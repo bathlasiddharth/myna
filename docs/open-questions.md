@@ -39,13 +39,13 @@ Each entry:
 **Raised:** 2026-03-31
 **Context:** The review queue is central to the system but the interaction model (present item → approve/edit/skip/discard) depends on the AI client being used. Need it to work in Claude Code, Kiro, etc.
 **Options considered:** Markdown-based queue files that any client can read/write, client-specific adapters
-**Status:** Open
+**Status:** Resolved — markdown files with checkbox-based approve/reject flow. Four queue files (`review-work`, `review-people`, `review-self`, `review-triage`) that any AI client can read, edit, and process. User can also edit directly in Obsidian. No client-specific adapters needed.
 
 ### Q005 — What's the vault folder structure?
 **Raised:** 2026-03-31
 **Context:** The existing requirements reference specific paths (Projects/, People/, etc.) but the full structure needs to be designed.
 **Options considered:** Flat, nested by domain, nested by date
-**Status:** Open
+**Status:** Moved to design phase — this is a design deliverable, not an open question. Tracked in roadmap under M2.
 
 ### Q006 — Local web UI needed?
 **Raised:** 2026-04-02
@@ -64,3 +64,27 @@ Each entry:
 **Context:** After basic setup, Myna could scan email folders and Slack channels to suggest additional project mappings automatically — the batch triage pattern applied to setup itself. More magical, but depends on MCP access being configured first.
 **Options considered:** Post-setup prompt like "want me to scan your folders and suggest project mappings?"
 **Status:** Backlog — build manual setup first (D009), add this as an enhancement later
+
+### Q009 — Where does the contributions log live in the vault?
+**Raised:** 2026-04-03
+**Context:** Self-tracking needs a home for the user's contributions log. Current placeholder is `myna/Journal/contributions.md` but the vault folder structure (Q005) isn't finalized. Contributions are personal to the user (not about a project or person), so they don't fit neatly under Projects/ or People/.
+**Options considered:** `myna/Journal/contributions.md` (dedicated journal area), `myna/Self/contributions.md` (new Self folder), section in daily/weekly notes (fragmented, hard to query), `myna/Tasks/contributions.md` (contributions aren't tasks)
+**Status:** Moved to design phase — resolved as part of vault folder structure (Q005).
+
+### Q010 — Unreplied & follow-up tracker: dedicated file or Dataview query?
+**Raised:** 2026-04-03
+**Context:** The unreplied tracker (messages waiting on you, messages you're waiting on) is populated as a byproduct of email/messaging processing. It could be a dedicated file that processing updates, or a Dataview query over processed data (if emails/messages get metadata tags like `status:: awaiting-reply`).
+**Options considered:** Dedicated tracker file (simpler to query, but another file to maintain), Dataview query over tagged message data (no extra file, but requires message metadata design), hybrid (tracker file auto-populated by processing, cleaned up periodically)
+**Status:** Resolved — TODOs with `type:: reply-needed`, queryable via Dataview. No separate file. Populated during email/messaging processing and triage. See email-and-messaging features.
+
+### Q011 — HTML dashboard: P0 or deferred?
+**Raised:** 2026-04-03
+**Context:** The Unified Dashboard has an optional HTML export for mobile/browser viewing without Obsidian. This adds build complexity (HTML generation, Obsidian URI links, styling) for a convenience feature. Obsidian mobile app may cover this need.
+**Options considered:** P0 (useful for quick mobile checks), deferred (Obsidian mobile covers most needs, build it only if friction emerges)
+**Status:** Resolved — deferred. Stick to Obsidian for P0. Revisit only if Obsidian doesn't support something or the UX is too complex.
+
+### Q012 — Tag registry: fourth config file or section in registry.md?
+**Raised:** 2026-04-03
+**Context:** Auto-tagging (cross-domain feature) needs a tag registry that defines available tags and their mapping rules (folder-based, keyword-based, person/project-based). This could be a section in the existing `registry.md` config or a separate fourth config file.
+**Options considered:** Section in `registry.md` (keeps config to three files per original design, but registry.md may get large), separate `tags.md` config (clean separation, but a fourth config file adds setup friction), derived from existing registry entries (no explicit tag registry — tags inferred from project/person names, but less control)
+**Status:** Resolved — separate `tags.md` config file. Four config files total: workspace, registry, communication-style, tags. Easier to maintain independently.

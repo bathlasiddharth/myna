@@ -2,13 +2,15 @@
 
 > Draft. Being refined through discussion.
 
-**Scope:** Email triage, thread summaries, message processing, inbox/channel scanning.
+**Scope:** Email processing pipeline, messaging processing, triage, thread summaries, unreplied tracker, deduplication.
 
-**Feature notes:** See `docs/features/email-and-messaging.md` for brainstorm notes to review.
+**Feature notes:** See `docs/features/email-and-messaging.md` for finalized features. Features will be copied here when all domains are reviewed.
 
 ---
 
 ## Features
+
+> Features are being finalized in `docs/features/email-and-messaging.md`. They will be copied here before the requirements writing phase begins.
 
 ## Requirements
 

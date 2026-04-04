@@ -18,8 +18,8 @@ Living task list. Updated by Claude as work progresses.
 | M1-T06 | Create `docs/requirements/cross-domain.md` | Done |
 | M1-T07 | Create `docs/requirements/non-functional.md` | Done |
 | M1-T08 | Create `docs/design-deliverables.md` | Done |
-| M1-T09 | Claude refines feature lists for all domains | Not started |
-| M1-T10 | User reviews refined feature lists | Not started |
+| M1-T09 | Claude refines feature lists for all domains | Done |
+| M1-T10 | User reviews refined feature lists | In progress (daily-workflow, email-and-messaging, meetings-and-calendar, projects-and-tasks done) |
 | M1-T11 | Email & Messaging requirements | Not started |
 | M1-T12 | Meetings & Calendar requirements | Not started |
 | M1-T13 | Projects & Tasks requirements | Not started |
@@ -61,6 +61,11 @@ Living task list. Updated by Claude as work progresses.
 | B001 | Scan-and-suggest setup mode (Q008) | Backlog |
 | B002 | Local web UI for review queue (Q006) | Backlog |
 | B003 | P1: Automation via headless agents | Backlog |
+| B004 | `/build-feature` pipeline (feature → requirements → design → build → present) | Backlog |
+| B005 | `/development` pipeline (implement → test → review → fix → re-test loop) | Backlog |
+| B006 | Feature toggles — all agent instructions check toggles before offering features | P0 |
+| B007 | Default profiles by role (manager, PM, IC) that pre-configure feature toggles | Backlog |
+| B008 | Customizable output templates for briefings, status summaries, narratives | Backlog |
 
 ---
 
@@ -272,3 +277,8 @@ Prompt: Myna is feature-complete. Read docs/instructions/build.md for how to wor
 - **B001** — Q008: Scan-and-suggest setup mode (auto-detect projects from email folders/Slack channels)
 - **B002** — Q006: Local web UI for review queue and draft management
 - **B003** — P1: Automation (scheduled/background agents via headless AI agent runs)
+- **B004** — `/build-feature` pipeline: single command that takes a feature idea through the full SDLC autonomously — feature description → requirements (self-check against vision/decisions/non-functional) → design → calls `/development` pipeline → present for review. Human checkpoint after requirements; everything after is autonomous.
+- **B005** — `/development` pipeline: autonomous build loop called by `/build-feature` or standalone — implement → test → review own code → fix issues → re-test (3+ iterations) → present. Reads from `instructions/build.md`. No human input until it's confident the code is solid.
+- **B006** — (P0) Feature toggles: extend workspace.md feature toggles to cover all major features (enable/disable per feature). Agent instructions and steering files check toggles before offering features. Baked into P0 so every agent instruction file is toggle-aware from the start — retrofitting is painful.
+- **B007** — Default profiles by role (manager, PM, IC) that pre-configure sensible feature toggle defaults.
+- **B008** — Customizable output templates for briefings, status summaries, and narratives. P0 uses default formats defined in agent instructions; this adds user-editable templates if demand emerges.

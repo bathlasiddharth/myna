@@ -63,7 +63,10 @@ Each file covers one domain of Myna's functionality. These are being actively re
 - **Never auto-commit.** Only commit when the user explicitly asks.
 - Use [Conventional Commits](https://www.conventionalcommits.org/): `feat:`, `fix:`, `docs:`, `chore:`, `refactor:`, `test:`, `style:`, `ci:`, `build:`
 - Keep commits atomic — one logical change per commit
-- Write clear commit messages: subject line explains the "what", body explains the "why" if needed
+- Write clear commit messages that describe what was accomplished, not which files changed:
+  - **Subject line:** lead with the most important change, in plain language. "refine email and daily-workflow features" NOT "update 6 docs files"
+  - **Body:** explain what was done and why — the decisions made, the design changes, the problems solved. NOT a list of files modified or sections edited.
+  - A reader should understand the significance of the commit from the message alone, without looking at the diff
 - **Never add Co-Authored-By lines.** Do not add Claude or any AI co-author to commits.
 
 ## Ground Rules

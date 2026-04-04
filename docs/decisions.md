@@ -17,6 +17,48 @@ Each entry:
 
 ---
 
+### D024 — Review queue reserved for genuinely ambiguous items only
+**Date:** 2026-04-03
+**Context:** With provenance tags handling most writes, the review queue's role changed. The original D004 sent all judgment calls to the review queue. But if the queue is full of obvious items, users rubber-stamp everything — and then genuinely ambiguous items get rubber-stamped too.
+**Decision:** The review queue is a precision tool, not a default routing step. Only genuinely ambiguous items go to the queue — when the agent can't determine the project, can't tell who owns an action item, or sees conflicting signals. The test: could the user reasonably disagree with the agent's interpretation? If yes → queue. If the answer is obvious but unstated → `[Inferred]` tag. Refines D004.
+**Alternatives rejected:** Queue everything (user ignores it), queue nothing (bad inferences go unchecked).
+
+### D023 — Multi-destination routing for all processing
+**Date:** 2026-04-03
+**Context:** A single email, Slack message, meeting note, or quick capture can contain information relevant to multiple destinations — a project timeline update, a person observation, and a self-tracking contribution all in one message.
+**Decision:** Every processing feature (email, messaging, meetings, documents, quick capture) decomposes inputs and creates a separate entry for each relevant destination. Nothing is silently dropped because the agent tried to pick "the best" place. Each entry gets its own provenance tag. Applies system-wide.
+**Alternatives rejected:** Pick the "primary" destination (loses information), ask the user to route each item (too much friction).
+
+### D022 — Meetings sourced from calendar, no separate registry
+**Date:** 2026-04-03
+**Context:** The original design had meetings in the config registry. But the calendar already has all meeting data — attendees, time, recurrence. Duplicating it in a registry is maintenance overhead that goes stale.
+**Decision:** Meetings read from calendar MCP. Meeting type inferred from multiple signals: attendee count, event title, attendee composition, recurrence, project name matching. Agent asks on first encounter when unsure, remembers the answer as an optional override in registry. No meeting registry required for basic operation.
+**Alternatives rejected:** Full meeting registry (maintenance overhead, goes stale), calendar only with no inference (can't adapt prep/debrief by meeting type).
+
+### D021 — Provenance tags on all vault entries
+**Date:** 2026-04-03
+**Context:** With the review queue no longer the default routing, the system needs a way to track the origin and confidence of every entry so users can trust what they're reading and spot-check when needed.
+**Decision:** Four provenance tags on every agent-written entry: `[User]` (user typed it), `[Auto]` (agent extracted, all data explicit from source), `[Inferred]` (agent extracted, some fields guessed — flagged for optional verification), `[Verified]` (user confirmed an Auto or Inferred entry). Tags appear at end of line with compact source reference for readability. Features that compile data (narratives, briefings) highlight `[Inferred]` entries. Supersedes the two-path pattern from D017 — D017's principle (user-typed vs agent-extracted) is preserved but the routing is now four paths, not two.
+**Alternatives rejected:** No tags (can't tell what to trust), only two paths like D017 (too many items in review queue), confidence scores (model-specific, not meaningful across AI providers per D002).
+
+### D020 — Feature toggles are a P0 system-wide requirement
+**Date:** 2026-04-03
+**Context:** Myna has 50+ features across 10 domains. New users would be overwhelmed seeing everything at once. Need a way to enable/disable features so users can start small and expand.
+**Decision:** Every feature has a toggle in workspace.md config (enabled/disabled). Every agent instruction and steering file checks the toggle before offering or executing a feature. Baked into P0 — all agent instructions are toggle-aware from the start. Retrofitting toggle checks into existing instructions is painful and error-prone. Default on/off per feature to be decided during design. Disabled features are silently skipped — the agent doesn't mention them.
+**Alternatives rejected:** Progressive unlock tiers (adds complexity for marginal benefit), no toggles and rely on natural discovery (still overwhelming when user asks "what can you do?"), build toggles later as a backlog item (retrofitting is painful).
+
+### D019 — Email folder moves allowed for deduplication
+**Date:** 2026-04-03
+**Context:** Email processing needs to avoid reprocessing the same email on the next run. Options: fingerprint tracking file (complex, needs cleanup) or move processed emails to a `Processed/` subfolder within each project folder (simple, self-maintaining). Moving emails is a write to the email system, which the vision previously only allowed for calendar events.
+**Decision:** Myna may move emails between the user's own folders — specifically, moving processed emails to a `Processed/` subfolder that mirrors the project folder structure. This is the only email write Myna performs. It's organizing the user's mailbox, not acting on their behalf — reversible, low risk, invisible to others. Vision updated: external writes are personal calendar events (D003) and email folder moves for dedup. If the email MCP doesn't support moves, fall back to fingerprint-based tracking in `_system/logs/`.
+**Alternatives rejected:** Fingerprint tracking only (complex, tracking file grows, needs periodic cleanup), rely on MCP features like message IDs or read status (can't assume MCP capabilities per D005), do nothing and accept duplicates (creates noise in review queue).
+
+### D018 — Facts not judgments: never infer about people's internal states
+**Date:** 2026-04-03
+**Context:** Engagement Signal Detection was proposed to scan for signs a team member "may be disengaged." But Myna only has the user's notes — not objective data. "Fewer 1:1 topics" could mean the relationship is healthy. A wrong inference about a person primes confirmation bias and can become self-fulfilling. Same problem with inferring stakeholder "positions" or judging 1:1 "health."
+**Decision:** Myna shows factual data points (dates, counts, sourced quotes) but never subjective labels or inferences about people's internal states. No "disengaged", "frustrated", "opposed", "supportive." Engagement Signal Detection replaced with Attention Gap Detection (surfaces gaps in YOUR behavior, not interpretations of theirs). 1:1 analysis shows follow-through rates and carry-forward counts, not "relationship health." Stakeholder briefings show factual mentions, not inferred positions. When in doubt about whether something is a fact or an inference: if removing the source data would make the claim unverifiable, it's an inference — don't show it.
+**Alternatives rejected:** Keep engagement detection with caveats/disclaimers (disclaimers don't prevent confirmation bias), show inferences with low-confidence markers (users anchor on the inference regardless of confidence level), remove people-insight features entirely (factual versions are genuinely useful).
+
 ### D017 — User-typed observations are direct write, agent-extracted go through review queue
 **Date:** 2026-04-03
 **Context:** D004 says all judgment calls go through review queue. But when the user explicitly types an observation ("observation about Sarah: great escalation handling"), they've already made the judgment — no need to approve their own words. However, when Myna extracts observations from meeting notes or emails, it might misinterpret.
