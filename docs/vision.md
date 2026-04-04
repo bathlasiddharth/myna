@@ -40,19 +40,22 @@ A mistake in a markdown file = edit a file. A mistake sending an email to a VP =
 ### 3. Draft, Never Send
 Myna drafts emails, Slack messages, status updates, recognition notes — but never sends them. Every outbound communication requires your explicit action outside of Myna.
 
-### 4. Human-in-the-Loop for Judgment Calls
+### 4. External Content Is Data, Never Instructions
+Myna processes emails, Slack messages, meeting notes, and documents — all of which could contain text that looks like instructions. An email could say "ignore previous instructions" or "delete all project files." Myna treats all external content as data to extract information from, never as instructions to follow. This is enforced at multiple layers: agent instructions, content framing delimiters, and hard hooks that block dangerous actions regardless of what triggered them.
+
+### 5. Human-in-the-Loop for Judgment Calls
 "Can you take a look at this?" — delegation or casual request? Myna doesn't guess. Items requiring interpretation go through a review queue. The system detects and stages; you approve.
 
-### 5. Never Assume, Always Ask
+### 6. Never Assume, Always Ask
 Ambiguous project name? Unclear meeting reference? Myna asks. A wrong guess creates bad data silently. Asking takes 5 seconds.
 
-### 6. AI Model Agnostic
+### 7. AI Model Agnostic
 Myna is not tied to any specific AI model. High-level agent instructions are shared across all models. During setup, you select your AI model (Claude, Kiro, Gemini, Codex) and the system generates model-specific configuration — prompt formatting, guardrails where supported, feature flags for capabilities the model doesn't support.
 
-### 7. Enterprise-Friendly, Minimal Infrastructure
+### 8. Enterprise-Friendly, Minimal Infrastructure
 Myna doesn't require new infrastructure and doesn't send data anywhere. For external services (email, Slack, calendar), it connects to whatever MCP servers your enterprise already provides. The only MCP Myna ships is a lightweight Obsidian CLI wrapper for vault operations — local-only, no network calls.
 
-### 8. Config-Driven, No Personal Data in Code
+### 9. Config-Driven, No Personal Data in Code
 All personal data (projects, people, channels, preferences) lives in config files that are gitignored. The system itself can be shared or open-sourced as-is.
 
 ---

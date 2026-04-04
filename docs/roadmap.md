@@ -19,7 +19,7 @@ Living task list. Updated by Claude as work progresses.
 | M1-T07 | Create `docs/requirements/non-functional.md` | Done |
 | M1-T08 | Create `docs/design-deliverables.md` | Done |
 | M1-T09 | Claude refines feature lists for all domains | Done |
-| M1-T10 | User reviews refined feature lists | In progress (daily-workflow, email-and-messaging, meetings-and-calendar, projects-and-tasks done) |
+| M1-T10 | User reviews refined feature lists | Done |
 | M1-T11 | Email & Messaging requirements | Not started |
 | M1-T12 | Meetings & Calendar requirements | Not started |
 | M1-T13 | Projects & Tasks requirements | Not started |
@@ -282,3 +282,4 @@ Prompt: Myna is feature-complete. Read docs/instructions/build.md for how to wor
 - **B006** — (P0) Feature toggles: extend workspace.md feature toggles to cover all major features (enable/disable per feature). Agent instructions and steering files check toggles before offering features. Baked into P0 so every agent instruction file is toggle-aware from the start — retrofitting is painful.
 - **B007** — Default profiles by role (manager, PM, IC) that pre-configure sensible feature toggle defaults.
 - **B008** — Customizable output templates for briefings, status summaries, and narratives. P0 uses default formats defined in agent instructions; this adds user-editable templates if demand emerges.
+- **B009** — Automated document review with doc-type-specific criteria (design doc, 6-pager/narrative, MBR/MTR/QBR, decision review). Structured feedback per doc type, saved to `Drafts/Reviews/`. Removed from writing-and-drafts P0 scope.

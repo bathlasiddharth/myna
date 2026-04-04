@@ -19,14 +19,14 @@ Each entry:
 
 ### D024 — Review queue reserved for genuinely ambiguous items only
 **Date:** 2026-04-03
-**Context:** With provenance tags handling most writes, the review queue's role changed. The original D004 sent all judgment calls to the review queue. But if the queue is full of obvious items, users rubber-stamp everything — and then genuinely ambiguous items get rubber-stamped too.
+**Context:** With provenance markers handling most writes, the review queue's role changed. The original D004 sent all judgment calls to the review queue. But if the queue is full of obvious items, users rubber-stamp everything — and then genuinely ambiguous items get rubber-stamped too.
 **Decision:** The review queue is a precision tool, not a default routing step. Only genuinely ambiguous items go to the queue — when the agent can't determine the project, can't tell who owns an action item, or sees conflicting signals. The test: could the user reasonably disagree with the agent's interpretation? If yes → queue. If the answer is obvious but unstated → `[Inferred]` tag. Refines D004.
 **Alternatives rejected:** Queue everything (user ignores it), queue nothing (bad inferences go unchecked).
 
 ### D023 — Multi-destination routing for all processing
 **Date:** 2026-04-03
 **Context:** A single email, Slack message, meeting note, or quick capture can contain information relevant to multiple destinations — a project timeline update, a person observation, and a self-tracking contribution all in one message.
-**Decision:** Every processing feature (email, messaging, meetings, documents, quick capture) decomposes inputs and creates a separate entry for each relevant destination. Nothing is silently dropped because the agent tried to pick "the best" place. Each entry gets its own provenance tag. Applies system-wide.
+**Decision:** Every processing feature (email, messaging, meetings, documents, quick capture) decomposes inputs and creates a separate entry for each relevant destination. Nothing is silently dropped because the agent tried to pick "the best" place. Each entry gets its own provenance marker. Applies system-wide.
 **Alternatives rejected:** Pick the "primary" destination (loses information), ask the user to route each item (too much friction).
 
 ### D022 — Meetings sourced from calendar, no separate registry
@@ -35,10 +35,10 @@ Each entry:
 **Decision:** Meetings read from calendar MCP. Meeting type inferred from multiple signals: attendee count, event title, attendee composition, recurrence, project name matching. Agent asks on first encounter when unsure, remembers the answer as an optional override in registry. No meeting registry required for basic operation.
 **Alternatives rejected:** Full meeting registry (maintenance overhead, goes stale), calendar only with no inference (can't adapt prep/debrief by meeting type).
 
-### D021 — Provenance tags on all vault entries
+### D021 — Provenance markers on all vault entries
 **Date:** 2026-04-03
 **Context:** With the review queue no longer the default routing, the system needs a way to track the origin and confidence of every entry so users can trust what they're reading and spot-check when needed.
-**Decision:** Four provenance tags on every agent-written entry: `[User]` (user typed it), `[Auto]` (agent extracted, all data explicit from source), `[Inferred]` (agent extracted, some fields guessed — flagged for optional verification), `[Verified]` (user confirmed an Auto or Inferred entry). Tags appear at end of line with compact source reference for readability. Features that compile data (narratives, briefings) highlight `[Inferred]` entries. Supersedes the two-path pattern from D017 — D017's principle (user-typed vs agent-extracted) is preserved but the routing is now four paths, not two.
+**Decision:** Four provenance markers on every agent-written entry: `[User]` (user typed it), `[Auto]` (agent extracted, all data explicit from source), `[Inferred]` (agent extracted, some fields guessed — flagged for optional verification), `[Verified]` (user confirmed an Auto or Inferred entry). Tags appear at end of line with compact source reference for readability. Features that compile data (narratives, briefings) highlight `[Inferred]` entries. Supersedes the two-path pattern from D017 — D017's principle (user-typed vs agent-extracted) is preserved but the routing is now four paths, not two.
 **Alternatives rejected:** No tags (can't tell what to trust), only two paths like D017 (too many items in review queue), confidence scores (model-specific, not meaningful across AI providers per D002).
 
 ### D020 — Feature toggles are a P0 system-wide requirement
