@@ -31,7 +31,7 @@ User involvement is concentrated at design phases (0, 4), user-involved manual p
 | 3 Reference Agent | Build one agent end-to-end using the Phase 2 SDLC; iterate the SDLC; capture learnings | Moderate |
 | 4 Autonomous Build Plan | Synthesize Phase 3 learnings; finalize `build-agent.md`, `verify-agent.md`, `escalation-rules.md`; run fresh-session acceptance test | Heavy |
 | 5 Autonomous Agent Build | Build all remaining agents autonomously + cross-agent structural lint after each | Minimal (escalations only) |
-| 6 Installation Script | Build Kiro install tooling (D035); user-involved, not autonomous | Heavy |
+| 6 Installation Script | Build Kiro CLI install tooling (D035); user-involved, not autonomous | Heavy |
 | 7 Manual Testing Plan | Design the manual testing plan document (D033); plan only — user executes post-ship | Heavy |
 | 8 Ship | README, setup guide, v1.0 tag. No open-source contribution model (D036) | Moderate |
 
@@ -76,7 +76,7 @@ User involvement is concentrated at design phases (0, 4), user-involved manual p
 | Task | Description | Status |
 |---|---|---|
 | P0-T01 | Foundations inventory: classify every item as [Settled]/[Derive]/[Gap] | Not started |
-| P0-T02 | Architecture design: agents, routing, steering, feature-to-agent mapping, Kiro mapping | Not started |
+| P0-T02 | Architecture design: agents, routing, steering, feature-to-agent mapping, Kiro CLI mapping | Not started |
 | P0-T03 | Write `docs/foundations.md` and `docs/architecture.md` | Not started |
 | P0-T04 | Reference agent selection | Not started |
 | P0-T05 | User review of all Phase 0 output | Not started |
@@ -155,11 +155,11 @@ User involvement is concentrated at design phases (0, 4), user-involved manual p
 
 > **Operational guide:** `docs/instructions/phase-6-installation-script.md`
 >
-> **Goal:** Kiro-targeted install tooling (v1 scope per D035). User-involved, not autonomous.
+> **Goal:** Kiro CLI-targeted install tooling (v1 scope per D035). User-involved, not autonomous.
 
 | Task | Description | Status |
 |---|---|---|
-| P6-T01 | Design the Kiro install flow | Not started |
+| P6-T01 | Design the Kiro CLI install flow | Not started |
 | P6-T02 | Write the install script | Not started |
 | P6-T03 | Test on a clean environment | Not started |
 | P6-T04 | Document install flow | Not started |
@@ -209,6 +209,6 @@ User involvement is concentrated at design phases (0, 4), user-involved manual p
 | B008 | Customizable output templates for briefings, status summaries, narratives | Backlog |
 | B009 | Automated document review with doc-type-specific criteria | Backlog |
 | B010 | Automated testing infrastructure (designed post-v1 from real-usage experience) | Post-launch |
-| B011 | Install tooling for Claude Code, Gemini, Codex (beyond Kiro v1 scope) | Post-launch |
+| B011 | Install tooling for Claude Code, Gemini, Codex (beyond Kiro CLI v1 scope) | Post-launch |
 | B012 | Open-source contribution model and CONTRIBUTING.md | Post-launch |
 | B013 | User acceptance testing and bug fixing from real-world use | Post-launch |

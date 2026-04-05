@@ -6,9 +6,9 @@
 
 ## What Is Myna?
 
-Myna is a set of AI agent instructions that turn any capable LLM (Claude, Kiro, Gemini, Codex) into a personal assistant for tech employees. It manages the information layer of your job: emails, Slack messages, meetings, projects, people, and tasks.
+Myna is a set of AI agent instructions that turn any capable LLM (Claude, Kiro CLI, Gemini, Codex) into a personal assistant for tech employees. It manages the information layer of your job: emails, Slack messages, meetings, projects, people, and tasks.
 
-You interact with Myna by typing natural language prompts inside your AI agent — Kiro, Claude Code, or whatever your company approves. Myna reads from your company's existing MCP-connected tools (email, Slack, calendar) and writes exclusively to your local Obsidian vault.
+You interact with Myna by typing natural language prompts inside your AI agent — Kiro CLI, Claude Code, or whatever your company approves. Myna reads from your company's existing MCP-connected tools (email, Slack, calendar) and writes exclusively to your local Obsidian vault.
 
 Myna **drafts** but never **sends**. It **organizes** but never **decides**. It **surfaces** but never **hides**. Everything stays local until you choose to act.
 
@@ -50,7 +50,7 @@ Myna processes emails, Slack messages, meeting notes, and documents — all of w
 Ambiguous project name? Unclear meeting reference? Myna asks. A wrong guess creates bad data silently. Asking takes 5 seconds.
 
 ### 7. AI Model Agnostic
-Myna is not tied to any specific AI model. High-level agent instructions are shared across all models. During setup, you select your AI model (Claude, Kiro, Gemini, Codex) and the system generates model-specific configuration — prompt formatting, guardrails where supported, feature flags for capabilities the model doesn't support.
+Myna is not tied to any specific AI model. High-level agent instructions are shared across all models. During setup, you select your AI model (Claude, Kiro CLI, Gemini, Codex) and the system generates model-specific configuration — prompt formatting, guardrails where supported, feature flags for capabilities the model doesn't support.
 
 ### 8. Enterprise-Friendly, Minimal Infrastructure
 Myna doesn't require new infrastructure and doesn't send data anywhere. For external services (email, Slack, calendar), it connects to whatever MCP servers your enterprise already provides. The only MCP Myna ships is a lightweight Obsidian CLI wrapper for vault operations — local-only, no network calls.
@@ -64,7 +64,7 @@ All personal data (projects, people, channels, preferences) lives in config file
 
 ```
 ┌─────────────────────────────────────────────────┐
-│  You (inside Kiro / Claude Code / Gemini / etc.) │
+│  You (inside Kiro CLI / Claude Code / Gemini / etc.) │
 │                                                   │
 │  "prep brief for my 1:1 with Sarah"              │
 └────────────────────┬──────────────────────────────┘
@@ -130,7 +130,7 @@ The MCP is kept lightweight and thin so it's easy to update as Obsidian releases
 
 Setup is an interactive conversation (~5 min), not a config file to fill out. The agent walks you through it:
 
-1. **Which AI model?** (Claude Code, Kiro, Gemini, Codex)
+1. **Which AI model?** (Claude Code, Kiro CLI, Gemini, Codex)
 2. **Where's your vault?** (path, or create new)
 3. **What MCP connections do you have?** (email, Slack, calendar — all optional, skip what you don't have)
 4. **What projects are you working on?** (names, aliases, mapped email folders/Slack channels)

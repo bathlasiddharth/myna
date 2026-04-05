@@ -8,13 +8,13 @@ Operational guide for Phase 6. Read at the start of any P6 task. See `docs/roadm
 
 Phase 6 builds the installation tooling that wires Myna into a user's environment. **This phase is user-involved, not autonomous**, because installation correctness depends on real-environment testing that the user is best positioned to do, and because ease-of-install is a user experience concern the user wants direct input on.
 
-**Target for v1: Kiro only** (per D035). Other AI tools (Claude Code, Gemini, Codex) are post-launch work.
+**Target for v1: Kiro CLI only** (per D035). Other AI tools (Claude Code, Gemini, Codex) are post-launch work.
 
 **In scope:**
-- Design the install flow for Kiro
+- Design the install flow for Kiro CLI
 - Write the install script (shell, Python, or whatever fits — decided in-phase)
-- Wire up the Obsidian CLI MCP wrapper with Kiro's MCP mechanism
-- Place agent instructions, steering, and foundations where Kiro expects them
+- Wire up the Obsidian CLI MCP wrapper with Kiro CLI's MCP mechanism
+- Place agent instructions, steering, and foundations where Kiro CLI expects them
 - Create the `myna/` folder in the user's Obsidian vault
 - Initialize config files and vault templates
 - Invoke the Setup & Config agent (built in Phase 5) for interactive onboarding
@@ -29,7 +29,7 @@ Phase 6 builds the installation tooling that wires Myna into a user's environmen
 
 ## Why Phase 6 matters
 
-Installation is the first moment a user's opinion matters. A hard-to-install product gets abandoned before the user sees what it does. Phase 6 is where we make the first mile friction-free for Kiro users.
+Installation is the first moment a user's opinion matters. A hard-to-install product gets abandoned before the user sees what it does. Phase 6 is where we make the first mile friction-free for Kiro CLI users.
 
 This is also the first phase where Myna stops being abstract markdown and becomes software someone actually runs. The install script is one of the very few pieces of executable code in the whole project (alongside the Obsidian CLI MCP wrapper).
 
@@ -39,10 +39,10 @@ Note: **autonomous agent build instructions don't apply to this script.** The `b
 
 1. `docs/foundations.md` — for the runtime file structure (where things need to land)
 2. `docs/architecture.md` — for the agent roster (what needs to be installed)
-3. `docs/decisions.md` — especially D007 (model-agnostic), D008 (Obsidian CLI MCP), D009 (interactive setup), D035 (Kiro-only v1)
+3. `docs/decisions.md` — especially D007 (model-agnostic), D008 (Obsidian CLI MCP), D009 (interactive setup), D035 (Kiro CLI-only v1)
 4. `docs/roadmap.md` — Phase 6 tasks
 5. The full set of built agents from Phase 5 — these are the payload the installer places
-6. Kiro documentation for how to load instructions, register MCPs, etc. (external — user provides)
+6. Kiro CLI documentation for how to load instructions, register MCPs, etc. (external — user provides)
 
 ## Phase-specific rules
 
@@ -54,10 +54,10 @@ Note: **autonomous agent build instructions don't apply to this script.** The `b
 
 ## Tasks
 
-### P6-T01 — Design the Kiro install flow
+### P6-T01 — Design the Kiro CLI install flow
 
 Walk through with the user:
-- What Kiro expects (where instructions live, how MCPs register, what config format)
+- What Kiro CLI expects (where instructions live, how MCPs register, what config format)
 - Which Myna files need to land where
 - How the setup agent gets invoked
 - Error modes and reporting
@@ -66,7 +66,7 @@ Output: a short design doc or bullet list of install steps.
 
 ### P6-T02 — Write the install script
 
-Implement the flow as an actual runnable script. Language chosen in-phase (bash, python, whatever makes sense for Kiro users).
+Implement the flow as an actual runnable script. Language chosen in-phase (bash, python, whatever makes sense for Kiro CLI users).
 
 ### P6-T03 — Test on a clean environment
 

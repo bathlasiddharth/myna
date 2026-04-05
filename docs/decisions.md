@@ -20,7 +20,7 @@ Each entry:
 ### D037 — Done = Phase 8 (Ship) complete; post-ship activities are outside the pipeline
 **Date:** 2026-04-05
 **Context:** The pipeline was ambiguous about what "done" means. Earlier it sounded like user acceptance testing (real-world usage + bug fixing) was part of the build pipeline. The user clarified: "I want to say this is done and I will then test it and find bugs and fix it." Real-world testing, bug finding, and bug fixing are the user's post-ship responsibility, not part of the build.
-**Decision:** The build pipeline ends at Phase 8 (Ship). When Phase 8 completes — README, setup guide, v1.0 tag in place — Myna is declared done. Post-ship activities are explicitly outside the pipeline: (a) user acceptance testing against the Phase 7 manual testing plan, (b) bug finding and fixing from real-world usage, (c) open-source contribution model design (D036), (d) install support for AI tools beyond Kiro (D035 scope), (e) any automated testing infrastructure (D033). These are tracked in the roadmap Backlog as post-launch items but are not pipeline phases.
+**Decision:** The build pipeline ends at Phase 8 (Ship). When Phase 8 completes — README, setup guide, v1.0 tag in place — Myna is declared done. Post-ship activities are explicitly outside the pipeline: (a) user acceptance testing against the Phase 7 manual testing plan, (b) bug finding and fixing from real-world usage, (c) open-source contribution model design (D036), (d) install support for AI tools beyond Kiro CLI (D035 scope), (e) any automated testing infrastructure (D033). These are tracked in the roadmap Backlog as post-launch items but are not pipeline phases.
 **Alternatives rejected:** Include user acceptance testing as a pipeline phase (conflates build with use; makes "done" depend on indefinite real-world use). Include bug-fixing as a pipeline phase (same problem; the bug-fix loop is open-ended). Defer the done declaration until after stabilization (never-ending pipeline).
 
 ### D036 — Open-source contribution model deferred to post-launch
@@ -29,10 +29,10 @@ Each entry:
 **Decision:** Open-source contribution model is post-launch work. Not in Phase 0 (foundations), not in Phase 8 (Ship). The repo ships at v1.0 without a formal contributor model. After launch, once the user has tested and stabilized Myna, the contribution model can be designed from real experience with what works and what doesn't — including how to add a new agent, how to extend foundations, how to handle escalations without the original user. This is tracked in the Backlog as B012.
 **Alternatives rejected:** Design the contribution model upfront in Phase 0 (premature — we don't know what works yet). Add minimal contribution docs in Phase 8 (partial commits to a contributor story without validation). Open-source from day one (user isn't ready for external contributors until post-ship stabilization).
 
-### D035 — Installation script as dedicated user-involved phase (Phase 6), Kiro-only for v1
+### D035 — Installation script as dedicated user-involved phase (Phase 6), Kiro CLI-only for v1
 **Date:** 2026-04-05
-**Context:** The installation script was initially not explicitly placed in the pipeline. It was then folded into Phase 5 (autonomous agent build) as a "final deliverable." The user corrected: (1) the autonomous agent-building instructions (build-agent.md recipe) don't apply to installation script work — the recipe is for writing agent prompts, not installer code. (2) The user wants to be directly involved in ensuring install is easy, so it shouldn't be autonomous. (3) v1 scope should target Kiro only since that's the user's primary tool; other AI tools (Claude Code, Gemini, Codex) are post-launch.
-**Decision:** Installation script creation is its own phase (Phase 6), positioned between autonomous agent build (Phase 5) and manual testing plan (Phase 7). It is **user-involved, not autonomous** — the user reviews design decisions, tests on a clean environment, and gives final approval. For v1, the installer targets **Kiro only**. Claude Code, Gemini, Codex, and other AI tools are post-launch work (tracked in Backlog as B011). Phase 6 produces a runnable installer that wires Myna's agents, steering, foundations, vault templates, config, and MCP wrapper into a Kiro user's environment.
+**Context:** The installation script was initially not explicitly placed in the pipeline. It was then folded into Phase 5 (autonomous agent build) as a "final deliverable." The user corrected: (1) the autonomous agent-building instructions (build-agent.md recipe) don't apply to installation script work — the recipe is for writing agent prompts, not installer code. (2) The user wants to be directly involved in ensuring install is easy, so it shouldn't be autonomous. (3) v1 scope should target Kiro CLI only since that's the user's primary tool; other AI tools (Claude Code, Gemini, Codex) are post-launch.
+**Decision:** Installation script creation is its own phase (Phase 6), positioned between autonomous agent build (Phase 5) and manual testing plan (Phase 7). It is **user-involved, not autonomous** — the user reviews design decisions, tests on a clean environment, and gives final approval. For v1, the installer targets **Kiro CLI only**. Claude Code, Gemini, Codex, and other AI tools are post-launch work (tracked in Backlog as B011). Phase 6 produces a runnable installer that wires Myna's agents, steering, foundations, vault templates, config, and MCP wrapper into a Kiro CLI user's environment.
 **Alternatives rejected:** Fold installer into Phase 5 autonomous build (autonomous recipe doesn't apply to code; user wants direct involvement). Target all AI tools in v1 (scope creep; each tool has different install mechanics). Skip installer entirely and require manual setup (defeats D009 interactive setup and D007 model-agnostic adaptation).
 
 ### D034 — All features in v1, no P0 subset
@@ -218,13 +218,13 @@ Implications: Phase 0 expands to include agent architecture design alongside dat
 
 ### D007 — Model-agnostic via common instructions + setup-time adaptation
 **Date:** 2026-04-02
-**Context:** Need to support Claude, Kiro, Gemini, Codex, etc. without maintaining separate codebases.
+**Context:** Need to support Claude, Kiro CLI, Gemini, Codex, etc. without maintaining separate codebases.
 **Decision:** High-level agent instructions are shared across all models. During setup, user selects their AI model and the system generates model-specific configuration (prompt formatting, guardrails where supported, feature flags for unsupported capabilities). Common layer: vault structure, behavior specs, config files. Model-specific layer: prompt format, guardrails, feature availability.
 **Alternatives rejected:** Fully identical prompts across models (models have different capabilities), separate implementations per model (maintenance nightmare).
 
 ### D006 — Prompt-based interaction, not CLI tool
 **Date:** 2026-04-02
-**Context:** Users interact with Myna through natural language prompts inside their AI agent (Kiro, Claude Code, etc.), not through a custom CLI binary.
+**Context:** Users interact with Myna through natural language prompts inside their AI agent (Kiro CLI, Claude Code, etc.), not through a custom CLI binary.
 **Decision:** Myna's "interface" is natural language prompts typed into whatever AI agent the user has. The deliverable is agent instructions + vault structure + config, not an application.
 **Alternatives rejected:** Custom CLI tool (unnecessary layer, adds build/install complexity), VS Code extension (vendor-specific).
 
@@ -249,7 +249,7 @@ Implications: Phase 0 expands to include agent architecture design alongside dat
 ### D002 — AI model agnostic
 **Date:** 2026-03-31
 **Context:** Don't want vendor lock-in. Want to use whichever model is best for each task.
-**Decision:** Myna must work with Claude, Gemini, Codex, Kiro, and any future capable model. Agent definitions are a protocol, not tied to a specific provider.
+**Decision:** Myna must work with Claude, Gemini, Codex, Kiro CLI, and any future capable model. Agent definitions are a protocol, not tied to a specific provider.
 **Alternatives rejected:** Claude-only (limits flexibility).
 
 ### D001 — Obsidian as the vault UI

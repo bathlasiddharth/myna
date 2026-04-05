@@ -10,7 +10,7 @@ The final phase of the build pipeline. Produces a public v1.0 release. After Pha
 
 **In scope:**
 - README polish (public-facing)
-- Setup guide (using the Phase 6 Kiro install script as the entry point)
+- Setup guide (using the Phase 6 Kiro CLI install script as the entry point)
 - Final consistency pass on public-facing artifacts
 - v1.0 release tag
 - Release notes
@@ -21,7 +21,7 @@ The final phase of the build pipeline. Produces a public v1.0 release. After Pha
 - User acceptance testing (post-ship, per D037)
 - Bug fixing from real-world use (post-ship)
 - Automated testing infrastructure (deferred post-launch per D033)
-- Install support for AI tools other than Kiro (post-launch per D035)
+- Install support for AI tools other than Kiro CLI (post-launch per D035)
 
 ## Why Phase 8 matters
 
@@ -55,7 +55,7 @@ Public-facing summary: what Myna is, who it's for, how to install, basic usage. 
 
 ### P8-T02 — Setup guide
 
-Walks the user through install (Phase 6 script), first-run setup, and basic use. Includes troubleshooting for common Kiro-specific install issues discovered during Phase 6 testing.
+Walks the user through install (Phase 6 script), first-run setup, and basic use. Includes troubleshooting for common Kiro CLI-specific install issues discovered during Phase 6 testing.
 
 ### P8-T03 — Final consistency pass
 
@@ -64,7 +64,7 @@ Fresh-eye read of all public-facing docs. Fix anything stale, unclear, or incons
 ### P8-T04 — v1.0 release tag and notes
 
 Tag v1.0. Write release notes summarizing:
-- What Myna delivers (agent-based assistant for Kiro)
+- What Myna delivers (agent-based assistant for Kiro CLI)
 - Feature coverage (the domains shipped)
 - Known limitations (single AI tool, manual testing only, no automation)
 - Where the methodology lives (the other first-class output)

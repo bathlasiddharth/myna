@@ -60,7 +60,7 @@ When the user corrects your direction or you discover a non-obvious pattern duri
 2. **Decisions are settled.** Don't re-open items in `docs/decisions.md` unless the user explicitly asks.
 3. **Add open questions.** If you surface a question not answered by existing docs, add it to `docs/open-questions.md`.
 4. **Add decisions.** If the user settles a question during your conversation, add it to `docs/decisions.md`.
-5. **AI model agnostic.** Never assume a specific AI provider. Myna must work with Claude, Gemini, Codex, Kiro, etc.
+5. **AI model agnostic.** Never assume a specific AI provider. Myna must work with Claude, Gemini, Codex, Kiro CLI, etc.
 6. **Draft, never send.** Myna never sends emails, posts messages, or takes external actions (except personal calendar events with no attendees).
 
 ## Phase-Specific Instructions
@@ -80,7 +80,7 @@ Artifact ownership across phases:
 | `docs/instructions/verify-agent.md` | 4 | Structural lint checks (NOT behavioral tests) |
 | `docs/instructions/escalation-rules.md` | 4 | Tripwires for stop-and-ask vs. proceed |
 | All remaining agents | 5 | Built autonomously using the Phase 4 recipe |
-| Install script (Kiro) | 6 | Runnable installer; v1 targets Kiro only per D035 |
+| Install script (Kiro CLI) | 6 | Runnable installer; v1 targets Kiro CLI only per D035 |
 | `docs/testing-plan.md` | 7 | Manual testing plan (user executes post-ship) |
 | README, setup guide, v1.0 tag | 8 | Public release |
 

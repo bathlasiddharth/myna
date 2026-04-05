@@ -37,7 +37,7 @@ Each entry:
 
 ### Q004 — How should the review queue UX work across AI clients?
 **Raised:** 2026-03-31
-**Context:** The review queue is central to the system but the interaction model (present item → approve/edit/skip/discard) depends on the AI client being used. Need it to work in Claude Code, Kiro, etc.
+**Context:** The review queue is central to the system but the interaction model (present item → approve/edit/skip/discard) depends on the AI client being used. Need it to work in Claude Code, Kiro CLI, etc.
 **Options considered:** Markdown-based queue files that any client can read/write, client-specific adapters
 **Status:** Resolved — markdown files with checkbox-based approve/reject flow. Four queue files (`review-work`, `review-people`, `review-self`, `review-triage`) that any AI client can read, edit, and process. User can also edit directly in Obsidian. No client-specific adapters needed.
 

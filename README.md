@@ -4,7 +4,7 @@ A local-first personal assistant for tech professionals. AI agents that watch, o
 
 ## What Is Myna?
 
-Myna is a set of AI agent instructions that turn any capable LLM (Claude, Gemini, Codex, Kiro) into a personal assistant for tech employees. It manages the information layer of your job: emails, Slack messages, meetings, projects, people, and tasks.
+Myna is a set of AI agent instructions that turn any capable LLM (Claude, Gemini, Codex, Kiro CLI) into a personal assistant for tech employees. It manages the information layer of your job: emails, Slack messages, meetings, projects, people, and tasks.
 
 You interact with Myna by typing natural language prompts inside your AI agent. Myna reads from your company's existing MCP-connected tools (email, Slack, calendar) and writes exclusively to your local Obsidian vault.
 
@@ -21,7 +21,7 @@ Engineering managers, tech leads, senior engineers, and PMs who:
 ## How It Works
 
 ```
-You (inside Claude Code / Kiro / Gemini / etc.)
+You (inside Claude Code / Kiro CLI / Gemini / etc.)
   │
   │  "prep brief for my 1:1 with Sarah"
   │
@@ -65,7 +65,7 @@ Myna is **not an application**. There is no server, no API, no frontend.
 - **Local-first** — All data lives in your Obsidian vault as plain markdown
 - **Draft, never send** — Every outbound communication requires your explicit action
 - **Human-in-the-loop** — Items requiring judgment go through a review queue
-- **AI model agnostic** — Works with Claude, Gemini, Codex, Kiro, and future models
+- **AI model agnostic** — Works with Claude, Gemini, Codex, Kiro CLI, and future models
 - **Enterprise-friendly** — No new infrastructure, connects to your company's existing MCP servers
 - **Config-driven** — All personal data in gitignored config files; system is shareable as-is
 
