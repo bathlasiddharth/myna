@@ -17,6 +17,22 @@ Each entry:
 
 ---
 
+### D038 — Tool-agnostic content layer separated from install-time packaging
+**Date:** 2026-04-05
+**Context:** Myna is being built for Kiro CLI first (D035), but the user wants extensibility to other AI platforms (Claude Code, Gemini, Codex, etc.) later without requiring agent content to be rewritten. Without an explicit separation between content and packaging, every new target tool would mean rewriting agent instructions, steering files, skill specs, and other artifacts in that tool's native format. This is the kind of architectural decision that is cheap to get right at Phase 0 and expensive to retrofit.
+**Decision:** Myna's build artifacts are organized into two distinct layers:
+
+**Content layer (tool-agnostic):** Agent behaviors, steering rules, skill specifications, foundations, vault templates, and any other instruction-like content live in plain markdown (and YAML for config schemas) in a neutral location in the repo. These files contain no Kiro CLI-specific syntax, no assumptions about file locations Kiro CLI expects, and no tool-specific conventions. They are the authoritative source of what Myna does. Phase 5 autonomous agent build writes content files to this layer.
+
+**Adapter layer (tool-specific):** The installation step (Phase 6) implements a Kiro CLI adapter that reads the content layer and packages it into whatever file formats, locations, and invocation conventions Kiro CLI expects at runtime. For v1, this adapter targets Kiro CLI only (per D035). Adding a future AI tool (Claude Code, Gemini, etc.) means writing a new adapter in the install step — NOT touching the content layer.
+
+**Phase 0 responsibility:** design the content layer's directory structure and file conventions such that they are neutral. Phase 0 does NOT design adapters for other tools — only the Kiro CLI adapter is in scope for v1. Phase 0 MUST pass this extensibility test: "If a future contributor wants to add Claude Code support, do they need to rewrite agent content, or just write a new Kiro-Code adapter?" If the answer is "rewrite content," the content layer has leaked tool-specific details and must be revised.
+
+**Test discipline:** when writing any agent/steering/skill content in Phase 5, ask "would this file need changes to work on a different AI tool?" If yes, the tool-specific part belongs in the adapter, not in the content file. Move it.
+
+This builds on and operationalizes D002 (AI model agnostic) and D007 (model-agnostic via common instructions + setup-time adaptation). D002 stated the principle; D007 said adaptation happens at setup; D038 specifies the concrete mechanism — a two-layer structure with the install step as the adapter.
+**Alternatives rejected:** Embed content directly in Kiro CLI-format files (locks in Kiro CLI's structure; future tools would require content rewrites — the exact problem this decision prevents). Design adapters for all supported AI tools in Phase 0 now (scope creep; we don't know enough about other tools' capabilities yet; v1 needs to ship). No separation at all and treat "write for each tool" as a future problem (fine for v1 in isolation but creates technical debt that blocks extensibility, which is exactly what this decision is meant to prevent).
+
 ### D037 — Done = Phase 8 (Ship) complete; post-ship activities are outside the pipeline
 **Date:** 2026-04-05
 **Context:** The pipeline was ambiguous about what "done" means. Earlier it sounded like user acceptance testing (real-world usage + bug fixing) was part of the build pipeline. The user clarified: "I want to say this is done and I will then test it and find bugs and fix it." Real-world testing, bug finding, and bug fixing are the user's post-ship responsibility, not part of the build.
