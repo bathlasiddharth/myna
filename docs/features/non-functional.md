@@ -279,4 +279,3 @@ This applies to every file in the vault — not just timelines.
 - Dataview query blocks for live data in dashboards and notes
 - Tasks plugin syntax for all TODOs
 
-## Requirements

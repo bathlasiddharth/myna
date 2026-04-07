@@ -1,4 +1,4 @@
-# Writing & Drafts — Requirements
+# Writing & Drafts — Features
 
 > Draft. Being refined through discussion.
 
@@ -131,4 +131,3 @@ One-line summary: Prepare you to engage intelligently with a document before a r
 - Written to meeting prep file if tied to a meeting, or standalone note
 - Different from Document Processing: processing extracts data for the vault, pre-read prepares YOU to engage with the content
 
-## Requirements

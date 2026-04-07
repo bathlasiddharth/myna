@@ -1,4 +1,4 @@
-# Cross-Domain Interactions — Requirements
+# Cross-Domain Interactions — Features
 
 > Draft. To be refined after individual domain requirements are closer to final.
 
@@ -98,4 +98,3 @@ One-line summary: Transparent log of every significant agent interpretation for 
 - Not exposed as a user feature — it's a system transparency mechanism the user can read when needed
 - **Distinct from prompt logging** (non-functional): prompt logging records what the user asked (`_system/logs/prompts.md`). The audit log records what the agent did in response (`_system/logs/audit.md`). Together they provide full traceability: user input → agent interpretation → agent action.
 
-## Requirements

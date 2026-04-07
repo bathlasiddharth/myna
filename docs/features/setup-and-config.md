@@ -1,4 +1,4 @@
-# Setup & Config — Requirements
+# Setup & Config — Features
 
 > Draft. Being refined through discussion.
 
@@ -91,4 +91,3 @@ One-line summary: Customizable templates for all Myna file types that ensure con
 - New files created via templates through Obsidian CLI MCP (D008) or raw file creation as fallback
 - Users can customize templates to match their preferences — edits preserved across vault re-initialization
 
-## Requirements

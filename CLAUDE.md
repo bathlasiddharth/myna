@@ -24,7 +24,7 @@ Treat process artifacts (roadmap, decisions, foundations, instructions/\*, dev-j
 | `docs/dev-journal.md` | Running log; see its header for entry triggers and format |
 | `docs/instructions/phase-{N}-{name}.md` | Operational guide for each build phase |
 
-Approved features for every domain live in `docs/requirements/{domain}.md` under the `## Features` section. This is the only authoritative source for what's being built.
+Approved features for every domain live in `docs/features/{domain}.md` under the `## Features` section. This is the only authoritative source for what's being built.
 
 ## Starting a Task
 

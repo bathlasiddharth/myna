@@ -54,8 +54,8 @@ User involvement is concentrated at design phases (0, 4), user-involved manual p
 | M1-T03 | Set up `docs/open-questions.md` | Done |
 | M1-T04 | Set up CLAUDE.md | Done |
 | M1-T05 | Create domain requirement skeletons | Done |
-| M1-T06 | Create `docs/requirements/cross-domain.md` | Done |
-| M1-T07 | Create `docs/requirements/non-functional.md` | Done |
+| M1-T06 | Create `docs/features/cross-domain.md` | Done |
+| M1-T07 | Create `docs/features/non-functional.md` | Done |
 | M1-T08 | Create `docs/design-deliverables.md` | Done |
 | M1-T09 | Claude refines feature lists for all domains | Done |
 | M1-T10 | User reviews refined feature lists | Done |

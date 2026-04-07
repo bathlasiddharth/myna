@@ -1,4 +1,4 @@
-# Meetings & Calendar — Requirements
+# Meetings & Calendar — Features
 
 > Draft. Being refined through discussion.
 
@@ -130,4 +130,3 @@ One-line summary: Draft a follow-up meeting invite for the user to manually crea
 - Auto-creates linked TODO for tracking ("send follow-up invite for auth migration")
 - User manually creates the calendar invite from the draft — Myna never creates events with attendees (D003)
 
-## Requirements

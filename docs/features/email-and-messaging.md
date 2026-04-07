@@ -1,4 +1,4 @@
-# Email & Messaging — Requirements
+# Email & Messaging — Features
 
 > Draft. Being refined through discussion.
 
@@ -103,4 +103,3 @@ One-line summary: Tracks messages waiting on you and messages you're waiting on 
 - **No separate tracker file** — the "unreplied tracker" is a Dataview query over TODOs with `type:: reply-needed`. Surfaced in daily note and queryable on demand ("what am I waiting on?").
 - Items auto-resolve when a reply is detected in subsequent processing runs (the TODO is marked complete)
 
-## Requirements

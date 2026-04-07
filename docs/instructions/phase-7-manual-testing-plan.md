@@ -33,7 +33,7 @@ The plan is also an artifact for future feature additions: when a new feature is
 
 1. `docs/foundations.md`
 2. `docs/architecture.md`
-3. `docs/requirements/*` — all feature lists (what needs to work)
+3. `docs/features/*` — all feature lists (what needs to work)
 4. The full set of built agents from Phase 5
 5. The install script from Phase 6 (the test starts with "fresh install works")
 6. `docs/decisions.md` — especially D033 (testing deferral), D024 (never infer about people's internal states — testable!)

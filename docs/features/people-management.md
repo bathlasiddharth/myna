@@ -1,4 +1,4 @@
-# People Management — Requirements
+# People Management — Features
 
 > Draft. Being refined through discussion.
 
@@ -139,4 +139,3 @@ One-line summary: Surfaces where YOUR attention has dropped — which team membe
 - Surfaced in daily/weekly notes as nudges, and in Team Health Overview
 - **Why this replaced Engagement Signal Detection:** The original feature tried to infer whether a team member "may be disengaged" from 1:1 notes and Slack data. The problem: Myna has YOUR notes, not objective data. "Fewer topics in recent 1:1s" could mean the relationship is healthy and there's less to discuss. "Tone shift in messaging" is unreliable from partial Slack data. Labeling someone as potentially disengaged based on sparse, one-sided data is dangerous — it primes the manager to see problems that may not exist, creating confirmation bias. The flipped version — "where have YOU dropped attention?" — uses the same underlying data (dates of feedback, observations, topics) but the framing is radically different. One judges the employee on incomplete evidence; the other nudges the manager based on their own factual record. False positives are harmless: "you haven't logged about Sarah" might mean you've been giving verbal feedback — it prompts you to log it, not to worry about Sarah.
 
-## Requirements

@@ -1,4 +1,4 @@
-# Self Tracking — Requirements
+# Self Tracking — Features
 
 > Draft. Being refined through discussion.
 
@@ -49,4 +49,3 @@ One-line summary: Query your contributions log to answer specific questions abou
 - Output shown inline — useful for quick self-check or preparing for a conversation
 - **Why this is needed:** The contributions log accumulates data over months. Without a query capability, the user has to read through the entire log. Targeted queries make the data actionable day-to-day, not just at review time.
 
-## Requirements

@@ -16,7 +16,7 @@ Both dimensions must be decided before any agent content can be written. Every a
 
 **In scope:**
 - Agent architecture (decomposition, scopes, routing, steering split)
-- Feature-to-agent mapping for all 50+ approved features in `docs/requirements/`
+- Feature-to-agent mapping for all 50+ approved features in `docs/features/`
 - Cross-cutting agents if any (sentinel, critic, router, extractor)
 - Complete vault folder structure
 - File templates for every file type (project, person, meeting, daily note, review queue files, contributions log, drafts, parked items, system files)
@@ -51,7 +51,7 @@ Test Phase 0 output must pass: **"if Phase 5 autonomous Claude were given only t
 1. `docs/vision.md` — what Myna is
 2. `docs/decisions.md` — all 37+ settled decisions, especially D025–D037 (pipeline, autonomy, capture discipline, agent-first, testing deferral, install scope)
 3. `docs/roadmap.md` — Project Goals, Build Approach, Phase 0 section
-4. `docs/requirements/*` — all 10 domain feature files under `## Features` headings. These are the authoritative approved features (per D026, don't read any other source for features).
+4. `docs/features/*` — all 10 domain feature files under `## Features` headings. These are the authoritative approved features (per D026, don't read any other source for features).
 5. `docs/dev-journal.md` — 2026-04-04 entries on the restructure and ultrathink (local only, not in git)
 
 ## Phase-specific rules

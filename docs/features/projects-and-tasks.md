@@ -1,4 +1,4 @@
-# Projects & Tasks — Requirements
+# Projects & Tasks — Features
 
 > Draft. Being refined through discussion.
 
@@ -86,4 +86,3 @@ One-line summary: "Catch me up on [project]" gives an instant status snapshot.
   - **Full:** "catch me up on [project]" (default) → complete status with recent timeline, all blockers, task breakdown, dependency status, upcoming meetings (7 days)
 - Output shown inline — quick context for switching between projects
 
-## Requirements

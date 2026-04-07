@@ -84,7 +84,7 @@ This builds on and operationalizes D002 (AI model agnostic) and D007 (model-agno
 ### D034 — All features in v1, no P0 subset
 **Date:** 2026-04-05
 **Context:** Considered prioritizing v1 to a minimum-viable subset of features (fewer agents or fewer features per agent) with the rest deferred to v1.1. This would ship faster and get feedback sooner.
-**Decision:** All approved features across all domains are in v1 scope. No minimum-viable subset. The user explicitly wants the complete feature set for personal use, not a partial first release. All 50+ features in `docs/requirements/*.md` under `## Features` sections will be built and shipped in v1.
+**Decision:** All approved features across all domains are in v1 scope. No minimum-viable subset. The user explicitly wants the complete feature set for personal use, not a partial first release. All 50+ features in `docs/features/*.md` under `## Features` sections will be built and shipped in v1.
 **Alternatives rejected:** Minimum-viable v1 with v1.1 follow-up (the user prefers complete v1 for their own use over faster partial release). Per-phase prioritization within Phase 5 (same objection).
 
 ### D033 — Automated testing deferred to post-v1; Phase 7 is manual testing plan only
@@ -112,7 +112,7 @@ Supersedes the Phase 2.5 "Test Infrastructure" phase proposed earlier in the ult
 **Context:** Earlier pipeline proposals treated per-feature specs (Intent/Evals/Behavior per feature) as the primary unit. The user pushed back: for an LLM-runtime system, the coherent unit is the agent prompt, not isolated features. Agent prompts have a role, shared context, priority ordering, and a context budget that emerges from designing the agent as a whole. Writing features in isolation and stitching them together retrofits coherence; designing agents top-down produces it.
 **Decision:** Myna's build is agent-first, not feature-first. Phase 0 decides how features group into agents (the architectural decomposition). Features become sections within agent prompts, sharing that agent's role, context, and conventions. Per-feature specification still happens — the Intent/Evals/Behavior concept isn't wrong — but it lives **within** an agent file as sections, not as standalone files. The unit of autonomous work in Phase 5 is one agent per session, not one feature per session. This matches how LLMs actually read instructions at runtime: as coherent prompts, not as concatenated fragments.
 
-Implications: Phase 0 expands to include agent architecture design alongside data foundations. Phase 3 builds one reference **agent** end-to-end. Phase 5 iterates per agent. The feature list in `docs/requirements/*.md` provides inputs to Phase 0's feature-to-agent mapping, but features are not themselves the build unit.
+Implications: Phase 0 expands to include agent architecture design alongside data foundations. Phase 3 builds one reference **agent** end-to-end. Phase 5 iterates per agent. The feature list in `docs/features/*.md` provides inputs to Phase 0's feature-to-agent mapping, but features are not themselves the build unit.
 **Alternatives rejected:** Feature-first with per-feature files (concatenates rather than composes; retrofits coherence; doesn't match LLM runtime reality). Hybrid with both per-feature files AND agent files (duplication and drift). Pure monolithic single-agent Myna (exceeds reasonable context budgets at feature scale).
 
 ### D029 — Phase 2 learnings captured in docs, not skills (capture-as-you-go)

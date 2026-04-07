@@ -1,4 +1,4 @@
-# Daily Workflow — Requirements
+# Daily Workflow — Features
 
 > Draft. Being refined through discussion.
 
@@ -133,4 +133,3 @@ One-line summary: Single aggregated view of everything across the vault, always 
 - Always up-to-date — no refresh needed
 - Sections: Immediate Attention, Today's Meetings, Review Queue count, Active Projects with status, Delegation Tracker (overdue/approaching), People Overview (upcoming 1:1s, feedback gaps), Team Health (for managers — see people-management Team Health Overview), Current Drafts with lifecycle state, Recent Activity
 
-## Requirements
