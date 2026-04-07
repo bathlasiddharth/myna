@@ -212,3 +212,8 @@ User involvement is concentrated at design phases (0, 4), user-involved manual p
 | B011 | Install tooling for Claude Code, Gemini, Codex (beyond Kiro CLI v1 scope) | Post-launch |
 | B012 | Open-source contribution model and CONTRIBUTING.md | Post-launch |
 | B013 | User acceptance testing and bug fixing from real-world use | Post-launch |
+| B014 | Configure skill — interactive setup wizard, natural language config management, communication style interview (D043) | Post-launch |
+| B015 | People-insights skill — 1:1 pattern analysis, performance narratives, team health tracking, attention/feedback gap detection, retro processing | Post-launch |
+| B016 | Pre-Read Preparation — "prep me for this doc" briefing for document review | Post-launch |
+| B017 | Brief freshness note — warn when vault data appears stale | Post-launch |
+| B018 | Draft lifecycle tracking — frontmatter states, "I sent the MBR" transitions | Post-launch |

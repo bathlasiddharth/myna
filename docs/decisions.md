@@ -17,6 +17,36 @@ Each entry:
 
 ---
 
+### D042 — Config files are YAML, not markdown
+**Date:** 2026-04-05
+**Context:** The original design had config files as markdown (workspace.md, registry.md, etc.). During Phase 0, the user specified that config files should be YAML for cleaner machine parsing. Six files: workspace.yaml, projects.yaml, people.yaml, meetings.yaml, communication-style.yaml, tags.yaml.
+**Decision:** All Myna config files use YAML format, stored under `_system/config/`. The previous naming (workspace.md, registry.md, tags.md) is superseded. The six config files are: workspace.yaml (user identity, preferences, feature toggles), projects.yaml (projects, aliases, source mappings, triage folders), people.yaml (people, relationship tiers, aliases), meetings.yaml (optional meeting type overrides), communication-style.yaml (writing style presets per audience tier), tags.yaml (auto-tagging rules). All are gitignored.
+**Alternatives rejected:** Keep markdown config (harder to parse reliably, mixes content and structure). JSON config (less human-readable than YAML, harder to hand-edit).
+
+### D043 — Configure skill deferred to post-launch; v1 config is manual YAML editing
+**Date:** 2026-04-06
+**Context:** The configure skill (interactive setup wizard, natural language config management, communication style interview, feature toggle management) adds complexity for v1. Users can edit YAML config files directly — they're simple, well-documented, and have .example files as reference. The interactive experience is polish, not core value.
+**Decision:** The configure skill is deferred to post-launch. For v1: the install script (Phase 6) creates the vault folder structure and drops .example config files. Users copy and edit them directly. Project/person file creation from template is a main-agent direct operation ("create project file for auth migration"). Feature toggles are edited in workspace.yaml. Communication style interview is deferred. Vault initialization is handled by the install script, not a skill.
+**Alternatives rejected:** Ship configure in v1 (adds a skill that duplicates what YAML editing already provides; delays launch for polish). Remove config files entirely and hardcode defaults (loses the config-driven flexibility that makes Myna adaptable).
+
+### D041 — Skill-based architecture with 14 consolidated skills
+**Date:** 2026-04-05 (updated 2026-04-06)
+**Context:** Phase 0 needed to map 60+ approved features into a runtime architecture. The key question: how to organize features into the units the LLM processes at runtime. Per D030 (agent-first, not feature-first), features compose into coherent units, not standalone specs. The design principle: one skill per workflow — features a user would naturally do together in one sitting belong in one skill.
+**Decision:** Myna uses 14 skills grouped by user workflow: sync, process, triage, prep-meeting, process-meeting, brief, capture, draft, calendar, wrap-up, review, self-track, park, draft-replies. Each skill covers one coherent workflow. Skills are loaded on demand (progressive disclosure) — only name and description in context until activated. Simple operations (vault search, link find, task completion, draft state updates, project/person file creation from template) are handled directly by the main agent without activating a skill. The main agent handles Universal Done routing by resolving the entity type and dispatching to the appropriate skill. The configure skill (setup wizard, config management) is deferred to post-launch (D043). People-insights skill (1:1 analysis, performance narratives, team health tracking) is deferred to post-launch. DraftReplies is a separate skill from process because it creates drafts rather than extracting vault data.
+**Alternatives rejected:** Per-feature skills (too many — 60+ skills would overwhelm routing). Per-domain skills (7 skills — too few, each would be too broad and the prompt too long). No skills, everything in the main agent prompt (exceeds context budget, instruction bleed). DraftReplies as part of process skill (mixes extraction and writing; different workflow).
+
+### D040 — Reference skill is capture (supersedes D026 domain selection)
+**Date:** 2026-04-05
+**Context:** D026 selected projects-and-tasks as the reference domain. With the skill-based architecture (D041), the build unit is a skill, not a domain. The reference skill for Phase 3 must exercise the most representative patterns while being testable locally.
+**Decision:** The reference skill is `capture`. It covers projects-and-tasks features directly (task management, project timeline writes, project status changes), exercises all core patterns (multi-destination routing, provenance markers across all four types, review queue routing, fuzzy name resolution, append-only writes, cross-domain writes to People/Projects/Journal/), and is fully testable locally with Myna's own development work as test data (D027). Quick Capture's ability to process pasted external content exercises the external-content-as-data pattern that D026 identified as needing explicit coverage. Patterns established by capture (routing, provenance, append-only) transfer directly to process, process-meeting, and wrap-up.
+**Alternatives rejected:** process-meeting (exercises the extraction pipeline heavily but is a narrower workflow — single meeting to vault — with less pattern diversity). process (requires email/Slack MCP access for testing). brief (read-only — doesn't exercise the write patterns that most skills share).
+
+### D039 — No subagents, no automatic skill chaining in v1
+**Date:** 2026-04-05
+**Context:** Kiro CLI supports subagents (isolated context windows) and skill chaining. The question was whether Myna v1 should use these capabilities.
+**Decision:** v1 uses neither subagents nor automatic skill chaining. All processing runs through skills in the main agent. Each skill outputs its result. If a follow-up action is needed, the skill tells the user what to invoke next — the user triggers it explicitly. This keeps the architecture simple, avoids latency from subagent spawning, and avoids the hooks-don't-fire-in-subagents limitation. Subagents and chaining are post-v1 performance optimizations.
+**Alternatives rejected:** Subagents for batch processing (latency cost, hook bypass risk). Automatic skill chaining (adds complexity, harder to debug, user loses control of sequencing). Hybrid with selective subagent use (half-measures add complexity without clear benefit for v1).
+
 ### D038 — Tool-agnostic content layer separated from install-time packaging
 **Date:** 2026-04-05
 **Context:** Myna is being built for Kiro CLI first (D035), but the user wants extensibility to other AI platforms (Claude Code, Gemini, Codex, etc.) later without requiring agent content to be rewritten. Without an explicit separation between content and packaging, every new target tool would mean rewriting agent instructions, steering files, skill specs, and other artifacts in that tool's native format. This is the kind of architectural decision that is cheap to get right at Phase 0 and expensive to retrofit.

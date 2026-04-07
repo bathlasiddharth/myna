@@ -90,7 +90,13 @@ Each entry:
 - Single sentinel for all tool access — tight choke point, simpler audit, but bigger blast radius if compromised and one bottleneck for all writes
 - Per-domain sentinels (calendar, email, vault) — narrower scopes, parallelizable, but more components to build and maintain
 - Hybrid: sentinel only for high-blast-radius actions (calendar, email moves, cascading task changes), inline deterministic policy for low-risk contained writes (vault markdown under myna/)
-**Status:** Open — decide during design phase. Tracked as a design deliverable under "Security & Trust Boundary."
+**Status:** Resolved for v1 — no sentinel subagent (D039). All processing runs through skills in the main agent. Hook-based enforcement (where the AI tool supports it) provides tool-level safety. Full sentinel architecture is a post-v1 consideration.
+
+### Q014 — Triage double-review: should triage-approved vault updates skip the second queue?
+**Raised:** 2026-04-05
+**Context:** The current triage flow has two review stages: (1) user approves items in review-triage.md, (2) approved vault updates route to review-work/review-people/review-self for a second review. This means the user approves the same item twice. The second stage adds safety (the item is re-evaluated in the context of the destination queue) but adds friction. An alternative: triage-approved vault updates write directly to the vault with [Verified] tag, skipping the second queue.
+**Options considered:** Current two-stage flow (safer, more friction), single-stage with direct write (faster, slight risk of bad routing), configurable per user
+**Status:** Open — use current two-stage flow for v1. Revisit post-launch based on whether users find the double-review burdensome.
 
 ### Q012 — Tag registry: fourth config file or section in registry.md?
 **Raised:** 2026-04-03
