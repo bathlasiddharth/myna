@@ -166,6 +166,7 @@ created: {YYYY-MM-DD}
 
 ## Rules
 
+- **Check `features.monthly_updates`** before generating MBR/MTR/QBR reports. If disabled, inform the user and stop.
 - **BLUF is contextual, not automatic.** Use BLUF for structured professional communications — status updates, escalations, emails to leadership, tone rewrites, full rewrites. Do NOT force BLUF on casual Slack messages, recognition notes, fix-mode rewrites, or conversational replies where it would feel stiff.
 - **Drafts are just files.** Save to `Drafts/` with type-prefixed filenames. No lifecycle state tracking. User deletes the file when done.
 - **Draft, never send.** All output is draft content for the user to review, copy, and send manually.

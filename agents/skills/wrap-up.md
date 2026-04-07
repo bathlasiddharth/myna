@@ -99,6 +99,7 @@ Weekly summary appended to `Journal/WeeklyNote-{monday-date}.md`.
 
 ## Rules
 
+- **Check feature toggles:** check `features.weekly_summary` before generating weekly summaries. Check `features.contribution_detection` before running contribution detection during end-of-day wrap-up — if disabled, skip the Contributions Detected section.
 - **First sync is the baseline.** Always compare against the first sync snapshot of the day, not the latest. The first sync represents the day's plan.
 - **Never duplicate contributions.** Read the existing contributions log before writing. If the same contribution was already logged (by process-meeting, capture, or a previous wrap-up), skip it.
 - **Tomorrow's note is append-safe.** If tomorrow's note already has user content or a "plan tomorrow" snapshot, append carried items to Immediate Attention without disturbing existing content.

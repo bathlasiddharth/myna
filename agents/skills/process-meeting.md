@@ -132,6 +132,7 @@ For batch mode, show per-meeting summaries and a total.
 
 ## Rules
 
+- **Check `features.process_meeting`** before acting. If disabled, inform the user and stop.
 - **Multi-destination routing.** A single meeting produces entries across multiple files — project timelines, person files, task lists, contributions log. Each item goes to its correct destination independently.
 - **Append-only.** Never modify existing content in project files, person files, or contributions logs. Only append new entries. The one exception: marking a task as complete (metadata update on an existing TODO).
 - **Near-duplicate detection.** Always check the target file before writing. If the same information was already captured (e.g., from a meeting summary email), skip the duplicate.

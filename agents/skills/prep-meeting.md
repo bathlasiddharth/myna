@@ -118,6 +118,7 @@ For batch mode, show a summary per meeting and a total: "Prepped 4 meetings. 2 h
 
 ## Rules
 
+- **Check `features.meeting_prep`** before acting. If disabled, inform the user and stop.
 - **Prep items are checkboxes.** The user checks them off during the meeting. Process-meeting reads the checked/unchecked state later.
 - **Append-only.** Never modify or remove existing content in meeting files. Existing user-added topics are preserved. Update mode appends only new items below existing ones.
 - **Factual, not judgmental.** All data points are dates, counts, explicit entries. The judgment belongs to the user (D018).

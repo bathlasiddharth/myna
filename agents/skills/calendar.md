@@ -83,6 +83,7 @@ User says "remind me about the design review at 2pm" → finds task "Design revi
 
 ## Rules
 
+- **Check feature toggles:** check `features.time_blocks` before creating time blocks, `features.calendar_reminders` before creating reminders. Task breakdown requires no toggle. If the relevant toggle is disabled, inform the user and stop.
 - **Never add attendees to any calendar event.** This is absolute — D003.
 - **Always use the configured prefix.** Read `calendar_event_prefix` and `calendar_event_types` from workspace.yaml. Never create an event without the prefix.
 - **Always confirm before creating.** Show all event parameters and wait for explicit user approval.
