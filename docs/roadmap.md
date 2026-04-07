@@ -80,16 +80,16 @@ Myna is built via a **4-phase pipeline**: Design, Build, Install, Ship (D044). T
 
 | Task | Description | Status |
 |---|---|---|
-| P1-T01 | Foundations revision | Not started |
-| P1-T02 | MCP server (Obsidian CLI wrapper) | Not started |
-| P1-T03 | Skill: capture | Not started |
-| P1-T04 | Skills: sync, wrap-up | Not started |
-| P1-T05 | Skills: triage, process | Not started |
-| P1-T06 | Skills: process-meeting, prep-meeting | Not started |
-| P1-T07 | Skill: brief | Not started |
-| P1-T08 | Skills: draft, draft-replies | Not started |
-| P1-T09 | Skill: calendar | Not started |
-| P1-T10 | Skills: review, self-track, park | Not started |
+| P1-T01 | Foundations revision | Done |
+| P1-T02 | MCP server (Obsidian CLI wrapper) | Done |
+| P1-T03 | Skill: capture | Done |
+| P1-T04 | Skills: sync, wrap-up | Done |
+| P1-T05 | Skills: triage, process | Done |
+| P1-T06 | Skills: process-meeting, prep-meeting | Done |
+| P1-T07 | Skill: brief | Done |
+| P1-T08 | Skills: draft, draft-replies | Done |
+| P1-T09 | Skill: calendar | Done |
+| P1-T10 | Skills: review, self-track, park | Done |
 | P1-T11 | Steering files (safety, conventions, output, system) | Not started |
 | P1-T12 | Main agent | Not started |
 | P1-T13 | Cross-skill audit | Not started |
