@@ -38,6 +38,8 @@ Do not duplicate rules from steering files. They are authoritative for their dom
 
 When a user request matches a skill, say: **"Load and follow the instructions in `agents/skills/{skill}.md`."**
 
+> Note: The "Load and follow the instructions in..." pattern is the Kiro CLI skill-loading mechanism. The Phase 2 install step adapts this for other AI tools — for example, an OpenAI Assistants adapter might use tool_choice, and a raw API adapter might inline the skill content. The content of the skill files remains tool-neutral.
+
 | # | Skill | What it does |
 |---|-------|-------------|
 | 1 | sync | Start or refresh your day — daily note, meeting preps, overdue tasks, priorities, capacity check |
@@ -104,6 +106,8 @@ Planning decides *what* to work on (sync). Calendar creates the time blocks and 
 - "What am I waiting on?", "what's unreplied?" → route to **brief** (unreplied tracker)
 - "What's blocked?", "show blockers" → route to **brief** (blocker detection)
 - "Summarize this thread" → route to **brief** (thread summary)
+- "Analyze my 1:1s with [person]", "how are my 1:1s with [person] going?", "what patterns do I see with [person]?" → route to **brief** (1:1 pattern analysis)
+- "Generate performance narrative for [person]", "write [person]'s review for [period]", "help me write [person]'s review" → route to **brief** (performance narrative)
 
 ### Writing Routing
 
@@ -114,6 +118,7 @@ Planning decides *what* to work on (sync). Calendar creates the time blocks and 
 - "Help me say no to ...", "help me prepare for [conversation]" → route to **draft**
 - "Fix this message", "rewrite this for ..." → route to **draft**
 - "Monthly update", "draft my MBR" → route to **draft**
+- "Prep me for this doc: [paste or link]", "analyze this doc", "pre-read [document]" → route to **draft** (pre-read preparation mode)
 
 ### Capture, Tasks, and Data Entry
 
@@ -122,6 +127,7 @@ Planning decides *what* to work on (sync). Calendar creates the time blocks and 
 - "Add task: ...", "create recurring task: ..." → route to **capture**
 - "Save link: [url]" → route to **capture**
 - "Update status of [project] to [status]" → route to **capture**
+- "Move [task] to [project]", "move this task from [project A] to [project B]" → handle as Direct Operation (Task Move)
 
 ### Self-Tracking
 
@@ -151,7 +157,7 @@ When a request could map to multiple skills, present the options and ask:
 Never silently pick one skill when multiple are plausible. Common ambiguities:
 
 - "[project name]" alone — could mean brief (status), process (emails), or draft (status update). Ask.
-- "Update on [project]" — could mean brief (get an update) or draft (write an update). Ask.
+- "Update on [project]" — default to **brief** (project status summary). Confirm: "Here's a status summary of [project]. If you meant to write a status update to share, say 'draft status update for [project]'." This handles the 90% case without forcing the user to disambiguate.
 - "Handle my meetings" — could mean sync (generate preps for all), prep-meeting (detailed prep for one), or process-meeting (process notes after). Ask.
 
 ---
@@ -183,6 +189,17 @@ Find the matching TODO in project files using fuzzy matching. Mark it as complet
 "Delete the [draft name] draft"
 
 Find the matching file in `Drafts/`. Delete it. Confirm: "Deleted: Drafts/{filename}."
+
+### Task Move
+
+"Move [task] to [project]", "move this task from [project A] to [project B]"
+
+1. Find the task using fuzzy matching in source project files.
+2. If found, show the task and ask: "Move to [target project]? (yes / no)" — never move without confirmation.
+3. On confirmation: append the task to the target project file under `## Open Tasks` (updating `[project:: {name}]` to the new project). Then mark the original as complete with a note: `- [x] {task} (moved to {target project} on {date})`.
+4. Confirm: "Moved '{task}' from {source} to {target}."
+
+Known limitation: if the task has subtasks, they must be moved manually — only the top-level task is moved by this operation.
 
 ### File Creation from Template
 

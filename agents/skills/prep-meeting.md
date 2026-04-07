@@ -30,7 +30,7 @@ Generate or update meeting prep — a checklist of topics, action items, and con
 
 - **Single:** resolve the meeting name against today's calendar events using meetings.yaml aliases and fuzzy matching on titles. If a Prep section for today already exists (e.g., sync wrote it earlier), treat as an update — read existing prep, append only new items.
 - **Batch ("remaining"):** find all today's meetings that don't yet have a Prep section for today's date.
-- **Update:** find all today's meetings that already have a Prep section. Read existing prep (including user-added topics) as context; append only what's new since last prep. Never remove or modify existing items. If the user already added a topic the agent would have surfaced, skip it.
+- **Update:** find all today's meetings that already have a Prep section. Read existing prep (including user-added topics) as context. "New since last prep" means: items from project timelines, tasks, or person files with dates after the most recent session header date in the meeting file (e.g., if the previous session was `## 2026-03-28 Session`, new = anything dated after March 28). Before appending any item, check existing prep items for near-duplicates — same content, same person — and skip if already present. Never remove or modify existing items.
 - **Add topic:** resolve the meeting, append `- [ ] {topic}` to the existing Prep section.
 
 For "add topic," append the checkbox and confirm. Skip the rest of the procedure.
@@ -88,6 +88,14 @@ Write prep under `### Prep` as checkboxes. Every item is a `- [ ]` checkbox.
 - Link to the document being reviewed (from project file Links section or meeting context)
 - Previous decisions on this topic (from project timeline)
 - Related project context and open questions
+- **Pre-read analysis** (if a document is linked or pasted): generate a 6-section pre-read note:
+  1. **TL;DR** — one-sentence summary of what the document proposes
+  2. **Key Decisions Being Asked** — what is the author asking reviewers to decide or approve?
+  3. **Risks and Concerns** — what could go wrong, what's missing, what's under-specified?
+  4. **Questions to Ask** — specific questions to raise based on gaps or assumptions
+  5. **How It Relates to Your Projects** — connections to your active projects and open tasks
+  6. **Stakeholder Impact** — who else is affected by what's proposed?
+  Write these as checkboxes under `### Pre-Read` in the meeting prep. If no document is linked, skip this section.
 
 **Cross-team meetings:**
 - Open dependencies on the other team (from project timelines)
@@ -124,6 +132,7 @@ For batch mode, show a summary per meeting and a total: "Prepped 4 meetings. 2 h
 - **Factual, not judgmental.** All data points are dates, counts, explicit entries. The judgment belongs to the user (D018).
 - **No dependency on other skills running first.** Use whatever data is currently in the vault. If process hasn't run today, prep uses yesterday's data. User can "update prep" after running other skills.
 - **Coaching is optional and lightweight.** One line per sensitive item. Don't coach straightforward checkboxes.
+- **Missing vault files are not failures.** If a person file, project file, or previous meeting session doesn't exist, skip that data source and proceed with available data. Note in the output what was unavailable: e.g., "No person file found for Sarah — skipped person-level prep items." Generate whatever prep is possible from the data that does exist.
 
 ## Worked Example
 

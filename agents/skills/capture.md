@@ -37,7 +37,15 @@ Routes user-entered data to the right vault destinations. The user says what hap
    - Personal note about someone → append to `People/{person}.md` under `## Personal Notes`
 3. For each entry, determine provenance: items the user explicitly stated get `[User]`. Items the agent interpreted from context get `[Inferred]`. If the destination is genuinely ambiguous, route to the appropriate review queue.
 4. Before writing observations or recognition, read the target person file's existing entries to avoid near-duplicates.
-5. Write all entries using `append`. One input can produce multiple entries — nothing is silently dropped.
+5. Write each entry using `append` under the correct section for its type:
+   - Timeline entries → `## Timeline` in the project file
+   - Tasks → `## Open Tasks` in the project file (or daily note if no project)
+   - Observations → `## Observations` in the person file
+   - Recognition → `## Recognition` in the person file
+   - Personal notes → `## Personal Notes` in the person file
+   - Contributions → `## Contributions — Week of {monday-date}` in the contributions file
+   - Links → `## Links` in the entity file
+   Use canonical entry formats from conventions.md. One input can produce multiple entries — nothing is silently dropped.
 6. Output: list each entry written with its destination file, or explain what went to the review queue and why.
 
 ### 2. Observation Logging
@@ -142,7 +150,7 @@ Skill reads projects.yaml (finds "Auth Migration"), people.yaml (finds "Sarah Ch
 1. **Recognition for Sarah** → reads `People/sarah-chen.md` `## Recognition` (no duplicate) → appends: `- [2026-04-06 | capture] Handled the auth incident really well — incident response [User]`
 2. **Timeline update** → appends to `Projects/auth-migration.md` `## Timeline`: `- [2026-04-06 | capture] Auth migration unblocked [User]`
 3. **Task** → appends to `Projects/auth-migration.md` `## Open Tasks`: `- [ ] Review API spec 📅 2026-04-11 [project:: Auth Migration] [type:: task] [User]`
-4. **Contribution** → appends to `Journal/contributions-2026-03-31.md`: `- [2026-04-06 | capture] **unblocking-others:** Helped unblock auth migration [Inferred] (capture, 2026-04-06)`
+4. **Contribution** → appends to `Journal/contributions-2026-03-31.md`: `- [2026-04-06 | capture] **unblocking-others:** Helped unblock auth migration [Inferred]`
 
 Output: "Captured 4 items: recognition for Sarah (People/sarah-chen.md), timeline update (Projects/auth-migration.md), task 'Review API spec' (Projects/auth-migration.md), contribution logged (Journal/contributions-2026-03-31.md)."
 
@@ -174,5 +182,6 @@ Written to `Projects/platform-api.md` under `## Open Tasks`.
 - **Contributions from capture** use source value `capture` in the entry header.
 - **Relative dates** ("by Friday", "next week") are resolved to absolute dates using workspace.yaml timezone. Store the resolved date.
 - **Person can't be resolved:** ask the user. Never create a new person file from capture — that's a main-agent operation.
+- **Person file doesn't exist yet:** if the person is resolved from people.yaml but their vault file (`People/{person}.md`) doesn't exist, create it from the person template (`_system/templates/person.md`) before writing. If no template exists, create a minimal file with frontmatter containing the person's name, role, and relationship tier from people.yaml.
 - **Project can't be resolved:** ask the user. Never create a new project file from capture.
 - **Wiki-links:** use `[[person-name]]` when mentioning people in timeline entries or task content.

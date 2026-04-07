@@ -68,7 +68,7 @@ Read the Notes section (Discussion, Action Items, Decisions subsections and any 
 
 **Observations about people** (1:1s and team meetings especially):
 - Append to the person's file under `## Observations`.
-- Format: `- [{date} | meeting {meeting-name}] **{type}:** {observation} [{provenance}] (meeting, {meeting-name}, {date})`
+- Format (from conventions.md): `- [{date} | meeting {meeting-name}] **{type}:** {observation} [{provenance}]`
 - Types: strength, growth-area, contribution.
 
 **Blockers:**
@@ -80,14 +80,14 @@ Read the Notes section (Discussion, Action Items, Decisions subsections and any 
 
 **Recognition:**
 - Append to person file under `## Recognition`.
-- Format: `- [{date} | meeting {meeting-name}] {what they did} — {context} [{provenance}] (meeting, {meeting-name}, {date})`
+- Format (from conventions.md): `- [{date} | meeting {meeting-name}] {what they did} — {context} [{provenance}]`
 
 **Your contributions:**
 - Append to `Journal/contributions-{week}.md` (Monday date of the current week). If the file doesn't exist, create it with the contributions log template (frontmatter with `week_start`, `#contributions` tag).
-- Format: `- [{date} | meeting {meeting-name}] **{category}:** {description} [{provenance}] (meeting, {meeting-name}, {date})`
+- Format (from conventions.md): `- [{date} | meeting {meeting-name}] **{category}:** {description} [{provenance}]`
 
 **Status updates and timeline entries:**
-- Append to project file `## Timeline`: `- [{date} | meeting {meeting-name}] {content} [{provenance}] (meeting, {meeting-name}, {date})`
+- Append to project file `## Timeline` (from conventions.md): `- [{date} | meeting {meeting-name}] {content} [{provenance}]`
 
 ### 5. Resolve Destinations
 
@@ -138,6 +138,8 @@ For batch mode, show per-meeting summaries and a total.
 - **Near-duplicate detection.** Always check the target file before writing. If the same information was already captured (e.g., from a meeting summary email), skip the duplicate.
 - **Review queue routing.** Items with genuinely ambiguous destinations or unresolvable person names go to review queues. Don't guess when two reasonable interpretations exist. Route to `ReviewQueue/review-work.md` for task/project ambiguity, `ReviewQueue/review-people.md` for person-related ambiguity, `ReviewQueue/review-self.md` for uncertain contributions.
 - **Don't process empty notes.** If the Notes section has no content and no prep checkboxes were changed, inform the user and skip.
+- **Missing destination files are not errors.** If a project file, person file, or contributions log doesn't exist when writing extracted items: create person files from the template in `_system/templates/person.md` (or a minimal stub with frontmatter from people.yaml). For project files: route the item to `review-work.md` with a note: "Could not write to [project] — no project file exists. Approve to create the entry manually." Never silently drop extracted items.
+- **Missing source files (for near-duplicate check).** If the target file doesn't exist when checking for near-duplicates, skip the check and proceed to write.
 
 ## Worked Example
 
@@ -156,8 +158,8 @@ User says: "done with 1:1 with Sarah"
      > [!info] Decision
      > [2026-04-06 | meeting 1:1 with Sarah] Go with Option B for caching — lower latency, acceptable memory trade-off [Auto]
      ```
-   - "Sarah handled the March 30 incident really well, took ownership immediately" → observation in `People/sarah-chen.md`: `- [2026-04-06 | meeting 1:1 with Sarah] **strength:** Took ownership of March 30 incident immediately [Auto] (meeting, 1:1 with Sarah, 2026-04-06)`
+   - "Sarah handled the March 30 incident really well, took ownership immediately" → observation in `People/sarah-chen.md`: `- [2026-04-06 | meeting 1:1 with Sarah] **strength:** Took ownership of March 30 incident immediately [Auto]`
    - "We should probably look into the flaky tests" → review-work queue (no clear owner or project)
-5. **Contributions:** "Resolved caching strategy decision" → `Journal/contributions-2026-04-06.md`: `- [2026-04-06 | meeting 1:1 with Sarah] **decisions-and-influence:** Resolved caching strategy for auth migration [Inferred] (meeting, 1:1 with Sarah, 2026-04-06)`
+5. **Contributions:** "Resolved caching strategy decision" → `Journal/contributions-2026-04-06.md`: `- [2026-04-06 | meeting 1:1 with Sarah] **decisions-and-influence:** Resolved caching strategy for auth migration [Inferred]`
 6. **Mark processed:** Appends `*[Processed 2026-04-06]*` to the meeting file.
 7. **Output:** "Processed 1:1 with Sarah. 1 task completed, 1 delegation created, 1 decision logged, 1 observation, 1 contribution [Inferred]. 1 item in review queue (ambiguous owner). 1 carry-forward to next session."

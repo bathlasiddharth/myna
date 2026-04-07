@@ -72,6 +72,14 @@ created: {YYYY-MM-DD}
 *Source: forwarded email from DraftReplies folder*
 ```
 
+### 3b. Create Review TODO
+
+After saving each draft, create a linked review TODO so the user is reminded to review and send it. Append to today's daily note:
+```
+- [ ] Review and send [Email] Reply to {recipient} [type:: review-draft] [User]
+```
+If the draft is a meeting invite rather than an email reply, use: `- [ ] Review and send [Meeting] Follow-up {topic} [type:: review-draft] [User]`
+
 ### 4. Move Processed Emails
 
 After successfully generating the draft, move the processed email to `{draft_replies_folder}/Processed/` via email MCP.
@@ -140,6 +148,18 @@ Generates meeting invite draft → saves to `Drafts/[Meeting] Follow-up caching 
 >
 > **Context:** Sarah flagged that the caching design needs group input before we commit. Original thread attached.
 
-Moves email to `DraftReplies/Processed/`.
+Moves email to `DraftReplies/Processed/`. Creates review TODOs in today's daily note:
+- `- [ ] Review and send [Email] Reply to vendor [type:: review-draft] [User]`
+- `- [ ] Review and send [Meeting] Follow-up caching design review [type:: review-draft] [User]`
 
-Output: "2 drafts created from DraftReplies. Files: [Email] Reply to vendor.md, [Meeting] Follow-up caching design review.md."
+**No-instruction case example:**
+
+**Email 3:** User forwarded a thread from the platform team (no note, just forwarded).
+
+- No instruction → default to email reply addressing open items
+- Thread: Marcus asking whether the caching schema is finalized
+- Marcus is a direct report (direct tier) → coaching preset
+
+Generates default reply addressing the open question: "Hi Marcus, the caching schema is still under review — expecting a decision by Thursday. I'll confirm once it's finalized." → saves to `Drafts/[Email] Reply to Marcus.md`. Creates review TODO in daily note.
+
+Output: "3 drafts created from DraftReplies. Files: [Email] Reply to vendor.md, [Meeting] Follow-up caching design review.md, [Email] Reply to Marcus.md. Review TODOs added to today's daily note."

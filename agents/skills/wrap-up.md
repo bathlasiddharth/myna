@@ -40,14 +40,14 @@ Closes out the day or the week — compares what you planned against what happen
    - Less certain contributions (agent thinks you influenced an outcome) → write with inferred marker to contributions log and daily note
    - Genuinely uncertain (can't tell if you contributed or just observed) → route to `ReviewQueue/review-self.md`
 
-4. List unfinished items explicitly in the End of Day section. Then move each to tomorrow's daily note:
+4. **Quick notes (ask before writing).** Before writing the End of Day section, ask: "Any last thoughts to capture? (say 'nothing' or press enter to skip)." If the user provides notes, capture them. This must happen BEFORE step 5 so the notes can be included in the End of Day section naturally.
+
+5. List unfinished items explicitly in the End of Day section. Then move each to tomorrow's daily note:
    - If `Journal/DailyNote-{tomorrow}.md` exists, append unfinished items to its Immediate Attention section (or create the section if missing)
    - If it doesn't exist, create it from the daily note template and add unfinished items to Immediate Attention
    - Mark carried items with "(carried from {today's date})"
 
-5. Ask the user if they have any quick notes — last thoughts to capture before closing out. This is optional; if the user has nothing to add, proceed. Add to the End of Day section if provided.
-
-6. Write the `## End of Day — {HH:MM}` section at the bottom of today's daily note with subsections: Planned vs Actual, Contributions Detected, Carried to Tomorrow.
+6. Write the `## End of Day — {HH:MM}` section at the bottom of today's daily note with subsections: Planned vs Actual, Contributions Detected, Carried to Tomorrow, Quick Notes (if any).
 
 7. Output summary: "Day wrapped up. Completed: {N} of {M} planned items. {N} contributions detected ({N} certain, {N} inferred, {N} in review queue). {N} items carried to tomorrow."
 
@@ -83,8 +83,8 @@ Written at the bottom of `Journal/DailyNote-{today}.md`:
 - **Partially done:** Delegation follow-ups (2 of 3 resolved)
 
 ### Contributions Detected
-- Completed API spec review ahead of schedule [Auto]
-- Resolved caching question that was blocking platform team [Inferred]
+- [2026-04-06 | wrap-up] **decisions-and-influence:** Completed API spec review ahead of schedule [Auto]
+- [2026-04-06 | wrap-up] **unblocking-others:** Resolved caching question that was blocking platform team [Inferred]
 
 ### Carried to Tomorrow
 - MBR draft (carried from 2026-04-06)
@@ -101,7 +101,7 @@ Weekly summary appended to `Journal/WeeklyNote-{monday-date}.md`.
 
 - **Check feature toggles:** check `features.weekly_summary` before generating weekly summaries. Check `features.contribution_detection` before running contribution detection during end-of-day wrap-up — if disabled, skip the Contributions Detected section.
 - **First sync is the baseline.** Always compare against the first sync snapshot of the day, not the latest. The first sync represents the day's plan.
-- **Never duplicate contributions.** Read the existing contributions log before writing. If the same contribution was already logged (by process-meeting, capture, or a previous wrap-up), skip it.
+- **Never duplicate contributions.** Read the existing contributions log before writing. If the same contribution was already logged (by process-meeting, capture, or a previous wrap-up), skip it. Wrap-up's contribution detection focuses on tasks completed that weren't captured by other skills today, and day-level patterns (e.g., resolved multiple blockers across projects). Do not re-detect contributions that process-meeting already wrote with [Auto] or [Inferred] today — check the contributions log first. Near-duplicate matching is semantic: "Drove caching decision" and "Resolved caching strategy for auth migration" refer to the same event and should be de-duplicated.
 - **Tomorrow's note is append-safe.** If tomorrow's note already has user content or a "plan tomorrow" snapshot, append carried items to Immediate Attention without disturbing existing content.
 - **Weekly summary is additive.** On re-run, only add new information since the previous summary timestamp. Never rewrite or replace previous summary sections.
 - **No wrap-up without a daily note.** If no daily note exists for today (user never ran sync), tell the user: "No daily note found for today. Run 'sync' first, or say 'wrap up anyway' to create a wrap-up without planned vs actual comparison." If they proceed, skip the planned vs actual section and still detect contributions and carry forward open tasks.

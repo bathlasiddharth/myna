@@ -69,6 +69,60 @@ Tag and compact source reference at end of line:
 
 Features that compile data (brag docs, self-reviews, person briefings, promo packets) must highlight [Inferred] entries so the user knows which data points to verify before acting on the compiled output.
 
+## Canonical Entry Formats
+
+Every agent-written entry to vault files must follow these exact formats. Skills defer to this section — they do not define their own formats.
+
+### Timeline Entries (project files `## Timeline`)
+
+```
+- [{YYYY-MM-DD} | {source}] {content} [{provenance}]
+```
+
+Callout variants for blockers and decisions:
+```
+> [!warning] Blocker
+> [{YYYY-MM-DD} | {source}] {blocker description} [{provenance}]
+
+> [!info] Decision
+> [{YYYY-MM-DD} | {source}] {decision description} [{provenance}]
+```
+
+No source-detail at the end — the header already provides full traceability.
+
+### Observations (person files `## Observations`)
+
+```
+- [{YYYY-MM-DD} | {source}] **{type}:** {observation} [{provenance}]
+```
+
+Types: `strength`, `growth-area`, `contribution`.
+
+### Recognition (person files `## Recognition`)
+
+Bullet format — for entries in person file `## Recognition` sections:
+```
+- [{YYYY-MM-DD} | {source}] {what they did} — {context} [{provenance}]
+```
+
+Callout format — only for project timelines when recognition is notable enough to surface in project context:
+```
+> [!tip] Recognition
+> [{YYYY-MM-DD} | {source}] {what they did} [{provenance}]
+```
+
+Do not use the callout format in person files — use bullet format there.
+
+### Contributions (contributions log `## Contributions — Week of {date}`)
+
+```
+- [{YYYY-MM-DD} | {source}] **{category}:** {description} [{provenance}]
+```
+
+No source-detail at the end — the header already provides full traceability.
+
+---
+
 ## Append-Only Discipline
 
 The agent never modifies or deletes existing content. It can only append new content and update specific structured metadata fields.
@@ -83,6 +137,8 @@ The agent never modifies or deletes existing content. It can only append new con
 - Collapse or merge previous sync snapshots
 - Rewrite timeline entries or observations
 - Remove items from any file (except review queue items on explicit user action)
+
+**`overwrite_section` MCP tool restriction:** Never use `overwrite_section` on content sections (Timeline, Observations, Recognition, Notes, Personal Notes, Contributions). It is only permitted for review queue files (removing processed items). Using it on a content section would permanently destroy accumulated data with no undo.
 
 **Agent additions in mixed-content sections** (where the user wrote content and the agent appends) are visually separated:
 

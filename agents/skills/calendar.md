@@ -6,10 +6,11 @@ Create personal calendar events — time blocks for focused work, reminders for 
 
 ## Triggers
 
-- Reserving focus time: "reserve 2 hours Thursday for the design doc", "block focus time tomorrow morning", "reserve 3 hours this week for deep work"
-- Planning the day with time blocks: "plan my day" (when requesting calendar events, not just priority advice — priority advice routes to sync)
-- Reminders: "remind me about the design review at 2pm", "remind me to call Alice at 3pm"
+- Reserving focus time: "reserve 2 hours Thursday for the design doc", "block focus time tomorrow morning", "reserve 3 hours this week for deep work", "reserve focus time for [task]"
+- Reminders: "remind me about the design review at 2pm", "remind me to call Alice at 3pm", "remind me to follow up with [person]"
 - Task breakdown: "break down the API migration task", "split this task into subtasks"
+
+Note: "plan my day" routes to **sync** (priority advice), not here. This skill handles calendar event creation. Sync decides what to work on; calendar creates the events.
 
 ## Inputs
 
@@ -48,6 +49,8 @@ Create personal calendar events — time blocks for focused work, reminders for 
 3. Apply three-layer D003 protection (same as time blocks — no attendees, prefix check, explicit confirmation).
 
 4. Create the event. Confirm with the time and title shown.
+
+   **Reminder note:** For reminders like "remind me to follow up with [person] next week," consider suggesting a task as a complement: "Calendar reminder created. If you also want this to show in Obsidian task queries, say 'add task: follow up with {person}' with a due date." The calendar event fires the notification; the task ensures it appears in Dataview queries and the daily note.
 
 ### Task Breakdown
 

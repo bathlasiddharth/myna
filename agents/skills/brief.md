@@ -12,6 +12,8 @@ Synthesize information about a person, project, team, thread, or topic and prese
 - Team health: "how is my team doing?", "team health overview"
 - Unreplied tracker: "what am I waiting on?", "what needs a reply?", "what's unreplied?"
 - Blocker detection: "what's blocked?", "show me blockers", "what's stuck?"
+- 1:1 pattern analysis: "analyze my 1:1s with Sarah", "how are my 1:1s with Alex going?", "what patterns do I see with [person]?"
+- Performance narrative: "generate performance narrative for Sarah", "write Sarah's review for H1", "help me write [person]'s review"
 
 ## Inputs
 
@@ -40,10 +42,11 @@ Determine which brief type the user is requesting, then follow the matching sect
    - **Last 1:1:** date, carry-forward items still open
    - **Open items between you:** tasks you delegated to them (filter tasks with `type:: delegation` and `person::` matching them), things they're waiting on from you (tasks assigned to you that relate to shared projects)
    - **Pending feedback:** undelivered observations from their Pending Feedback section, with coaching-tone talking points
+   - **Feedback gap:** check the gap between today and the most recent entry in their Observations or Recognition sections. If the gap exceeds `feedback_cycle_days` from workspace.yaml (default 30), add: "Feedback gap: {N} days since last logged feedback (threshold: {days}). Consider discussing growth areas or recent work."
    - **Personal notes:** hobbies, milestones from their Personal Notes section
    - **Stakeholder mentions** (for cross-team contacts, PMs, VPs only): factual list of where this person appears in your project data — timeline entries, meeting notes, email exchanges. Present as raw mentions with dates, not interpreted stance.
 
-4. If `features.people_management` is disabled, omit the Pending feedback section from the output.
+4. If `features.people_management` is disabled, omit the Pending feedback and Feedback gap sections from the output.
 
 ### Project Status Summary
 
@@ -91,6 +94,46 @@ Determine which brief type the user is requesting, then follow the matching sect
 
 4. After the table, highlight the top concerns — the 2-3 people who most need your attention and why.
 
+### 1:1 Pattern Analysis
+
+1. Resolve the person name against `people.yaml`. If ambiguous, ask.
+
+2. Read the full meeting file for 1:1s with this person (`Meetings/1-1s/{person-name}.md`). Read all sessions (not just the most recent).
+
+3. Analyze across sessions:
+   - **Action item follow-through:** For each session, count action items that were yours vs theirs (from Prep and Notes sections). For each, was it checked off before the next session or carried forward? Calculate follow-through rate separately for you and for them.
+   - **Recurring topics:** Topics or themes that appear in multiple sessions' prep or notes (e.g., "API spec", "career growth", "delegation"). List each with how many sessions it appears in.
+   - **Carry-forward rate:** Count items that were carried forward (unchecked prep items becoming the next session's prep). High carry-forward rate indicates recurring bottleneck.
+   - **Feedback delivery:** Count sessions with pending feedback in prep vs sessions where feedback items were checked off.
+   - **Session gap:** Calculate the gap between each session and flag if any gap exceeded 3 weeks.
+
+4. Present inline as a factual analysis — dates, counts, rates. No inferences about morale or performance. "You completed 7 of 10 action items across 5 sessions. Sarah completed 12 of 14." is factual. "Sarah is reliable" is not.
+
+### Performance Narrative
+
+1. Check `features.people_management`. If disabled, tell the user and stop.
+
+2. Resolve the person name against `people.yaml`. Determine the time period — user may specify "for H1", "for Q1", "since January". Default: last 6 months.
+
+3. Gather evidence across the period:
+   - Person file: Observations (strengths, growth areas), Recognition entries
+   - Project timelines: entries where this person is mentioned — completed work, decisions, contributions
+   - Meeting files: 1:1 notes, action items, outcomes attributed to them
+   - Contributions log: entries where `person::` matches or descriptions mention them
+
+4. Generate a narrative draft. Structure:
+   - **Summary** (2–3 sentences): overall assessment based on evidence
+   - **Strengths** (evidence-backed): each claim linked to a specific observation or event with date
+   - **Growth areas** (factual, not judgmental): patterns from growth-area observations, with dates
+   - **Key contributions** (specific and dated): project outcomes, decisions driven, team impact
+   - **Development highlights:** career conversations, skills worked on, milestones
+
+5. Highlight all [Inferred] data points in the draft. The user must verify before submitting.
+
+6. Save to `Drafts/[Self] Performance Narrative {person} {period}.md` automatically (performance narratives are always saved — they aggregate significant data the user will iterate on).
+
+7. Confirm: "Performance narrative for Sarah saved to Drafts/. {N} [Inferred] items flagged for verification."
+
 ### Unreplied Tracker
 
 1. Query tasks with `type:: reply-needed` that are not completed. Split into two lists:
@@ -126,7 +169,9 @@ Include wiki-links (`[[person-name]]`, `[[project-name]]`) in output so the user
 - **Feature toggles.** Check `features.team_health` before Team Health Overview. Check `features.people_management` before person briefing feedback sections.
 - **Fuzzy name resolution.** Match person and project names against aliases in people.yaml and projects.yaml. If multiple matches, present options and ask — never guess.
 - **No inference on people.** Team Health Overview presents factual data (dates, counts, gaps). Never infer engagement, morale, or performance from this data.
-- **Scope boundaries.** Weekly Summary belongs to wrap-up. Monthly Update Generation (MBR/MTR/QBR) belongs to draft. Unified Dashboard is a static Dataview file, not a brief feature.
+- **Missing vault files are not errors.** If a person file, project file, or meeting file doesn't exist when reading, skip that data source and proceed with available data. Note in the output what was unavailable: e.g., "No person file found for Sarah — showing only projects.yaml data." Never fail a briefing entirely because one file is missing.
+- **Scope boundaries.** Weekly Summary belongs to wrap-up. Monthly Update Generation (MBR/MTR/QBR) belongs to draft. Unified Dashboard is a static Dataview file, not a brief feature. Self-tracking (your own contributions) belongs to self-track. Performance narratives for direct reports belong here.
+- **Performance narrative is always saved.** Unlike other brief modes (which are read-only inline), performance narratives are saved to `Drafts/` because they aggregate significant data that the user will iterate on.
 
 ## Examples
 
@@ -198,6 +243,51 @@ Output:
 **Upcoming meetings (7 days):**
 - Weekly sync (Mon, Wed, Fri) — [[auth-migration-sync]]
 - Design review Thursday 2pm — [[auth-design-review]]
+```
+
+### Thread Summary
+
+User: "summarize the email from James about the API spec"
+
+Reads thread via `email.search_messages` + `email.read_message`. Thread: 6 emails over 3 days, James asking about API spec timeline, Sarah responding with options, escalating to Priya for a decision.
+
+Output:
+```
+**[[email: API spec timeline — James]]**
+
+**Bottom line:** James needs a decision on the API spec approach by Friday. Sarah has proposed two options; your input is required.
+
+**Key points:**
+- James flagged that Option A requires an extra week of testing
+- Sarah laid out trade-offs: Option A (safer, slower) vs Option B (faster, higher risk)
+- No decision reached yet — thread is waiting on you
+
+**Open items:**
+- Your call: which option? James needs this by Friday EOD.
+- Sarah offered to prototype Option B this week if you lean that way.
+```
+
+If email MCP is unavailable: "Email MCP not configured. Paste the thread content and I'll summarize it."
+
+### Blocker Detection
+
+User: "what's blocked?" or "show me blockers"
+
+Reads all active project files.
+
+Output:
+```
+**Blockers across active projects:**
+
+[[auth-migration]] — 1 blocker
+- Waiting on Team X for OAuth provider credentials — 12 days, no update since Mar 28. (email, Sarah, Mar 28)
+  → Say "escalate this blocker" to draft a follow-up.
+
+[[platform-api]] — 2 blockers
+- Schema validation dependency on infra team — 5 days, owner: Marcus. (meeting, platform sync, Apr 1)
+- Overdue dependency: "Auth team to provide token format spec" — 9 days overdue. [type:: dependency]
+
+No blockers detected in: [[q2-planning]], [[hiring-pipeline]]
 ```
 
 ### Team Health Overview

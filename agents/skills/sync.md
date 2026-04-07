@@ -76,6 +76,8 @@ Activated by specific planning requests. These read existing vault data and prod
 
 When the user says "plan tomorrow": create `Journal/DailyNote-{tomorrow}.md` from template if it doesn't exist. Run a sync-style snapshot for tomorrow using tomorrow's calendar and open tasks. If the note already exists (user edited it earlier or wrap-up carried items forward), prepend a snapshot without overwriting any existing content — Morning Focus, carried items, and user edits are all preserved.
 
+The following morning, when sync runs and tomorrow's date is now today: if a "plan tomorrow" snapshot already exists in today's daily note from the prior evening, treat this as a re-run. Read the existing snapshot as context, prepend a fresh Morning Sync snapshot, and note in the output: "Updating your plan from last night." Highlight any changes since the plan was made (new meetings added, tasks completed overnight, new queue items).
+
 ### Journal Auto-Archiving
 
 During each sync, move daily and weekly notes older than `journal.archive_after_days` (default: 30) from `Journal/` to `Journal/Archive/` using the `move` MCP tool. Do not archive today's note or the current week's note.
@@ -143,11 +145,13 @@ After every sync, show a one-line summary with counts. For re-runs, also mention
 ## Rules
 
 - **Morning Focus is sacred.** Never overwrite, move, or modify the Morning Focus section. It lives outside snapshot sections.
+- **Missing files are not errors.** If project files, review queue files, or person files don't exist yet (first run, empty vault), skip those data sources and show counts as zero. A fresh vault is valid — sync still creates the daily note, reads the calendar, and generates meeting preps.
 - **Snapshots are immutable.** On re-run, prepend a new snapshot. Never edit, collapse, restructure, or delete previous snapshots.
 - **Lightweight meeting preps.** Sync generates brief preps (key topics, open items). The prep-meeting skill handles deep meeting preparation with coaching suggestions.
 - **No skill chaining.** After sync, tell the user about follow-up actions ("Say 'prep for my 1:1 with Sarah' for detailed prep") but do not automatically invoke other skills.
 - **Archive threshold.** If `journal.archive_after_days` is not configured, default to 30 days. Never archive the current day's or current week's note.
 - **Weekly note timing.** Create weekly note on first sync of the week only. If the user syncs on Wednesday and no weekly note exists for this week, create it then.
+- **High meeting count.** If the day's calendar has 10 or more meetings, add a note to the Capacity Check section: "Warning: {N} meetings scheduled today — this day may not be realistic. Consider which are optional."
 
 ## Examples
 
@@ -188,3 +192,52 @@ User says "what should I focus on today?"
 **Reads:** Open tasks (8 total, 2 overdue), weekly goals from weekly note, delegation status, defer history.
 
 **Output inline:** "Top 3 priorities: (1) Marcus delegation follow-up — overdue 3 days, blocking his work. (2) Update runbook — deferred 3 times, took on tech debt. (3) Review Sarah's design doc — due tomorrow, she's waiting on you. Consider: the MBR draft has been deferred twice but isn't due until Friday. Safe to defer once more."
+
+### Example: Weekly Note Creation (first sync of the week)
+
+User syncs on Monday April 6. No weekly note exists for this week.
+
+**Reads:** Last week's daily notes (March 30 – April 3) for unfinished items. This week's calendar via `calendar.list_events` for the full week.
+
+**Creates `Journal/WeeklyNote-2026-04-06.md`:**
+```
+---
+week_start: 2026-04-06
+---
+
+#weekly
+
+## Week Capacity
+
+| Day | Meetings | Focus Time | Notes |
+|-----|----------|------------|-------|
+| Mon (Apr 6) | 2.5 hrs | 5.5 hrs | |
+| Tue (Apr 7) | 4.0 hrs | 4.0 hrs | |
+| Wed (Apr 8) | 1.5 hrs | 6.5 hrs | |
+| Thu (Apr 9) | 5.5 hrs | 2.5 hrs | ⚠ packed |
+| Fri (Apr 10) | 1.0 hrs | 7.0 hrs | |
+
+**Total:** 14.5 hrs meetings, 25.5 hrs focus. Thursday is meeting-heavy.
+
+## Weekly Goals
+> User-editable. Add your goals for the week here.
+
+## Carry-Forwards
+- MBR draft (from Friday Apr 3 — deferred twice)
+- Update runbook (from Wednesday Apr 2)
+```
+
+**Output note in sync summary:** "Weekly note created for week of Apr 6. 2 carry-forwards from last week. Thursday looks packed (5.5 hrs of meetings)."
+
+### Example: Week Optimization
+
+User says "week optimization" or "help me optimize my week."
+
+**Reads:** Full week's calendar, all open tasks, weekly note (goals and capacity table).
+
+**Output inline:** "This week has 14.5 hrs of meetings across 5 days. Observations:
+- Thursday is packed (5.5 hrs). Consider: the 3pm Platform sync has 8 attendees and a clear written agenda — async status update may be sufficient.
+- Tuesday and Thursday have back-to-back meetings 10am–1pm. Cognitive load will be high; don't schedule deep work in those windows.
+- 2 tasks due this week total ~6 hrs effort. Best fit: Wednesday morning (6.5 hrs focus) and Friday (7 hrs focus).
+- MBR draft has been deferred twice. If it's not done by Wednesday, it will be overdue by Friday review.
+Suggestions: (1) Skip or delegate the Thursday 3pm Platform sync. (2) Block Wednesday 9–11am for MBR draft. (3) Move Friday afternoon task to Thursday if you clear the 3pm sync."

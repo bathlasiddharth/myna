@@ -16,6 +16,7 @@ Produce polished professional writing — email replies, follow-ups, status upda
 - "help me prepare for [conversation]" — difficult conversation prep
 - "fix this message" / "rewrite this for [audience]" — message rewriting
 - "monthly update" / "draft my MBR" — monthly/quarterly report
+- "prep me for this doc: [paste or link]", "analyze this doc", "pre-read [document]" — pre-read preparation
 
 ## Inputs
 
@@ -44,7 +45,7 @@ When the user provides instructions (rough points, intent, tone override), follo
 
 Multiple intents in one request produce multiple separate drafts. "Draft a reply praising Sarah AND an escalation to her manager" creates two files.
 
-Show the draft inline. Save to `Drafts/[Email] Reply to {person}.md` when the user says "save" or asks to save.
+Show the draft inline. Save to `Drafts/[Email] Reply to {person}.md` when the user says "save" or asks to save. After saving, create a linked review TODO in today's daily note: `- [ ] Review and send [Email] Reply to {person} [type:: review-draft] [User]`
 
 ### 3. Follow-Up Email
 
@@ -52,7 +53,7 @@ Read the meeting file for the referenced meeting (`Meetings/1-1s/`, `Meetings/Re
 
 Generate an email draft covering all of the above. Use communication style for the audience tier of the meeting attendees.
 
-Save to `Drafts/[Email] Follow-up {meeting name}.md` when asked.
+Save to `Drafts/[Email] Follow-up {meeting name}.md` when asked. After saving, create a review TODO in today's daily note: `- [ ] Review and send [Email] Follow-up {meeting name} [type:: review-draft] [User]`
 
 ### 4. Follow-Up Meeting Draft
 
@@ -83,7 +84,7 @@ Read the project file: `Projects/{project}.md` — open tasks, recent timeline e
 
 The audience tier sets the default depth; the user can override ("make it shorter", "more detail").
 
-Show inline. Save to `Drafts/[Status] {project} {month}.md` when asked.
+Show inline. Save to `Drafts/[Status] {project} {month}.md` when asked. After saving, create a review TODO in today's daily note: `- [ ] Review and send [Status] {project} update [type:: review-draft] [User]`
 
 ### 7. Structured Draft — Escalation
 
@@ -125,7 +126,23 @@ Tone calibrated to `difficult_message_approach` from `communication-style.yaml`.
 
 Show inline. Save to `Drafts/[Conversation-Prep] {topic}.md` when asked.
 
-### 11. Monthly Update Generation (MBR/MTR/QBR)
+### 11. Pre-Read Preparation
+
+Triggered by: "prep me for this doc: [paste or link]", "analyze this doc for me", "pre-read [document]".
+
+1. Receive the document — either pasted inline or linked to a vault file or URL.
+
+2. Generate a structured pre-read note with six sections:
+   - **TL;DR** — one-sentence summary of what the document proposes or describes
+   - **Key Decisions Being Asked** — what is the author asking readers to decide, approve, or provide feedback on?
+   - **Risks and Concerns** — what could go wrong, what's missing, what's under-specified or assumed without evidence?
+   - **Questions to Ask** — 3–5 specific questions to raise based on gaps or implicit assumptions
+   - **How It Relates to Your Projects** — cross-reference with your active projects and open tasks; flag where this document affects work in progress
+   - **Stakeholder Impact** — who else is affected by what's proposed? Are all affected parties represented?
+
+3. Show inline. If the document is tied to an upcoming meeting (user mentioned which meeting), ask if they want it appended to that meeting's prep file under `### Pre-Read`. Otherwise, ask if they want to save it as `Drafts/[Status] Pre-Read {document title}.md`.
+
+### 12. Monthly Update Generation (MBR/MTR/QBR)
 
 Read across the relevant time period (month or quarter):
 - `Projects/` files — timeline entries, completed tasks, blockers resolved

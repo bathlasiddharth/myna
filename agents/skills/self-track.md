@@ -138,6 +138,7 @@ Triggered by "am I underselling myself?" or similar. Requires an existing draft 
 - **Append-only.** New contributions are appended to the weekly file. Never edit or remove existing entries.
 - **Weekly file boundaries.** Each week gets its own file keyed to Monday's date. When logging on a Wednesday, append to the file for that week's Monday.
 - **No duplicate detection across skills.** Wrap-up, process, and process-meeting may also write contributions. This skill only handles the user-typed logging path. Duplicate checking between skills is not this skill's responsibility.
+- **Performance narratives for direct reports** belong to the brief skill ("generate performance narrative for Sarah"), not here. This skill handles self-narratives only (your own contributions, your own self-review, your own promo packet).
 - **Role fallback.** If `user.role` is not set, default to IC categories.
 
 ## Examples
