@@ -964,8 +964,8 @@ The Obsidian CLI MCP wraps the Obsidian CLI to provide structured vault operatio
 | search | Vault-wide full-text search using Obsidian's index. Returns file paths and matching lines | brief, main agent (vault search, link find) |
 | tags | List all tags in the vault or find files with a specific tag | brief, auto-tagging verification |
 | backlinks | List all files that link to a given file | brief (person/project context discovery) |
-| property:get | Read a YAML frontmatter property from a file | All skills that check frontmatter (meeting type, draft state) |
-| property:set | Set a YAML frontmatter property on a file | Task completion (marking TODOs done), review-status updates |
+| property_read | Read a YAML frontmatter property from a file | All skills that check frontmatter (meeting type, draft state) |
+| property_set | Set a YAML frontmatter property on a file | Task completion (marking TODOs done), review-status updates |
 | tasks | Query tasks via Obsidian Tasks plugin — filter by status, project, type, due date | sync (open/overdue tasks), brief (queries), calendar (task data), wrap-up |
 | create-from-template | Create a note from an `_system/templates/` template file, substituting variables | main agent (new project/person files), sync (daily/weekly notes) |
 | eval | Run a Dataview query or JavaScript expression against the vault | brief (complex queries), dashboard generation |

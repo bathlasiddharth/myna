@@ -28,9 +28,8 @@ Tagged by task so the user knows what to revisit.
 - **Note:** Contributions log filename pattern: used `contributions-{monday-date}` for clarity (Monday date of that week).
 
 ### P1-T05 (triage, process)
-- **Assumption (triage):** Triage review-triage.md entry format extends the foundations 2.10b template with "Vault updates" and "Reply needed" fields for Step 3 routing.
 - **Assumption (process):** "process my communications" processes both email AND Slack in a single run.
-- **Note:** Architecture says triage Step 3 does "nothing else" beyond moving, but feature file adds vault update routing to review queues. Feature file used as authoritative — routing to review queues is not the same as direct vault writes.
+- **Fixed in audit (P1-T13):** Original triage skill had vault update routing in Step 3. Removed — triage only moves emails to folders, never touches the vault. Architecture is authoritative here.
 
 ### P1-T06 (prep-meeting, process-meeting)
 - **Assumption (prep-meeting):** When sync already wrote a prep and user requests prep for the same meeting, treat as update mode rather than creating duplicate.
