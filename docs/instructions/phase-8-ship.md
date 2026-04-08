@@ -10,7 +10,7 @@ The final phase of the build pipeline. Produces a public v1.0 release. After Pha
 
 **In scope:**
 - README polish (public-facing)
-- Setup guide (using the Phase 6 Kiro CLI install script as the entry point)
+- Setup guide (using the Phase 2 Claude Code install script as the entry point)
 - Final consistency pass on public-facing artifacts
 - v1.0 release tag
 - Release notes
@@ -21,7 +21,7 @@ The final phase of the build pipeline. Produces a public v1.0 release. After Pha
 - User acceptance testing (post-ship, per D037)
 - Bug fixing from real-world use (post-ship)
 - Automated testing infrastructure (deferred post-launch per D033)
-- Install support for AI tools other than Kiro CLI (post-launch per D035)
+- Install support for AI tools other than Claude Code (post-launch per D045)
 
 ## Why Phase 8 matters
 
@@ -41,7 +41,7 @@ Per D037, **done = Phase 8 complete.** User says "done" here. Then the user does
 
 ## Phase-specific rules
 
-1. **Two audiences, named.** README and setup guide are for end users installing Myna. The methodology artifacts (foundations, architecture, build-agent.md, decisions) are for future users applying the playbook to a different agentic assistant. Don't conflate them in the public-facing docs.
+1. **Two audiences, named.** README and setup guide are for end users installing Myna. The methodology artifacts (foundations, architecture, autonomous-build-plan.md, decisions) are for future users applying the playbook to a different agentic assistant. Don't conflate them in the public-facing docs.
 2. **Nothing stale ships.** Every doc current as of Phase 8. No TBDs, no placeholders, no references to incomplete work. No forward pointers to things that don't exist yet.
 3. **Don't add new features at ship time.** Any feature gap discovered at Phase 8 is either a late Phase 5 fix or a post-launch item. Ship isn't the time to build.
 4. **Open-source is not in scope.** D036 is explicit. No CONTRIBUTING.md, no contributor onboarding docs, no GitHub issue templates. That's all post-launch work.
@@ -55,7 +55,7 @@ Public-facing summary: what Myna is, who it's for, how to install, basic usage. 
 
 ### P8-T02 — Setup guide
 
-Walks the user through install (Phase 6 script), first-run setup, and basic use. Includes troubleshooting for common Kiro CLI-specific install issues discovered during Phase 6 testing.
+Walks the user through install (Phase 2 script), first-run setup, and basic use. Includes troubleshooting for common Claude Code-specific install issues discovered during Phase 2 testing.
 
 ### P8-T03 — Final consistency pass
 
@@ -64,7 +64,7 @@ Fresh-eye read of all public-facing docs. Fix anything stale, unclear, or incons
 ### P8-T04 — v1.0 release tag and notes
 
 Tag v1.0. Write release notes summarizing:
-- What Myna delivers (agent-based assistant for Kiro CLI)
+- What Myna delivers (agent-based assistant for Claude Code)
 - Feature coverage (the domains shipped)
 - Known limitations (single AI tool, manual testing only, no automation)
 - Where the methodology lives (the other first-class output)

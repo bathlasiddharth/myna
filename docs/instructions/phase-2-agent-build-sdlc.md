@@ -27,7 +27,7 @@ Phase 2 builds the **build harness** — the Claude Code skills and subagents th
 
 Phase 2 is the only phase where we build tool infrastructure for the build itself. Per the feedback captured in memory, tools are built only when they serve a specific mechanism — and the automated build loop is that mechanism. Without Phase 2, Phase 5 has no way to operate autonomously; with it, Phase 5 is just "run the harness on the remaining agents."
 
-**Important distinction:** the skills/subagents created in Phase 2 are Claude Code-specific build infrastructure. They are NOT part of Myna's runtime (which stays model-agnostic per D002). They're the scaffolding around Myna's construction, not Myna itself.
+**Important distinction:** the skills/subagents created in Phase 2 are Claude Code-specific build infrastructure. They are NOT part of Myna's runtime. They're the scaffolding around Myna's construction, not Myna itself.
 
 The test Phase 2 output must pass: **"can the Writer+Reviewer+Refiner loop produce at least a first-pass draft of an agent's content given foundations + feature assignments, in a way that's worth iterating on in Phase 3?"** Phase 3 will refine these based on real use.
 

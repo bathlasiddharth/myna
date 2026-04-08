@@ -4,7 +4,7 @@ A local-first personal assistant for tech professionals. AI agents that watch, o
 
 ## What Is Myna?
 
-Myna is a set of AI agent instructions that turn any capable LLM (Claude, Gemini, Codex, Kiro CLI) into a personal assistant for tech employees. It manages the information layer of your job: emails, Slack messages, meetings, projects, people, and tasks.
+Myna is a set of AI agent instructions that turn Claude Code into a personal assistant for tech employees. It manages the information layer of your job: emails, Slack messages, meetings, projects, people, and tasks. All instructions are plain markdown — inherently readable by any capable LLM, but designed and tested for Claude Code.
 
 You interact with Myna by typing natural language prompts inside your AI agent. Myna reads from your company's existing MCP-connected tools (email, Slack, calendar) and writes exclusively to your local Obsidian vault.
 
@@ -21,7 +21,7 @@ Engineering managers, tech leads, senior engineers, and PMs who:
 ## How It Works
 
 ```
-You (inside Claude Code / Kiro CLI / Gemini / etc.)
+You (inside Claude Code)
   │
   │  "prep brief for my 1:1 with Sarah"
   │
@@ -58,14 +58,14 @@ Myna is **not an application**. There is no server, no API, no frontend.
 | **Agent instructions** | Markdown behavior specs the AI model reads on every prompt |
 | **Obsidian CLI MCP** | Lightweight MCP server wrapping Obsidian CLI for vault operations |
 | **Config templates** | `.example` files for projects, people, preferences (gitignored) |
-| **Setup wizard** | Interactive ~5 min conversation to get you running |
+| **Install script** | Shell script that generates CLAUDE.md, registers MCP, creates vault structure |
 
 ## Core Principles
 
 - **Local-first** — All data lives in your Obsidian vault as plain markdown
 - **Draft, never send** — Every outbound communication requires your explicit action
 - **Human-in-the-loop** — Items requiring judgment go through a review queue
-- **AI model agnostic** — Works with Claude, Gemini, Codex, Kiro CLI, and future models via a tool-neutral content layer + per-tool install adapter (content authored once; new AI tools added as new adapters, not rewrites)
+- **Claude-first, not Claude-only** — Built for Claude Code, but all instructions are plain markdown readable by any LLM. Community can add support for other tools.
 - **Enterprise-friendly** — No new infrastructure, connects to your company's existing MCP servers
 - **Config-driven** — All personal data in gitignored config files; system is shareable as-is
 
@@ -79,7 +79,7 @@ Myna is **not an application**. There is no server, no API, no frontend.
 
 ## Status
 
-Myna is in the **requirements phase**. Vision and core decisions are settled; domain requirements are being refined. See the [roadmap](docs/roadmap.md) for current progress.
+Phase 1 (Build) is complete. Ready for Phase 2 (Install) targeting Claude Code. See the [roadmap](docs/roadmap.md) for current progress.
 
 ### Phases
 
@@ -103,10 +103,11 @@ The methodology lives across several files as it stabilizes: see [decisions D025
 | Document | Purpose |
 |----------|---------|
 | [Vision](docs/vision.md) | North star — what Myna is, who it's for, core principles |
+| [Architecture](docs/architecture.md) | Runtime model — skills, steering, vault structure, MCP integration |
+| [Foundations](docs/foundations.md) | Data layer — templates, config schemas, file formats, conventions |
 | [Decisions](docs/decisions.md) | Settled architectural and design decisions |
 | [Open Questions](docs/open-questions.md) | Unresolved questions under discussion |
 | [Roadmap](docs/roadmap.md) | Milestones, tasks, and backlog |
-| [Design Deliverables](docs/design-deliverables.md) | Checklist for design phase |
 
 ## License
 

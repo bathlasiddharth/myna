@@ -25,10 +25,10 @@ Myna is built via a **4-phase pipeline**: Design, Build, Install, Ship (D044). T
 |---|---|---|
 | 0 Design | Architecture, foundations, features, decisions, build plan | Heavy |
 | 1 Build | Autonomous build of all skills, agent, MCP server, steering files | Minimal (escalations only) |
-| 2 Install | Install tooling (D035); user-involved, not autonomous | Heavy |
+| 2 Install | Shell script to wire Myna into Claude Code (D045, D047); user-involved | Heavy |
 | 3 Ship | README, setup guide, testing plan, v1.0 tag | Moderate |
 
-**Done = Phase 3 complete** (D037). Real-world testing, bug fixing, open-source contribution model, and install support for other AI tools are all post-ship activities outside this pipeline.
+**Done = Phase 3 complete** (D037). Real-world testing, bug fixing, open-source contribution model, and install support for AI tools beyond Claude Code are all post-ship activities outside this pipeline.
 
 **How Phase 1 works:** A Claude orchestrator session reads `docs/instructions/autonomous-build-plan.md` and spawns subagents — each subagent builds 1-3 components with 3 self-review rounds (coverage, quality, consistency). The orchestrator does lightweight checks between subagents and re-spawns on failure. Full details in the build plan.
 
@@ -98,11 +98,11 @@ Myna is built via a **4-phase pipeline**: Design, Build, Install, Ship (D044). T
 
 > **Operational guide:** `docs/instructions/phase-6-installation-script.md`
 >
-> **Goal:** Install tooling that packages agent artifacts for the target AI tool (v1 targets Kiro CLI per D035).
+> **Goal:** Shell script that wires Myna into Claude Code: generate CLAUDE.md, register MCP, create vault structure, copy config examples (D045, D047).
 
 | Task | Description | Status |
 |---|---|---|
-| P2-T01 | Design the install flow | Not started |
+| P2-T01 | Design the Claude Code install flow | Not started |
 | P2-T02 | Write the install script | Not started |
 | P2-T03 | Test on a clean environment | Not started |
 | P2-T04 | Document install flow | Not started |
@@ -137,7 +137,7 @@ Myna is built via a **4-phase pipeline**: Design, Build, Install, Ship (D044). T
 | B008 | Customizable output templates for briefings, status summaries, narratives | Backlog |
 | B009 | Automated document review with doc-type-specific criteria | Backlog |
 | B010 | Automated testing infrastructure (designed post-v1 from real-usage experience) | Post-launch |
-| B011 | Install tooling for Claude Code, Gemini, Codex (beyond Kiro CLI v1 scope) | Post-launch |
+| B011 | Install tooling for Gemini, Codex, and other AI tools (beyond Claude Code v1 scope) | Post-launch |
 | B012 | Open-source contribution model and CONTRIBUTING.md | Post-launch |
 | B013 | User acceptance testing and bug fixing from real-world use | Post-launch |
 | B014 | Configure skill — interactive setup wizard, natural language config management, communication style interview (D043) | Post-launch |

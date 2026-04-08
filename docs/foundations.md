@@ -1,6 +1,6 @@
 # Myna — Foundations
 
-Data layer foundations. Everything an agent builder needs to know about vault structure, file formats, config schemas, and conventions. If a fresh Claude session had only this file, `architecture.md`, and one skill's feature assignment, it should be able to build that skill without asking questions.
+Data layer foundations for Claude Code. Everything an agent builder needs to know about vault structure, file formats, config schemas, and conventions. If a fresh Claude Code session had only this file, `architecture.md`, and one skill's feature assignment, it should be able to build that skill without asking questions.
 
 ---
 
@@ -650,7 +650,7 @@ mcp_servers:
 
 # System settings
 prompt_logging: true                  # default: true — log prompts to _system/logs/
-ai_model: kiro-cli                    # reference only — not enforced by Myna
+ai_model: claude-code                  # reference only — not enforced by Myna
 
 # Feature toggles — true = enabled, false = disabled
 # Defaults set by role during setup
@@ -974,9 +974,9 @@ The Obsidian CLI MCP wraps the Obsidian CLI to provide structured vault operatio
 
 **Fallback:** When Obsidian isn't running, the MCP server falls back to direct file I/O. `search` falls back to text search. `tasks` falls back to regex matching of TODO syntax. `backlinks` and `tags` fall back to scanning wiki-link and tag patterns. `create-from-template` falls back to copying template content with variable substitution. `eval` is unavailable in fallback mode — skills that use it degrade gracefully.
 
-### 7.1 Abstract External MCP Operations
+### 7.1 External MCP Operations
 
-Skills that read from external sources (email, Slack, calendar) use these abstract operations. The adapter (Phase 6) maps them to actual MCP tool calls based on the user's configured servers.
+Skills that read from external sources (email, Slack, calendar) need these capabilities from the user's MCP servers. Exact tool names and parameters depend on which MCP servers the user has installed and registered with Claude Code via `claude mcp add`. The `mcp_servers` map in workspace.yaml records the server names for reference.
 
 | Operation | Used by | Parameters |
 |-----------|---------|-----------|
@@ -989,7 +989,7 @@ Skills that read from external sources (email, Slack, calendar) use these abstra
 | calendar.list_events | sync, prep-meeting, calendar | date_range |
 | calendar.create_event | calendar | title, start, end, description (never attendees) |
 
-These are abstract operations — they describe what Myna needs from external MCPs, not actual tool signatures. Exact tool names and parameters depend on which MCP servers the user has installed. Skills reference these by the abstract name; the adapter layer maps them to actual MCP tool calls at install time.
+These describe what Myna needs from external MCPs, not actual tool signatures. Skills call the MCP tools directly by the names available in the Claude Code session. If the user's email MCP exposes a tool called `gmail_list_messages`, the skill calls that tool. The skill instructions describe the intent; Claude Code resolves the tool call.
 
 ### 7.2 User Identity Matching
 

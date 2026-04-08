@@ -33,13 +33,13 @@ Each entry:
 **Raised:** 2026-03-31
 **Context:** Phase 1 has 40 features. Might be better to ship a tiny subset first to validate the approach.
 **Options considered:** Full Phase 1, stripped Phase 0 with 5-10 features, iterative delivery within Phase 1
-**Status:** Partially resolved — Vision defines P0 (interactive prompts, user-triggered) and P1 (automation). The old 40-feature scope is being reworked via domain threads. Exact feature prioritization within P0 still open.
+**Status:** Resolved → D034 (all approved features in v1, no subset).
 
-### Q004 — How should the review queue UX work across AI clients?
+### Q004 — How should the review queue UX work?
 **Raised:** 2026-03-31
-**Context:** The review queue is central to the system but the interaction model (present item → approve/edit/skip/discard) depends on the AI client being used. Need it to work in Claude Code, Kiro CLI, etc.
-**Options considered:** Markdown-based queue files that any client can read/write, client-specific adapters
-**Status:** Resolved — markdown files with checkbox-based approve/reject flow. Four queue files (`review-work`, `review-people`, `review-self`, `review-triage`) that any AI client can read, edit, and process. User can also edit directly in Obsidian. No client-specific adapters needed.
+**Context:** The review queue is central to the system but the interaction model (present item → approve/edit/skip/discard) needs a clean UX.
+**Options considered:** Markdown-based queue files, client-specific adapters
+**Status:** Resolved — markdown files with checkbox-based approve/reject flow. Four queue files (`review-work`, `review-people`, `review-self`, `review-triage`) that Claude Code can read, edit, and process. User can also edit directly in Obsidian.
 
 ### Q005 — What's the vault folder structure?
 **Raised:** 2026-03-31
@@ -102,4 +102,4 @@ Each entry:
 **Raised:** 2026-04-03
 **Context:** Auto-tagging (cross-domain feature) needs a tag registry that defines available tags and their mapping rules (folder-based, keyword-based, person/project-based). This could be a section in the existing `registry.md` config or a separate fourth config file.
 **Options considered:** Section in `registry.md` (keeps config to three files per original design, but registry.md may get large), separate `tags.md` config (clean separation, but a fourth config file adds setup friction), derived from existing registry entries (no explicit tag registry — tags inferred from project/person names, but less control)
-**Status:** Resolved — separate `tags.md` config file. Four config files total: workspace, registry, communication-style, tags. Easier to maintain independently.
+**Status:** Resolved → D042. Tags is a separate YAML config file (tags.yaml). Six config files total: workspace.yaml, projects.yaml, people.yaml, meetings.yaml, communication-style.yaml, tags.yaml.

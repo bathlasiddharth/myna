@@ -11,7 +11,7 @@ Myna is a local-first personal assistant for tech professionals. It's a set of A
 
 Treat process artifacts (roadmap, decisions, foundations, instructions/\*, dev-journal) with the same care as product artifacts. Both ship. When updating any process artifact, ask: "would this still make sense to someone using this playbook to build a different agentic assistant?"
 
-**Status:** Design complete (Phase 0). Ready for autonomous build (Phase 1).
+**Status:** Phase 1 (Build) complete. Ready for Phase 2 (Install) targeting Claude Code.
 
 ## Key Documents
 
@@ -60,24 +60,24 @@ When the user corrects your direction or you discover a non-obvious pattern duri
 2. **Decisions are settled.** Don't re-open items in `docs/decisions.md` unless the user explicitly asks.
 3. **Add open questions.** If you surface a question not answered by existing docs, add it to `docs/open-questions.md`.
 4. **Add decisions.** If the user settles a question during your conversation, add it to `docs/decisions.md`.
-5. **AI model agnostic.** Never assume a specific AI provider. Myna must work with Claude, Gemini, Codex, Kiro CLI, etc.
+5. **Claude-first, not Claude-only (D046).** Myna v1 targets Claude Code. Agent instructions can reference Claude Code capabilities directly. Content stays plain markdown — inherently readable by any LLM — but we don't architect for other runtimes upfront.
 6. **Draft, never send.** Myna never sends emails, posts messages, or takes external actions (except personal calendar events with no attendees).
 
 ## Phase-Specific Instructions
 
 Build pipeline is a **4-phase structure** (D044): Design (0), Build (1), Install (2), Ship (3). See `docs/roadmap.md`.
 
-**Content vs adapter layers (D038).** All agent artifacts — skills, steering, main agent — are authored as **tool-neutral markdown files** under `agents/`. The install step (Phase 2) packages them for the target AI tool's runtime format (Kiro CLI for v1). Do NOT embed tool-specific syntax or paths in content files.
+**Claude-first design (D046).** All agent artifacts — skills, steering, main agent — are plain markdown under `agents/`. The install step (Phase 2) generates a CLAUDE.md for Claude Code, registers the MCP server, and creates the vault structure. See `docs/architecture.md` §11 for how this works.
 
 | Artifact | Phase | Purpose |
 |---|---|---|
 | `docs/foundations.md` + `docs/architecture.md` | 0 Design | Architecture, data layer, patterns, feature-to-skill mapping |
 | `docs/instructions/autonomous-build-plan.md` | 0 Design | Recipe for autonomous build |
-| `agents/skills/*.md` (14 skill files) | 1 Build | Skill instructions (tool-neutral markdown) |
+| `agents/skills/*.md` (14 skill files) | 1 Build | Skill instructions (plain markdown) |
 | `agents/steering/*.md` (4 files) | 1 Build | Cross-cutting rules |
 | `agents/main.md` | 1 Build | Main agent prompt |
 | `agents/mcp/obsidian-cli/` | 1 Build | MCP server code |
-| Install script | 2 Install | Packages agents/ for Kiro CLI; creates vault structure |
+| Install script | 2 Install | Generates CLAUDE.md; registers MCP; creates vault structure |
 | README, setup guide, testing plan, v1.0 tag | 3 Ship | Public release |
 
 **Automated behavioral testing is NOT in the pipeline** (deferred per D033). **Open-source contribution model is NOT in the pipeline** (deferred post-launch per D036). **Done = Phase 3 complete** (D037); real-world testing and bug fixing are post-ship activities outside the pipeline.

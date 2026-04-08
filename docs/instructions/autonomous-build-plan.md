@@ -532,7 +532,7 @@ Each skill subagent follows the standard Per-Subagent Protocol above. Key remind
 - **Always-on rules:** reference steering files (these are always loaded alongside main.md)
 - **Config loading:** read 6 YAML config files at session start
 
-**Skill activation (tool-neutral):** When a user request matches a skill, the main agent should say: "Load and follow the instructions in `agents/skills/{skill}.md`." The install script (Phase 2) maps this to the target AI tool's native mechanism (Kiro CLI skill invocation, Claude Code file reading, etc.). Do NOT embed tool-specific activation syntax in main.md.
+**Skill activation:** When a user request matches a skill, the main agent instructs Claude Code to read and follow the instructions in `agents/skills/{skill}.md`. The generated CLAUDE.md (produced by the install script in Phase 2) includes the skill directory with file paths so Claude Code can load the full skill file on demand.
 
 **Must NOT contain:**
 - Feature-specific procedures — those live in skill files

@@ -2,11 +2,24 @@
 
 ## 1. Overview
 
-Myna is a set of AI agent instructions that turn any capable LLM into a personal assistant for tech professionals. The user types natural language prompts inside their AI agent (Kiro CLI, Claude Code, etc.). Myna reads from external sources (email, Slack, calendar) via company-provided MCP servers and writes exclusively to a local Obsidian vault under a single `myna/` subfolder.
+Myna is a set of AI agent instructions that turn Claude Code into a personal assistant for tech professionals. The user types natural language prompts inside Claude Code. Myna reads from external sources (email, Slack, calendar) via MCP servers and writes exclusively to a local Obsidian vault under a single `myna/` subfolder. All agent instructions are plain markdown — readable by any LLM, but designed and tested for Claude Code (D045, D046).
 
 Architecturally, Myna is one main agent with 14 skills. The main agent handles routing, always-on safety rules, and simple operations. Skills handle feature-specific workflows and are loaded on demand (progressive disclosure — only their name and description are in context until activated). Cross-cutting rules live in steering files that are always loaded. Config lives in 6 YAML files read at session start.
 
 There are no subagents in v1. No automatic skill chaining — each skill outputs its result and tells the user what to do next if a follow-up action is needed.
+
+### How Myna Runs on Claude Code
+
+Claude Code uses a project-level `CLAUDE.md` file as its entry point — instructions loaded automatically at session start. Myna's install script (Phase 2) generates this file, which:
+
+1. **Loads the main agent** — includes `agents/main.md` content (identity, routing logic, always-on rules, direct operations)
+2. **Loads steering files** — includes the 4 steering files (safety, conventions, output, system) as always-on context
+3. **Provides skill directory** — lists skill names, descriptions, and file paths so the main agent can route and Claude Code can read the full skill file on demand
+4. **Loads config** — includes an instruction for Claude to read all `.yaml` files in `{vault_path}/myna/_system/config/` at session start to load user configuration
+
+MCP servers (obsidian-cli and any external servers like email, Slack, calendar) are registered with Claude Code via `claude mcp add` and are available as tools in every session. Skills call MCP tools directly by name.
+
+When a skill is activated, the main agent instructs Claude Code to read the full skill file using Claude Code's built-in file reading capability. The file path is listed in the skill directory within CLAUDE.md. This is a simple file read — no special plugin or skill-loading mechanism is needed.
 
 ---
 
@@ -372,7 +385,7 @@ Cross-cutting rules loaded into every session. Separate from the main prompt so 
 
 ### Skills
 
-14 feature skills loaded on demand. At session start, only the skill name and description are in context. When the user's request matches a skill's description (or the user explicitly invokes it), the full skill instructions are loaded.
+14 feature skills loaded on demand. At session start, only the skill name and description are in context (via the generated CLAUDE.md skill directory). When the user's request matches a skill's description (or the user explicitly invokes it), Claude Code reads the full skill file from `agents/skills/{skill}.md`.
 
 Skills read config files and vault files as needed. Each skill's instructions describe what to do, where to read, where to write, and what rules to follow.
 
@@ -459,7 +472,7 @@ Complete folder structure with naming conventions: see `foundations.md` §1.
 
 Six YAML files under `_system/config/`. Read at session start (not every prompt). Manual edits take effect next session. Full schemas with every field: see `foundations.md` §3.
 
-**v1 config approach:** Users edit YAML files directly. The install script (Phase 6) creates the folder structure and drops `.example` config files with sample data as reference. Interactive setup wizard and natural language config management ("add project: ...") are deferred to post-launch (D043).
+**v1 config approach:** Users edit YAML files directly. The install script (Phase 2) creates the folder structure and drops `.example` config files with sample data as reference. Interactive setup wizard and natural language config management ("add project: ...") are deferred to post-launch (D043).
 
 ### workspace.yaml
 
@@ -622,7 +635,7 @@ Myna does NOT build MCPs for email, Slack, or calendar (D005). It connects to wh
 | Slack | process, brief (thread summary) | No |
 | Calendar | sync, prep-meeting, calendar (reading schedule, creating events) | No |
 
-MCP server names are configured during setup and stored in workspace.yaml. Skills reference them by a generic name (email, slack, calendar); the installer maps these to actual MCP server names at install time.
+All MCP servers — both obsidian-cli and external ones — are registered with Claude Code via `claude mcp add`. MCP server names are configured in workspace.yaml so skills know which tool names to call. Skills call MCP tools directly by name (e.g., the tool names from the user's email MCP server). The `mcp_servers` map in workspace.yaml records the server names for reference.
 
 ---
 
@@ -743,29 +756,23 @@ When one skill depends on data another skill manages:
 
 ---
 
-## 11. Content vs Adapter Layers (D038)
+## 11. Claude-First, Not Claude-Only (D046)
 
-All Myna artifacts are organized into two layers:
+Myna v1 targets Claude Code as its runtime (D045). Agent instructions can reference Claude Code capabilities directly — how CLAUDE.md is loaded, how MCP servers are registered, how skills are activated by reading files.
 
-### Content Layer (tool-neutral)
+All agent content — skills, steering, main agent, config schemas — is plain markdown and YAML. This makes it inherently readable by any capable LLM. If someone wants to run Myna on Gemini, Codex, or another tool in the future, they can read the markdown files and write their own wiring. That's an open-source community contribution, not something we architect for upfront.
 
-Everything in this repo. Agent behavior specs, skill instructions, steering rules, vault templates, config schemas, foundations — all in plain markdown and YAML. No tool-specific syntax, no assumptions about file locations or invocation formats for any particular AI tool.
+**What the install script produces for Claude Code:**
 
-**Test:** "Would this file need changes to work on a different AI tool?" If yes, the tool-specific part belongs in the adapter.
+| Source artifact | Install output |
+|----------------|---------------|
+| Main agent (`agents/main.md`) | Included in generated CLAUDE.md |
+| Steering files (`agents/steering/*.md`) | Included in generated CLAUDE.md |
+| Skill files (`agents/skills/*.md`) | Referenced in CLAUDE.md skill directory; Claude reads on demand |
+| MCP server (`agents/mcp/obsidian-cli/`) | Registered via `claude mcp add` |
+| Config templates | `.example` files copied to vault `_system/config/` |
 
-### Adapter Layer (tool-specific)
-
-The install step (Phase 6) reads the content layer and packages it for the target AI tool's runtime format. For v1, the adapter targets Kiro CLI only (D035).
-
-| Content artifact | Adapter produces |
-|-----------------|-----------------|
-| Main agent definition | Agent config in target tool's format |
-| Skill instructions | Skill packages in target tool's format |
-| Steering files | Steering config in target tool's format |
-| MCP wrapper | MCP server registered with target tool |
-| Config templates | .example files in vault |
-
-Adding future AI tool support means writing a new adapter — NOT rewriting content.
+The previous two-layer architecture (content layer + adapter layer, D038) has been superseded. See D046 for rationale.
 
 ---
 
@@ -779,7 +786,7 @@ Myna drafts all outbound communications but never sends them. Every draft requir
 
 **Reference skill: capture.**
 
-The `capture` skill is built first in Phase 3 because it exercises the most representative patterns while being fully testable locally.
+The `capture` skill is built first in Phase 1 because it exercises the most representative patterns while being fully testable locally.
 
 **Why capture:**
 

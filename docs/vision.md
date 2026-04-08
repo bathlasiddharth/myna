@@ -6,9 +6,9 @@
 
 ## What Is Myna?
 
-Myna is a set of AI agent instructions that turn any capable LLM (Claude, Kiro CLI, Gemini, Codex) into a personal assistant for tech employees. It manages the information layer of your job: emails, Slack messages, meetings, projects, people, and tasks.
+Myna is a set of AI agent instructions that turn Claude Code into a personal assistant for tech employees. It manages the information layer of your job: emails, Slack messages, meetings, projects, people, and tasks. All instructions are plain markdown — inherently readable by any capable LLM, but designed and tested for Claude Code.
 
-You interact with Myna by typing natural language prompts inside your AI agent — Kiro CLI, Claude Code, or whatever your company approves. Myna reads from your company's existing MCP-connected tools (email, Slack, calendar) and writes exclusively to your local Obsidian vault.
+You interact with Myna by typing natural language prompts inside Claude Code. Myna reads from your company's existing MCP-connected tools (email, Slack, calendar) and writes exclusively to your local Obsidian vault.
 
 Myna **drafts** but never **sends**. It **organizes** but never **decides**. It **surfaces** but never **hides**. Everything stays local until you choose to act.
 
@@ -49,8 +49,8 @@ Myna processes emails, Slack messages, meeting notes, and documents — all of w
 ### 6. Never Assume, Always Ask
 Ambiguous project name? Unclear meeting reference? Myna asks. A wrong guess creates bad data silently. Asking takes 5 seconds.
 
-### 7. AI Model Agnostic
-Myna is not tied to any specific AI model. This is achieved through a two-layer architecture: all agent content — behaviors, steering, skills, foundations, templates — lives as **tool-neutral files** in a content layer that contains no tool-specific syntax. A lightweight **install-time adapter** packages the content layer for the target AI tool's expected runtime format and locations, handling prompt formatting, guardrails where supported, and feature flags for capabilities the model doesn't support. During setup, you select your AI model (Claude, Kiro CLI, Gemini, Codex) and the adapter produces the right configuration for that tool. Adding a new AI tool in the future means writing a new install adapter, not rewriting content. See D038 for the full rationale.
+### 7. Claude-First, Not Claude-Only
+Myna v1 targets Claude Code as its runtime. All agent content — behaviors, steering, skills, foundations, templates — is plain markdown and YAML. This makes it inherently readable by any capable LLM. If someone wants to run Myna on Gemini, Codex, or another tool in the future, they can read the markdown files and write their own wiring — that's a community contribution, not something we architect for upfront. See D045 and D046 for rationale.
 
 ### 8. Enterprise-Friendly, Minimal Infrastructure
 Myna doesn't require new infrastructure and doesn't send data anywhere. For external services (email, Slack, calendar), it connects to whatever MCP servers your enterprise already provides. The only MCP Myna ships is a lightweight Obsidian CLI wrapper for vault operations — local-only, no network calls.
@@ -64,7 +64,7 @@ All personal data (projects, people, channels, preferences) lives in config file
 
 ```
 ┌─────────────────────────────────────────────────┐
-│  You (inside Kiro CLI / Claude Code / Gemini / etc.) │
+│  You (inside Claude Code)                            │
 │                                                   │
 │  "prep brief for my 1:1 with Sarah"              │
 └────────────────────┬──────────────────────────────┘
@@ -130,12 +130,11 @@ The MCP is kept lightweight and thin so it's easy to update as Obsidian releases
 
 Setup is an interactive conversation (~5 min), not a config file to fill out. The agent walks you through it:
 
-1. **Which AI model?** (Claude Code, Kiro CLI, Gemini, Codex)
-2. **Where's your vault?** (path, or create new)
-3. **What MCP connections do you have?** (email, Slack, calendar — all optional, skip what you don't have)
-4. **What projects are you working on?** (names, aliases, mapped email folders/Slack channels)
-5. **Who do you work with?** (direct reports, manager, key collaborators — names and roles)
-6. **What recurring meetings do you have?** (optional, add later)
+1. **Where's your vault?** (path, or create new)
+2. **What MCP connections do you have?** (email, Slack, calendar — all optional, skip what you don't have)
+3. **What projects are you working on?** (names, aliases, mapped email folders/Slack channels)
+4. **Who do you work with?** (direct reports, manager, key collaborators — names and roles)
+5. **What recurring meetings do you have?** (optional, add later)
 
 After setup, Myna can immediately do useful things like "prep brief for my 1:1 with Sarah" because it knows who Sarah is. Everything else has sensible defaults and can be added later. Power users can skip the interactive setup and edit config files directly.
 
@@ -193,7 +192,7 @@ After setup, Myna can immediately do useful things like "prep brief for my 1:1 w
 - **Not a decision maker.** It surfaces information; you decide.
 - **Not a sender.** It drafts; you send.
 - **Not cloud-dependent.** Everything is local markdown files.
-- **Not model-locked.** Works with any capable LLM.
+- **Not model-locked.** Built for Claude Code, but all instructions are plain markdown readable by any LLM.
 - **Not new infrastructure.** Connects to your company's existing MCP servers.
 - **Not a replacement for your tools.** It augments Obsidian, email, Slack, and calendar — doesn't replace them.
 
@@ -208,4 +207,4 @@ After setup, Myna can immediately do useful things like "prep brief for my 1:1 w
 
 ## Status
 
-This document is a **living draft**. The vision is being refined through discussion before requirements are finalized. See `docs/decisions.md` for settled questions and `docs/open-questions.md` for active exploration.
+Phase 1 (Build) complete. Ready for Phase 2 (Install) targeting Claude Code. See `docs/decisions.md` for settled questions and `docs/roadmap.md` for current progress.

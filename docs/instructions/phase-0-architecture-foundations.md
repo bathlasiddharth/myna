@@ -31,7 +31,7 @@ Both dimensions must be decided before any agent content can be written. Every a
 - Feature toggle mechanism
 - Reference agent selection (which agent will be built first in Phase 3)
 - Lightweight structural check scripts (grep/shell lint — NOT automated behavioral tests)
-- Abstract architecture → Kiro CLI mapping (v1 install target per D035)
+- Architecture → Claude Code runtime mapping (v1 install target per D045)
 
 **Out of scope:**
 - Writing any agent content (Phase 3 and 5)
@@ -85,7 +85,7 @@ Top-down design session with the user. Decide:
 - Steering file list (cross-cutting rules outside any single agent)
 - Cross-cutting utility agents (sentinel, critic, extractor, router — if any)
 - Feature-to-agent mapping (every approved feature assigned to one agent)
-- How the abstract architecture maps to Kiro CLI (v1 install target)
+- How the architecture maps to Claude Code (v1 install target per D045)
 
 Output: `docs/architecture.md` or an architecture section inside `docs/foundations.md`.
 
