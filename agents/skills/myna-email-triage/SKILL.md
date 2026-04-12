@@ -130,6 +130,12 @@ Before writing to review-triage.md, check if a previous triage run left unchecke
 
 If an email was already processed in a prior run (moved to a non-inbox folder), skip it — it won't appear in the inbox read anyway.
 
+**Near-duplicate skips:** If two inbox emails are closely related (e.g., two copies of the same notification, or an email and its forwarded version), and one is already included in review-triage.md, skip the near-duplicate and note it in the file:
+```markdown
+  ~~Skipped: "RE: API spec" — Sarah, 2026-04-05~~ (near-duplicate of entry above)
+```
+This ensures the user can see what was skipped and override if it was actually a distinct email.
+
 ---
 
 ## Edge Cases

@@ -31,7 +31,7 @@ For each project, process emails in the configured `email_folders`. Each folder 
 
 Read messages from channels mapped to projects in projects.yaml (`slack_channels` per project). Process only messages after the last-processed timestamp stored in `_system/logs/processed-channels.md` for each channel.
 
-DMs and unmapped channels: supported via the inbox channel (configurable in projects.yaml as `slack_inbox_channel`). Messages in the inbox channel support keyword routing tags: `TODO`, `LOG`, `BLOCKER`, `DECISION`, `RECOGNITION`. Messages without a keyword tag go through normal extraction.
+DMs and unmapped channels: supported via a designated Slack inbox channel (add `slack_inbox_channel: {channel-name}` to the `triage:` section of projects.yaml). Messages in the inbox channel support keyword routing tags: `TODO`, `LOG`, `BLOCKER`, `DECISION`, `RECOGNITION`. Messages without a keyword tag go through normal extraction.
 
 User can also paste a Slack message or thread directly into the conversation — route using context clues and any project mention.
 
@@ -199,7 +199,7 @@ Both paths run independently. Near-duplicate detection (layer 3) prevents double
 
 During extraction, when an email or Slack message clearly needs a reply from you (someone asked you a direct question, requested a decision, or is waiting on your input), stage a reply-needed task in `ReviewQueue/review-work.md`. The user approves which ones are worth tracking. Approved items become tasks with `[type:: reply-needed]` in the project file.
 
-These surface in the daily note's delegation/open-task view. When a subsequent processing run detects a reply from you in the same thread, mark the reply-needed task complete.
+These surface in the daily note's delegation/open-task view. When a subsequent processing run detects a message from you in the same thread (sender email matches `user.email` from workspace.yaml, or sender name matches `user.name`), mark the reply-needed task complete.
 
 ---
 
