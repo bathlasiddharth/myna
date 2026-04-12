@@ -83,8 +83,8 @@ Deduplicate results.
 3. `Write` the new file with substituted content
 
 If the template doesn't exist, create a minimal file with:
-- Frontmatter (tags, date, type)
-- Appropriate `#tag` at top
+- `#tags` on the first line (no YAML frontmatter)
+- Use `#type/value` tags for typed metadata (e.g., `#status/active`, `#tier/direct`)
 - Empty sections matching the file type's standard structure
 
 ## Vault Path Patterns

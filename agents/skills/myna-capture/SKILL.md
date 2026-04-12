@@ -287,12 +287,7 @@ Output: "Saved link to auth-migration.md and central index."
 2. Create `Projects/{slug}.md` from template. If template exists at `_system/templates/project.md`, use it. Otherwise create minimal structure:
 
 ```markdown
----
-created: {YYYY-MM-DD}
-status: active
----
-
-#project #{project-tag}
+#project #{project-tag} #status/active
 
 ## Overview
 
@@ -329,11 +324,7 @@ SORT priority DESC, due ASC
 2. Create `People/{slug}.md`:
 
 ```markdown
----
-created: {YYYY-MM-DD}
----
-
-#person #{relationship-tier}
+#person #tier/{relationship-tier}
 
 ## Overview
 

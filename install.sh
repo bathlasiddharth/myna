@@ -248,6 +248,28 @@ for name in "${config_files[@]}"; do
   fi
 done
 
+# ── Copy Templates ────────────────────────────────────────────
+
+step "Installing templates"
+
+TEMPLATES_SRC="$SCRIPT_DIR/agents/templates"
+TEMPLATES_DEST="$MYNA_ROOT/_system/templates"
+
+template_count=0
+for tmpl in "$TEMPLATES_SRC"/*.md; do
+  [ -f "$tmpl" ] || continue
+  template_count=$((template_count + 1))
+  dest="$TEMPLATES_DEST/$(basename "$tmpl")"
+
+  if $DRY_RUN; then
+    echo "  [dry-run] cp $tmpl → $dest"
+  else
+    cp "$tmpl" "$dest"
+  fi
+done
+
+info "Installed $template_count templates"
+
 # ── Install Manifest ──────────────────────────────────────────
 
 step "Writing install metadata"
@@ -299,6 +321,7 @@ echo "  Agent file:    $AGENT_FILE"
 echo "  Skills:        $SKILLS_DEST/myna-*/ ($feature_count feature + $steering_count steering)"
 echo "  Vault:         $MYNA_ROOT/"
 echo "  Config:        $MYNA_ROOT/_system/config/"
+echo "  Templates:     $MYNA_ROOT/_system/templates/ ($template_count files)"
 echo "  Manifest:      $MYNA_HOME/install-manifest.json"
 echo ""
 

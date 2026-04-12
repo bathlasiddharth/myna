@@ -48,10 +48,6 @@ Weekly note path: `Journal/WeeklyNote-{YYYY-MM-DD}.md` (Monday of target week)
 If today is Monday **and** no weekly note exists for this week, create `Journal/WeeklyNote-{YYYY-MM-DD}.md` using this template:
 
 ```markdown
----
-week_start: {YYYY-MM-DD}
----
-
 #weekly
 
 ## Week Capacity
@@ -209,27 +205,20 @@ For each calendar event today, if `features.meeting_prep` is enabled:
 
    For **1:1 meetings** (`Meetings/1-1s/{person-slug}.md`):
    ```markdown
-   ---
-   type: 1-1
-   person: [[{person-slug}]]
-   ---
-   #meeting #1-1
+   #meeting #1-1 #person/{person-slug}
+
+   **Person:** [[{person-slug}]]
    ```
 
    For **recurring meetings** (`Meetings/Recurring/{slug}.md`):
    ```markdown
-   ---
-   type: recurring
-   project: {project-name or null}
-   ---
    #meeting #recurring
+
+   **Project:** [[{project-slug}]]
    ```
 
    For **adhoc meetings** (`Meetings/Adhoc/{slug}.md`):
    ```markdown
-   ---
-   type: adhoc
-   ---
    #meeting #adhoc
    ```
 

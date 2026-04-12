@@ -215,31 +215,21 @@ Use a sub-separator if appending to distinguish from original prep:
 
 ### 1:1 File (create if missing)
 ```markdown
----
-type: 1-1
-person: [[{person-slug}]]
----
+#meeting #1-1 #person/{person-slug}
 
-#meeting #1-1
+**Person:** [[{person-slug}]]
 ```
 Sessions are appended below.
 
 ### Recurring File (create if missing)
 ```markdown
----
-type: recurring
-project: {project-slug or null}
----
-
 #meeting #recurring
+
+**Project:** [[{project-slug}]]
 ```
 
 ### Adhoc File (create if missing)
 ```markdown
----
-type: adhoc
----
-
 #meeting #adhoc
 ```
 
