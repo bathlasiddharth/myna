@@ -1,6 +1,6 @@
 ---
 name: myna-park
-description: Save your current working context to a file so a brand new session can resume with zero context loss — covers any task or discussion, not just projects. Resume a parked context by name, or list all parked items. "Switch to [project]" parks current + loads project status.
+description: Save working context for zero-loss resumption in a new session. Resume by name or list all parked items. "Switch to [project]" parks current context and loads project status.
 user-invocable: true
 argument-hint: "park this | park: [topic name] | resume [topic] | resume (show list) | what's parked? | switch to [project]"
 ---
@@ -9,16 +9,16 @@ argument-hint: "park this | park: [topic name] | resume [topic] | resume (show l
 
 Saves context for later resumption. The point: a brand new session should be able to read the parked file and pick up exactly where you left off — zero orientation needed.
 
-## 📋 Before You Start
+## Before You Start
 
 Read at session start:
 - `_system/config/workspace.yaml` — vault path, subfolder
 
-Parked files live at: `{vault}/{subfolder}/_system/parked/{topic-slug}.md`
+Parked files live at: `_system/parked/{topic-slug}.md`
 
 ---
 
-## 🅿️ Park
+## Park
 
 **Trigger:** "park this", "park: [topic name]", "pause and save context"
 
@@ -129,7 +129,7 @@ Output: "Parked. Resume with 'resume auth-caching-discussion'."
 
 ---
 
-## ▶️ Resume
+## Resume
 
 **Trigger:** "resume [topic]", "resume auth-caching-discussion", "pick up where we left off on [topic]"
 
@@ -170,7 +170,7 @@ Ready to continue. Should I check email/Slack for Marcus's response first?
 
 ---
 
-## 📋 List Parked Items
+## List Parked Items
 
 **Trigger:** "resume" (no topic), "what's parked?", "show parked items"
 
@@ -181,7 +181,7 @@ Ready to continue. Should I check email/Slack for Marcus's response first?
 
 **Output:**
 ```
-## 🅿️ Parked Context Files
+## Parked Context Files
 
 1. **auth-caching-discussion** — Auth Migration: Caching Architecture Discussion (parked Apr 5, 2:30 PM)
 2. **q2-planning** — Q2 Planning Priorities (parked Apr 3, 11:15 AM)
@@ -192,7 +192,7 @@ Say "resume [name]" to pick one up.
 
 ---
 
-## 🔀 Switch Projects
+## Switch Projects
 
 **Trigger:** "switch to [project]", "switch context to [project]"
 
@@ -218,24 +218,26 @@ Ready to work on Platform API.
 
 ---
 
-## 🗑️ Archive / Delete
+## Archive / Delete
 
 **Trigger:** "archive [parked item]", "done with [parked item]", "delete [parked item]"
 
 **How:**
 1. Resolve the parked file.
-2. For "archive": move to `_system/parked/archived/{slug}.md` using Bash `mv`.
-3. For "delete": delete the file.
+2. For "archive": read the file, write it to `_system/parked/archived/{slug}.md`, then delete the original.
+3. For "delete": delete the file using the file deletion tool.
 4. Confirm.
 
 ---
 
-## ⚠️ Edge Cases
+## Edge Cases
 
 **No current context to park:** If the session just started and there's nothing to park, say: "Nothing substantive to park yet. Start working on something first."
 
 **Parked file already exists:** "A parked file named '{slug}' already exists (parked {date}). Overwrite, or save as '{slug}-2'?"
 
 **Resume fails to find file:** "I don't see a parked context matching '{name}'. Closest match: '{closest}' — is that the one? Or say 'what's parked?' to see all."
+
+**Nothing parked yet:** If Glob returns no results, say: "Nothing is parked yet. Say 'park this' to save your current context."
 
 **Long conversation with many files:** Include all files that are relevant to resuming the work. Err on the side of including more.

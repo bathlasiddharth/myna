@@ -1,15 +1,15 @@
 ---
 name: myna-1on1-analysis
-description: Analyze 1:1 patterns with a specific person — action item follow-through, recurring topics, carry-forward trends, topic source balance. Reports facts from your notes. Does NOT infer relationship quality. Invoke for "analyze my 1:1s with Sarah", "1:1 trends with Alex", "1:1 patterns".
+description: Analyze 1:1 patterns with a specific person — action item follow-through, recurring topics, carry-forward rate, topic source balance. Reports facts from notes only. Does NOT assess relationship quality. Invoke for "analyze my 1:1s with Sarah", "1:1 trends with Alex", "1:1 patterns".
 user-invocable: true
 argument-hint: "[person name]"
 ---
 
 # 1:1 Pattern Analysis
 
-Reviews 1:1 session notes for a specific person and surfaces factual patterns. Read-only — inline output only.
+Reviews 1:1 session notes for a specific person and surfaces factual patterns across sessions. Read-only — inline output only.
 
-**Strict data boundary:** Report only what's in the notes. No inferences about relationship quality, engagement, or morale. "Fewer topics" doesn't mean anything about the relationship — say it as a count, not an interpretation.
+**Strict data boundary:** Report only what's in the notes. No inferences about relationship quality, engagement, or morale. "Fewer topics" is a count, not a signal about anything.
 
 Check `features.people_management` in workspace.yaml. If disabled, inform the user and stop.
 
@@ -17,7 +17,7 @@ Check `features.people_management` in workspace.yaml. If disabled, inform the us
 
 ## Resolve the Person
 
-Match the user's input against people.yaml via fuzzy resolution. If multiple matches, ask. If the person has `relationship_tier: direct`, proceed. For non-directs, still proceed — the user may be analyzing 1:1s with their own manager or a peer they meet with regularly.
+Match the user's input against people.yaml via fuzzy resolution. If multiple matches, ask the user to clarify. Proceed for any relationship tier — the user may analyze 1:1s with their manager or a peer.
 
 ---
 
@@ -41,8 +41,9 @@ Each session in this file follows the template:
 
 Read all sessions. If the file has more than 12 sessions, default to analyzing the most recent 8. The user can specify a range ("last 6 months", "last 10 sessions").
 
-**Secondary sources:**
-- `People/{person-slug}.md` — feedback dates from Observations section (for feedback cadence analysis)
+**Note on two distinct item types:**
+- **Prep items** (`### Prep` checkboxes) — topics planned before the session. Checkbox state (`[x]` = addressed, `[ ]` = not addressed/carried forward) is the primary signal for carry-forward analysis.
+- **Action items** (`### Notes > **Action Items:**`) — commitments made during the session. These are freeform text. Track them by checking whether the same item text appears in a later session's Notes or Prep as addressed.
 
 ---
 
@@ -50,60 +51,56 @@ Read all sessions. If the file has more than 12 sessions, default to analyzing t
 
 ### 1. Action Item Follow-Through
 
-For each session (starting from the second), check whether action items from the PREVIOUS session appear as addressed in that session's notes or in the carry-forward items.
+For each session (starting from the second), check whether action items from the **previous session's Notes > Action Items** appear as addressed in the current session's notes or prep.
 
 - Count action items from the previous session that were addressed vs. not addressed
-- List the unaddressed items specifically (name the item, the session it came from)
-- Calculate follow-through rate: X of Y action items addressed
+- List unaddressed items specifically: the item text and the session it came from
+- Calculate follow-through rate: X of Y action items addressed across analyzed sessions
 
 ### 2. Recurring Unresolved Topics
 
-Scan discussion notes across sessions for topics that appear in 3 or more sessions without resolution (no "resolved", "closed", "done", "decided" language near them in the same or subsequent sessions).
+Scan `**Discussion:**` notes across all sessions for topics that appear in 3 or more sessions. A topic recurs when the same term, phrase, or subject appears in the discussion text across sessions.
 
-List each recurring topic:
+A topic is resolved if the same or a subsequent session contains "resolved", "closed", "done", "decided", or "won't pursue" in close proximity to that topic text.
+
+List each recurring unresolved topic:
 - Topic name/description
 - Sessions it appeared in (dates)
 - Whether it was ever marked resolved
 
-Don't infer why it recurs — just report the facts.
+Do not infer why it recurs — just report the facts.
 
 ### 3. Carry-Forward Rate
 
-For each session, count:
-- Topics/items carried forward from the previous session (prep items marked `- [ ]` and reappearing, or explicitly labeled as carry-forward)
-- New topics introduced in that session
+Carry-forward is tracked via Prep checkboxes. For each session, count:
+- Prep items marked `- [ ]` (not addressed — carried forward or dropped)
+- Prep items marked `- [x]` (addressed in that session)
 
-Carry-forward rate = (carried items) / (total items) per session, averaged across sessions.
+If a `- [ ]` item from session N appears again in session N+1's Prep, it is confirmed as carried forward. If it disappears, it was dropped.
+
+Carry-forward rate per session = unchecked items / total prep items. Report the per-session rate and the average across sessions.
 
 ### 4. Topic Source Balance
 
 Classify prep items by source:
-- **You added:** items you introduced (not from previous session, not from meeting prep generation)
-- **Carried forward:** items marked as carry-forward from previous session
-- **Generated by prep:** items that appear to come from automated prep (follow-through check, feedback reminder, personal notes)
+- **You added:** items not present in the previous session's prep and not matching known auto-generated patterns
+- **Carried forward:** items that appeared (checked or unchecked) in the previous session's prep
+- **Generated by prep:** items that match known auto-generated patterns — e.g., "No feedback logged in X days", "Carry-forward from last session", items with `[Auto]` markers
 
-Report the breakdown. Don't interpret whether the balance is good or bad.
-
-### 5. Feedback Cadence (if `features.feedback_gap_detection` is enabled)
-
-From the person file's Observations section, report:
-- Date of most recent observation
-- Date of observation that was delivered as feedback (if tracked)
-- Average days between feedback entries
-- Flag if current gap exceeds `feedback_cycle_days` threshold
+Report the count and percentage for each source. Do not interpret whether the balance is good or bad.
 
 ---
 
 ## Output Structure
 
 ```
-## 📊 1:1 Analysis — [Person Name]
+## 1:1 Analysis — [Person Name]
 
 **Sessions analyzed:** [N] sessions ([date range])
 
 ---
 
-### ✅ Action Item Follow-Through
+### Action Item Follow-Through
 
 **Overall rate:** [X]% ([Y of Z] action items addressed across analyzed sessions)
 
@@ -114,13 +111,13 @@ From the person file's Observations section, report:
 | Mar 28  | 4           | 4         | 0             |
 | Mar 21  | 2           | 1         | 1             |
 
-**Unaddressed items (from last 3 sessions):**
+**Unaddressed items (from analyzed sessions):**
 - "Review caching architecture proposal" — from Mar 21, not addressed in Mar 28 or Apr 2
 - "Send growth plan template" — from Apr 2, not yet addressed
 
 ---
 
-### 🔄 Recurring Unresolved Topics
+### Recurring Unresolved Topics
 
 Topics appearing in 3+ sessions without resolution:
 
@@ -129,34 +126,25 @@ Topics appearing in 3+ sessions without resolution:
 
 ---
 
-### 📈 Carry-Forward Rate
+### Carry-Forward Rate
 
 **Average carry-forward rate:** [X]% (average across [N] sessions)
 
-| Session | Total Items | Carried | New | Carry-Forward % |
-|---------|------------|---------|-----|-----------------|
-| Apr 2   | 6          | 3       | 3   | 50%             |
-| Mar 28  | 5          | 2       | 3   | 40%             |
-| Mar 21  | 7          | 4       | 3   | 57%             |
+| Session | Total Prep Items | Unchecked | Checked | Carry-Forward % |
+|---------|-----------------|-----------|---------|-----------------|
+| Apr 2   | 6               | 3         | 3       | 50%             |
+| Mar 28  | 5               | 2         | 3       | 40%             |
+| Mar 21  | 7               | 4         | 3       | 57%             |
 
 ---
 
-### 🎯 Topic Source Balance
+### Topic Source Balance
 
 Across [N] analyzed sessions:
 
 - **You added:** [N] topics ([X]%)
 - **Carried forward:** [N] topics ([X]%)
 - **Auto-generated by prep:** [N] topics ([X]%)
-
----
-
-### 💬 Feedback Cadence   [only if feature enabled]
-
-- Last observation logged: [date] ([X] days ago)
-- Configured threshold: [N] days
-- Gap status: [within threshold ✅ | over threshold ⚠️ ([X] days over)]
-- Average gap between feedback entries (last 6 months): [N] days
 ```
 
 ---
@@ -170,13 +158,13 @@ Across [N] analyzed sessions:
 **Output:**
 
 ```
-## 📊 1:1 Analysis — Sarah Chen
+## 1:1 Analysis — Sarah Chen
 
 **Sessions analyzed:** 8 sessions (2026-01-31 to 2026-04-02)
 
 ---
 
-### ✅ Action Item Follow-Through
+### Action Item Follow-Through
 
 **Overall rate:** 72% (18 of 25 action items addressed across 8 sessions)
 
@@ -194,7 +182,7 @@ Across [N] analyzed sessions:
 
 ---
 
-### 🔄 Recurring Unresolved Topics
+### Recurring Unresolved Topics
 
 Topics appearing in 3+ sessions without resolution:
 
@@ -203,35 +191,26 @@ Topics appearing in 3+ sessions without resolution:
 
 ---
 
-### 📈 Carry-Forward Rate
+### Carry-Forward Rate
 
-**Average carry-forward rate:** 46% (across 7 transitions)
+**Average carry-forward rate:** 46% (across 7 session transitions)
 
-| Session | Total Items | Carried | New | Carry-Forward % |
-|---------|------------|---------|-----|-----------------|
-| Apr 2   | 6          | 3       | 3   | 50%             |
-| Mar 28  | 5          | 2       | 3   | 40%             |
-| Mar 21  | 7          | 4       | 3   | 57%             |
-| Mar 7   | 5          | 2       | 3   | 40%             |
+| Session | Total Prep Items | Unchecked | Checked | Carry-Forward % |
+|---------|-----------------|-----------|---------|-----------------|
+| Apr 2   | 6               | 3         | 3       | 50%             |
+| Mar 28  | 5               | 2         | 3       | 40%             |
+| Mar 21  | 7               | 4         | 3       | 57%             |
+| Mar 7   | 5               | 2         | 3       | 40%             |
 
 ---
 
-### 🎯 Topic Source Balance
+### Topic Source Balance
 
 Across 8 sessions:
 
 - **You added:** 14 topics (34%)
 - **Carried forward:** 22 topics (54%)
 - **Auto-generated by prep:** 5 topics (12%)
-
----
-
-### 💬 Feedback Cadence
-
-- Last observation logged: 2026-04-02 (10 days ago)
-- Configured threshold: 30 days
-- Gap status: within threshold ✅
-- Average gap (last 6 months): 18 days
 ```
 
 ---
@@ -240,6 +219,7 @@ Across 8 sessions:
 
 - **No 1:1 file found:** "No 1:1 meeting file found for [person]. 1:1 analysis requires meeting notes in `Meetings/1-1s/{person-slug}.md`."
 - **Fewer than 3 sessions:** Show what's available, note "Analysis is limited — only [N] sessions found."
-- **Notes section is empty in a session:** That session counts toward the total but can't contribute to topic analysis. Note how many sessions had no notes.
-- **No action items in notes:** Skip the action item section, note that no action items were found in the notes format.
-- **User specifies a range:** "analyze my last 6 months of 1:1s with Sarah" → filter sessions by date range, proceed with the filtered set.
+- **Notes section empty in a session:** That session counts toward the total but cannot contribute to action item or recurring topic analysis. Note how many sessions had no notes.
+- **No action items in any session:** Skip the Action Item Follow-Through section, note that no action items were found in the notes.
+- **No prep checkboxes:** Skip Carry-Forward Rate and Topic Source Balance, note that no prep items were found.
+- **User specifies a range:** Filter sessions by date range or count, proceed with the filtered set.

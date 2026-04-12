@@ -1,6 +1,6 @@
 ---
 name: myna-prep-meeting
-description: Generate or update meeting prep for a specific meeting or all remaining meetings today. Infers meeting type from calendar data. Creates or appends the Prep section in the meeting file with checkboxes, carry-forward items, and conversation coaching for sensitive topics.
+description: Generate or update meeting prep for one meeting or all remaining meetings today. Infers meeting type from calendar data, writes the Prep section with checkboxes, carry-forward items, and coaching notes for sensitive topics.
 user-invocable: true
 argument-hint: '"prep for my 1:1 with Sarah", "prep for my remaining meetings", "update prep for my meetings"'
 ---
@@ -154,7 +154,6 @@ Active blockers from shared project timelines.
 - Related project context: what phase, what's already decided
 - Previous decisions on this topic (from project timeline)
 - Open questions or risks to raise (from project file Notes section)
-- Pre-read note if available (from a parked context or meeting file)
 
 ### Cross-Team Meeting Prep
 
@@ -183,8 +182,6 @@ Use relationship tier from people.yaml and `communication-style.yaml` `difficult
 ```
 
 Not every item gets coaching — only items flagged as sensitive. Straightforward status items and follow-ups stay as plain checkboxes.
-
-All data points are factual (dates, counts, specific entries). The judgment is yours, not the AI's.
 
 ---
 
@@ -215,21 +212,31 @@ Use a sub-separator if appending to distinguish from original prep:
 
 ### 1:1 File (create if missing)
 ```markdown
-#meeting #1-1 #person/{person-slug}
+---
+type: 1-1
+person: [[{person-slug}]]
+---
 
-**Person:** [[{person-slug}]]
+#meeting #1-1
 ```
 Sessions are appended below.
 
 ### Recurring File (create if missing)
 ```markdown
-#meeting #recurring
+---
+type: recurring
+project: {project-slug or null}
+---
 
-**Project:** [[{project-slug}]]
+#meeting #recurring
 ```
 
 ### Adhoc File (create if missing)
 ```markdown
+---
+type: adhoc
+---
+
 #meeting #adhoc
 ```
 

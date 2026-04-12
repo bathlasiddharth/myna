@@ -1,6 +1,6 @@
 ---
 name: myna-brief-person
-description: Brief me on a person — synthesizes everything Myna knows about someone before a meeting or conversation. Covers role, shared projects, open items, pending feedback, 1:1 history, and personal notes. Works for directs, peers, manager, cross-team contacts, and VPs.
+description: Deep-dive briefing on one person — role, shared projects, open items, pending feedback, 1:1 history, personal notes. Works for directs, peers, manager, or cross-team. (For all directs at once, use myna-team-health.)
 user-invocable: true
 argument-hint: "[person name]"
 ---
@@ -24,9 +24,15 @@ Once resolved, read these files in parallel:
 | Person file | `People/{person-slug}.md` | Role, team, relationship tier, recent observations, pending feedback, recognition log, personal notes |
 | 1:1 meeting file | `Meetings/1-1s/{person-slug}.md` | Last session date, carry-forward items from last session, action items from last session |
 | Project files | `Projects/*.md` | Projects where this person appears in key-people or timeline entries |
-| Task files | All project files + personal TODOs | Open delegations assigned TO this person (`[type:: delegation] [person:: {name}]`), open tasks waiting ON this person |
-| Contributions log | `Journal/contributions-{week}.md` | Recent contributions this person is mentioned in |
+| Task files | All project files + personal TODOs | Open items involving this person — see "Open Items detection" below |
+| Contributions log | `Journal/contributions-{week}.md` for current and prior week | Recent contributions this person is mentioned in |
 | Recent interactions | Grep `{person-name}` across `Projects/`, `Meetings/`, and `Journal/` | Timeline entries and meeting notes that mention this person in the last 30 days — these represent recent email/Slack exchanges and interactions that were logged to the vault |
+
+**Person slug:** The file path slug is the kebab-case of the person's full_name from people.yaml (e.g., "Sarah Chen" → `sarah-chen`). If people.yaml has no full_name, use display_name.
+
+**Open Items detection:** Grep open tasks (`- [ ]`) across `Projects/` that mention this person:
+- **You delegated to them:** `[type:: delegation] [person:: {name}]` — tasks where you assigned them work
+- **They're waiting on you:** `[type:: dependency] [person:: {name}]` or `[type:: reply-needed] [person:: {name}]` — tasks blocking them that require your action
 
 For **cross-team contacts, PMs, and VPs** (relationship_tier: cross-team or upward): also collect stakeholder mentions — every place this person appears in your vault data (meeting notes, timeline entries, email references). Present as a dated list of raw mentions, not interpreted stance or position.
 
@@ -171,6 +177,6 @@ Action items from last session:
 
 - **No person file exists:** Create a minimal briefing from what's findable (project mentions, meeting references). Note "No person file found — briefing is partial."
 - **No 1:1 history:** Skip the 1:1 History section entirely.
-- **Manager or skip-level (upward relationship):** Focus on shared context — projects they're stakeholders on, recent email/meeting mentions, open items. Skip the pending feedback section (you don't manage them).
+- **Manager or skip-level (upward relationship):** Focus on shared context — projects they're stakeholders on, recent email/meeting mentions, open items. Skip the pending feedback section (you don't manage them). Show Stakeholder Mentions section (same as cross-team).
 - **Cross-team contact with no person file:** Show stakeholder mentions only — pull every vault mention with date and source.
 - **Ambiguous person name:** "brief me on Alex" when there's both an Alex Kumar and an Alex Thompson — list both and ask which one.

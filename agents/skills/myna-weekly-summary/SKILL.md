@@ -1,13 +1,13 @@
 ---
 name: myna-weekly-summary
-description: Summarize your week — synthesizes daily notes, contributions, decisions, and task completions into a structured weekly review with self-reflection prompts. Appends a new summary section to the weekly note each time it's run; never duplicates prior summaries. Includes team health snapshot for managers.
+description: Summarize your week — synthesizes daily notes, contributions, decisions, and task completions into a structured weekly review with self-reflection prompts. Appends a new section each run. Includes team health snapshot for managers.
 user-invocable: true
 argument-hint: "[week of YYYY-MM-DD | last week]"
 ---
 
 # myna-weekly-summary
 
-Generates or updates the weekly summary. Each run appends a fresh summary section to the weekly note with a timestamp. If run multiple times in a week, only adds what's new since the last summary — no duplication.
+Generates or updates the weekly summary. Each run appends a fresh `## Weekly Summary — {date}` section to the weekly note. Re-runs are additive — previous sections stay untouched.
 
 ---
 
@@ -33,12 +33,9 @@ Read `workspace.yaml`:
 
 ---
 
-## Step 3: Determine What's Already Covered
+## Step 3: Read Existing Weekly Note
 
-Read the existing weekly note. Look for prior "Weekly Summary — {date}" sections. Note the timestamp of the most recent one.
-
-**First run:** Synthesize the full week.
-**Re-run:** Only surface items from after the last summary's timestamp — tasks completed since then, new decisions logged, contributions added. Do not re-surface items already in the prior summary.
+Read the weekly note if it exists. Note any prior "Weekly Summary" sections for context. Each run always appends a full new summary section — do not skip or abbreviate because a prior section exists.
 
 ---
 
@@ -53,33 +50,33 @@ Read in parallel:
 
 **Contributions log:** Read `Journal/contributions-{YYYY-MM-DD}.md` (Monday date). Collect all entries for the week.
 
-**Decisions logged this week:** Grep `myna/Projects/` for `[!info] Decision` blocks with dates in the target week.
+**Decisions logged this week:** Grep `{vault.path}/Projects/` for `[!info] Decision` blocks with dates in the target week.
 
-**Blockers this week:** Grep `myna/Projects/` for `[!warning] Blocker` blocks with dates in the target week, plus any blockers that opened before the week and are still unresolved.
+**Blockers this week:** Grep `{vault.path}/Projects/` for `[!warning] Blocker` blocks with dates in the target week, plus any blockers that opened before the week and are still unresolved.
 
-**Tasks completed vs carried:** Grep `myna/` for:
+**Tasks completed vs carried:** Grep `{vault.path}/` for:
 - `- \[x\]` with completion dates in the target week → completed count
 - Items present in Monday's daily note Immediate Attention and still `- \[ \]` at end of week → carried count
 
-**For managers — Team Health** (if `features.team_health` enabled and role is `engineering-manager`): Read all `People/{slug}.md` files for direct reports (those with `relationship_tier: direct` in people.yaml). For each, gather: open task count, overdue task count, last 1:1 date, feedback gap (days since last entry in Pending Feedback or Observations). Check `Team/{team}.md` for any existing health snapshots this week.
+**For managers — Team Health** (if `features.team_health` enabled and role is `engineering-manager`): Read all `People/{slug}.md` files for direct reports (those with `relationship_tier: direct` in people.yaml). For each, gather: open task count, overdue task count, last 1:1 date, feedback gap (days since last entry in Pending Feedback or Observations), attention gap (days since any interaction was logged — 1:1, observation, or quick note). Check `Team/{team}.md` for any existing health snapshots this week.
 
 ---
 
 ## Step 5: Write Weekly Summary Section
 
-Append to the weekly note at the appropriate position (after `## Carry-Forwards`, before any prior summary sections if re-running, or at the end on first run):
+Append a new section to the end of the weekly note:
 
 ```markdown
 ## Weekly Summary — {YYYY-MM-DD}
 
-### ✅ Accomplishments
+### Accomplishments
 
 {Key completed work this week. Not a raw task dump — synthesize into meaningful outcomes. Lead with the most impactful items.}
 
 - {outcome or completed work} [{provenance if from contributions log}]
 - ...
 
-### 🧭 Decisions Made
+### Decisions Made
 
 {Decisions logged this week across all projects.}
 
@@ -87,7 +84,7 @@ Append to the weekly note at the appropriate position (after `## Carry-Forwards`
 - ...
 {If none: "(no decisions logged this week)"}
 
-### 🧱 Blockers
+### Blockers
 
 {Blockers opened or unresolved this week.}
 
@@ -95,24 +92,26 @@ Append to the weekly note at the appropriate position (after `## Carry-Forwards`
 - ...
 {If none: "(no open blockers)"}
 
-### 📊 Tasks: Completed vs Carried
+### Tasks: Completed vs Carried
 
 Completed {N} tasks. Carried {M} to next week.
 {If M > 0: List the carried tasks. If M is large (5+): "Consider reviewing what's chronically deferred."}
 
-### 🤔 Self-Reflection
+### Self-Reflection
 
 {2–4 agent-generated prompts based on this week's patterns. These are questions, not judgments.}
 
-{Examples of what to generate based on patterns observed:}
-- If feedback gap > threshold: "You haven't logged any observations for {person} in {N} days. Anything worth capturing from this week's interactions?"
-- If multiple carry-overs: "3 tasks have been carried forward multiple times. Are these still the right priorities, or should they be explicitly deferred or dropped?"
-- If delegation overdue: "{Person}'s {task} is {N} days overdue. Is it blocked? Did the priority change?"
-- If low meeting count: "Lighter meeting week — did you get the deep work time you needed, or did other things fill it?"
-- If high meeting count: "Heavy meeting week ({N} hrs). What would you protect next week for focused work?"
-- If time allocation imbalanced (e.g., most hours in meetings, few tasks completed): "You spent {N} hrs in meetings this week and completed {M} tasks. Is that the balance you wanted?"
-- If overdue delegations persist across the week: "You had {N} overdue delegations at the start of the week. {M} are still open. What's blocking resolution?"
+Pattern triggers (all users):
+- Multiple carry-overs: "3 tasks carried forward multiple times — still the right priorities, or should they be deferred?"
+- Light meeting week: "Did you get the deep work time you needed, or did other things fill it?"
+- Heavy meeting week: "{N} hrs in meetings. What would you protect next week for focused work?"
+- Low task completion vs. meeting time: "You completed {M} tasks against {N} hrs of meetings. Is that the balance you wanted?"
 - General: "What would have made this week better?"
+
+Pattern triggers (engineering-manager role only — skip entirely for IC):
+- Feedback gap > threshold: "You haven't logged any observations for {person} in {N} days. Anything worth capturing?"
+- Delegation overdue: "{Person}'s {task} is {N} days overdue. Is it blocked? Did the priority change?"
+- Persistent overdue delegations: "{N} overdue delegations at week start, {M} still open. What's blocking resolution?"
 ```
 
 ---
@@ -140,9 +139,9 @@ Append under `## Health Snapshots`:
 ```markdown
 ### {YYYY-MM-DD}
 
-| Person | Open Tasks | Overdue | Feedback Gap | Last 1:1 |
-|--------|-----------|---------|--------------|----------|
-| {name} | {N}       | {N}     | {N} days     | {date}   |
+| Person | Open Tasks | Overdue | Feedback Gap | Attention Gap | Last 1:1 |
+|--------|-----------|---------|--------------|---------------|----------|
+| {name} | {N}       | {N}     | {N} days     | {N} days      | {date}   |
 | ...
 ```
 
@@ -154,10 +153,10 @@ Flag entries:
 Also include in the weekly summary section:
 
 ```markdown
-### 👥 Team Health
+### Team Health
 
-| Person | Open | Overdue | Feedback Gap | Last 1:1 |
-|--------|------|---------|--------------|----------|
+| Person | Open Tasks | Overdue | Feedback Gap | Attention Gap | Last 1:1 |
+|--------|-----------|---------|--------------|---------------|----------|
 | {data} |
 ```
 
@@ -185,7 +184,7 @@ Then suggest:
 
 ## Examples
 
-### Example 1: End-of-week summary (first run)
+### Example 1: End-of-week summary, first run (manager role)
 
 User says: "weekly summary" on Friday April 11.
 
@@ -217,9 +216,7 @@ User says: "weekly summary" again on Friday evening after running wrap-up.
 
 Existing summary covers through Thursday wrap-up. New data since then: Friday's completed tasks (2), one new decision logged during the afternoon meeting.
 
-Append a new section "Weekly Summary — 2026-04-11 (updated)":
-- Shows only the new items (Friday's completions + the new decision)
-- Notes "Updated from prior summary at [time]."
+Append a new `## Weekly Summary — 2026-04-11` section with the full week's data. The prior section from Thursday remains in place above it.
 
 ### Example 3: Manager with team health
 
@@ -244,3 +241,5 @@ Write team health table to both weekly note and `Team/platform-team.md`. Mention
 **Feature toggle `weekly_summary` off:** Decline with "Weekly summary is disabled. Enable it in workspace.yaml under features.weekly_summary."
 
 **IC role with team_health toggle on:** Skip team health section — it requires the engineering-manager role. Skip silently (don't mention it in output).
+
+**Partial week (running mid-week, e.g., Wednesday):** Summarize the days available so far. Note in the summary header: "Note: summary covers {Mon}–{today} — run again at week's end for a complete picture." Self-reflection prompts should reflect partial data (e.g., don't flag "light meeting week" if the week isn't over).

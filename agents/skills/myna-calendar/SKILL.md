@@ -1,6 +1,6 @@
 ---
 name: myna-calendar
-description: Create time blocks, reminders, and task breakdowns on your calendar. Finds available slots, proposes options, and creates personal calendar events (never with attendees). Three-layer safety on every calendar write. Does NOT handle meeting prep or scheduling with other people.
+description: Create personal calendar time blocks, reminders, and task breakdowns. Finds free slots, proposes options, user confirms. Three-layer safety on every write — no attendees, ever. Does not handle meeting prep or scheduling with others.
 user-invocable: true
 argument-hint: "reserve [duration] [when] for [what] | remind me [what] at [time] | break down [task]"
 ---
@@ -11,30 +11,19 @@ Creates personal calendar events (time blocks and reminders) and breaks down tas
 
 ---
 
-## Three Operations
-
-### 1. Time Block Planning
-
-Reserve focused work time on your calendar.
-
-### 2. Calendar Reminders
-
-Set a timed reminder for a task or standalone item.
-
-### 3. Task Breakdown
-
-Decompose a complex task into subtasks and optionally schedule each one.
-
----
-
 ## Time Block Planning
 
-**Triggers:** "reserve 2 hours Thursday for the design doc", "block 3 hours this week for deep work", "plan my day with time blocks", "find me a good slot for [task]"
+**Triggers:** "plan my day", "reserve 2 hours Thursday for the design doc", "block 3 hours this week for deep work", "plan my day with time blocks", "find me a good slot for [task]"
+
+**Toggle:** `features.time_blocks` in workspace.yaml. If disabled, decline: "Time block planning is disabled in your config."
 
 ### How It Works
 
 **Step 1: Determine scope and duration**
-Extract from the request: duration (required), when (day, "this week", "morning", etc.), and purpose.
+
+For "plan my day": read workspace.yaml work hours, query today's calendar for free slots, read open tasks due today or flagged as today's focus. Suggest time block assignments for each task, fitting them into free slots. Show a proposed schedule inline and ask the user to confirm before creating any events.
+
+For specific requests: extract duration (required), when (day, "this week", "morning", etc.), and purpose.
 
 **Step 2: Find available slots**
 
@@ -55,27 +44,25 @@ Show all parameters before creating:
 
 ```
 📅 Proposed time block:
-Title: {prefix}:{type} {purpose}
+Title: [Myna:Focus] {purpose}
 When: {day}, {start time}–{end time} ({duration})
 No attendees.
 
 Create this event? (yes / pick a different slot / cancel)
 ```
 
-The prefix comes from workspace.yaml `calendar_event_prefix` (default: `[Myna]`). The type label comes from `calendar_event_types`:
-- Focus work → `[Myna:Focus]`
-- Task-linked → `[Myna:Task]`
+Event type labels (`[Myna:Focus]`, `[Myna:Task]`, `[Myna:Reminder]`) and the base prefix (`[Myna]`) are configurable in workspace.yaml. Focus work → `[Myna:Focus]`, task-linked → `[Myna:Task]`.
 
 **Step 4: Create the event**
 
-Only after explicit user confirmation. Before calling the calendar MCP tool, verify: (a) no attendees field is populated, (b) event title includes the configured prefix. If either check fails, stop and report the issue rather than proceeding.
+Only after explicit user confirmation. Apply myna-steering-safety three-layer calendar protection: verify no attendees and title has configured prefix before calling the MCP tool. If either check fails, stop and report.
 
 Call the calendar MCP's create_event tool with:
-- `title`: `{prefix}:{type_label} {purpose}`
+- `title`: `[Myna:Focus] {purpose}` (using configured type label)
 - `start`: ISO datetime
 - `end`: ISO datetime
 - `description`: optional context about the task
-- **No attendees field** — never add attendees. Reject any call that would include attendees.
+- **No attendees field — never.**
 
 If creation succeeds, confirm: "✅ Time block created: {title}, {day} {start}–{end}."
 
@@ -84,6 +71,8 @@ If creation succeeds, confirm: "✅ Time block created: {title}, {day} {start}�
 ## Calendar Reminders
 
 **Triggers:** "remind me about the design review at 2pm", "remind me to call Alice at 3pm", "set a reminder for the deployment window at 11 AM"
+
+**Toggle:** `features.calendar_reminders` in workspace.yaml. If disabled, decline: "Calendar reminders are disabled in your config."
 
 ### Two Reminder Types
 
@@ -103,7 +92,7 @@ If "at 2pm" is ambiguous (today or tomorrow?), assume today if the time hasn't p
 
 ```
 ⏰ Proposed reminder:
-Title: {prefix}:Reminder {what}
+Title: [Myna:Reminder] {what}
 When: {day}, {time} ({duration}: 15 min)
 No attendees.
 
@@ -166,15 +155,6 @@ Tasks go in the project file, not the Dataview query block — the Dataview quer
 After writing subtasks: "Want me to find calendar slots for any of these? Say 'block time for subtask 1' and I'll find a slot."
 
 Do not auto-schedule. Let the user choose which subtasks to block time for.
-
----
-
-## Feature Toggles
-
-Check before each operation:
-- `features.time_blocks` → gates Time Block Planning. If disabled, decline: "Time block planning is disabled in your config."
-- `features.calendar_reminders` → gates Calendar Reminders. If disabled, decline similarly.
-- Task Breakdown has no toggle — always available.
 
 ---
 
@@ -279,3 +259,5 @@ User says "yes". Tasks appended to auth-migration.md. "Want me to find calendar 
 **Duration exceeds work day:** "That's {N} hours — longer than your work day. Want multiple shorter blocks instead?"
 
 **Task breakdown with no matching project:** "Couldn't find a project file for '{task}'. Want me to write the subtasks to your daily note instead?"
+
+**User specifies an already-booked time:** Show what's on the calendar at that time and offer the nearest free slots instead. Don't overwrite existing events.

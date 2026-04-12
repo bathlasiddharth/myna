@@ -1,6 +1,6 @@
 ---
 name: myna-sync
-description: Set up or refresh your day — creates the daily note (or prepends a new snapshot if re-run), generates meeting prep files, surfaces overdue tasks, delegation alerts, and review queue count. Also handles "plan tomorrow" and first-of-week weekly note creation. Auto-archives old journal notes.
+description: 'Sync / "good morning" / "set up my day" — creates or refreshes the daily note, generates meeting prep, surfaces overdue tasks and review queue. Handles "plan tomorrow" and weekly note creation. Auto-archives old journal notes.'
 user-invocable: true
 argument-hint: "[plan tomorrow]"
 ---
@@ -27,9 +27,11 @@ Read from `_system/config/workspace.yaml`:
 - `timezone` → for date resolution
 - `journal.archive_after_days` → for auto-archiving
 - `calendar_event_prefix` and `calendar_event_types` → for naming calendar events
-- `features` map → check: `meeting_prep`, `milestones`, `contribution_detection`
+- `features` map → check: `meeting_prep`, `milestones`
 
-Read from `_system/config/projects.yaml`, `people.yaml`, `meetings.yaml`.
+Read from `_system/config/projects.yaml`, `_system/config/people.yaml`, `_system/config/meetings.yaml`.
+
+If `workspace.yaml` is missing or unreadable, stop and tell the user: "workspace.yaml not found at `_system/config/workspace.yaml`. Myna can't run without it."
 
 ---
 
@@ -41,13 +43,19 @@ Read from `_system/config/projects.yaml`, `people.yaml`, `meetings.yaml`.
 Daily note path: `Journal/DailyNote-{YYYY-MM-DD}.md`
 Weekly note path: `Journal/WeeklyNote-{YYYY-MM-DD}.md` (Monday of target week)
 
+If "plan tomorrow" is run again after the user has already edited the note: treat it as a re-run. Prepend a new snapshot, never overwrite Morning Focus or any user-written content.
+
 ---
 
 ## Step 3: Weekly Note (first sync of the week only)
 
-If today is Monday **and** no weekly note exists for this week, create `Journal/WeeklyNote-{YYYY-MM-DD}.md` using this template:
+If no weekly note exists for the ISO week containing the target date, create `Journal/WeeklyNote-{YYYY-MM-DD}.md` (Monday of that week) using this template:
 
 ```markdown
+---
+week_start: {YYYY-MM-DD}
+---
+
 #weekly
 
 ## Week Capacity
@@ -60,18 +68,22 @@ If today is Monday **and** no weekly note exists for this week, create `Journal/
 | Thu | {hrs} hrs | {hrs} hrs | {hrs} hrs |
 | Fri | {hrs} hrs | {hrs} hrs | {hrs} hrs |
 
-{Packed day flags and rebalancing suggestions.}
-
 ## Weekly Goals
 
-> User-editable. Set your priorities for the week.
+> User-editable.
 
 ## Carry-Forwards
 
-> Items carried from last week (auto-populated from last Friday's wrap-up).
+## Weekly Summary
 
-{List any items found in last week's wrap-up carry-forward section, or "(none)" if clean.}
+### Accomplishments
+### Decisions Made
+### Blockers
+### Tasks: Completed vs Carried
+### Self-Reflection
 ```
+
+After writing the file, append packed day flags and carry-forward items from last week's wrap-up section below the table (before `## Weekly Goals`), or "(none)" if clean.
 
 Populate Week Capacity by reading this week's calendar events (duration + count per day) and querying tasks with due dates in the coming week. Flag any day with more than 6 hours of meetings as packed. Suggest rebalancing if one day looks heavier than adjacent days.
 
@@ -79,7 +91,7 @@ Populate Week Capacity by reading this week's calendar events (duration + count 
 
 ## Step 4: Auto-Archive Old Journal Notes
 
-Check `journal.archive_after_days` (default: 30). Use Glob to find all `Journal/DailyNote-*.md` and `Journal/WeeklyNote-*.md` files. Move any file older than the threshold to `Journal/Archive/` using Bash `mv`. Do this silently — don't report individual files moved. Report the count at the end.
+Check `journal.archive_after_days` (default: 30). Use Glob to find all `Journal/DailyNote-*.md` and `Journal/WeeklyNote-*.md` files. Determine age using the date in the filename (not filesystem mtime). Files whose filename date is more than `archive_after_days` days before today qualify. If 5 or more files qualify, show the list and wait for user confirmation before moving. Move qualifying files to `Journal/Archive/` using Bash `mv`. Report the count at the end — don't list individual files moved.
 
 ---
 
@@ -89,15 +101,15 @@ Collect in parallel:
 
 **Calendar:** Read today's (or tomorrow's) calendar events via the calendar MCP. For each event, note: title, start time, end time, attendees (count only — not names), and any existing meeting file path. If calendar MCP is unavailable, skip calendar sections and note it in the output.
 
-**Open tasks:** Grep `myna/Projects/` and the current daily note for `- \[ \]` with `📅 {date}` on or before target date (overdue or due today). Also find tasks with no due date and high priority `⏫`. Cap at 15 items for the Immediate Attention section.
+**Open tasks:** Grep `{vault}/{subfolder}/Projects/` and the current daily note for `- \[ \]` with `📅 {date}` on or before target date (overdue or due today). Also find tasks with no due date and high priority `⏫`. Cap at 15 items for the Immediate Attention section.
 
-**Overdue delegations:** Grep `myna/` for `- \[ \]` lines containing `[type:: delegation]` with `📅 {date}` before today. These are red-flag items.
+**Overdue delegations:** Grep `{vault}/{subfolder}/` for `- \[ \]` lines containing `[type:: delegation]` with `📅 {date}` before today. These are red-flag items.
 
-**Review queue counts:** Read `ReviewQueue/review-work.md`, `ReviewQueue/review-people.md`, `ReviewQueue/review-self.md`. Count unchecked items (`- \[ \]`) in each.
+**Review queue counts:** Read `{vault}/{subfolder}/ReviewQueue/review-work.md`, `review-people.md`, `review-self.md`, and `review-triage.md`. Count unchecked items (`- \[ \]`) in each. If a file doesn't exist, treat its count as 0.
 
 **Milestones** (if `features.milestones` is enabled): Read `people.yaml` and all People files. Find birthdays (`birthday: MM-DD`) or work anniversaries (`work_anniversary: YYYY-MM-DD`) within the next 7 days.
 
-**Blockers:** Grep `myna/Projects/` for `[!warning] Blocker` callout blocks. Surface only unresolved ones (no "resolved" or "fixed" text after the callout).
+**Blockers:** Grep `{vault}/{subfolder}/Projects/` for `> \[!blocker\]` callout blocks. For each match, read a window of ~5 surrounding lines. Skip if `resolved:: true` or `status:: resolved` appears within the same callout block. Surface only unresolved ones.
 
 ---
 
@@ -105,9 +117,11 @@ Collect in parallel:
 
 **If daily note doesn't exist:** Create it with the Morning Focus section and the first snapshot below.
 
-**If daily note exists (re-run):** Read it first. Use the existing snapshot(s) as context to detect what's changed (new meetings added since last sync, tasks completed, queue items resolved). Then prepend a fresh snapshot at the very top, before Morning Focus. Never move, edit, or collapse previous snapshots.
+**If daily note exists (re-run):** Read it first. Use the existing snapshot(s) as context to detect what's changed (new meetings added since last sync, tasks completed, queue items resolved). Then insert a fresh snapshot immediately after the `#daily` tag line and before the `## Morning Focus` section. Never move, edit, or collapse previous snapshots.
 
 ### Daily Note Structure (new file)
+
+Substitute `{vault.subfolder}` with the actual subfolder value from `workspace.yaml` when writing the Dataview blocks.
 
 ```markdown
 ---
@@ -122,46 +136,46 @@ date: {YYYY-MM-DD}
 
 ## Sync — {HH:MM}
 
-### ⚡ Capacity Check
+### Capacity Check
 
 {available_focus_hours} hrs focus time vs {task_effort_hours} hrs task effort due today.
-{Over-capacity flag if effort > focus: "⚠️ Over capacity by {N} hrs — consider deferring or delegating."}
+{Over-capacity flag if effort > focus: "Over capacity by {N} hrs — consider deferring or delegating."}
 
-### 🎯 Immediate Attention
+### Immediate Attention
 
 {1–5 highest-priority items: overdue tasks, overdue delegations, approaching deadlines, blockers. One line each.}
 
-### 📋 Open Tasks
+### Open Tasks
 
 ```dataview
 TASK
-FROM "myna"
+FROM "actual-subfolder-value"
 WHERE !completed AND (due <= date(today) OR !due)
 SORT priority DESC
 LIMIT 20
 ```
 
-### 📤 Delegations
+### Delegations
 
 ```dataview
 TASK
-FROM "myna"
+FROM "actual-subfolder-value"
 WHERE !completed AND type = "delegation"
 SORT due ASC
 ```
 
-### 🗂️ Review Queue
+### Review Queue
 
-{total_count} items pending: [[review-work]] ({work_count}), [[review-people]] ({people_count}), [[review-self]] ({self_count}).
+{total_count} items pending: [[review-work]] ({work_count}), [[review-people]] ({people_count}), [[review-self]] ({self_count}), [[review-triage]] ({triage_count}).
 
-### 🎂 Milestones
+### Milestones
 
 {Upcoming birthdays/anniversaries if milestones enabled, else omit this section entirely.}
 
-### 📅 Today's Meetings
+### Today's Meetings
 
 {For each calendar event today, one checkbox linking to the prep file:}
-- [ ] {HH:MM} [[{meeting-file-path}]] — {meeting title}
+- [ ] {HH:MM} [[{meeting-file}]] — {meeting title}
 ```
 
 ### Re-run Snapshot Format (prepended at top)
@@ -169,22 +183,22 @@ SORT due ASC
 ```markdown
 ## Sync — {HH:MM}
 
-### ⚡ Capacity Check
+### Capacity Check
 
 {available_focus_hours} hrs focus time vs {task_effort_hours} hrs task effort.
 {Delta from previous sync: "Since last sync: {N} tasks completed, {M} meetings added."}
 
-### 🎯 Immediate Attention
+### Immediate Attention
 
 {Updated priority items.}
 
-### 🗂️ Review Queue
+### Review Queue
 
-{total_count} items pending: [[review-work]] ({work_count}), [[review-people]] ({people_count}), [[review-self]] ({self_count}).
+{total_count} items pending: [[review-work]] ({work_count}), [[review-people]] ({people_count}), [[review-self]] ({self_count}), [[review-triage]] ({triage_count}).
 
-### 📅 Today's Meetings
+### Today's Meetings
 
-- [ ] {HH:MM} [[{meeting-file-path}]] — {meeting title}
+- [ ] {HH:MM} [[{meeting-file}]] — {meeting title}
 ```
 
 Note: re-run snapshots are more compact — they omit Dataview sections (those live in the permanent part of the note and update automatically) and focus on what changed.
@@ -205,20 +219,30 @@ For each calendar event today, if `features.meeting_prep` is enabled:
 
    For **1:1 meetings** (`Meetings/1-1s/{person-slug}.md`):
    ```markdown
-   #meeting #1-1 #person/{person-slug}
+   ---
+   type: 1-1
+   person: [[{person-slug}]]
+   ---
 
-   **Person:** [[{person-slug}]]
+   #meeting #1-1
    ```
 
    For **recurring meetings** (`Meetings/Recurring/{slug}.md`):
    ```markdown
-   #meeting #recurring
+   ---
+   type: recurring
+   project: {project-name or null}
+   ---
 
-   **Project:** [[{project-slug}]]
+   #meeting #recurring
    ```
 
    For **adhoc meetings** (`Meetings/Adhoc/{slug}.md`):
    ```markdown
+   ---
+   type: adhoc
+   ---
+
    #meeting #adhoc
    ```
 
@@ -240,13 +264,14 @@ Meeting file is wiki-linked in the daily note's Today's Meetings section.
 
 ## Step 8: Output
 
-Print the sync summary. Keep it short — one line per category.
+Print the sync summary. Keep it short — one line per category. Include the Obsidian URI and full disk path for the daily note created or updated.
 
 ```
-✅ Sync complete ({HH:MM}). {N} meetings today ({M} hrs), {O} tasks overdue, {P} delegations overdue, {Q} items in review queue.
-{If first sync of week: "📅 Weekly note created for week of {date}."}
+Sync complete ({HH:MM}). {N} meetings today ({M} hrs), {O} tasks overdue, {P} delegations overdue, {Q} items in review queue.
+Daily note: obsidian://open?vault={vault}&file={path} | {disk-path}
+{If first sync of week: "Weekly note created for week of {date}."}
 {If archived: "{N} journal notes archived."}
-{If calendar unavailable: "⚠️ Calendar unavailable — meeting sections skipped."}
+{If calendar unavailable: "Calendar unavailable — meeting sections skipped."}
 ```
 
 Then print the Immediate Attention items as a quick-scan list.
@@ -264,7 +289,7 @@ Then suggest:
 
 User says: "good morning"
 
-1. It's Monday, no weekly note exists → create `Journal/WeeklyNote-2026-04-07.md` with week capacity populated.
+1. No weekly note exists for this ISO week → create `Journal/WeeklyNote-2026-04-07.md` with week capacity populated.
 2. Auto-archive check: no daily notes older than 30 days.
 3. No daily note for today → create `Journal/DailyNote-2026-04-07.md`.
 4. Calendar: 3 meetings today (weekly sync 10:00 AM, 1:1 with Sarah 2:00 PM, design review 4:00 PM). Total: 2.5 hrs.
@@ -273,7 +298,7 @@ User says: "good morning"
 7. Review queue: 3 in review-work, 1 in review-self.
 8. Milestones: Sarah's birthday in 3 days.
 9. Meetings.yaml check: "1:1 with Sarah" → matches alias → `Meetings/1-1s/sarah-chen.md`. Append new session. "Design Review" → adhoc → `Meetings/Adhoc/design-review-2026-04-07.md`.
-10. Output: "✅ Sync complete (8:47 AM). 3 meetings today (2.5 hrs), 2 tasks overdue, 1 delegation overdue, 4 items in review queue. 📅 Weekly note created for week of 2026-04-07."
+10. Output: "Sync complete (8:47 AM). 3 meetings today (2.5 hrs), 2 tasks overdue, 1 delegation overdue, 4 items in review queue. Weekly note created for week of 2026-04-07."
 
 ### Example 2: Re-sync mid-afternoon
 
@@ -282,7 +307,7 @@ User says: "sync"
 1. Daily note already exists with an 8:47 AM snapshot.
 2. Compare: 2 tasks completed since morning, 1 new meeting added (ad-hoc at 3 PM), queue unchanged.
 3. Prepend a new "Sync — 2:15 PM" snapshot at the top showing the current state. Previous snapshot left intact.
-4. Output: "✅ Sync complete (2:15 PM). 1 meeting remaining (1 hr), 2 tasks completed since morning, 1 overdue task remaining, 4 items in review queue."
+4. Output: "Sync complete (2:15 PM). 1 meeting remaining (1 hr), 2 tasks completed since morning, 1 overdue task remaining, 4 items in review queue."
 
 ### Example 3: Plan tomorrow
 
@@ -293,7 +318,7 @@ User says: "plan tomorrow"
 3. Read tomorrow's calendar: 2 meetings.
 4. Tasks due tomorrow: 3.
 5. Generate prep for tomorrow's meetings.
-6. Output: "✅ Tomorrow's note ready (2026-04-08). 2 meetings, 3 tasks due. Prep files created."
+6. Output: "Tomorrow's note ready (2026-04-08). 2 meetings, 3 tasks due. Prep files created."
 
 ---
 

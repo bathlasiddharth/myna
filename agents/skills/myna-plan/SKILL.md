@@ -17,8 +17,8 @@ Determine the mode from the user's request:
 
 | Request type | Mode |
 |---|---|
-| "what should I focus on today", "plan my day", "what do I tackle first" | **Plan Day** |
-| "priority coaching", "top priorities", "what are my top 3", "am I over-committed?" | **Priority Coaching** |
+| "what should I focus on today", "plan my day", "what do I tackle first", "am I over-committed?" | **Plan Day** |
+| "priority coaching", "top priorities", "what are my top 3" | **Priority Coaching** |
 | "week optimization", "plan my week", "what meetings can I skip", "best time for deep work" | **Week Optimization** |
 
 If intent is ambiguous, ask: "Planning your day, or would you like priority coaching or week optimization?"
@@ -29,11 +29,11 @@ If intent is ambiguous, ask: "Planning your day, or would you like priority coac
 
 Read these before showing output:
 
-1. **workspace.yaml** — `work_hours`, `timezone`, `features` map
-2. **Today's daily note** (`Journal/DailyNote-{YYYY-MM-DD}.md`) — check Immediate Attention section and any sync snapshots for current state
+1. **`{vault}/_system/config/workspace.yaml`** — `work_hours.start` + `work_hours.end` (capacity baseline), `timezone`, `features` map (no toggle gates this skill — read timezone and work hours only)
+2. **Today's daily note** (`{vault}/{subfolder}/Journal/DailyNote-{YYYY-MM-DD}.md`) — check Immediate Attention section and any sync snapshots for current state
 3. **Calendar** (via calendar MCP) — events for today (Plan Day / Priority Coaching) or the full week (Week Optimization). If unavailable, note it and work from the daily note.
-4. **Open tasks** — Grep `myna/Projects/` for `- \[ \]` with due dates, priority flags, and `[type:: delegation]`
-5. **Project files** — scan `myna/Projects/` for blocked items (`[!warning] Blocker`) and stalled projects (no timeline entry in last 14 days)
+4. **Open tasks** — Grep `{vault}/{subfolder}/Projects/` for `- \[ \]` with due dates, priority flags, and `[type:: delegation]`
+5. **Project files** — scan `{vault}/{subfolder}/Projects/` for blocked items (`[!warning] Blocker`) and stalled projects (no timeline entry in last 14 days)
 
 ---
 
@@ -43,7 +43,6 @@ Show a concrete, ordered picture of the day.
 
 **Output structure:**
 
-```
 📅 Today — {YYYY-MM-DD}
 
 ⚡ Capacity: {focus_hours} hrs available | {meeting_hours} hrs in meetings | {task_effort_hours} hrs of task effort due
@@ -65,7 +64,6 @@ Show a concrete, ordered picture of the day.
 
 💡 Consider:
 - {Specific suggestion: "Move MBR draft to Thursday — you have a 3-hr morning block then"}
-```
 
 **Priority ordering logic:**
 
@@ -79,7 +77,6 @@ Show the 3 things that matter most right now, with clear reasoning.
 
 **Output structure:**
 
-```
 🏆 Top 3 priorities right now:
 
 1. {task or goal} — {specific reason: "blocks Sarah's API work, deadline Friday"}
@@ -92,7 +89,6 @@ Show the 3 things that matter most right now, with clear reasoning.
 
 🔄 Recurring carry-overs:
 - {task} has been carried forward {N} days. Either commit to it today or explicitly defer to {date}.
-```
 
 **Include carry-over detection:** Compare task names across the last 3 daily notes' Immediate Attention sections. A task that appears in 3+ consecutive notes is a recurring carry-over — flag it explicitly with the count.
 
@@ -104,7 +100,6 @@ Step back from today and look at the full week.
 
 **Output structure:**
 
-```
 📆 Week of {YYYY-MM-DD}
 
 ⚡ Capacity overview:
@@ -124,97 +119,11 @@ Step back from today and look at the full week.
 - {Delegation suggestion: "Marcus's infra proposal is 5 days overdue — follow up now before Friday crunch"}
 
 🔮 This week's risk: {top 1–2 things most likely to cause problems if not addressed}
-```
 
 **Optimization criteria:**
 - Meetings to consider skipping: recurring meetings with no agenda items touching your current tasks or projects. Never say "cancel" — say "consider whether you need to attend."
 - Optimal focus slots: contiguous blocks of 2+ hours with no calendar events.
 - What to safely defer: tasks with no due date, no dependencies, no one waiting on them.
-
----
-
-## Examples
-
-### Example 1: Plan Day
-
-User says: "what should I focus on today?"
-
-Read: daily note (Sync — 8:47 AM snapshot shows 2 overdue tasks, 1 overdue delegation), calendar (3 meetings totaling 2.5 hrs), project files (auth migration blocker, platform API on track).
-
-Output:
-```
-📅 Today — 2026-04-07
-
-⚡ Capacity: 5.5 hrs available | 2.5 hrs in meetings | ~6 hrs of task effort due
-⚠️ Slightly over capacity — one item worth deferring.
-
-🎯 Suggested order:
-1. API spec review (due today, blocks Sarah's implementation work)
-2. Follow up with Alex on infra proposal (5 days overdue delegation)
-3. Auth migration status update (project meeting at 4 PM — this feeds it)
-4. MBR draft (due Friday — start today to avoid crunch)
-
-📅 Your meetings:
-- 10:00 AM Weekly sync (30 min)
-- 2:00 PM 1:1 with Sarah (30 min)
-- 4:00 PM Design review (1 hr)
-
-⚠️ Flags:
-- Overdue delegation: Alex was due to send infra proposal by 2026-04-02
-- At-risk: MBR draft due Friday, not started
-
-💡 Consider:
-- Move status report writing to after the design review — you'll have fresh context from the meeting
-```
-
-### Example 2: Priority Coaching
-
-User says: "priority coaching"
-
-Output:
-```
-🏆 Top 3 priorities right now:
-
-1. API spec review — due today, Sarah can't proceed without it
-2. Follow up with Alex on infra proposal — 5 days past due, overdue delegations compound
-3. Auth migration design doc — carried forward 4 days, high priority, no blocker
-
-⚠️ Watch list:
-- MBR draft: no progress in 2 weeks, due Friday
-- Platform API deployment: no timeline update in 18 days
-
-🔄 Recurring carry-overs:
-- "MBR draft" has appeared in your Immediate Attention for 4 consecutive days. Commit to starting it today or explicitly defer to Thursday with a calendar block.
-```
-
-### Example 3: Week Optimization
-
-User says: "plan my week"
-
-Output:
-```
-📆 Week of 2026-04-07
-
-⚡ Capacity overview:
-| Day | Meetings | Est. Focus | Tasks Due |
-|-----|----------|-----------|-----------|
-| Mon | 2.5 hrs  | 5.5 hrs   | 6         |
-| Tue | 1 hr     | 7 hrs     | 2         |
-| Wed | 3.5 hrs  | 4.5 hrs   | 1         |
-| Thu | 0.5 hrs  | 7.5 hrs   | 3         |
-| Fri | 2 hrs    | 6 hrs     | 4 (MBR)   |
-
-🎯 Best days for deep work: Tuesday and Thursday — both have 7+ hrs focus time
-
-⚠️ Packed days: Wednesday — 3.5 hrs meetings, limited focus time
-
-💡 Optimization suggestions:
-- Tuesday morning is ideal for the MBR draft — 3 hr uninterrupted block 9–12 AM
-- Wednesday's platform sync has no open agenda items matching your priorities — check if attendance is required
-- Thursday is your lightest day — good for exploratory or deferred work
-
-🔮 This week's risk: MBR draft due Friday with no start — block Tuesday morning before it becomes a crunch
-```
 
 ---
 
@@ -225,5 +134,7 @@ Output:
 **Daily note missing (no sync run):** Note "No daily note found — run 'sync' first for full context." Still show what's available from project files and task queries.
 
 **Ambiguous mode:** When "plan my day" and "priority coaching" would produce similar output (low task count, few meetings), default to Plan Day mode and offer: "Say 'priority coaching' for a more coaching-focused view."
+
+**No open tasks:** Proceed with calendar and daily note data only. Note "No open tasks found" in the output and focus recommendations on meeting preparation and capacity.
 
 **Feature toggle:** No toggles gate planning modes — this skill is always available.

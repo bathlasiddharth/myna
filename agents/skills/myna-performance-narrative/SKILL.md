@@ -71,12 +71,13 @@ Structure the narrative naturally around what the data supports. Typical structu
 
 ### Draft File
 
-Save the narrative to `Drafts/[Self] {person-name} Performance Narrative {period}.md`.
+Save the narrative to `Drafts/[Performance Narrative] {person-name} {period}.md`.
 
 Frontmatter:
 ```yaml
 ---
 type: performance-narrative
+audience_tier: upward
 related_person: {person-slug}
 period: {YYYY-MM-DD to YYYY-MM-DD}
 created: {YYYY-MM-DD}
@@ -116,7 +117,7 @@ Recognized when the user says: "review my narratives", "calibrate my reviews", "
 
 ### What to Read
 
-Glob `Drafts/[Self] * Performance Narrative *.md` — find all performance narrative drafts. If fewer than 2 found, inform: "Calibration needs at least 2 narratives. Found [N] in Drafts/."
+Glob `Drafts/[Performance Narrative] *.md` — find all performance narrative drafts. If fewer than 2 found, inform: "Calibration needs at least 2 narratives. Found [N] in Drafts/."
 
 ### What to Check
 
@@ -133,7 +134,7 @@ Glob `Drafts/[Self] * Performance Narrative *.md` — find all performance narra
 ### Calibration Output
 
 ```
-## 📊 Narrative Calibration — [date]
+## Narrative Calibration — [date]
 
 **Narratives reviewed:** [N] ([names])
 
@@ -191,7 +192,7 @@ Glob `Drafts/[Self] * Performance Narrative *.md` — find all performance narra
 - 8 1:1 sessions
 - 2 contributions log entries
 
-**Draft saved:** `Drafts/[Self] sarah-chen Performance Narrative 2025-10-12 to 2026-04-12.md`
+**Draft saved:** `Drafts/[Performance Narrative] sarah-chen 2025-10-12 to 2026-04-12.md`
 
 **Narrative (shown inline):**
 

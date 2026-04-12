@@ -49,11 +49,9 @@ For each "not started" and "partially done" item:
 
 1. Determine tomorrow's date (next weekday).
 2. If tomorrow's daily note (`Journal/DailyNote-{tomorrow}.md`) doesn't exist, create it with frontmatter and Morning Focus section only.
-3. Append the carried items under a `## Carry-Forwards from {today}` section in tomorrow's note:
+3. Append the carried items to tomorrow's note under the `## Immediate Attention` section (add the section if it doesn't exist). Each item gets a carry-forward annotation:
 
 ```markdown
-## Carry-Forwards from {YYYY-MM-DD}
-
 - {item} (carried from {today}) [Inferred]
 - {item} (carried from {today}) [Inferred]
 ```
@@ -114,48 +112,34 @@ Append to today's daily note at the very bottom:
 ```markdown
 ## End of Day — {HH:MM}
 
-### ✅ Planned vs Actual
+> Written by wrap-up skill.
 
-**Completed:**
-- {item}
-- {item}
+### Planned vs Actual
 
-**Not started:**
-- {item} → carried to tomorrow
+- Completed: {list}
+- Not started: {list}
+- Partially done: {list}
 
-**Partially done:**
-- {item} → carried to tomorrow
-
-### 💡 Contributions Detected
+### Contributions Detected
 
 - {contribution} [{provenance}]
 {If any went to review-self: "1 uncertain contribution added to review-self queue."}
 {If contribution_detection disabled: omit this section entirely.}
 
-### 📝 Carried to Tomorrow
+### Carried to Tomorrow
 
-- {item} (from Immediate Attention)
-- {item}
+- {item} (carried from {today}) [Inferred]
+- {item} (carried from {today}) [Inferred]
 {If nothing to carry: "(nothing to carry — clean day)"}
 
-### 💬 Quick Notes
+### Quick Notes
 
 {User's quick note if provided. Omit this section if not provided.}
 ```
 
 ---
 
-## Step 7: Learning Reflection
-
-After writing the End of Day section, invoke myna-learn's reflect operation. This is the final step — do it silently (don't announce it). The reflection scans the session for behavioral patterns worth capturing.
-
-Tell the user: "Say 'reflect' or 'what did you learn today?' to run a learning reflection."
-
-Do NOT auto-invoke myna-learn. Suggest it as a follow-up.
-
----
-
-## Step 8: Output Summary
+## Step 7: Output Summary
 
 Print a concise summary:
 
@@ -174,6 +158,7 @@ Then suggest:
 - "Run 'sync' tomorrow morning to start fresh."
 - "Say 'weekly summary' to summarize the week." (if it's Friday or end of sprint)
 - "Say 'review my queue' to process contributions in review-self."
+- "Say 'reflect' or 'what did you learn today?' to run a learning reflection."
 
 ---
 
@@ -221,7 +206,7 @@ User says: "end of day"
 
 Daily note exists but has no sync snapshot. Skip the planned vs actual comparison (nothing to compare against). Still:
 - Run contribution detection from tasks completed today
-- Carry any `- [ ]` high-priority tasks to tomorrow
+- Carry all unfinished `- [ ]` tasks to tomorrow
 - Write End of Day section noting "No morning sync — planned vs actual skipped."
 
 ---
@@ -232,7 +217,7 @@ Daily note exists but has no sync snapshot. Skip the planned vs actual compariso
 
 **contributions-{week}.md doesn't exist yet:** Create it with frontmatter (`week_start: {YYYY-MM-DD}`) and `#contributions` tag, plus a `## Contributions — Week of {YYYY-MM-DD}` section header. Append new entries.
 
-**User runs wrap-up twice:** The End of Day section already exists. Read it for context. Prepend a new "End of Day — {HH:MM} (re-run)" snapshot above the existing one, noting what changed. Do not overwrite the original.
+**User runs wrap-up twice:** The End of Day section already exists. Read it for context. Append a new "End of Day — {HH:MM} (re-run)" section below the existing one, noting what changed. Do not overwrite the original.
 
 **Feature toggle `contribution_detection` off:** Skip Steps 4 entirely. Omit Contributions Detected section from End of Day.
 

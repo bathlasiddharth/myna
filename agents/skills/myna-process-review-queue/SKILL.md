@@ -11,7 +11,7 @@ Processes pending review queue items. Writes approved items to their destination
 
 **Does NOT handle `review-triage.md`** — email triage is handled by myna-email-triage.
 
-## 📋 Before You Start
+## Before You Start
 
 Read at session start:
 - `_system/config/workspace.yaml` — vault subfolder
@@ -27,54 +27,58 @@ Audit trail: `ReviewQueue/processed-{YYYY-MM-DD}.md`
 
 ---
 
-## 📋 Review Queue Entry Format
+## Review Queue Entry Format
 
-Entries in queue files follow this format:
+Each entry in a queue file follows this format:
 
 ```
-- [ ] **{proposed action}** — {source reference}
+- [ ] **{proposed action}**
+  Source: {where this came from}
+  Interpretation: {what the agent thinks it means}
   Ambiguity: {why this needs review — what's unclear}
-  Proposed: {destination file and section}
-  Content: {the entry to write if approved}
+  Proposed destination: {destination file and section}
+  Content: {the entry to write verbatim if approved}
+  ---
 ```
 
-User checks the box (`- [x]`) in Obsidian to approve an item, or the assistant processes interactively.
+`- [x]` = user approved in Obsidian (file mode). `- [ ]` = still pending.
 
 ---
 
-## 🔀 Two Processing Modes
+## Two Processing Modes
 
 ### Mode 1: Chat Mode (Interactive)
 
-**Trigger:** "review my queue", "what's in my queue?", "go through my queue"
+**Trigger:** "review my queue", "go through my queue"
 
 **How:**
 1. Read all three queue files.
-2. Count pending items (unchecked boxes: `- [ ]`) across all queues.
+2. Count pending items (unchecked `- [ ]`) across all queues.
 3. If empty: "Your review queue is clear. Nothing pending."
-4. If items exist: Show them one at a time, presenting the source, interpretation, ambiguity, and proposed action.
-5. For each item, wait for user response:
-   - **approve** (or "yes", "looks good") → write to destination with `[Verified]` tag
-   - **approve and assign to me** → same, but update owner field to user
-   - **edit** → user provides correction → write the corrected version with `[Verified]`
-   - **skip** → leave in queue, move to next item
-   - **discard** (or "no", "ignore this") → remove from queue without writing
+4. Present items one at a time. For each item, show:
 
-6. After all items: summarize what was approved, edited, skipped, discarded. Write audit trail entry.
-
-**Presentation format for each item:**
 ```
 ## Item {N} of {total} — {queue name}
 
 **{Proposed action}**
 Source: {source reference}
+Interpretation: {agent's interpretation}
 Ambiguity: {what's unclear}
 Proposed destination: {destination file + section}
-Content to write if approved:
+Content if approved:
   {content}
 
 Approve / Edit / Skip / Discard?
 ```
+
+5. Wait for user response per item:
+   - **approve** (or "yes", "looks good") → write to destination with `[Verified]` tag
+   - **approve and assign to me** → same, but add `[person:: {user.name}]` to the entry
+   - **edit** → user provides corrected content → write the corrected version with `[Verified]`
+   - **skip** → leave in queue file untouched, move to next item
+   - **discard** (or "no", "ignore this") → remove from queue file, log to audit trail only
+
+6. After all items: summarize what was approved, edited, skipped, discarded. Write audit trail entry.
 
 **Worked example:**
 
@@ -90,16 +94,18 @@ Queue state: 5 items (3 in review-work, 1 in review-people, 1 in review-self)
 
 **Add task: check if Platform team confirmed March 15 deadline**
 Source: email from James, April 3 — "someone should verify this"
+Interpretation: A task needs to be added to the auth-migration project
 Ambiguity: "someone" — can't determine owner. Could be you or James.
 Proposed destination: Projects/auth-migration.md — Open Tasks
-Content: - [ ] Verify Platform team confirmed Mar 15 deadline 📅 2026-04-10 [project:: Auth Migration] [type:: task] [Inferred]
+Content if approved:
+  - [ ] Verify Platform team confirmed Mar 15 deadline 📅 2026-04-10 [project:: Auth Migration] [type:: task] [Inferred]
 
 Approve / Edit / Skip / Discard?
 ```
 
 User: "approve and assign to me"
 
-Write to `Projects/auth-migration.md`:
+Write to `Projects/auth-migration.md` (Open Tasks section):
 ```
 - [ ] Verify Platform team confirmed Mar 15 deadline 📅 2026-04-10 [project:: Auth Migration] [type:: task] [person:: {user.name}] [Verified] (was Inferred, verified 2026-04-05)
 ```
@@ -114,36 +120,40 @@ Continue to item 2.
 
 **How:**
 1. Read all three queue files.
-2. Find all checked items (lines matching `- [x]`).
+2. Find all checked items (`- [x]`).
 3. If none checked: "No items are checked in your queue files. Open them in Obsidian, check the items you want to approve, then say 'process approved items'."
-4. For each checked item: read the `Proposed` destination and `Content` fields.
-5. Write each approved item to its destination with `[Verified]` tag.
-6. Remove checked items from the queue file. Leave unchecked items untouched.
-7. Summarize: how many items processed, from which queues, to which destinations.
+4. If 5 or more items are checked: present the full list and confirm before writing: "About to write {n} items to {n} files. Proceed?"
+5. For each checked item: parse `Proposed destination` and `Content` fields. Before writing, check for near-duplicates (same action + entity from same source) in the destination file. If a near-duplicate is found: skip that item and inform the user.
+6. Write each approved item to its destination with `[Verified]` tag (see Writing Approved Items below).
+7. Remove checked items from the queue file. Leave unchecked items untouched.
 8. Write audit trail.
+9. Summarize: how many items processed, from which queues, to which destinations.
 
 ---
 
-## 📝 Writing Approved Items
+## Writing Approved Items
 
-For each approved item:
+For each approved item (chat or file mode):
 
-1. Parse the destination file and section from the `Proposed` field.
-2. Resolve the destination path using vault path conventions.
+1. Parse destination file and section from the `Proposed destination` field.
+2. Resolve the destination path using vault path conventions from workspace.yaml.
 3. Read the destination file — check for near-duplicates (same action + entity from same source).
-4. If near-duplicate found: skip that item, inform user.
-5. If not: append the `Content` entry to the destination file, replacing `[Auto]` or `[Inferred]` marker with `[Verified]`.
-   - Add source note: `(was {original marker}, verified {YYYY-MM-DD})`
-6. Remove the item from the queue file.
+   - If near-duplicate found: skip that item, inform user.
+4. Append the `Content` entry to the destination section, replacing `[Auto]` or `[Inferred]` with `[Verified]`, and appending `(was {original marker}, verified {YYYY-MM-DD})`.
+5. Remove the item from the queue file.
 
-**[Verified] entry format:**
-```
-- [{YYYY-MM-DD} | {source}] {content} [Verified] (was {original marker}, verified {YYYY-MM-DD})
-```
+**Destination write formats (per section type):**
+
+- Project timeline: `- [{YYYY-MM-DD} | {source}] {content} [Verified] ({source-detail})`
+- Person file Observations: `- [{YYYY-MM-DD} | {source}] **{type}:** {observation} [Verified] ({source-detail})`
+- Task entry: `- [ ] {task} [Verified]` (or `- [x] {task} [Verified]` if marking complete)
+- Contributions log: `- [{YYYY-MM-DD} | {source}] **{category}:** {description} [Verified] ({source-detail})`
+
+The `[Verified]` marker and provenance conventions are defined in myna-steering-conventions.
 
 ---
 
-## 🗃️ Audit Trail
+## Audit Trail
 
 After each processing run, append to `ReviewQueue/processed-{YYYY-MM-DD}.md`:
 
@@ -165,7 +175,7 @@ After each processing run, append to `ReviewQueue/processed-{YYYY-MM-DD}.md`:
 - {item summary} — left in queue
 ```
 
-If the file doesn't exist, create it with this header:
+If the file doesn't exist, create it with this header first:
 
 ```markdown
 ---
@@ -177,11 +187,11 @@ created: {YYYY-MM-DD}
 
 ---
 
-## 📊 Queue Summary
+## Queue Summary
 
 **Trigger:** "what's in my queue?", "how many queue items do I have?"
 
-Show a summary without processing:
+Show a count summary without entering interactive review:
 
 ```
 ## Review Queue Summary
@@ -190,26 +200,26 @@ Show a summary without processing:
 - review-people: 1 pending item
 - review-self: 2 pending items
 
-Total: 6 items. Say 'review my queue' to go through them, or open the files in Obsidian to check items you want to approve.
+Total: 6 items. Say 'review my queue' to go through them interactively, or open the files in Obsidian to check items you want to approve.
 ```
 
 ---
 
-## ⚠️ Processing Rules
+## Processing Rules
 
-**Destination file doesn't exist:** If the proposed destination file doesn't exist, inform the user: "The destination file `{path}` doesn't exist. Create it first, or discard this item." Don't create the file automatically for queue items — that could create orphan files.
+**Destination file doesn't exist:** Inform the user: "The destination file `{path}` doesn't exist. Create it first, or discard this item." Do not create the file automatically — that could create orphan files.
 
-**Ambiguous destination in queue entry:** If the `Proposed` field isn't specific enough to locate the file, present to user: "I need a clearer destination for this item. Which file should this go to?"
+**Ambiguous destination:** If the `Proposed destination` field isn't specific enough to locate the file, present to user: "I need a clearer destination for this item. Which file should this go to?"
 
-**Queue files don't exist:** If a queue file doesn't exist, skip it silently. Don't create empty queue files.
+**Queue files don't exist:** If a queue file doesn't exist, skip it silently. Do not create empty queue files.
 
 **review-triage.md:** If the user asks to process triage items, redirect: "Email triage is handled separately. Say 'process triage' to move approved emails to their folders."
 
-**Bulk write:** Processing more than 5 items at once qualifies as a bulk operation — present the full list and confirm before writing: "About to write {n} items to {n} files. Proceed?"
+**Bulk write (file mode):** 5 or more checked items — present the full list and confirm before writing: "About to write {n} items to {n} files. Proceed?"
 
 ---
 
-## 🔍 Queue-Specific Notes
+## Queue-Specific Notes
 
 ### review-work
 Contains: ambiguous tasks, delegations, decisions, blockers, timeline entries.
@@ -222,6 +232,7 @@ Destination examples: `People/{slug}.md` → Observations or Recognition section
 ### review-self
 Contains: uncertain contribution candidates.
 Destination: `Journal/contributions-{week-monday}.md`
+
 Extra care: contribution claims — especially manager-type ones — should be confirmed thoughtfully. The user's career record depends on accuracy here.
 
 **Worked example — review-self item:**
@@ -230,9 +241,11 @@ Queue entry:
 ```
 - [ ] **Log contribution: may have helped resolve auth team's API blocker**
   Source: meeting 1:1 with Sarah, April 2
+  Interpretation: Agent thinks you influenced the resolution, but it's not confirmed
   Ambiguity: Unclear whether you resolved it or Sarah did — discussion was about the blocker but action wasn't assigned
-  Proposed: Journal/contributions-2026-03-30.md
+  Proposed destination: Journal/contributions-2026-03-30.md
   Content: - [2026-04-02 | meeting 1:1 with Sarah] **unblocking-others:** Helped resolve API blocker for auth migration [Inferred] (meeting, 1:1 with Sarah, 2026-04-02)
+  ---
 ```
 
 Chat mode presentation:
@@ -241,8 +254,11 @@ Chat mode presentation:
 
 **Log contribution: may have helped resolve auth team's API blocker**
 Source: 1:1 with Sarah, April 2 — discussed the API blocker
-Ambiguity: It's unclear from the notes whether you resolved this or Sarah did.
-Content if approved: [unblocking-others] Helped resolve API blocker for auth migration [Inferred]
+Interpretation: You may have influenced the resolution, but it's not clear from the notes.
+Ambiguity: It's unclear whether you resolved this or Sarah did.
+Proposed destination: Journal/contributions-2026-03-30.md
+Content if approved:
+  [2026-04-02 | meeting] **unblocking-others:** Helped resolve API blocker for auth migration [Inferred]
 
-This would be marked [Inferred] in your contributions log. Approve, Edit, Skip, or Discard?
+Approve, Edit, Skip, or Discard?
 ```

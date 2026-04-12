@@ -1,6 +1,6 @@
 ---
 name: myna-capture
-description: Route user-entered data to the right vault destinations — quick capture (multi-destination routing), observations about people, recognition, tasks (add or recurring), links (save to entity + index), project/person file management (status updates, new files). One input can produce multiple vault entries. Use this for any "log this", "add task", "capture", "save link", "observation about" intent.
+description: Route user input to vault destinations — quick capture, observations, recognition, tasks (single or recurring), links (save or find), project/person file management. One input can produce multiple entries.
 user-invocable: true
 argument-hint: "capture: [anything] | observation about [person]: [text] | add task: [description] | create recurring task: [description] | save link: [url] for [entity] | update status of [project]"
 ---
@@ -109,7 +109,7 @@ Output: "Wrote 3 entries: recognition for Sarah, timeline update for auth migrat
    - Explicit praise → strength
    - Explicit concern or development feedback → growth-area
    - Contribution noted → contribution
-   - Unclear → ask or default to strength
+   - Unclear → ask the user which type applies
 3. Check if this should also go to Pending Feedback (if it's a coaching point worth delivering).
 4. Append to `People/{person-slug}.md` → Observations section.
 5. If it's a growth area with coaching potential, also append to Pending Feedback section.
@@ -121,8 +121,7 @@ Output: "Wrote 3 entries: recognition for Sarah, timeline update for auth migrat
 
 **Pending Feedback entry** (when observation has coaching value):
 ```
-- [{date}] Growth area: {observation}
-  Talking points: {coaching framing}
+- [{date} | capture] {observation} — Coaching note: {framing} [User] (capture, {date})
 ```
 
 **Worked example:**
@@ -162,14 +161,14 @@ Different from the observation capture above: this is a recognition entry specif
    - Due date (resolve relative dates to absolute: "by Friday" → `2026-04-11`)
    - Priority (explicit or inferred from language — "urgent", "ASAP" → high)
    - Effort estimate (if mentioned)
-   - Type: task (default), delegation (if "ask Alex to..."), dependency (if "waiting on...")
+   - Type: task (default), delegation (if "ask Alex to..."), dependency (if "waiting on..."), reply-needed (if "need a reply from...")
    - Person (for delegations)
 2. Mark each field as `explicit` or `(inferred)`.
 3. **Write directly if all fields are explicit.** If any field is inferred, add `[review-status:: pending]` and write to review queue.
 
 **Task format:**
 ```
-- [ ] {title} 📅 {YYYY-MM-DD} ⏫ [project:: {name}] [type:: {task|delegation|dependency}] [person:: {name}] [effort:: {estimate}] [review-status:: pending] [Auto] (capture, {date})
+- [ ] {title} 📅 {YYYY-MM-DD} ⏫ [project:: {name}] [type:: {task|delegation|dependency|reply-needed}] [person:: {name}] [effort:: {estimate}] [review-status:: pending] [Auto] (capture, {date})
 ```
 
 Include only fields that have values.
@@ -223,7 +222,7 @@ All fields explicit → write directly, no review queue.
 User: "Create recurring task: weekly team status update, every Monday"
 
 ```
-- [ ] Weekly team status update 🔁 every week 🛫 Monday [type:: task] [User] (capture, 2026-04-05)
+- [ ] Weekly team status update 🔁 every week [type:: task] [User] (capture, 2026-04-05)
 ```
 
 ---
@@ -244,7 +243,7 @@ User: "Create recurring task: weekly team status update, every Monday"
 
 **Entity Links section entry:**
 ```
-- [{title}]({url}) — {description} [{YYYY-MM-DD}]
+- [{YYYY-MM-DD}] [{title}]({url}) — {description}
 ```
 
 **Central index entry** (`_system/links.md`):
@@ -259,11 +258,20 @@ User: "save link: https://runbook.internal/auth-migration for auth migration"
 1. Resolve: auth migration → `Projects/auth-migration.md`
 2. Infer title from URL (or ask user if unclear): "Auth Migration Runbook"
 3. Write to `Projects/auth-migration.md` Links section:
-   `- [Auth Migration Runbook](https://runbook.internal/auth-migration) — [2026-04-05]`
+   `- [2026-04-05] [Auth Migration Runbook](https://runbook.internal/auth-migration) — runbook`
 4. Write to `_system/links.md`:
    `- [2026-04-05] [Auth Migration Runbook](https://runbook.internal/auth-migration) — runbook — [[auth-migration]]`
 
 Output: "Saved link to auth-migration.md and central index."
+
+### Find Link
+
+**Trigger:** "find link: [query]", "do I have a link for [entity/topic]?"
+
+**How:**
+1. Search `_system/links.md` for entries matching the query (title, description, or entity).
+2. Also search the `## Links` section of the resolved entity file (if entity is named).
+3. Return matching entries inline. If no matches: "No saved links found for '[query]'."
 
 ---
 
@@ -286,32 +294,13 @@ Output: "Saved link to auth-migration.md and central index."
 1. Confirm project name and basic info (description, key people). Ask if not provided.
 2. Create `Projects/{slug}.md` from template. If template exists at `_system/templates/project.md`, use it. Otherwise create minimal structure:
 
-```markdown
-#project #{project-tag} #status/active
-
-## Overview
-
-**Description:** {description}
-**Status:** active
-**Key People:** {wiki-links if people exist in vault}
-
-## Timeline
-
-> Append-only chronological log.
-
-## Open Tasks
-
-```dataview
-TASK
-FROM "myna/Projects/{slug}"
-WHERE !completed
-SORT priority DESC, due ASC
-```
-
-## Links
-
-## Notes
-```
+Minimal project file structure (sections in order):
+- Tags line: `#project #{project-tag} #status/active`
+- `## Overview` — Description, Status (active), Key People as wiki-links
+- `## Timeline` — with note: Append-only chronological log
+- `## Open Tasks` — Dataview query: TASK FROM project folder WHERE !completed SORT priority DESC, due ASC
+- `## Links`
+- `## Notes`
 
 3. Show file path.
 
@@ -363,3 +352,5 @@ SORT priority DESC, due ASC
 **Deduplication:** Before writing, check the target section for near-duplicate entries (same action + same entity from the same source). Skip duplicates: "This looks like it may already be logged in auth-migration.md — skipping to avoid duplicate."
 
 **Missing target file:** If a project or person file doesn't exist, create it (minimal structure) before writing the entry. Mention: "Created new file for {entity}."
+
+**No identifiable entity:** If capture text has no recognizable person, project, or task ("the meeting went well"), ask: "Where should I log this? (project name, person name, or personal notes)"

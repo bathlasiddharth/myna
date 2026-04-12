@@ -1,6 +1,6 @@
 ---
 name: myna-self-track
-description: Log your own contributions to the vault and generate self-review documents — brag docs, self-reviews, promo packets, and self-calibration analysis. Query contributions by category, project, or date range. Handles YOUR contributions only — for others' performance narratives, use myna-performance-narrative.
+description: Log contributions and generate self-review documents — brag docs, self-reviews, promo packets. Query by category, project, or date. Self-calibration: check draft claims against your log. YOUR contributions only.
 user-invocable: true
 argument-hint: "log contribution: [description] | what did I do this quarter | draft my self-review for [period] | build my promo case | am I underselling myself? | what feedback did I give this [period]"
 ---
@@ -53,7 +53,17 @@ Includes all IC categories plus:
 
 ## ✍️ Log Contribution
 
-**Trigger:** "log contribution: [description]", "I just [did something worth logging]"
+Three write paths, each with a distinct provenance tag:
+
+| Path | When | Provenance |
+|---|---|---|
+| **User-typed** | User says "log contribution: X" | `[User]` — write directly |
+| **Agent-extracted, high confidence** | Agent finds a clear contribution signal in structured data (task completed, decision logged in timeline) | `[Auto]` — write directly with source reference |
+| **Agent-extracted, uncertain** | Agent thinks something might be a contribution but can't confirm | `[Inferred]` — write directly if plausible; route to `ReviewQueue/review-self.md` if genuinely ambiguous |
+
+The user-typed path is always available. The [Auto] and [Inferred] paths are used when other skills (e.g., meeting processing, project tracking) surface contribution signals and pass them here to log.
+
+**Trigger (user-typed):** "log contribution: [description]", "I just [did something worth logging]"
 
 **How:**
 1. Parse the contribution from the user's text. Extract:
@@ -81,9 +91,11 @@ week_start: {YYYY-MM-DD}
 
 4. Append the entry:
 ```
-- [{YYYY-MM-DD} | capture] **{category}:** {description}[; impact: {impact}] [User]
+- [{YYYY-MM-DD} | {source}] **{category}:** {description}[; impact: {impact}] [User] ({source-detail})
 ```
-Include `; impact: {impact}` only when the user states the impact explicitly. Omit when not mentioned.
+- `{source}`: `capture` when user typed it directly; meeting/email name if user mentions the context.
+- `({source-detail})`: the specific meeting title or email subject if known; omit the parens entirely if source is just `capture` with no additional detail.
+- Include `; impact: {impact}` only when the user states the impact explicitly. Omit when not mentioned.
 
 5. Confirm: "Logged: [{category}] {description}"
 
@@ -109,6 +121,7 @@ User: "log contribution: led the auth migration design review and made the final
 4. Find Monday of current week: 2026-03-30.
 5. Append to `Journal/contributions-2026-03-30.md`:
    `- [2026-04-05 | capture] **decisions-and-influence:** Led auth migration design review and made final call on caching architecture [User]`
+   (No source-detail parens — source is just `capture` with no meeting/email context provided.)
 
 Output: "Logged: [decisions-and-influence] Led auth migration design review and made final call on caching architecture"
 
@@ -155,8 +168,6 @@ Output:
 - [2026-03-23 | capture] feedback-given: Gave feedback to Marcus on incident communication
 
 [... 5 more entries]
-
-Last feedback to Maya: 47 days ago (none logged).
 ```
 
 ---
@@ -178,6 +189,9 @@ Last feedback to Maya: 47 days ago (none logged).
 ```markdown
 ---
 type: brag-doc
+audience_tier: upward
+related_project: null
+related_person: null
 created: {YYYY-MM-DD}
 period: {period}
 ---
@@ -217,6 +231,8 @@ Read contributions files for Jan–Mar 2026. Organize by category. Output:
 [...]
 
 18 total contributions logged. 3 marked [Inferred] — verify before using in review docs.
+
+Saved to [[Drafts/[Self] Brag Doc Q1 2026.md]]
 ```
 
 ---
@@ -228,7 +244,7 @@ Read contributions files for Jan–Mar 2026. Organize by category. Output:
 **How:**
 1. Determine the review period. Ask if unclear.
 2. Read contributions for the period.
-3. Read any goals or competency areas from the user's CLAUDE.md or workspace config if present.
+3. Read competency areas or goals from `_system/config/workspace.yaml` if present (look for `self_tracking.competency_areas` or `review_framework`). If none defined, ask the user to name the competency areas their company uses (e.g., "Technical Impact, Collaboration, Leadership") before drafting.
 4. Write a narrative self-review organized by competency areas or goals (not just a list of contributions). Reads as a genuine self-assessment — specific, evidence-based, honest about growth areas too.
 5. Flag `[Inferred]` entries in the draft with a note: "(verify this contribution before submitting)".
 6. Save to `Drafts/[Self] Self-Review {period}.md`.
@@ -237,6 +253,9 @@ Read contributions files for Jan–Mar 2026. Organize by category. Output:
 ```
 ---
 type: self-review
+audience_tier: upward
+related_project: null
+related_person: null
 created: {YYYY-MM-DD}
 period: {period}
 ---
@@ -256,6 +275,19 @@ period: {period}
 5. For each criterion: select the strongest evidence from contributions. Be specific — dates, outcomes, scale.
 6. Flag `[Inferred]` entries prominently.
 7. Save to `Drafts/[Self] Promo Packet {level} {date}.md`.
+
+**Draft frontmatter:**
+```
+---
+type: promo-packet
+audience_tier: upward
+related_project: null
+related_person: null
+created: {YYYY-MM-DD}
+period: {period}
+target_level: {level}
+---
+```
 
 ---
 
@@ -306,8 +338,12 @@ Overall: your draft undersells your feedback and unblocking work. The evidence i
 
 **No contributions logged:** "No contributions found for that period. You can log them now with 'log contribution: [description]', or contributions are captured automatically during daily wrap-up."
 
-**Period not specified for narrative generation:** Default to last quarter. Mention: "Using last quarter (Jan–Mar 2026). Say 'this month' or 'last 6 months' if you want a different range."
+**Period not specified for narrative generation:** Default to last quarter. Resolve to absolute dates and confirm: "Using last quarter ([resolved date range]). Say 'this month' or 'last 6 months' if you want a different range."
 
 **[Inferred] entries in compiled output:** Always flag them. The user needs to verify inferred contributions before using them in performance docs. Use ⚠️ marker inline.
 
 **User's role is IC but they logged manager-type contributions:** Accept and log them — roles evolve. Don't reject. Just use the correct category name.
+
+**No competency areas in workspace config (self-review):** Ask the user: "What competency areas does your company's review process use? (e.g., Technical Impact, Collaboration, Leadership, Execution)" Draft only after they confirm. Do not invent a framework.
+
+**Append-only:** Never overwrite or truncate an existing contributions file. New entries always go at the end of the file. If the file header is missing, create it first, then append — never rewrite existing entries.

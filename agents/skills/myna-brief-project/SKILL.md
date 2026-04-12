@@ -16,7 +16,7 @@ Read the project file and surface current status inline. Read-only — no vault 
 | Trigger | Mode |
 |---------|------|
 | "catch me up quick on [project]", "quick status on [project]" | **Quick** — 3-5 bullet TL;DR |
-| "catch me up on [project]", "project status: [project]" (no "quick") | **Full** — complete status |
+| "catch me up on [project]", "project status: [project]", "what's happening with [project]" (no "quick") | **Full** — complete status |
 
 Default is Full when no qualifier is given.
 
@@ -32,12 +32,13 @@ Match the user's project name against projects.yaml using fuzzy resolution (exac
 
 | Source | Path | Used in |
 |--------|------|---------|
-| Project file | `Projects/{project-slug}.md` | Both modes |
-| Task items | Grep `[project:: {name}]` across vault | Both modes |
-| Meeting files | `Meetings/` (Glob for files mentioning project) | Full mode only |
+| Project file | `myna/Projects/{project-name}.md` | Both modes |
+| Task items | Grep `[project:: {resolved-name}]` across vault | Both modes |
+| Meeting files | `myna/Meetings/` (Glob for files mentioning project) | Full mode only |
 | Calendar | Calendar MCP — next 7 days, filtered to project meetings | Full mode only |
+| Email threads | Gmail MCP — recent threads mentioning project (optional) | Full mode only |
 
-Missing files: skip and note what was unavailable.
+Missing files or unavailable MCPs: skip and note what was unavailable.
 
 ---
 
@@ -100,6 +101,8 @@ Skip the blocker bullet if there are no open blockers. Skip recent development i
 - [Day, Date] [Time] — [Meeting name] (recurring grouped: "Weekly sync — Mon, Wed, Fri")
 - ...
 
+Group recurring meetings: if the same meeting title appears on multiple days, collapse into one line listing all days (e.g., "Weekly sync — Mon, Wed, Fri"). Show individual entries for non-recurring meetings.
+
 [If no meetings: "No meetings in the next 7 days."]
 
 ### 📜 Recent Timeline (last 5 entries)
@@ -136,7 +139,7 @@ Skip the blocker bullet if there are no open blockers. Skip recent development i
 **User:** "catch me up on auth migration"
 
 **Files read:**
-- `Projects/auth-migration.md` — status: active, 8 timeline entries, 5 open tasks
+- `myna/Projects/auth-migration.md` — status: active, 8 timeline entries, 5 open tasks
 - Grep for tasks with `[project:: Auth Migration]`
 - Calendar MCP — 2 meetings in next 7 days
 
@@ -193,5 +196,7 @@ Phase 2 is underway. Sarah's API spec draft is in review. The Platform API depen
 - **Project file missing:** Inform the user — "No project file found for [project]. Say 'create project file for [project]' to create one."
 - **Status is paused or complete:** Note this prominently at the top of the output.
 - **No open tasks:** Skip the Open Tasks section.
+- **No recent timeline entries:** Skip the Recent Timeline section, note "No timeline entries recorded yet."
 - **Calendar MCP unavailable:** Skip the Upcoming Meetings section, note unavailability.
+- **Email MCP unavailable:** Skip email context, proceed with vault data only — do not mention it unless the user asks.
 - **Ambiguous project name:** "catch me up on auth" when there's Auth Migration and Auth Service — list both, ask which one.

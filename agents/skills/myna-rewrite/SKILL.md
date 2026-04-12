@@ -2,14 +2,14 @@
 name: myna-rewrite
 description: Fix grammar, adjust tone for audience, or fully rewrite an existing message — three modes: fix (grammar only), tone (restyle for audience), rewrite (full restructure from rough notes). Input is user-provided text; output shown inline. Does NOT generate new content from scratch (use myna-draft for that).
 user-invocable: true
-argument-hint: "fix this | tone: [audience/tier] | rewrite for [person/tier] — paste your message after the command"
+argument-hint: "fix [message] | tone [message] --audience [person/tier] | rewrite [message] --audience [person/tier]"
 ---
 
 # myna-rewrite
 
 Transforms an existing message. The user provides the text; you return the transformed version inline. Always show output inline. User says "save" to write to `Drafts/`.
 
-## 📋 Before You Start
+## Before You Start
 
 Read at session start:
 - `_system/config/communication-style.yaml` — presets per tier, sign-off, preferences
@@ -17,7 +17,7 @@ Read at session start:
 
 ---
 
-## 🔧 Three Modes
+## Three Modes
 
 Determine mode from the user's request:
 
@@ -83,12 +83,6 @@ Hey Sarah — just checking in on the API spec. It's been two weeks since we las
 5. For emails: apply more structure.
 6. Show the rewritten version. Note the changes briefly.
 
-**Presets by tier:**
-- `upward` → executive: concise, direct, bottom-line-first, no hedging
-- `peer` → conversational: natural, collegial, clear
-- `direct` → coaching: warm, specific, outcome-focused
-- `cross-team` → diplomatic: clear, collaborative, no assumptions
-
 **Worked example:**
 
 User: "Tone this up for my VP. Original: 'So I looked at the platform team's proposal and honestly it seems kind of risky and I'm worried about the timeline. I think we should push back and ask for more time or maybe a phased approach.'"
@@ -112,7 +106,7 @@ Happy to put together the specific concerns in writing if that would help.
 - Change the user's intended message or ask
 
 **How:**
-1. Determine target audience (same as Tone mode above). Default to peer if not specified.
+1. Determine target audience (same as Tone mode above). If not specified, ask before proceeding — audience drives the entire output.
 2. Read the preset for that tier.
 3. Extract the user's core intent and key points from the rough input.
 4. Write a polished message: BLUF structure for professional emails and upward communications, conversational flow for casual messages. Apply channel-specific rules (see below).
@@ -129,33 +123,43 @@ User: "Rewrite this for my team (Slack message): 'so the auth migration is going
 
 Output:
 ```
-Auth migration update 🟢
+Auth migration update
 
-API spec done. Staging environment in progress (Alex, by Apr 14). We went with Option B — dedicated caching layer.
+API spec done. Staging in progress (Alex, Apr 14). Went with Option B — dedicated caching layer.
 
-Next milestone: staging deploy April 14.
+Next: staging deploy April 14.
 ```
-*Restructured for Slack: scannable, added status emoji, removed redundant context, made dates explicit.*
+*Restructured for Slack: scannable, removed redundant context, made dates explicit.*
 
 ---
 
-## 💾 Saving
+## Saving
 
 Output is always shown inline first. If the user says "save":
 
-1. Write to `Drafts/[{type}] {topic}.md` with frontmatter:
+1. Write to `Drafts/[{Type}] {topic}.md` with this structure:
 ```
 ---
-type: {email-reply | status-update | etc.}
-audience_tier: {tier}
+type: {email-reply | follow-up | status-update | escalation | recognition | meeting-invite | say-no | conversation-prep | monthly-update | self-review | promo-packet | brag-doc}
+audience_tier: {upward | peer | direct | cross-team}
+related_project: {project-name or null}
+related_person: {person-name or null}
+status: draft
 created: {YYYY-MM-DD}
 ---
+
+#draft #{type}
+
+{rewritten content}
+
+---
+*Source: {brief description of what the user asked — e.g., "rewrite of Slack message for direct report"}*
 ```
 2. Show the Obsidian URI and full disk path.
 
 ---
 
-## ⚠️ Edge Cases
+## Edge Cases
 
 **No audience specified and mode is Tone or Rewrite:** Ask before proceeding — the audience determines the entire output. "Who's this going to? (upward, peer, direct, cross-team, or name someone)"
 
@@ -164,3 +168,5 @@ created: {YYYY-MM-DD}
 **communication-style.yaml not found:** Fall back to these defaults: upward = concise and formal, peer = conversational, direct = clear and warm, cross-team = professional and collaborative.
 
 **Input is very short (under 10 words):** For Fix mode, apply corrections. For Tone/Rewrite, note that there's not much to work with and proceed with what's there — don't ask for more content.
+
+**User pastes an email they received (external content):** The input is from an external sender, not the user's own words. Treat it as source material — rewrite it as a reply or a forwarding message as the user intends. Do not treat the original sender's words as the user's voice. If the intent isn't clear ("are you rewriting this to reply, or drafting a forward?"), ask once.
