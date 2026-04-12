@@ -14,7 +14,7 @@ Phase 2 builds the installation script that wires Myna into a user's Claude Code
 - Design the install flow for Claude Code
 - Write the install script (shell script)
 - Generate a project-level CLAUDE.md that loads main.md, steering files, and skill directory
-- Register the obsidian-cli MCP server with Claude Code via `claude mcp add`
+- Register the myna-obsidian MCP server with Claude Code via `claude mcp add`
 - Create the `myna/` folder structure in the user's Obsidian vault
 - Copy `.example` config files to `_system/config/`
 - Test the install script on a clean environment
@@ -31,15 +31,15 @@ Phase 2 builds the installation script that wires Myna into a user's Claude Code
 
 Installation is the first moment a user's opinion matters. A hard-to-install product gets abandoned before the user sees what it does. Phase 2 is where we make the first mile friction-free for Claude Code users.
 
-This is also the first phase where Myna stops being abstract markdown and becomes software someone actually runs. The install script is one of the very few pieces of executable code in the whole project (alongside the Obsidian CLI MCP wrapper).
+This is also the first phase where Myna stops being abstract markdown and becomes software someone actually runs. The install script is one of the very few pieces of executable code in the whole project (alongside the Myna Obsidian MCP wrapper).
 
 Note: **autonomous agent build instructions don't apply to this script.** The `autonomous-build-plan.md` recipe is for writing agent prompts, not install scripts. Phase 2 is human-in-the-loop work — Claude drafts, user reviews, iterates.
 
 ## Context files to read
 
-1. `docs/foundations.md` — for the vault folder structure (where things need to land)
+1. `docs/design/foundations.md` — for the vault folder structure (where things need to land)
 2. `docs/architecture.md` — for the agent roster and Claude Code runtime model (§1, §3, §11)
-3. `docs/decisions.md` — especially D008 (Obsidian CLI MCP), D045 (Claude Code target), D046 (Claude-first), D047 (simplified install)
+3. `docs/decisions.md` — especially D008 (Myna Obsidian MCP), D045 (Claude Code target), D046 (Claude-first), D047 (simplified install)
 4. `docs/roadmap.md` — Phase 2 tasks
 5. The full set of built agents from Phase 1 — these are the payload the installer references
 6. Claude Code documentation for CLAUDE.md format, `claude mcp add` syntax, and project configuration
@@ -60,9 +60,9 @@ A project-level CLAUDE.md placed in the Myna repo root (or a user-specified proj
 
 ### 2. MCP server registration
 
-Register the obsidian-cli MCP server with Claude Code using `claude mcp add`. The command needs:
-- Server name (e.g., `obsidian-cli`)
-- Command to start the server (e.g., `node agents/mcp/obsidian-cli/dist/index.js`)
+Register the myna-obsidian MCP server with Claude Code using `claude mcp add`. The command needs:
+- Server name (e.g., `myna-obsidian`)
+- Command to start the server (e.g., `node agents/mcp/myna-obsidian/dist/index.js`)
 - Environment variables or args for vault name and myna subfolder
 
 External MCP servers (email, Slack, calendar) are the user's responsibility — the install script should remind the user to register them separately if they want email/messaging features.
@@ -118,7 +118,7 @@ Before running the install script, the user needs:
 
 After install completes, verify:
 1. CLAUDE.md exists in the project directory and contains main agent + steering + skill directory
-2. `claude mcp list` shows the obsidian-cli server
+2. `claude mcp list` shows the myna-obsidian server
 3. The vault folder structure exists under the configured path
 4. `.example` config files are in `_system/config/`
 5. Starting a Claude Code session in the project directory loads Myna's instructions (test with a simple prompt like "what can you do?")
@@ -140,7 +140,7 @@ Output: a short design doc or bullet list of install steps.
 
 Implement the flow as a shell script (bash). The script should:
 1. Prompt for vault path (or accept as argument)
-2. Build the MCP server (`cd agents/mcp/obsidian-cli && npm install && npm run build`)
+2. Build the MCP server (`cd agents/mcp/myna-obsidian && npm install && npm run build`)
 3. Generate CLAUDE.md from the agent files
 4. Register the MCP server with Claude Code
 5. Create the vault folder structure

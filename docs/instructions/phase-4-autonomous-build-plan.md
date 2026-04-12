@@ -30,7 +30,7 @@ This is also where we honestly assess whether the methodology is ready. If the f
 
 ## Context files to read before any P4 task
 
-1. `docs/foundations.md`
+1. `docs/design/foundations.md`
 2. `docs/architecture.md`
 3. `docs/instructions/phase-3-learnings.md` — the captured learnings from Phase 3
 4. `docs/instructions/agent-build-sdlc-rules.md` — the SDLC rules as refined during Phase 3
@@ -77,7 +77,7 @@ Explicit tripwires. Each has a condition and an action. Output: `docs/instructio
 Spawn a fresh Claude Code session (no prior conversation context). Give it only:
 - `docs/vision.md`
 - `docs/decisions.md`
-- `docs/foundations.md`
+- `docs/design/foundations.md`
 - `docs/architecture.md`
 - `docs/instructions/build-agent.md`
 - `docs/instructions/verify-agent.md`

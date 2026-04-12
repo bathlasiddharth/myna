@@ -36,14 +36,14 @@ The test Phase 3 output must pass: **"does the reference agent work when invoked
 
 ## Context files to read before any P3 task
 
-1. `docs/foundations.md`
+1. `docs/design/foundations.md`
 2. `docs/architecture.md` — specifically the reference agent's scope and feature assignments
 3. `docs/instructions/agent-build-sdlc-rules.md` (the Phase 2 initial rules)
 4. `docs/features/{reference-agent-domain}.md` — the feature list for the agent being built
 5. `docs/roadmap.md` — Phase 3 tasks
 6. `docs/decisions.md` — especially D027, D029
 7. Any existing Phase 2 smoke test results
-8. `docs/dev-journal.md` — prior phase entries
+8. `docs/journal/dev-journal.md` — prior phase entries
 
 ## Phase-specific rules
 

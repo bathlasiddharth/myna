@@ -32,7 +32,7 @@ Per D037, **done = Phase 8 complete.** User says "done" here. Then the user does
 ## Context files to read
 
 1. `docs/vision.md`
-2. `docs/foundations.md` and `docs/architecture.md`
+2. `docs/design/foundations.md` and `docs/architecture.md`
 3. All built agents from Phase 5 (the runtime content being released)
 4. The Phase 6 install script and its documentation
 5. The Phase 7 manual testing plan

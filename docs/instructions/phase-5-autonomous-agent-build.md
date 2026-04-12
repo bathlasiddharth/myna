@@ -29,7 +29,7 @@ Per D028, Phase 5 targets roughly ~90% quality before Phase 7/post-ship user tes
 
 ## Context files to read before any P5 task
 
-1. `docs/foundations.md`
+1. `docs/design/foundations.md`
 2. `docs/architecture.md`
 3. `docs/instructions/build-agent.md` — PRIMARY operational guide, finalized in Phase 4
 4. `docs/instructions/verify-agent.md` — structural lint to run after each agent

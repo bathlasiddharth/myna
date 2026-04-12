@@ -51,7 +51,7 @@ The bad example has 6 steps doing what a single sentence can convey. The good ex
 Before starting the build, the orchestrator must verify:
 
 1. `docs/architecture.md` exists and is current
-2. `docs/foundations.md` exists and is current
+2. `docs/design/foundations.md` exists and is current
 3. `docs/features/*.md` — all 10 feature files exist
 4. This plan exists at `docs/instructions/autonomous-build-plan.md`
 5. `node` and `npm` are available (needed for MCP server build)
@@ -60,7 +60,7 @@ Before starting the build, the orchestrator must verify:
 
 ## Build Log
 
-Subagents log assumptions, open questions, and judgment calls to `docs/build-log.md`. The orchestrator creates this file before spawning the first subagent. Format:
+Subagents log assumptions, open questions, and judgment calls to `docs/journal/build-log.md`. The orchestrator creates this file before spawning the first subagent. Format:
 
 ```markdown
 # Build Log
@@ -117,7 +117,7 @@ agents/
     output.md
     system.md
   mcp/
-    obsidian-cli/            # MCP server code
+    myna-obsidian/            # MCP server code
       package.json
       tsconfig.json
       src/
@@ -150,7 +150,7 @@ What this skill reads before doing its work:
 ## Procedure
 Step-by-step workflow. This is the core of the skill.
 Detailed enough that a fresh LLM session can execute it
-without reading architecture.md or foundations.md.
+without reading architecture.md or design/foundations.md.
 
 ## Output
 What gets created or modified:
@@ -170,7 +170,7 @@ Constraints, edge cases, guard rails:
 ```
 
 **Key principles for skill files:**
-- **Self-contained:** A fresh LLM session should be able to execute the skill with ONLY the skill file + steering files + config loaded. Do NOT say "see foundations.md" — inline the relevant rules.
+- **Self-contained:** A fresh LLM session should be able to execute the skill with ONLY the skill file + steering files + config loaded. Do NOT say "see design/foundations.md" — inline the relevant rules.
 - **Shared patterns are secondary.** The skill's value is in its feature workflow. Inline patterns like append-only, dedup, and fuzzy name resolution briefly where they apply — a few lines each. **Provenance markers are NOT inlined in skills** — they're handled by the conventions steering file. Skills just write content; the steering conventions ensure markers are applied.
 - **Architecture.md is the feature mapping authority.** Each skill's "Features covered" line in architecture.md is the definitive list of what the skill handles. When reading feature files, only include details for features that belong to YOUR skill — don't absorb features that belong to other skills just because they're in the same feature file.
 - **Mandatory worked examples.** Every skill file MUST include at least one realistic worked example showing: user input → what the skill reads → what it decides → what it writes → what it tells the user. Skills with multiple workflow paths (e.g., sync handles daily note + weekly note + planning) need one example per major path.
@@ -276,7 +276,7 @@ Each rule should be actionable and specific.
 No preamble — just the rules.
 ```
 
-The four steering files and their contents are defined in `architecture.md` §3 (Agent Structure → Steering Files table). The subagent building steering files should read that table and expand each row into a complete steering file using the rules from `foundations.md` and `architecture.md`.
+The four steering files and their contents are defined in `architecture.md` §3 (Agent Structure → Steering Files table). The subagent building steering files should read that table and expand each row into a complete steering file using the rules from `design/foundations.md` and `architecture.md`.
 
 ---
 
@@ -298,8 +298,8 @@ The build runs in 5 sequential batches. Within Batch C, all skill subagents run 
 
 | # | Subagent | Deliverables |
 |---|----------|-------------|
-| 1 | Foundations revision | Updated `docs/foundations.md` |
-| 2 | MCP server | `agents/mcp/obsidian-cli/` (compilable code) |
+| 1 | Foundations revision | Updated `docs/design/foundations.md` |
+| 2 | MCP server | `agents/mcp/myna-obsidian/` (compilable code) |
 | 3 | Capture | `agents/skills/capture.md` |
 | 4 | Sync + Wrap-up | `agents/skills/sync.md`, `agents/skills/wrap-up.md` |
 | 5 | Triage + Process | `agents/skills/triage.md`, `agents/skills/process.md` |
@@ -314,12 +314,12 @@ The build runs in 5 sequential batches. Within Batch C, all skill subagents run 
 
 ### What each subagent reads
 
-Every skill subagent (3-10) reads: `docs/architecture.md` (full file), `docs/foundations.md` (full file), and this plan. In addition, each reads the specific feature files listed below — **only the named features from each file, not the entire file's scope.**
+Every skill subagent (3-10) reads: `docs/architecture.md` (full file), `docs/design/foundations.md` (full file), and this plan. In addition, each reads the specific feature files listed below — **only the named features from each file, not the entire file's scope.**
 
 | # | Architecture section | Feature files and specific features to read |
 |---|---------------------|---------------------------------------------|
 | 1 | Full file | All `docs/features/*.md` |
-| 2 | §2 (all skills' Reads/Writes), §7 | foundations.md §7 |
+| 2 | §2 (all skills' Reads/Writes), §7 | design/foundations.md §7 |
 | 3 | §2 skill 7 (capture) | `daily-workflow.md`: Quick Capture. `projects-and-tasks.md`: Task Management, Project File Management. `people-management.md`: Observations & Feedback Logging, Recognition Tracking. `cross-domain.md`: Multi-Destination Routing. |
 | 4 | §2 skills 1, 10 (sync, wrap-up) | `daily-workflow.md`: Morning Sync, Daily Note, Weekly Note, Planning, End of Day Wrap-Up, Weekly Summary. |
 | 5 | §2 skills 2, 3 (process, triage) | `email-and-messaging.md`: Email Processing, Messaging Processing, Email Triage. `projects-and-tasks.md`: Deduplication. `non-functional.md`: Near-Duplicate Detection. |
@@ -328,9 +328,9 @@ Every skill subagent (3-10) reads: `docs/architecture.md` (full file), `docs/fou
 | 8 | §2 skills 8, 14 (draft, draft-replies) | `writing-and-drafts.md`: all features. `email-and-messaging.md`: DraftReplies folder, Email Draft Reply. |
 | 9 | §2 skill 9 (calendar) | `meetings-and-calendar.md`: Time Block Planning, Calendar Reminders. `daily-workflow.md`: Planning (Task Breakdown only). |
 | 10 | §2 skills 11, 12, 13 (review, self-track, park) | `daily-workflow.md`: Review Queue. `self-tracking.md`: all features. `cross-domain.md`: Park & Resume. |
-| 11 | §3 (steering table) | foundations.md (all cross-cutting rules), ALL `agents/skills/*.md` (to avoid duplicating skill-specific rules) |
+| 11 | §3 (steering table) | design/foundations.md (all cross-cutting rules), ALL `agents/skills/*.md` (to avoid duplicating skill-specific rules) |
 | 12 | §3 (full section) | All `agents/skills/*.md`, all `agents/steering/*.md` |
-| 13 | Full file | All `agents/*` files, foundations.md |
+| 13 | Full file | All `agents/*` files, design/foundations.md |
 
 **Notes on ordering:**
 - Foundations first — everything builds on it. Changes here don't cascade.
@@ -389,25 +389,25 @@ This is the highest-value review. Getting features right matters more than anyth
 - Is the skill within the target length range? (100-200 lines for most skills)
 
 #### Round 3 — Consistency Check
-- Does the skill reference the correct vault paths from foundations.md §1?
-- Does it use the correct config field names from foundations.md §3?
-- Does it reference the correct MCP operations from foundations.md §7?
+- Does the skill reference the correct vault paths from design/foundations.md §1?
+- Does it use the correct config field names from design/foundations.md §3?
+- Does it reference the correct MCP operations from design/foundations.md §7?
 - Verify the skill does NOT include provenance marker rules (those belong in conventions steering file, not skills)
-- When this skill creates or modifies a file, does the format match the template in foundations.md §2? Check frontmatter fields, section headers, and content structure.
+- When this skill creates or modifies a file, does the format match the template in design/foundations.md §2? Check frontmatter fields, section headers, and content structure.
 - Does it conflict with any other skill's responsibility? (Check architecture.md for skill boundaries)
-- If this skill routes items to review queues, does the routing match foundations.md §6?
+- If this skill routes items to review queues, does the routing match design/foundations.md §6?
 
 After each round: fix all issues found, then proceed to the next round. The next round reviews the improved version.
 
 ### 5. Build Log
 
-Log any assumptions, open questions, or judgment calls to `docs/build-log.md`, tagged with your task number (e.g., `### P1-T03 (capture)`). See the Build Log section at the top of this plan for format and rules.
+Log any assumptions, open questions, or judgment calls to `docs/journal/build-log.md`, tagged with your task number (e.g., `### P1-T03 (capture)`). See the Build Log section at the top of this plan for format and rules.
 
-For parallel subagents (Batch C): **do NOT write directly to `docs/build-log.md`** — include your log entries in your report to the orchestrator instead. The orchestrator will write them to the build log after the batch completes to avoid parallel write conflicts.
+For parallel subagents (Batch C): **do NOT write directly to `docs/journal/build-log.md`** — include your log entries in your report to the orchestrator instead. The orchestrator will write them to the build log after the batch completes to avoid parallel write conflicts.
 
 ### 6. Dev Journal
 
-If you discovered anything interesting — a gap in the design, a non-obvious pattern — include it in your report to the orchestrator. **Do NOT write directly to `docs/dev-journal.md`** — the orchestrator consolidates entries after each batch.
+If you discovered anything interesting — a gap in the design, a non-obvious pattern — include it in your report to the orchestrator. **Do NOT write directly to `docs/journal/dev-journal.md`** — the orchestrator consolidates entries after each batch.
 
 ### 7. Done
 
@@ -430,14 +430,14 @@ Build log entries:
 
 ### Subagent 1: Foundations Revision
 
-**Goal:** Review and improve `docs/foundations.md` before any skills are built on top of it.
+**Goal:** Review and improve `docs/design/foundations.md` before any skills are built on top of it.
 
 **What to check:**
 - Are all templates complete enough for skill builders to use? Would a skill builder have all the field names, formatting rules, and examples they need?
 - Are config schemas complete? Every field referenced in architecture.md exists in the schema?
 - Are pattern descriptions clear and actionable? Could a fresh LLM follow each pattern without asking questions?
-- Are there inconsistencies between foundations.md and architecture.md? (Architecture is authoritative for skill design; foundations is authoritative for data layer.)
-- Is anything missing that architecture.md implies but foundations.md doesn't define? In particular: §7 (MCP tool surface) should be updated to reflect the Obsidian CLI's actual command surface — `move`, `append`, `prepend`, `property:set`, `backlinks`, `tags`, etc. The current §7 lists abstract tools that predate the Obsidian CLI research.
+- Are there inconsistencies between design/foundations.md and architecture.md? (Architecture is authoritative for skill design; foundations is authoritative for data layer.)
+- Is anything missing that architecture.md implies but design/foundations.md doesn't define? In particular: §7 (MCP tool surface) should be updated to reflect the Obsidian CLI's actual command surface — `move`, `append`, `prepend`, `property:set`, `backlinks`, `tags`, etc. The current §7 lists abstract tools that predate the Obsidian CLI research.
 - Is anything over-specified? Remove rules for things LLMs handle naturally.
 
 **What NOT to do:**
@@ -513,10 +513,10 @@ Each skill subagent follows the standard Per-Subagent Protocol above. Key remind
 **Goal:** Build the 4 steering files defined in architecture.md §3.
 
 **Source material:**
-- `safety.md`: architecture.md (draft-never-send, vault-only writes), foundations.md §8.3 (external content as data — content framing delimiters), architecture.md (confirm before bulk writes)
-- `conventions.md`: foundations.md §4 (provenance markers — **this is the ONLY place marker rules live at runtime; skills do not include them**), §8.2 (append-only), §5 (date+source format), §10 (Obsidian conventions — tags, wiki-links, callouts, Dataview, Tasks plugin syntax)
+- `safety.md`: architecture.md (draft-never-send, vault-only writes), design/foundations.md §8.3 (external content as data — content framing delimiters), architecture.md (confirm before bulk writes)
+- `conventions.md`: design/foundations.md §4 (provenance markers — **this is the ONLY place marker rules live at runtime; skills do not include them**), §8.2 (append-only), §5 (date+source format), §10 (Obsidian conventions — tags, wiki-links, callouts, Dataview, Tasks plugin syntax)
 - `output.md`: architecture.md §3 (voice rules — no AI tells, no hedging, concise), BLUF contextual rules from draft skill
-- `system.md`: architecture.md §5 (feature toggles), foundations.md §9.5 (error recovery), architecture.md (graceful degradation, config reload, relative date resolution, prompt logging)
+- `system.md`: architecture.md §5 (feature toggles), design/foundations.md §9.5 (error recovery), architecture.md (graceful degradation, config reload, relative date resolution, prompt logging)
 
 **Key rule:** Steering files are cross-cutting — they apply to ALL skills. Don't include skill-specific behavior. If a rule only applies to one skill, it belongs in that skill file, not steering.
 
@@ -549,13 +549,13 @@ Each skill subagent follows the standard Per-Subagent Protocol above. Key remind
 1. **Feature coverage:** Every feature from architecture.md "Features covered" is handled by exactly one skill. No feature falls through the cracks. No two skills claim the same feature.
 2. **Cross-references:** If skill A says "user runs skill B next," verify skill B actually handles that flow
 3. **Main agent alignment:** Routing in main.md covers all skills. Direct operations don't overlap with skills.
-4. **Path consistency:** Every vault path referenced in skills matches foundations.md naming conventions
-5. **Config field consistency:** Every config field referenced in skills exists in foundations.md §3 schemas
-6. **Template consistency:** File formats skills write match the templates in foundations.md §2
-7. **MCP operation consistency:** Every MCP call in skills matches foundations.md §7 tool surface
+4. **Path consistency:** Every vault path referenced in skills matches design/foundations.md naming conventions
+5. **Config field consistency:** Every config field referenced in skills exists in design/foundations.md §3 schemas
+6. **Template consistency:** File formats skills write match the templates in design/foundations.md §2
+7. **MCP operation consistency:** Every MCP call in skills matches design/foundations.md §7 tool surface
 8. **Steering alignment:** Nothing in skill files contradicts steering files
 9. **Shared pattern consistency:** Review queue routing and other inlined patterns are correct where used. Verify NO skill includes provenance marker rules (those belong in conventions.md only).
-10. **No "see foundations.md" references:** Skills must be self-contained
+10. **No "see design/foundations.md" references:** Skills must be self-contained
 
 **Fix issues directly** in the files. If an issue requires a design decision (not just a typo), document it and flag to the orchestrator.
 
@@ -572,7 +572,7 @@ The orchestrator (main Claude session) manages the build:
 1. Read this plan
 2. Read `docs/roadmap.md` — check which P1 tasks are already Done (for resuming)
 3. Verify prerequisites (design files exist)
-4. Create `agents/` directory structure if it doesn't exist (`agents/skills/`, `agents/steering/`, `agents/mcp/obsidian-cli/src/`)
+4. Create `agents/` directory structure if it doesn't exist (`agents/skills/`, `agents/steering/`, `agents/mcp/myna-obsidian/src/`)
 5. Skip completed batches, begin spawning from the next incomplete batch
 
 ### Resuming a Build
@@ -615,8 +615,8 @@ After each batch completes:
    - **Files exist:** All deliverables listed for that batch were created
    - **Not empty/truncated:** Files have reasonable content (not just headers)
    - **Quick feature count:** For skill subagents — does the skill mention all the features listed in its "Features covered" line from architecture.md?
-2. **Build log:** If any subagent reported assumptions/questions, append them to `docs/build-log.md` tagged with the task number
-3. **Dev journal:** If any subagent reported discoveries, write a single consolidated entry to `docs/dev-journal.md`
+2. **Build log:** If any subagent reported assumptions/questions, append them to `docs/journal/build-log.md` tagged with the task number
+3. **Dev journal:** If any subagent reported discoveries, write a single consolidated entry to `docs/journal/dev-journal.md`
 3. **Commit:** Stage and commit all new/modified files from the batch. Use conventional commit prefixes that match the artifact type:
    - Batch A (foundations revision): `docs:` — these are design documents
    - Batch B (MCP server): `feat:` — this is product code
@@ -653,9 +653,9 @@ grep -l "## Rules" agents/skills/*.md | wc -l  # expect 14
 wc -l agents/skills/*.md  # each should be 80-300 lines
 
 # 4. MCP server compiles
-cd agents/mcp/obsidian-cli && npm run build
+cd agents/mcp/myna-obsidian && npm run build
 
-# 5. No skill mentions "see foundations.md" (self-containment check)
+# 5. No skill mentions "see design/foundations.md" (self-containment check)
 grep -rl "see foundations" agents/skills/  # expect 0 results
 ```
 
@@ -677,7 +677,7 @@ The build is complete when:
 1. All 14 skill files exist under `agents/skills/`
 2. All 4 steering files exist under `agents/steering/`
 3. `agents/main.md` exists
-4. `agents/mcp/obsidian-cli/` builds without errors
+4. `agents/mcp/myna-obsidian/` builds without errors
 5. Cross-skill audit found no unresolved issues
-6. `docs/foundations.md` has been revised
+6. `docs/design/foundations.md` has been revised
 7. All features from architecture.md are covered across the skill files

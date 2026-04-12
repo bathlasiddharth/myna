@@ -25,7 +25,7 @@ What the design phase must produce before build starts. Claude should not begin 
 - [ ] How agent instructions reference MCP tools and vault paths
 - [ ] **Feature simplification pass:** identify features that are really just "LLM + vault access + config" and collapse them into agent instructions rather than separate feature implementations. Writing/output features (rewriting, Help Me Say No, conversation prep, doc review, pre-read, thread summary, briefings, recognition drafts) are candidates — they don't need pipeline code, just a well-written agent instruction with access to the right files. The detailed specs should focus on plumbing (processing pipelines, review queue, dedup, meeting lifecycle, task management), not prose generation.
 
-## Obsidian CLI MCP
+## Myna Obsidian MCP
 - [ ] Tool definitions (name, parameters, return format for each tool)
 - [ ] Mapping from MCP tools to Obsidian CLI commands
 - [ ] Fallback behavior when Obsidian isn't running

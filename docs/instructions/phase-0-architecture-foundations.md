@@ -24,7 +24,7 @@ Both dimensions must be decided before any agent content can be written. Every a
 - Provenance marker placement rules with canonical examples per entry type
 - Date + source format with examples
 - Review queue routing rules (three queues + criteria)
-- Obsidian CLI MCP tool surface
+- Myna Obsidian MCP tool surface
 - Cross-domain data flow map (concrete source-agent → destination-agent pairs)
 - Cross-domain behavior coordination (what happens when agent A depends on state agent B manages and B hasn't run yet)
 - Pattern catalog (recurring agentic patterns with worked examples)
@@ -52,7 +52,7 @@ Test Phase 0 output must pass: **"if Phase 5 autonomous Claude were given only t
 2. `docs/decisions.md` — all 37+ settled decisions, especially D025–D037 (pipeline, autonomy, capture discipline, agent-first, testing deferral, install scope)
 3. `docs/roadmap.md` — Project Goals, Build Approach, Phase 0 section
 4. `docs/features/*` — all 10 domain feature files under `## Features` headings. These are the authoritative approved features (per D026, don't read any other source for features).
-5. `docs/dev-journal.md` — 2026-04-04 entries on the restructure and ultrathink (local only, not in git)
+5. `docs/journal/dev-journal.md` — 2026-04-04 entries on the restructure and ultrathink (local only, not in git)
 
 ## Phase-specific rules
 
@@ -87,13 +87,13 @@ Top-down design session with the user. Decide:
 - Feature-to-agent mapping (every approved feature assigned to one agent)
 - How the architecture maps to Claude Code (v1 install target per D045)
 
-Output: `docs/architecture.md` or an architecture section inside `docs/foundations.md`.
+Output: `docs/architecture.md` or an architecture section inside `docs/design/foundations.md`.
 
 ### P0-T03 — Write foundations.md
 
-Turn the inventory and architecture decisions into the final `docs/foundations.md`. Organized for use, not just review. Every section cross-references its source decisions.
+Turn the inventory and architecture decisions into the final `docs/design/foundations.md`. Organized for use, not just review. Every section cross-references its source decisions.
 
-Output: `docs/foundations.md` — the single canonical scaffolding document.
+Output: `docs/design/foundations.md` — the single canonical scaffolding document.
 
 ### P0-T04 — Reference agent selection
 

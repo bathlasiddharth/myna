@@ -33,7 +33,7 @@ The test Phase 2 output must pass: **"can the Writer+Reviewer+Refiner loop produ
 
 ## Context files to read before any P2 task
 
-1. `docs/foundations.md` — what agents need to respect
+1. `docs/design/foundations.md` — what agents need to respect
 2. `docs/architecture.md` — what agents exist and their scopes
 3. `docs/roadmap.md` — Phase 2 tasks
 4. `docs/decisions.md` — especially D028, D029, D031

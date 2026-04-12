@@ -506,7 +506,7 @@ Pro/enterprise feature: administrators can publish an allowlist of MCP servers a
 
 ### 9.10 Implication for Myna
 
-- The Obsidian CLI MCP is the only MCP Myna ships. The Phase 6 adapter must register it at install time — either inline in every Myna agent's config or in `.kiro/settings/mcp.json`.
+- The Myna Obsidian MCP is the only MCP Myna ships. The Phase 6 adapter must register it at install time — either inline in every Myna agent's config or in `.kiro/settings/mcp.json`.
 - External MCPs (email, Slack, calendar) are user-provided per D005. The installer must ask the user which MCP names they have and record them in Myna config so agents know what servers to call.
 - Agent `tools` allowlists must include `@obsidian` (or whatever name the adapter picks) plus whichever external MCPs the user has. This binding is an install-time concern, not a content concern.
 
@@ -538,7 +538,7 @@ Complete list from kiro.dev/docs/cli/reference/built-in-tools/. ✅
 
 ### 10.1 Implication for Myna
 
-- The `read`/`write`/`glob`/`grep` tools are the baseline for vault operations — but Myna prefers the Obsidian CLI MCP because it gives access to Obsidian's search index, Tasks plugin, Dataview queries, and template rendering.
+- The `read`/`write`/`glob`/`grep` tools are the baseline for vault operations — but Myna prefers the Myna Obsidian MCP because it gives access to Obsidian's search index, Tasks plugin, Dataview queries, and template rendering.
 - Myna should still grant `read` and `grep` to every agent so they can operate on vault files when Obsidian isn't running (D008 fallback).
 - `write` should be **path-restricted** via `toolsSettings.write.allowedPaths` to enforce D011 (vault-only writes under `myna/`). This is one of the key defense-in-depth layers for Phase 6 adapter.
 - `shell` should be **heavily denied** by default — Myna doesn't need arbitrary shell access.
@@ -635,7 +635,7 @@ When context fills, Kiro summarizes older turns while preserving recent ones. Co
 
 ### 13.1 Implication for Myna
 
-⚠️ Potentially useful for Myna's future "search across long historical vault content" workflows, but **not required for v1**. Myna's current search plan uses the Obsidian CLI MCP, which is already indexed by Obsidian. Knowledge bases are a possible post-launch optimization.
+⚠️ Potentially useful for Myna's future "search across long historical vault content" workflows, but **not required for v1**. Myna's current search plan uses the Myna Obsidian MCP, which is already indexed by Obsidian. Knowledge bases are a possible post-launch optimization.
 
 ---
 
@@ -762,7 +762,7 @@ Consolidated takeaways that will shape the architecture and foundations docs.
 | Steering rules (always-on) | `.kiro/steering/AGENTS.md` | workspace + optionally home |
 | Feature skills | `.kiro/skills/<name>/SKILL.md` | workspace |
 | User-invokable prompts | `.kiro/prompts/*.md` | workspace (for @-commands) |
-| Obsidian CLI MCP | inline `mcpServers` in agent or `.kiro/settings/mcp.json` | workspace |
+| Myna Obsidian MCP | inline `mcpServers` in agent or `.kiro/settings/mcp.json` | workspace |
 | External MCP names | referenced in agent `tools` allowlist | agent-level |
 
 ### 20.2 Steering MUST be in agent `resources`

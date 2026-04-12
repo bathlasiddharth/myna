@@ -181,22 +181,22 @@ The process skill correctly applies framing delimiters (process.md step 3a). How
 
 ### I1. Triage skill retains vault update routing that contradicts architecture
 **Dimension:** 1 (Feature depth)
-**File(s):** `agents/skills/triage.md`, `docs/architecture.md`, `docs/build-log.md`
+**File(s):** `agents/skills/triage.md`, `docs/architecture.md`, `docs/journal/build-log.md`
 **Problem:** Architecture.md §2 skill 3 states:
 
 > "Triage is purely about classification — it never touches the vault."
 > "Step 3 ('process triage') moves emails to their approved folders via email MCP — nothing else."
 
-The build-log under P1-T05 states:
+The build-log (`docs/journal/build-log.md`) under P1-T05 states:
 
 > "**Fixed in audit (P1-T13):** Original triage skill had vault update routing in Step 3. Removed — triage only moves emails to folders, never touches the vault. Architecture is authoritative here."
 
-Yet the current `triage.md` still includes vault update routing in step 5 ("Vault updates (only if applicable)") and step 3 ("route each proposed vault update to the appropriate review queue"). The build-log says this was removed but the file still contains it.
+Yet the current `triage.md` still includes vault update routing in step 5 ("Vault updates (only if applicable)") and step 3 ("route each proposed vault update to the appropriate review queue"). The build-log (`docs/journal/build-log.md`) says this was removed but the file still contains it.
 
 **Impact:** Scope confusion between triage and process. Architecture draws a clean boundary: triage sorts, process extracts. With vault updates in triage, both skills extract data from the same emails, creating overlap. Users may run triage expecting only folder moves, then discover vault items were also created in review queues.
 **Recommendation:** Two options:
 - **Option A (architecture-authoritative):** Remove vault update recommendations from triage.md steps 1, 2b, and 3. Triage becomes pure classification. Users who want vault data from triaged emails run "process my email" after triage. Update the triage example to remove vault update lines.
-- **Option B (feature-file-authoritative):** Update architecture.md §2 skill 3 to acknowledge vault update routing to review queues as an enhancement. Update the build-log to reflect the decision reversal. This makes triage more powerful but blurs the triage/process boundary.
+- **Option B (feature-file-authoritative):** Update architecture.md §2 skill 3 to acknowledge vault update routing to review queues as an enhancement. Update the build-log (`docs/journal/build-log.md`) to reflect the decision reversal. This makes triage more powerful but blurs the triage/process boundary.
 
 ### I2. Process-meeting task format uses `[due::]` instead of emoji format
 **Dimension:** 4 (Format consistency)
@@ -483,7 +483,7 @@ Option B is cleaner — weekly summary is already a data aggregation step, and w
 
 ### M8. MCP server package.json missing explicit `zod` dependency
 **Dimension:** (incidental)
-**File(s):** `agents/mcp/obsidian-cli/package.json`
+**File(s):** `agents/mcp/myna-obsidian/package.json`
 **Problem:** The MCP server source (`src/index.ts`) imports `z` directly from `"zod"`:
 ```typescript
 import { z } from "zod";
@@ -642,7 +642,7 @@ Draft reads project file, determines VP = upward tier = executive preset, genera
 - **Dimension 8 (Model-agnostic):** Content layer is clean markdown. The one tool-specific element (Kiro CLI skill-loading pattern) is acknowledged and isolated for Phase 2 adaptation. No Claude-specific syntax, XML tags, or model-specific behavior assumptions found.
 - **Dimension 12 (Voice consistency):** The 14 skills read as one coherent system. Rules sections are consistently structured with bold headers. "Missing files are not errors" phrasing is consistent across skills. Feature toggle checking patterns are uniform. Output summaries follow consistent count-based formats.
 - **Dimension 7 (Safety — draft-never-send):** Traced every skill that produces outbound content. No path exists where content could be sent automatically. MCP server has no email/Slack sending tools. Calendar events are protected by three-layer D003.
-- **Dimension 7 (Safety — vault-only writes):** MCP server's `assertWritablePath()` correctly blocks path traversal attempts. Tested `myna/../../../etc/passwd` and similar patterns — all rejected. The `daily_append`/`daily_prepend` exemption is a known accepted risk documented in build-log.
+- **Dimension 7 (Safety — vault-only writes):** MCP server's `assertWritablePath()` correctly blocks path traversal attempts. Tested `myna/../../../etc/passwd` and similar patterns — all rejected. The `daily_append`/`daily_prepend` exemption is a known accepted risk documented in the build-log (`docs/journal/build-log.md`).
 - **Dimension 7 (Safety — calendar D003):** Calendar skill implements all three layers. `calendar.create_event` abstract operation has no attendees parameter. Three-layer protection is enforced in the calendar skill procedure.
 - **Dimension 7 (Safety — bulk write confirmation):** Process skill checks the 5-file threshold. Safety steering file establishes the rule.
 - **Dimension 7 (Safety — append-only):** Conventions steering file restricts `overwrite_section` to review queue files only. No skill uses `overwrite_section` on content sections.

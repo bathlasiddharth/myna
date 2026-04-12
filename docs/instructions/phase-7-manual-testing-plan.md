@@ -31,7 +31,7 @@ The plan is also an artifact for future feature additions: when a new feature is
 
 ## Context files to read
 
-1. `docs/foundations.md`
+1. `docs/design/foundations.md`
 2. `docs/architecture.md`
 3. `docs/features/*` — all feature lists (what needs to work)
 4. The full set of built agents from Phase 5

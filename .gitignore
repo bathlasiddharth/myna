@@ -2,8 +2,7 @@
 .DS_Store
 
 # Development journal (raw material for blog, not project docs)
-docs/dev-journal.md
-docs/dev-journal-1.md
+docs/journal/dev-journal.md
+docs/journal/dev-journal-1.md
 
-# Personal prompts and notes
-docs/prompts/
+# Personal notes (not prompts — those are committed in docs/prompts/)

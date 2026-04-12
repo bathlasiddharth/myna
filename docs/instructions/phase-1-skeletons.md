@@ -14,7 +14,7 @@ Mechanical scaffolding. Phase 0 designed the system; Phase 1 creates the empty c
 - Create file templates for each file type (empty, structured)
 - Create an agent bootstrap file per agent (shell with role, shared context, conventions — no feature content)
 - Create steering file skeletons (empty, just headers for cross-cutting rules)
-- Create the Obsidian CLI MCP wrapper stub
+- Create the Myna Obsidian MCP wrapper stub
 - Create any directory structure for Claude Code skills/subagents that Phase 2 will populate
 
 **Out of scope:**
@@ -30,7 +30,7 @@ This phase is mostly mechanical but demands attention to matching Phase 0's deci
 
 ## Context files to read
 
-1. `docs/foundations.md` — the authoritative source for what needs to exist
+1. `docs/design/foundations.md` — the authoritative source for what needs to exist
 2. `docs/architecture.md` (or the architecture section of foundations) — the agent list and scopes
 3. `docs/roadmap.md` — Phase 1 tasks
 
@@ -65,7 +65,7 @@ One file per agent defined in Phase 0 architecture. Each has: role statement, sh
 
 One file per steering rule identified in Phase 0. Headers and brief description, empty body.
 
-### P1-T06 — Obsidian CLI MCP wrapper stub
+### P1-T06 — Myna Obsidian MCP wrapper stub
 
 Create the wrapper code stub. Minimal — just enough structure to be filled in when Phase 3 features need it.
 
