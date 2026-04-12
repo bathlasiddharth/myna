@@ -2,7 +2,7 @@
 
 ## What's happening
 
-Myna's skill system is being rebuilt to use Claude Code's **native skills mechanism**. Instead of 15 flat markdown files loaded manually by the main agent, we're writing 24 focused skills + 5 steering skills as native Claude Code `SKILL.md` files with progressive disclosure.
+Myna's skill system is being rebuilt to use Claude Code's **native skills mechanism**. Instead of 15 flat markdown files loaded manually by the main agent, we're writing 24 focused skills + 6 steering skills as native Claude Code `SKILL.md` files with progressive disclosure.
 
 ## Architecture changes
 
@@ -78,10 +78,7 @@ Myna's skill system is being rebuilt to use Claude Code's **native skills mechan
 | **P0** | Update `architecture.md` and `foundations.md` for new structure | Nothing |
 | **P0.5** | Remove Obsidian MCP from architecture, add vault-ops steering skill to docs | P0 |
 | **P1** | Write 6 steering skills | P0.5 |
-| **P2** | Write 5 skills: day lifecycle + calendar | P0 |
-| **P3** | Write 5 skills: email + meeting pipeline | P0 |
-| **P4** | Write 7 skills: information retrieval + people management | P0 |
-| **P5** | Write 7 skills: writing + capture + self-tracking + context + memory + review | P0 |
-| **P6** | Rewrite main.md + update install.sh, CLAUDE.md, README.md, etc. | P1-P5 |
+| **P2** | Write all 24 feature skills (orchestrator spawns 4 parallel subagents by domain) | P0.5 |
+| **P3** | Rewrite main.md + update install.sh, CLAUDE.md, README.md, etc. | P1, P2 |
 
-P1 through P5 can run in any order (or in parallel sessions) after P0 completes. P6 must run last.
+P1 and P2 can run in parallel after P0.5 completes. P3 must run last.

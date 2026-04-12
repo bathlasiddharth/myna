@@ -1,0 +1,38 @@
+# Myna — Auto-Tagging Rules
+# Copy to: _system/config/tags.yaml
+#
+# Myna auto-applies tags to vault files based on these rules.
+# Tags appear as inline #tags at the top of files.
+
+tags:
+  # Project-based — auto-applied to files related to a project
+  - name: auth-migration
+    type: project-based
+    project: Auth Migration
+
+  - name: platform
+    type: project-based
+    project: Platform API
+
+  # Keyword-based — applied when keywords appear in content
+  - name: urgent
+    type: keyword-based
+    keywords: [urgent, critical, ASAP, blocker, P0]
+
+  - name: hiring
+    type: keyword-based
+    keywords: [interview, candidate, hiring, onboarding]
+
+  # Person-based — applied to files mentioning a person
+  - name: sarah-chen
+    type: person-based
+    person: Sarah Chen
+
+  # Source-based — applied based on data source
+  - name: from-email
+    type: source-based
+    source: email
+
+  - name: from-slack
+    type: source-based
+    source: slack

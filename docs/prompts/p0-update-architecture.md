@@ -13,7 +13,7 @@ Myna is a personal assistant for tech professionals built on Claude Code. We're 
 - `docs/design/foundations.md` — data layer, vault structure, patterns (needs updating)
 - `docs/decisions.md` — for context on existing decisions
 
-**Do NOT read** any files under `agents/skills/` — those are being replaced entirely.
+**Note:** Old flat skill files have been removed. Only `myna-steering-*` directories exist under `agents/skills/`.
 
 ## What changed
 

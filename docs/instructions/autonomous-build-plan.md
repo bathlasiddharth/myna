@@ -1,8 +1,12 @@
 # Autonomous Build Plan
 
-This document is the complete recipe for building Myna autonomously. An orchestrator Claude session reads this plan and spawns subagents to build each component. Each subagent reads this plan + the referenced docs and produces its deliverables independently.
+This document is the complete recipe for building Myna's skills autonomously. An orchestrator Claude session reads this plan and spawns subagents to build each component.
 
-**Approach:** Orchestrator spawns subagents sequentially (or in parallel for independent work). Each subagent builds 1-3 related components end-to-end with 3 self-review rounds. Subagents write files to disk — later subagents can read earlier subagents' output.
+**Architecture:** Myna uses Claude Code's native skills mechanism. Skills are `SKILL.md` files under `agents/skills/myna-{name}/`. Steering skills are preloaded via the agent's `skills:` frontmatter. There is NO MCP server for vault operations — all vault I/O uses Claude Code built-in tools (Read, Write, Edit, Grep, Glob). External MCPs (email, Slack, calendar) are user-provided.
+
+**You are writing 24 new skills from scratch.** There are no existing skills to update or rewrite — the old skills have been deleted. Write fresh from the feature specs and architecture. Do not look for or reference old skill files.
+
+**This is a long-running session.** You are building the backbone of Myna — 24 skills that determine whether the product works. Every skill deserves full attention, including the last one. Do not speed up, skip steps, or reduce quality as the session progresses. Skill #24 gets the same effort as skill #1.
 
 ---
 
@@ -23,7 +27,7 @@ This document is the complete recipe for building Myna autonomously. An orchestr
 - How to write in a professional tone (the LLM already does this)
 - Step-by-step parsing logic ("read the subject line, identify the topic, determine if...") — just say "determine the relevant project from the email content"
 
-**Test:** For every line in your skill file, ask: "Would an LLM get this wrong without this instruction?" If no, delete the line. If the answer is "it might pick a different default," that's only worth specifying if the default matters.
+**Test:** For every line in your skill file, ask: "Would an LLM get this wrong without this instruction?" If no, delete the line.
 
 **Example — BAD (over-specified):**
 ```
@@ -42,642 +46,307 @@ This document is the complete recipe for building Myna autonomously. An orchestr
    (match against projects.yaml). Format as Obsidian Tasks plugin TODOs.
 ```
 
-The bad example has 6 steps doing what a single sentence can convey. The good example tells the LLM WHAT to extract and WHERE it goes — the LLM handles the HOW.
-
 ---
 
-## Prerequisites
-
-Before starting the build, the orchestrator must verify:
-
-1. `docs/architecture.md` exists and is current
-2. `docs/design/foundations.md` exists and is current
-3. `docs/features/*.md` — all 10 feature files exist
-4. This plan exists at `docs/instructions/autonomous-build-plan.md`
-5. `node` and `npm` are available (needed for MCP server build)
-
----
-
-## Build Log
-
-Subagents log assumptions, open questions, and judgment calls to `docs/journal/build-log.md`. The orchestrator creates this file before spawning the first subagent. Format:
-
-```markdown
-# Build Log
-
-Assumptions, open questions, and judgment calls from the autonomous build.
-Tagged by task so the user knows what to revisit.
-
-## Entries
-
-### P1-T03 (capture)
-- **Assumption:** When capture can't resolve a person name, it asks the user rather than creating a new person file. Rationale: creating files without user intent could clutter the vault.
-- **Question:** Should "save link" also add the link to the relevant project file's Links section, or only to `_system/links.md`?
-
-### P1-T05 (triage)
-- **Assumption:** ...
-```
-
-**Rules for subagents:**
-- Log any assumption you made where the design docs were ambiguous
-- Log any question where you had to choose between two reasonable approaches
-- Log any feature detail that seemed contradictory between architecture.md and the feature files
-- Do NOT log routine decisions that are clearly covered by the design docs
-- Include enough context that someone reading the log can understand the issue without re-reading the skill file
-
-After the build, the user reviews this file and asks for targeted fixes.
-
----
-
-## Repo Structure for Build Artifacts
-
-All agent artifacts go under `agents/` in the repo root:
+## Repo Structure
 
 ```
 agents/
-  main.md                    # Main agent instructions
+  main.md                              # Main agent instructions
   skills/
-    capture.md
-    sync.md
-    wrap-up.md
-    triage.md
-    process.md
-    process-meeting.md
-    prep-meeting.md
-    brief.md
-    draft.md
-    draft-replies.md
-    calendar.md
-    review.md
-    self-track.md
-    park.md
-  steering/
-    safety.md
-    conventions.md
-    output.md
-    system.md
-  mcp/
-    myna-obsidian/            # MCP server code
-      package.json
-      tsconfig.json
-      src/
-        index.ts
+    myna-sync/SKILL.md                 # Feature skills (24 total)
+    myna-plan/SKILL.md
+    ...
+    myna-steering-safety/SKILL.md      # Steering skills (6 total)
+    myna-steering-conventions/SKILL.md
+    myna-steering-output/SKILL.md
+    myna-steering-system/SKILL.md
+    myna-steering-memory/SKILL.md
+    myna-steering-vault-ops/SKILL.md
 ```
 
 ---
 
-## Skill File Format
+## Skill Format
 
-Every skill file follows this structure. No additional sections unless genuinely needed.
+Each skill is a directory with a `SKILL.md` file (+ optional `examples.md` for skills with many worked examples). Claude Code loads all files in the directory when invoked.
 
-```markdown
-# {Skill Name}
-
-## Purpose
-One line: what this skill does and why it exists.
-
-## Triggers
-Natural language descriptions of when this skill should be invoked.
-These are NOT hardcoded commands — the main agent routes by intent.
-List the kinds of user requests that map to this skill.
-
-## Inputs
-What this skill reads before doing its work:
-- Vault files (which ones, from where)
-- Config files (which fields)
-- External MCP operations (if any)
-
-## Procedure
-Step-by-step workflow. This is the core of the skill.
-Detailed enough that a fresh LLM session can execute it
-without reading architecture.md or design/foundations.md.
-
-## Output
-What gets created or modified:
-- File paths and naming conventions
-- Content format and structure
-- What to show the user inline
-
-## Rules
-Constraints, edge cases, guard rails:
-- What NOT to do
-- Edge case handling
-- Any skill-specific constraints
-- Shared patterns this skill uses (review queue routing, append-only,
-  dedup — inline briefly, only what applies)
-- Note: provenance markers are handled by the conventions steering
-  file, NOT by individual skills. Don't include marker rules here.
+**Required frontmatter:**
+```yaml
+---
+name: myna-{name}
+description: {what this skill does — Claude uses this for auto-invocation. ~250 chars. Front-load the action.}
+user-invocable: true
+argument-hint: "{hint for slash command arguments}"
+---
 ```
 
-**Key principles for skill files:**
-- **Self-contained:** A fresh LLM session should be able to execute the skill with ONLY the skill file + steering files + config loaded. Do NOT say "see design/foundations.md" — inline the relevant rules.
-- **Shared patterns are secondary.** The skill's value is in its feature workflow. Inline patterns like append-only, dedup, and fuzzy name resolution briefly where they apply — a few lines each. **Provenance markers are NOT inlined in skills** — they're handled by the conventions steering file. Skills just write content; the steering conventions ensure markers are applied.
-- **Architecture.md is the feature mapping authority.** Each skill's "Features covered" line in architecture.md is the definitive list of what the skill handles. When reading feature files, only include details for features that belong to YOUR skill — don't absorb features that belong to other skills just because they're in the same feature file.
-- **Mandatory worked examples.** Every skill file MUST include at least one realistic worked example showing: user input → what the skill reads → what it decides → what it writes → what it tells the user. Skills with multiple workflow paths (e.g., sync handles daily note + weekly note + planning) need one example per major path.
-- Don't over-specify what LLMs do naturally (understanding context, generating coherent text, following instructions).
-- Don't add error handling for scenarios that can't happen.
-
-**Style guidance:**
-- Write in imperative mood: "Read the config file" not "The skill reads the config file"
-- Use numbered steps for sequential procedures, bullet lists for non-sequential items
-- Target 100-200 lines per skill file. Simpler skills (park, calendar) can be shorter (~80-120). Complex skills (process, sync) can be longer (~150-250). If your skill exceeds 300 lines, you're probably over-specifying.
-
-### Calibration: What Good Procedure Looks Like
-
-This excerpt shows the right level of detail. The focus is on **the feature workflow** — what happens, in what order, with what inputs and outputs.
-
-```markdown
-## Procedure
-
-### Morning Sync
-
-1. Check if `Journal/DailyNote-{today}.md` exists. If not, create it from
-   the daily note template. If it exists, this is a re-run — prepend a new
-   snapshot at the top with a timestamp header. Never modify previous snapshots.
-
-2. Read today's calendar via calendar MCP. For each meeting:
-   - Determine meeting type from attendees, title, and recurrence (1:1, standup,
-     project, adhoc — see meetings.yaml for overrides)
-   - Create or update the prep file under `Meetings/{type}/{name}.md`
-   - Add a linked checkbox to the daily note Meetings section
-
-3. Read open tasks across all project files (TODO items not marked done).
-   Surface overdue tasks and tasks due today in the daily note.
-
-4. Check delegation items — flag any with overdue dates (red) or approaching
-   deadlines within 2 days (yellow).
-
-5. Read review queue files — show count in daily note with link.
-
-6. Write Capacity Check: compare available focus time (work hours minus
-   meeting hours) against estimated task effort. Flag if over-capacity.
-
-7. Suggest top 3 priorities based on: due dates, defer count (tasks
-   deferred multiple times rank higher), and blocking status.
-
-8. Output: "Sync complete (8:30 AM). 4 meetings (2 hrs), 2 overdue tasks,
-   1 overdue delegation, 5 items in review queue. Top priority: API spec
-   review (due tomorrow)."
-```
-
-**What makes this good:**
-- The feature workflow is the focus — you can trace each feature (Daily Note, Calendar, Tasks, Delegations, Capacity Check, Priority Coaching) to specific steps
-- Specific vault paths and section names — the LLM knows exactly where to read and write
-- Decision criteria are inline where needed (meeting type inference, priority ranking logic)
-- The output format shows what the user actually sees
-- Doesn't explain how to read calendar data or summarize tasks (the LLM already knows how)
-
-**What BAD looks like** — avoid these patterns:
-- "Create the daily note with relevant information" (WHICH information? From WHERE?)
-- "Read the user's calendar and populate the meetings section" (HOW to populate? What format? What about meeting types?)
-- "Process the emails and extract relevant data" (WHAT data? WHERE does it go? What format?)
-- "Determine the appropriate destination based on the content" (WHICH destinations are possible?)
-- Including provenance marker rules in a skill (they belong in the conventions steering file, not skills)
+**Body structure is up to each subagent.** Don't apply a template — figure out what structure suits each skill. Some need step-by-step procedures, some need decision trees, some are simple enough for focused paragraphs.
 
 ---
 
-## Quality Markers: What Good vs Mediocre Looks Like
+## Quality Bar
 
-This section helps subagents calibrate quality. "Correct" isn't enough — the output needs to be *good*.
+These skills are Myna's backbone. A mediocre skill means a broken feature in production. Apply this bar to every skill — don't lower it as the session progresses.
 
-**Skills — what separates good from mediocre:**
-- **Good:** Every feature from "Features covered" has a clear, executable procedure. You can point to exactly where each feature is handled.
-- **Mediocre:** Features are mentioned in the Purpose section but the Procedure doesn't actually explain how to do them.
-- **Good:** Procedure steps name specific vault paths, section headers, and config fields. "Append to `Projects/{project}.md` under `## Timeline`" / "Read `meetings.yaml` for meeting type overrides"
-- **Mediocre:** "Write the update to the appropriate project file." (Which file? Which section?)
-- **Good:** Multi-step workflows show the complete user journey. Sync example: create daily note → read calendar → generate meeting preps → surface overdue tasks → show capacity check → output summary.
-- **Mediocre:** "Create the daily note with relevant information." (What information? In what order? What sections?)
-- **Good:** Examples show realistic scenarios with multiple inputs and outputs, not just the happy path.
+**A good skill:**
+- A fresh session with only SKILL.md + 6 steering skills can execute it correctly without reading any other docs
+- Every vault entry format is shown explicitly in the skill, not deferred to steering or architecture
+- At least one worked example per major workflow path — realistic, not toy scenarios
+- All vault operations use Claude Code built-in tools (Read, Write, Edit, Grep, Glob) — no Obsidian MCP. **If you encounter references to "Obsidian MCP", "myna-obsidian", or MCP vault tools in any doc you read, ignore them — those are stale references from a previous architecture. Use built-in tools instead.**
+- Output uses light emojis in section headings and status labels (e.g. ✅ completed, ⚠️ blockers, 📋 tasks) — professional, not decorative. Each skill decides what fits its output; don't overuse.
+- The `description` field is specific enough that Claude would auto-invoke it for the right intents AND would NOT invoke it for neighboring skills' intents
+- Edge cases are handled: missing files, ambiguous entity names, feature toggles disabled, empty data sources
+
+**What separates good from mediocre:**
+- **Good:** Every feature from the spec has a clear, executable procedure. You can point to exactly where each feature is handled.
+- **Mediocre:** Features mentioned but Procedure doesn't explain how to do them.
+- **Good:** Specific vault paths, section headers, config fields. "Append to `Projects/{project}.md` under `## Timeline`"
+- **Mediocre:** "Write the update to the appropriate project file."
+- **Good:** Worked examples show a complete flow — user phrase, files read, decisions made, files written, output shown to user. Multiple scenarios if the skill has multiple modes.
 - **Mediocre:** Examples are one-liners: "User says X → skill does Y."
-
-**MCP server — what separates good from mediocre:**
-- **Good:** Each tool validates inputs, handles CLI errors gracefully, parses CLI output into structured JSON responses. Comments show the exact CLI command being invoked.
-- **Mediocre:** Thin wrappers that pass strings through without validation or error handling. No comments explaining what CLI command is being called.
-
-**Steering files — what separates good from mediocre:**
-- **Good:** Rules are concrete and actionable. "Never start a response with 'Great question!' or 'I'd be happy to help.' Start with the answer or the action."
-- **Mediocre:** Rules are abstract. "Be professional and helpful." (Every LLM already does this.)
-
-**Main agent — what separates good from mediocre:**
-- **Good:** Routing logic handles ambiguous cases explicitly. "If the user says 'process my inbox,' route to triage — inbox = unsorted email. If they say 'process my email,' route to process — email in project folders."
-- **Mediocre:** Routing is a simple keyword→skill mapping table with no ambiguity handling.
-
----
-
-## Steering File Format
-
-Steering files are cross-cutting rules loaded into every session alongside the main agent. They follow a simpler format:
-
-```markdown
-# {Steering Category}
-
-Rules and conventions, organized by topic.
-Each rule should be actionable and specific.
-No preamble — just the rules.
-```
-
-The four steering files and their contents are defined in `architecture.md` §3 (Agent Structure → Steering Files table). The subagent building steering files should read that table and expand each row into a complete steering file using the rules from `design/foundations.md` and `architecture.md`.
+- **Good:** Instructions tell Claude what to accomplish, not how to think. Only specifies where Claude might get the default wrong.
+- **Mediocre:** Over-specified with step-by-step parsing logic, or under-specified leaving ambiguous decisions to Claude's default behavior.
 
 ---
 
 ## Build Order
 
-### Execution phases
+### Completed (prerequisites for this build)
 
-The build runs in 5 sequential batches. Within Batch C, all skill subagents run **in parallel**.
+| Step | What | Status |
+|------|------|--------|
+| P0 | Updated architecture.md + foundations.md for 24 native skills | Done |
+| P0.5 | Removed Obsidian MCP from architecture, added vault-ops steering | Done |
+| P1 | Wrote 6 steering skills | Done |
 
-| Batch | Subagents | Mode | Commit after |
-|-------|-----------|------|-------------|
-| A | 1 (Foundations revision) | Sequential | Yes |
-| B | 2 (MCP server) | Sequential | Yes |
-| C | 3-10 (All skills) | **Parallel** | Yes (one commit for all skills) |
-| D | 11 (Steering), then 12 (Main agent) | Sequential | Yes (after each) |
-| E | 13 (Cross-skill audit) | Sequential | Yes |
+### Remaining (this session)
 
-### Subagent details
+4 subagents run **in parallel**, one per domain batch. One commit per skill.
 
-| # | Subagent | Deliverables |
-|---|----------|-------------|
-| 1 | Foundations revision | Updated `docs/design/foundations.md` |
-| 2 | MCP server | `agents/mcp/myna-obsidian/` (compilable code) |
-| 3 | Capture | `agents/skills/capture.md` |
-| 4 | Sync + Wrap-up | `agents/skills/sync.md`, `agents/skills/wrap-up.md` |
-| 5 | Triage + Process | `agents/skills/triage.md`, `agents/skills/process.md` |
-| 6 | Process-meeting + Prep-meeting | `agents/skills/process-meeting.md`, `agents/skills/prep-meeting.md` |
-| 7 | Brief | `agents/skills/brief.md` |
-| 8 | Draft + Draft-replies | `agents/skills/draft.md`, `agents/skills/draft-replies.md` |
-| 9 | Calendar | `agents/skills/calendar.md` |
-| 10 | Review + Self-track + Park | `agents/skills/review.md`, `agents/skills/self-track.md`, `agents/skills/park.md` |
-| 11 | Steering files | `agents/steering/safety.md`, `agents/steering/conventions.md`, `agents/steering/output.md`, `agents/steering/system.md` |
-| 12 | Main agent | `agents/main.md` |
-| 13 | Cross-skill audit | Fixes across all files |
+**Note:** Main agent rewrite, install script, and doc updates are a separate session (P3). This session only writes the 24 feature skills.
 
-### What each subagent reads
+---
 
-Every skill subagent (3-10) reads: `docs/architecture.md` (full file), `docs/design/foundations.md` (full file), and this plan. In addition, each reads the specific feature files listed below — **only the named features from each file, not the entire file's scope.**
+## Skill Batches
 
-| # | Architecture section | Feature files and specific features to read |
-|---|---------------------|---------------------------------------------|
-| 1 | Full file | All `docs/features/*.md` |
-| 2 | §2 (all skills' Reads/Writes), §7 | design/foundations.md §7 |
-| 3 | §2 skill 7 (capture) | `daily-workflow.md`: Quick Capture. `projects-and-tasks.md`: Task Management, Project File Management. `people-management.md`: Observations & Feedback Logging, Recognition Tracking. `cross-domain.md`: Multi-Destination Routing. |
-| 4 | §2 skills 1, 10 (sync, wrap-up) | `daily-workflow.md`: Morning Sync, Daily Note, Weekly Note, Planning, End of Day Wrap-Up, Weekly Summary. |
-| 5 | §2 skills 2, 3 (process, triage) | `email-and-messaging.md`: Email Processing, Messaging Processing, Email Triage. `projects-and-tasks.md`: Deduplication. `non-functional.md`: Near-Duplicate Detection. |
-| 6 | §2 skills 4, 5 (prep-meeting, process-meeting) | `meetings-and-calendar.md`: Meeting File Prep, Process Meeting, Meeting Type Inference. `people-management.md`: Conversation Coaching. |
-| 7 | §2 skill 6 (brief) | `daily-workflow.md`: Weekly Summary, Monthly Update Generation, Unified Dashboard. `people-management.md`: Person Briefing, Team Health Overview. `projects-and-tasks.md`: Project Status Summary, Blocker Detection. |
-| 8 | §2 skills 8, 14 (draft, draft-replies) | `writing-and-drafts.md`: all features. `email-and-messaging.md`: DraftReplies folder, Email Draft Reply. |
-| 9 | §2 skill 9 (calendar) | `meetings-and-calendar.md`: Time Block Planning, Calendar Reminders. `daily-workflow.md`: Planning (Task Breakdown only). |
-| 10 | §2 skills 11, 12, 13 (review, self-track, park) | `daily-workflow.md`: Review Queue. `self-tracking.md`: all features. `cross-domain.md`: Park & Resume. |
-| 11 | §3 (steering table) | design/foundations.md (all cross-cutting rules), ALL `agents/skills/*.md` (to avoid duplicating skill-specific rules) |
-| 12 | §3 (full section) | All `agents/skills/*.md`, all `agents/steering/*.md` |
-| 13 | Full file | All `agents/*` files, design/foundations.md |
+### Batch 1: Day Lifecycle + Calendar (5 skills)
 
-**Notes on ordering:**
-- Foundations first — everything builds on it. Changes here don't cascade.
-- MCP server second — skills reference MCP operations. Tool surface must be defined.
-- Skills in parallel — they read from foundations and architecture, not from each other.
-- Steering before main agent — main agent references them.
-- Cross-skill audit last — catches inconsistencies across everything.
+**Read:** `docs/features/daily-workflow.md`, `docs/features/meetings-and-calendar.md` (Time Block/Calendar/Task Breakdown sections), `docs/features/cross-domain.md` (carry-forward patterns)
+
+| Skill | Intent | Features to cover from specs |
+|---|---|---|
+| `myna-sync` | Set up or refresh your day | Morning Sync, Daily Note, Weekly Note (first sync of week), Plan Tomorrow, Journal auto-archiving |
+| `myna-plan` | Planning advice — inline only, no vault writes | Plan Day, Priority Coaching, Week Optimization |
+| `myna-wrap-up` | Close out your day | End of Day Wrap-Up, contribution detection, carry-forward, reflection |
+| `myna-weekly-summary` | Summarize your week | Weekly Summary, Team Health snapshot (for managers) |
+| `myna-calendar` | Time blocks, reminders, task breakdown | Time Block Planning, Calendar Reminders, Task Breakdown |
+
+**Boundaries:** sync does NOT include planning modes (that's plan). plan NEVER writes to vault. wrap-up does NOT include weekly summary. calendar NEVER adds attendees.
+
+### Batch 2: Email Pipeline + Meeting Lifecycle (5 skills)
+
+**Read:** `docs/features/email-and-messaging.md`, `docs/features/meetings-and-calendar.md` (Meeting File/Process Meeting/Summaries sections)
+
+| Skill | Intent | Features to cover from specs |
+|---|---|---|
+| `myna-email-triage` | Sort inbox emails into folders | Email Triage (all 3 steps) |
+| `myna-process-messages` | Extract data from email/Slack/docs → vault | Email Processing, Messaging Processing, Document Processing, Dedup, Meeting Summaries from Email, Unreplied Tracker (as byproduct) |
+| `myna-draft-replies` | Batch process forwarded DraftReplies emails | Email Draft Reply (DraftReplies folder path), Follow-Up Meeting Draft |
+| `myna-prep-meeting` | Generate meeting prep | Meeting File Prep, meeting type inference, conversation coaching |
+| `myna-process-meeting` | Process meeting notes into vault | Process Meeting, Universal Done (meeting path) |
+
+**Boundaries:** email-triage is PURELY classification — never extracts vault data. process-messages skips the DraftReplies folder. draft-replies ONLY reads the DraftReplies folder.
+
+### Batch 3: Information Retrieval + People Management (7 skills)
+
+**Read:** `docs/features/people-management.md`, `docs/features/projects-and-tasks.md` (Project Status/Blocker sections), `docs/features/email-and-messaging.md` (Unreplied Tracker section)
+
+| Skill | Intent | Features to cover from specs |
+|---|---|---|
+| `myna-brief-person` | Person briefing | Person Briefing |
+| `myna-brief-project` | Project status (quick + full modes) | Project Status Summary |
+| `myna-team-health` | Team health dashboard for all directs | Team Health Overview |
+| `myna-unreplied-threads` | What's waiting on you vs what you're waiting on | Unreplied & Follow-up Tracker queries |
+| `myna-blockers` | Scan projects for blockers and stuck items | Blocker Detection |
+| `myna-1on1-analysis` | 1:1 pattern analysis across sessions | 1:1 Pattern Analysis |
+| `myna-performance-narrative` | Performance review narrative + calibration | Performance Narrative, Review Calibration |
+
+**Boundaries:** Only performance-narrative writes to vault (Drafts/). All others are read-only inline output. Never infer engagement, morale, or performance — present factual data only.
+
+### Batch 4: Writing, Capture, Self-Tracking, Context, Memory, Review (7 skills)
+
+**Read:** `docs/features/writing-and-drafts.md` (all EXCEPT Pre-Read Preparation — deferred), `docs/features/cross-domain.md` (Quick Capture/Park & Resume/Link Manager), `docs/features/self-tracking.md`, `docs/features/daily-workflow.md` (Review Queue), `docs/features/projects-and-tasks.md` (Task Management)
+
+| Skill | Intent | Features to cover from specs |
+|---|---|---|
+| `myna-draft` | Generate professional content | Email Draft Reply (conversation path), Follow-Up Email/Meeting Draft, Structured Draft, Recognition Draft, Help Me Say No, Difficult Conversation Prep, Monthly Update |
+| `myna-rewrite` | Fix grammar, adjust tone, or fully rewrite | Message Rewriting (3 modes: fix/tone/rewrite) |
+| `myna-capture` | Route user data to vault | Quick Capture, Observations, Recognition, Task Management (add/recurring), Link Manager (save), Project/Person File Management |
+| `myna-self-track` | Log contributions + career docs | Contributions Tracking, Self-Narrative Generation, Contribution Queries, Self-calibration |
+| `myna-park` | Save/resume context across sessions | Park & Resume |
+| `myna-learn` | Myna's experiential memory | Emergent memory: capture, reflect, delete, negotiate |
+| `myna-process-review-queue` | Process review queue items | Review Queue processing (review-work, review-people, review-self) |
+
+**Boundaries:** draft does NOT include message rewriting (that's rewrite). self-track handles SELF-narratives only (others → performance-narrative). learn never writes to CLAUDE.md. process-review-queue does NOT handle review-triage.md (that's email-triage).
 
 ---
 
 ## Per-Subagent Protocol
 
-Every subagent follows this protocol:
+Every skill subagent follows this protocol. **Do not rush any step.** The last skill in your batch deserves the same attention as the first. If you notice yourself writing shorter examples or skipping edge cases toward the end, stop and reset your pace.
 
 ### 1. Read
 
-**You MUST read every file listed before writing anything.** Do not start writing after reading just the plan and architecture — the feature files contain critical details that architecture.md only summarizes. Skipping them is the #1 cause of incomplete skills.
+Read ALL of these before writing anything:
+- ALL feature files listed in your batch's "Read" line — read every section mentioned, not just the first file
+- `docs/architecture.md` (full)
+- `docs/design/foundations.md` (full) — especially §2 (file templates) for canonical vault entry formats
+- All 6 steering skills under `agents/skills/myna-steering-*/SKILL.md` — to understand what rules are already handled by steering so you don't duplicate them in feature skills (provenance markers, append-only discipline, confirmation policy, etc.)
 
-Read:
-- This plan (for format, calibration example, and review criteria)
-- All files listed in the "What each subagent reads" table for your subagent number
-- Any previously-built skill files that your skill interacts with (e.g., if building process, read capture.md if it exists)
+**Do not start writing after reading just architecture or just one feature file.** The feature files contain critical details that architecture only summarizes. Reading all sources before writing is what produces cohesive skills.
 
-### 2. Design (Think Before Writing)
+### 2. Write
 
-Before writing any file, output this checklist in your working output — it forces you to process the source material before writing:
+For each skill in your batch:
 
-1. **Feature list:** Copy the "Features covered" line from architecture.md for your skill. This is your scope — nothing more, nothing less.
-2. **Feature details:** For each feature, note any details from the feature files that architecture.md doesn't include. These details MUST appear in your skill file.
-3. **Workflow:** Describe the user-facing workflow end-to-end. What's the first thing the skill does? What are the decision points? What's the last thing?
-4. **Patterns used:** Which shared patterns does this skill use? (append-only? dedup? fuzzy name resolution? multi-destination routing? review queue routing?) Keep this brief — patterns support the features, they're not the focus. Note: provenance markers are in steering, not skills.
-5. **Edge cases:** What if the target file doesn't exist? What if there's nothing to process? What if config fields are missing?
+1. **Gather features.** Read all the feature spec sections listed in "Features to cover." List every behavior, mode, and edge case the skill must support. This is your raw material.
 
-### 3. Write
+2. **Design the skill.** Now step back and think: what structure makes this skill cohesive? Group related behaviors into a natural workflow — not one section per feature, but a unified procedure where features are supported inherently. A skill that handles 5 features should NOT read like 5 mini-skills stitched together. It should read like one clear set of instructions that a person would follow, where the features emerge naturally from the workflow.
 
-Write the skill file following the Skill File Format above. Write the complete file in one pass — do not append incrementally.
+3. **Write cohesively.** Write the skill as a unified whole. The reader should not be able to tell which lines map to which feature — they should just see a clear, complete procedure. If the skill has distinct modes (e.g., myna-rewrite has fix/tone/rewrite), those are natural sections. But if the features are parts of one workflow (e.g., myna-sync's daily note + calendar + tasks + priorities are all part of "setting up your day"), write them as one flowing procedure, not as labeled feature blocks.
 
-### 4. Self-Review (3 Rounds)
+4. **Write to the correct path.** Each skill is a directory: `agents/skills/myna-{name}/SKILL.md` (not a flat file). Create the directory first if it doesn't exist. If the skill needs an `examples.md`, put it in the same directory.
 
-**Critical rule: every review round MUST find at least one thing to improve.** If you find nothing, you're not looking hard enough — go back and compare your Procedure line-by-line against the feature file details. A "no issues found" result means the review failed, not that the skill is perfect.
+5. **Commit:** `mkdir -p agents/skills/myna-{name} && git add agents/skills/myna-{name}/ && git commit -m "feat(skills): add myna-{name} skill"`
 
-#### Round 1 — Coverage Check (most important round)
-This is the highest-value review. Getting features right matters more than anything else.
-- Read every feature listed in "Features covered" from architecture.md for this skill
-- For each feature, **point to the exact step(s)** in your Procedure that handle it. If you can't point to a specific step, the feature isn't covered — add it.
-- Open the feature files and compare details line by line — are there specifics in the feature files that your skill omits? Feature files often have sub-bullets and edge cases that architecture.md summarizes away.
-- Verify the worked example(s) are realistic and cover the main workflow paths
-- Flag and fix any gaps
+### 3. Review (after writing all skills in batch)
 
-#### Round 2 — Quality Check
-- **Apply the Golden Rule:** Read every line and ask "would an LLM get this wrong without this instruction?" Delete lines that teach the LLM things it already knows (how to summarize, parse text, format markdown, write professionally). Multiple steps that can be one sentence should be collapsed.
-- Is the Procedure ordered logically? Would reordering steps improve clarity?
-- Are there ambiguities where an LLM might misinterpret what to do?
-- Are there edge cases that the features imply but the skill doesn't handle?
-- Is the writing tight? Remove filler, redundancy, and obvious statements.
-- Is the skill within the target length range? (100-200 lines for most skills)
+**Reviews are not a formality.** Every round MUST find at least one thing to improve. If you find nothing, you're not looking hard enough. A "no issues found" result means the review failed, not that the skills are perfect.
 
-#### Round 3 — Consistency Check
-- Does the skill reference the correct vault paths from design/foundations.md §1?
-- Does it use the correct config field names from design/foundations.md §3?
-- Does it reference the correct MCP operations from design/foundations.md §7?
-- Verify the skill does NOT include provenance marker rules (those belong in conventions steering file, not skills)
-- When this skill creates or modifies a file, does the format match the template in design/foundations.md §2? Check frontmatter fields, section headers, and content structure.
-- Does it conflict with any other skill's responsibility? (Check architecture.md for skill boundaries)
-- If this skill routes items to review queues, does the routing match design/foundations.md §6?
+**Round 1: Feature coverage.**
+For each skill, re-read the feature spec sections listed in "Features to cover." For every feature in the spec:
+- Point to the exact place in your SKILL.md that handles it. If you can't point to a specific place, the feature isn't covered — add it.
+- Check the feature spec for sub-bullets, edge cases, and details that your skill may have summarized away. Feature specs often have specifics that the architecture table doesn't show.
+- Verify the skill doesn't cover features that belong to a neighboring skill (check the Boundaries note for your batch).
 
-After each round: fix all issues found, then proceed to the next round. The next round reviews the improved version.
+Fix all gaps before Round 2.
 
-### 5. Build Log
+**Round 2: Skill quality.**
+Read each skill as if you've never seen it before. For each skill, answer these questions honestly:
+- **Auto-invocation:** Is the `description` accurate and specific enough? Would Claude invoke this skill for the right user intents? Would it ALSO incorrectly invoke it for intents that belong to a different skill? Test mentally with 3-4 example user phrases.
+- **Self-containedness:** Could a fresh session execute this with ONLY SKILL.md + steering? Are entry formats inlined or just referenced? Are vault paths concrete or vague?
+- **Instructions:** Are they clear and unambiguous, or does anything rely on context that only exists in your head from reading the specs? Would a different Claude session interpret any instruction differently than you intended?
+- **Worked examples:** Do they show a realistic complete flow (user phrase → files read → decision → files written → output to user)? Or are they abbreviated happy-path sketches?
+- **Calibration:** Is anything over-specified (teaching Claude what it already knows) or under-specified (leaving ambiguous decisions to Claude's defaults when the default would be wrong)?
 
-Log any assumptions, open questions, or judgment calls to `docs/journal/build-log.md`, tagged with your task number (e.g., `### P1-T03 (capture)`). See the Build Log section at the top of this plan for format and rules.
+Fix all issues. Amend commits if needed.
 
-For parallel subagents (Batch C): **do NOT write directly to `docs/journal/build-log.md`** — include your log entries in your report to the orchestrator instead. The orchestrator will write them to the build log after the batch completes to avoid parallel write conflicts.
+### 4. Push
 
-### 6. Dev Journal
+After all skills pass review: `git pull --rebase origin main && git push origin main`
 
-If you discovered anything interesting — a gap in the design, a non-obvious pattern — include it in your report to the orchestrator. **Do NOT write directly to `docs/journal/dev-journal.md`** — the orchestrator consolidates entries after each batch.
+Other subagents may have pushed first. The rebase ensures your commits land cleanly on top. If rebase fails (conflict on the same file — unlikely since batches have zero file overlap), flag to the orchestrator.
 
-### 7. Done
+### 5. Report
 
-Report to the orchestrator. **Keep it under 30 lines** — the orchestrator processes many reports and bloated reports waste context.
-
+Report to orchestrator (under 30 lines):
 ```
-Files: agents/skills/capture.md (created)
-Features covered: 7/7 — Quick Capture, Observations Logging, Recognition Tracking,
-  Task Management, Link Manager, Project File Management, Person File Management
-Issues: None
-Discoveries: [any design gaps or non-obvious patterns, for dev journal]
-Build log entries:
-- Assumption: [brief description]
-- Question: [brief description]
+Files: [list of created files]
+Features covered: [count] — [list]
+Issues: [any gaps or concerns]
 ```
-
----
-
-## Subagent-Specific Instructions
-
-### Subagent 1: Foundations Revision
-
-**Goal:** Review and improve `docs/design/foundations.md` before any skills are built on top of it.
-
-**What to check:**
-- Are all templates complete enough for skill builders to use? Would a skill builder have all the field names, formatting rules, and examples they need?
-- Are config schemas complete? Every field referenced in architecture.md exists in the schema?
-- Are pattern descriptions clear and actionable? Could a fresh LLM follow each pattern without asking questions?
-- Are there inconsistencies between design/foundations.md and architecture.md? (Architecture is authoritative for skill design; foundations is authoritative for data layer.)
-- Is anything missing that architecture.md implies but design/foundations.md doesn't define? In particular: §7 (MCP tool surface) should be updated to reflect the Obsidian CLI's actual command surface — `move`, `append`, `prepend`, `property:set`, `backlinks`, `tags`, etc. The current §7 lists abstract tools that predate the Obsidian CLI research.
-- Is anything over-specified? Remove rules for things LLMs handle naturally.
-
-**What NOT to do:**
-- Don't restructure the document — keep the existing section numbering
-- Don't rename config fields, vault paths, or section headers — downstream skills reference them by exact name
-- Don't add new sections unless something is genuinely missing
-- Don't duplicate architecture.md content
-- Don't simplify templates or remove fields — skill builders need every field name
-
-### Subagent 2: MCP Server
-
-**Goal:** Build a thin MCP wrapper around the Obsidian CLI (`obsidian` command).
-
-**Prerequisite:** The Obsidian CLI must be installed and enabled (Settings → General). The MCP server assumes this and shells out to `obsidian` commands. It does NOT reimplement vault operations — it wraps them.
-
-**Obsidian CLI commands the MCP server wraps:**
-
-| MCP Tool | Obsidian CLI Command | Purpose |
-|----------|---------------------|---------|
-| `search` | `obsidian search query=<term>` | Vault-wide search |
-| `search_content` | `obsidian search-content query=<term>` | Search within note content |
-| `tasks` | `obsidian tasks` | List/query tasks |
-| `daily_read` | `obsidian daily:read` | Read today's daily note |
-| `daily_append` | `obsidian daily:append content=<text>` | Append to daily note |
-| `daily_prepend` | `obsidian daily:prepend content=<text>` | Prepend to daily note |
-| `read` | `obsidian read file=<name>` or `path=<path>` | Read a note |
-| `create` | `obsidian create name=<name> content=<text>` | Create a note |
-| `append` | `obsidian append file=<name> content=<text>` | Append to a note |
-| `prepend` | `obsidian prepend file=<name> content=<text>` | Prepend to a note |
-| `move` | `obsidian move file=<name> to=<path>` | Move a file within vault |
-| `delete` | `obsidian delete file=<name>` | Delete a file |
-| `create_from_template` | `obsidian create` with template params | Create note from template |
-| `property_set` | `obsidian property:set name=<key> value=<val> file=<name>` | Set frontmatter property |
-| `property_read` | `obsidian property:read file=<name>` | Read frontmatter properties |
-| `eval` | `obsidian eval` | Run JavaScript (Dataview queries, custom logic) |
-| `tags` | `obsidian tags` | List vault tags |
-| `backlinks` | `obsidian backlinks file=<name>` | Find notes linking to a file |
-
-**Implementation approach:**
-- Use the MCP SDK (`@modelcontextprotocol/sdk`)
-- Each MCP tool shells out to the corresponding `obsidian` CLI command using `child_process.execFile`
-- Use `vault=<name>` parameter to target the correct vault (configurable)
-- Use `--json` flag where available for structured output parsing
-- Use `silent` flag on write operations to prevent files from opening in the UI
-- **Write restriction:** Tools that modify files (`create`, `append`, `prepend`, `move`, `delete`) must validate that the target path is under the configured `myna/` subfolder before executing. Reject operations outside this boundary.
-- **Configuration:** Accept vault name and myna subfolder as MCP server config
-
-**What NOT to do:**
-- Don't reimplement file I/O — let Obsidian CLI handle it so vault indexing stays consistent
-- Don't add tools for every CLI command — only wrap what Myna skills actually need (check architecture.md §2 for each skill's Reads/Writes)
-- Don't handle the case where Obsidian isn't running — the CLI requires Obsidian to be running. Document this as a prerequisite.
-
-**Quality bar:** For each MCP tool, include:
-- A JSDoc comment showing the exact CLI command with example parameters
-- Input validation (required params, path format)
-- Error handling for CLI failures (non-zero exit, stderr)
-- Structured JSON output (parse CLI text output into typed response objects)
-
-**Done criteria:** `npm run build` compiles without errors. All tools are implemented with correct parameter schemas. Write restriction is enforced. Each tool correctly invokes the corresponding `obsidian` CLI command.
-
-### Subagent 3-10: Skill Building
-
-Each skill subagent follows the standard Per-Subagent Protocol above. Key reminders:
-
-- **Features are the priority, patterns are secondary.** Spend your effort getting the feature workflows right. Shared patterns (dedup, append-only, fuzzy name resolution) should be inlined briefly where they apply. **Provenance markers are handled by the conventions steering file — don't include marker rules in skills.**
-- **Write holistically.** Read all features for the skill, understand the complete workflow, then write the entire file. Never append feature-by-feature.
-- **Check interactions.** If your skill reads files that another skill writes (or vice versa), verify the file format and path conventions match.
-- **Don't include main-agent direct operations.** Check architecture.md §2 "Main-Agent Direct Operations" — vault search, link find, task completion, draft deletion, and file creation from template are handled by the main agent, NOT by skills. Don't include these in your skill even if they seem related.
-- **Concrete examples are mandatory.** At least one realistic worked example per major workflow path (see Key Principles above).
-
-### Subagent 11: Steering Files
-
-**Goal:** Build the 4 steering files defined in architecture.md §3.
-
-**Source material:**
-- `safety.md`: architecture.md (draft-never-send, vault-only writes), design/foundations.md §8.3 (external content as data — content framing delimiters), architecture.md (confirm before bulk writes)
-- `conventions.md`: design/foundations.md §4 (provenance markers — **this is the ONLY place marker rules live at runtime; skills do not include them**), §8.2 (append-only), §5 (date+source format), §10 (Obsidian conventions — tags, wiki-links, callouts, Dataview, Tasks plugin syntax)
-- `output.md`: architecture.md §3 (voice rules — no AI tells, no hedging, concise), BLUF contextual rules from draft skill
-- `system.md`: architecture.md §5 (feature toggles), design/foundations.md §9.5 (error recovery), architecture.md (graceful degradation, config reload, relative date resolution, prompt logging)
-
-**Key rule:** Steering files are cross-cutting — they apply to ALL skills. Don't include skill-specific behavior. If a rule only applies to one skill, it belongs in that skill file, not steering.
-
-### Subagent 12: Main Agent
-
-**Goal:** Build `agents/main.md` — the always-loaded prompt that routes user requests and handles simple operations.
-
-**Must contain:**
-- **Identity:** who Myna is, what it does (from architecture.md §1)
-- **Skill directory:** one-liner per skill with description (from architecture.md §2 overview table). This is what's loaded at session start for routing.
-- **Routing logic:** how to match user intent to skills. Include the specific routing rules from architecture.md §3 (Universal Done, inbox routing, planning routing, ambiguous intent handling)
-- **Direct operations:** vault search, link find, task completion, draft deletion, file creation from template (from architecture.md §2 "Main-Agent Direct Operations")
-- **Always-on rules:** reference steering files (these are always loaded alongside main.md)
-- **Config loading:** read 6 YAML config files at session start
-
-**Skill activation:** When a user request matches a skill, the main agent instructs Claude Code to read and follow the instructions in `agents/skills/{skill}.md`. The generated CLAUDE.md (produced by the install script in Phase 2) includes the skill directory with file paths so Claude Code can load the full skill file on demand.
-
-**Must NOT contain:**
-- Feature-specific procedures — those live in skill files
-- Detailed rules already in steering files — just reference them
-- Duplicated skill procedures
-
-**Read ALL skill files before writing.** The main agent needs to know what each skill does to route correctly.
-
-### Subagent 13: Cross-Skill Audit
-
-**Goal:** Find and fix inconsistencies across all built artifacts.
-
-**Checklist (in priority order):**
-1. **Feature coverage:** Every feature from architecture.md "Features covered" is handled by exactly one skill. No feature falls through the cracks. No two skills claim the same feature.
-2. **Cross-references:** If skill A says "user runs skill B next," verify skill B actually handles that flow
-3. **Main agent alignment:** Routing in main.md covers all skills. Direct operations don't overlap with skills.
-4. **Path consistency:** Every vault path referenced in skills matches design/foundations.md naming conventions
-5. **Config field consistency:** Every config field referenced in skills exists in design/foundations.md §3 schemas
-6. **Template consistency:** File formats skills write match the templates in design/foundations.md §2
-7. **MCP operation consistency:** Every MCP call in skills matches design/foundations.md §7 tool surface
-8. **Steering alignment:** Nothing in skill files contradicts steering files
-9. **Shared pattern consistency:** Review queue routing and other inlined patterns are correct where used. Verify NO skill includes provenance marker rules (those belong in conventions.md only).
-10. **No "see design/foundations.md" references:** Skills must be self-contained
-
-**Fix issues directly** in the files. If an issue requires a design decision (not just a typo), document it and flag to the orchestrator.
-
-**If the audit finds more than 5 issues requiring procedure changes** (not just path/name fixes), flag to the orchestrator rather than rewriting large sections. The orchestrator should re-spawn the affected skill subagents with specific fix instructions.
 
 ---
 
 ## Orchestrator Protocol
 
-The orchestrator (main Claude session) manages the build:
+### Model Split
+
+The orchestrator runs in **Opus** (design judgment, cross-skill evaluation). Subagents run in **Sonnet** (executing well-defined skill writing from clear specs). When spawning subagents, set `model: "sonnet"`. Do not reduce effort level — subagents should run at the same high effort as the orchestrator.
+
+Why: Sonnet's natural conciseness produces leaner LLM instructions. Opus would over-engineer individual skills. But cross-skill review requires comparing 24 skills holistically — that's Opus's strength.
 
 ### Starting the Build
 
-1. Read this plan
-2. Read `docs/roadmap.md` — check which P1 tasks are already Done (for resuming)
-3. Verify prerequisites (design files exist)
-4. Create `agents/` directory structure if it doesn't exist (`agents/skills/`, `agents/steering/`, `agents/mcp/myna-obsidian/src/`)
-5. Skip completed batches, begin spawning from the next incomplete batch
+1. Read this plan (full file)
+2. Read `docs/roadmap.md` — check task status
+3. Read `docs/architecture.md` and `docs/design/foundations.md` (full files)
+4. For each batch, prepare the subagent prompt. **Subagents cannot read this plan — you must include everything they need.** Each subagent prompt must contain:
+   - The **Golden Rule** section (what to specify, what not to, bad/good examples)
+   - The **Skill Format** section (frontmatter, body structure)
+   - The **Quality Bar** section (all 7 criteria + all 4 good/mediocre comparisons)
+   - The **full Per-Subagent Protocol** (Read → Write → Review → Push → Report)
+   - The **batch table** for that subagent (skills + intents + features to cover)
+   - The **Boundaries** note for that batch
+   - The **docs to read** for that batch
+   - Instruction to also read: `docs/architecture.md` (full), `docs/design/foundations.md` (full), and all 6 steering skills under `agents/skills/myna-steering-*/SKILL.md` (to understand what's already handled there and avoid duplicating steering rules in feature skills)
+   - Do NOT paraphrase — include the sections verbatim or the subagent will lose precision
+5. Spawn 4 subagents in parallel (one per batch, `model: "sonnet"`)
+6. Wait for all to complete. **Do not write any skills yourself — your job is orchestration and cross-skill review only.**
 
-### Resuming a Build
+### After All Subagents Complete: Cross-Skill Review
 
-The build is designed to survive session timeouts (4-hour subscription limits, context exhaustion, etc.).
+**Read all 24 SKILL.md files.** Do not spot-check — read every one. Then check:
 
-**How it works:**
-- After each batch completes, the orchestrator commits and updates `docs/roadmap.md` (marks tasks Done)
-- If the session ends, the user starts a new session and says "resume the build" or "start Phase 1"
-- The new orchestrator reads the roadmap, sees which P1 tasks are Done, and continues from the next incomplete batch
-- Previously-built files exist on disk — later subagents can read them
+1. **Boundary bleed:** For each related pair, read both skills and verify neither contains logic that belongs in the other:
+   - sync ↔ plan (sync writes vault, plan is inline only)
+   - wrap-up ↔ weekly-summary (daily vs weekly scope)
+   - email-triage ↔ process-messages (classification vs extraction)
+   - draft ↔ rewrite (generation vs transformation)
+   - draft ↔ draft-replies (conversation path vs DraftReplies folder)
+   - self-track ↔ performance-narrative (self vs others)
+   - learn ↔ capture (behavioral patterns vs entity data)
+   - process-review-queue ↔ email-triage (review queues vs triage queue)
 
-**Batch checkpoint order:** A (foundations) → B (MCP) → C (all skills) → D (steering + main) → E (audit)
+2. **Description collision:** Read all 24 `description` fields together. Would any two trigger for the same user intent? If so, make one more specific.
 
-### Subagent Prompt Template
+3. **Format consistency:** Skills across different batches that write the same vault entry types must use identical formats. Check:
+   - Task format (capture, process-messages, process-meeting, wrap-up, calendar)
+   - Timeline entry format (capture, process-messages, process-meeting)
+   - Observation format (capture, process-messages, process-meeting)
+   - Contribution format (wrap-up, self-track, process-meeting)
 
-Use this template when spawning each subagent (adapt for the specific subagent number):
+4. **Steering duplication:** No feature skill should contain rules that belong in steering (provenance marker rules, append-only rules, confirmation policy, external content framing rules). These are handled by the 6 steering skills.
 
-```
-You are building components for Myna, a local-first AI assistant.
-Your task: [describe deliverables for this subagent].
+5. **No MCP references:** `grep -rl "obsidian MCP\|myna-obsidian" agents/skills/myna-*/` should return 0 results.
 
-Follow the autonomous build plan at docs/instructions/autonomous-build-plan.md:
-1. Read the "Per-Subagent Protocol" section for your workflow
-2. Read the "Subagent [N]" section under "Subagent-Specific Instructions" for your specific guidance
-3. Read the files listed in the "What each subagent reads" table row [N]
-4. Execute: Read → Design → Write → Self-Review (3 rounds) → Dev Journal → Done
+Fix all issues, commit, push.
 
-When done, report: files created/modified (with paths), feature coverage
-summary, and any issues or design gaps found.
-```
-
-For parallel skill subagents (Batch C), spawn all 8 subagents simultaneously using the Agent tool.
-
-### Between Batches
-
-After each batch completes:
-
-1. **Verify output:**
-   - **Files exist:** All deliverables listed for that batch were created
-   - **Not empty/truncated:** Files have reasonable content (not just headers)
-   - **Quick feature count:** For skill subagents — does the skill mention all the features listed in its "Features covered" line from architecture.md?
-2. **Build log:** If any subagent reported assumptions/questions, append them to `docs/journal/build-log.md` tagged with the task number
-3. **Dev journal:** If any subagent reported discoveries, write a single consolidated entry to `docs/journal/dev-journal.md`
-3. **Commit:** Stage and commit all new/modified files from the batch. Use conventional commit prefixes that match the artifact type:
-   - Batch A (foundations revision): `docs:` — these are design documents
-   - Batch B (MCP server): `feat:` — this is product code
-   - Batch C (skills): `feat:` — agent instructions are product, not docs
-   - Batch D (steering + main agent): `feat:` — agent instructions are product
-   - Batch E (audit fixes): `fix:` — consistency corrections across files
-4. **Update roadmap:** Mark the corresponding P1-T tasks as Done in `docs/roadmap.md`
-5. **Push:** Push to remote so work is preserved even if session ends
-
-If something looks wrong with a subagent's output, re-spawn that subagent before committing.
-
-**Spot-check (Batch C only):** After all 8 skill subagents return, open 2-3 skill files and verify:
-- Does the Procedure follow the Golden Rule? (goal-oriented steps, not LLM-teaching)
-- Are worked examples realistic and specific?
-- Is the line count reasonable? (under 80 = likely too thin, over 300 = likely over-specified)
-- Does it include main-agent direct operations it shouldn't?
-If any fail, re-spawn that subagent with specific feedback.
-
-### After All Batches Complete
-
-Run this pre-flight check:
+### Pre-flight Check
 
 ```bash
-# 1. Verify all files exist
-ls agents/skills/  # expect 14 .md files
-ls agents/steering/  # expect 4 .md files
-ls agents/main.md  # expect 1 file
+# All 24 skill directories exist
+ls agents/skills/myna-{sync,plan,wrap-up,weekly-summary,calendar}/SKILL.md  # 5
+ls agents/skills/myna-{email-triage,process-messages,draft-replies,prep-meeting,process-meeting}/SKILL.md  # 5
+ls agents/skills/myna-{brief-person,brief-project,team-health,unreplied-threads,blockers,1on1-analysis,performance-narrative}/SKILL.md  # 7
+ls agents/skills/myna-{draft,rewrite,capture,self-track,park,learn,process-review-queue}/SKILL.md  # 7
 
-# 2. Verify all skills have required sections
-grep -l "## Procedure" agents/skills/*.md | wc -l  # expect 14
-grep -l "## Rules" agents/skills/*.md | wc -l  # expect 14
+# No MCP references in any skill
+grep -rl "obsidian MCP\|myna-obsidian" agents/skills/myna-*/  # expect 0
 
-# 3. Verify line counts are reasonable
-wc -l agents/skills/*.md  # each should be 80-300 lines
-
-# 4. MCP server compiles
-cd agents/mcp/myna-obsidian && npm run build
-
-# 5. No skill mentions "see design/foundations.md" (self-containment check)
-grep -rl "see foundations" agents/skills/  # expect 0 results
+# All have valid frontmatter
+grep -l "user-invocable: true" agents/skills/myna-*/SKILL.md | wc -l  # expect 24
 ```
 
-If any check fails, fix before declaring done. Then report completion summary to the user.
+Update `docs/roadmap.md` task P2-T13 to Done. Report completion to user.
 
 ### Error Handling
 
-- If a subagent fails or produces bad output: re-spawn with a clarifying prompt
-- If a subagent discovers a design gap: document it, continue building, flag to user at the end
-- If two skills contradict each other: the cross-skill audit (subagent 13) resolves it. If it can't, flag to user.
-- If the session is about to hit limits: commit whatever is done, update roadmap, push. The next session resumes.
+- Subagent fails or produces bad output → re-spawn with clarifying prompt and specific feedback on what went wrong
+- Subagent returns fewer skills than expected → check if it hit context limits. Re-spawn for remaining skills only.
+- Subagent writes flat files instead of directories → fix paths before committing
+- Design gap discovered → document, continue building, flag to user
+- Two skills contradict → cross-skill review resolves; if it can't, flag to user
+- Session hitting limits → commit whatever is complete, update roadmap, push. Resume in next session.
 
 ---
 
 ## What "Done" Looks Like
 
-The build is complete when:
-
-1. All 14 skill files exist under `agents/skills/`
-2. All 4 steering files exist under `agents/steering/`
-3. `agents/main.md` exists
-4. `agents/mcp/myna-obsidian/` builds without errors
-5. Cross-skill audit found no unresolved issues
-6. `docs/design/foundations.md` has been revised
-7. All features from architecture.md are covered across the skill files
+1. All 24 feature skill directories exist under `agents/skills/myna-*/`
+2. All 6 steering skill directories exist (already done from P1)
+3. Cross-skill review found no unresolved boundary or format issues
+4. All features from the feature spec files are covered across the 24 skills
+5. No skill references Obsidian MCP
+6. Roadmap task P2-T13 marked Done

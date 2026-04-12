@@ -1,0 +1,50 @@
+# Myna — Projects Configuration
+# Copy to: _system/config/projects.yaml
+# Add your active projects here. Myna uses this to route emails, Slack messages,
+# and user input to the right project files.
+
+projects:
+  - name: Auth Migration               # Display name — used in vault files and routing
+    aliases: [auth, AM, auth-mig]       # Short names for quick reference in conversation
+    status: active                      # active | paused | complete
+    email_folders:                      # Email folders mapped to this project
+      - "Auth Migration/"
+    slack_channels:                     # Slack channels mapped to this project
+      - auth-team
+      - auth-migration
+    description: "Migrating to new OAuth provider"
+    key_people:                         # Referenced in project file overview
+      - Sarah Chen
+      - Alex Kumar
+
+  - name: Platform API
+    aliases: [platform, PAPI]
+    status: active
+    email_folders:
+      - "Platform/"
+    slack_channels:
+      - platform-eng
+    description: "Core platform API modernization"
+    key_people:
+      - Marcus Lee
+
+# ---
+# Email Triage Configuration
+# Controls how "triage my inbox" classifies emails.
+# ---
+triage:
+  inbox_source: "INBOX"                # Email folder/label to read for triage
+  folders:                              # Triage folders — agent uses descriptions to classify
+    - name: Reply
+      description: "Needs a response from me"
+    - name: FYI
+      description: "Informational, no action needed"
+    - name: Follow-Up
+      description: "Waiting on someone else — check back later"
+    - name: Schedule
+      description: "Needs a meeting or calendar action"
+    # Add custom folders below:
+    - name: Trainings
+      description: "Training invitations, course materials, learning resources"
+  draft_replies_folder: DraftReplies    # Email folder for draft reply requests
+                                        # Process skill skips this — handled by draft-replies skill

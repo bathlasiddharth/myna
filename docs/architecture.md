@@ -473,7 +473,7 @@ Processes review queue items. Two interaction modes: work through items interact
 
 These operations are simple enough that the main agent handles them without activating a skill:
 
-- **Vault-wide search:** "search: auth migration" → runs Obsidian MCP search, groups results by folder
+- **Vault-wide search:** "search: auth migration" → runs Grep across vault files, groups results by folder
 - **Link find:** "find link: MBR Jan" → searches `_system/links.md` and entity link sections
 - **Task completion:** "done with [task]" → marks TODO as complete (simple metadata update, no skill needed)
 - **Draft deletion:** "delete the MBR draft" → removes the draft file from Drafts/.

@@ -1,0 +1,94 @@
+# Myna — Workspace Configuration
+# Copy to: _system/config/workspace.yaml
+# Edit the values below to match your setup.
+
+# ---
+# User Identity (required)
+# ---
+user:
+  name: "Alex Johnson"               # Your full name
+  email: "alex@company.com"           # Your work email — used to identify your messages
+  role: senior-engineer               # Your role: engineering-manager | tech-lead | senior-engineer | pm
+
+# ---
+# Vault Settings (required)
+# ---
+vault:
+  path: "/Users/alex/Documents/MyVault"  # Absolute path to your Obsidian vault
+  subfolder: myna                         # Myna subfolder within the vault (default: myna)
+
+# ---
+# Time Settings
+# ---
+timezone: America/Los_Angeles         # IANA timezone (default: system timezone)
+work_hours:
+  start: "09:00"                      # Workday start (default: 09:00)
+  end: "17:00"                        # Workday end (default: 17:00)
+timestamp_format: "YYYY-MM-DD"        # Date format for entries (default: YYYY-MM-DD)
+
+# ---
+# Journal
+# ---
+journal:
+  archive_after_days: 30              # Auto-archive daily/weekly notes older than this (default: 30)
+
+# ---
+# Email Processing
+# ---
+email:
+  processed_folder: per-project       # How processed emails are filed: per-project | common
+  common_folder: "Processed/"         # Shared folder (only used when processed_folder is "common")
+
+# ---
+# People Management
+# ---
+feedback_cycle_days: 30               # Days between feedback gap alerts (default: 30)
+
+# ---
+# Calendar
+# ---
+calendar_event_prefix: "[Myna]"       # Prefix on all Myna-created calendar events (default: [Myna])
+calendar_event_types:                 # Labels appended to the prefix
+  focus: Focus                        # e.g. [Myna:Focus]
+  task: Task                          # e.g. [Myna:Task]
+  reminder: Reminder                  # e.g. [Myna:Reminder]
+
+# ---
+# MCP Server Names
+# Maps Myna's abstract names to your registered MCP servers.
+# Only configure the ones you have installed. Myna degrades gracefully without them.
+# ---
+mcp_servers:
+  email: gmail-mcp                    # Email MCP server (e.g., gmail-mcp, outlook-mcp)
+  slack: slack-mcp                    # Slack MCP server
+  calendar: gcal-mcp                  # Calendar MCP server (e.g., gcal-mcp)
+
+# ---
+# System
+# ---
+prompt_logging: true                  # Log user prompts to _system/logs/prompts.md (default: true)
+ai_model: claude-code                 # Reference only — not enforced
+
+# ---
+# Feature Toggles
+# true = enabled, false = disabled. All default to true.
+# Disabled features are silently skipped — never mentioned or suggested.
+# ---
+features:
+  email_processing: true
+  messaging_processing: true
+  email_triage: true
+  meeting_prep: true
+  process_meeting: true
+  time_blocks: true
+  calendar_reminders: true
+  people_management: true
+  self_tracking: true
+  team_health: true                   # Managers: team health overview in daily note
+  attention_gap_detection: true
+  feedback_gap_detection: true
+  contribution_detection: true
+  milestones: true                    # Birthdays/anniversaries in daily note
+  weekly_summary: true
+  monthly_updates: true
+  park_resume: true

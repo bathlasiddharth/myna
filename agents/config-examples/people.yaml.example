@@ -1,0 +1,37 @@
+# Myna — People Configuration
+# Copy to: _system/config/people.yaml
+# Add the people you work with. Start with direct reports and close collaborators.
+
+people:
+  - display_name: Sarah                 # How you refer to them in conversation
+    full_name: Sarah Chen               # Full name — for matching against emails
+    aliases: [SC, schen]                # Short names for quick reference
+    email: sarah.chen@company.com       # Email address — for message matching
+    slack_handle: schen                 # Slack username
+    relationship_tier: direct           # direct | peer | upward | cross-team
+    role: Senior Engineer               # Their role/title
+    team: Platform                      # Their team
+    feedback_cycle_days: 21             # Override workspace default for this person
+    birthday: "03-15"                   # MM-DD (for milestone alerts in daily note)
+    work_anniversary: "2023-06-01"      # YYYY-MM-DD (for milestone alerts)
+
+  - display_name: Marcus
+    full_name: Marcus Lee
+    aliases: [ML]
+    email: marcus.lee@company.com
+    relationship_tier: direct
+    role: Engineer
+    team: Platform
+
+  - display_name: James
+    full_name: James Park
+    email: james.park@company.com
+    relationship_tier: peer
+    role: Engineering Manager
+    team: Infrastructure
+
+  - display_name: Sam
+    full_name: Sam Rivera
+    email: sam.rivera@company.com
+    relationship_tier: upward
+    role: VP Engineering
