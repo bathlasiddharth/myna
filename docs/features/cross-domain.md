@@ -40,7 +40,7 @@ One-line summary: Search across the entire vault and get results grouped by cont
 
 - "search: auth migration" → searches all vault files
 - Results grouped by folder type: Projects, Meetings, People, Drafts, System
-- Uses Obsidian MCP global search — steering instruction, no custom search logic
+- Uses Grep for content search across vault files — no custom search logic needed
 
 ### Park & Resume
 

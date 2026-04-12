@@ -88,6 +88,6 @@ One-line summary: Customizable templates for all Myna file types that ensure con
 - Templates for: project files, person files, meeting notes (1:1, recurring, adhoc), daily notes, weekly notes, draft files, review queue entries
 - Stored in `_system/templates/`
 - Each template includes proper frontmatter, section structure, and Dataview query blocks
-- New files created via templates through Obsidian CLI MCP (D008) or raw file creation as fallback
+- New files created by reading the template and substituting placeholders via Claude Code built-in tools
 - Users can customize templates to match their preferences — edits preserved across vault re-initialization
 

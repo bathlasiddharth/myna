@@ -53,7 +53,7 @@ Ambiguous project name? Unclear meeting reference? Myna asks. A wrong guess crea
 Myna v1 targets Claude Code as its runtime. All agent content — behaviors, steering, skills, foundations, templates — is plain markdown and YAML. This makes it inherently readable by any capable LLM. If someone wants to run Myna on Gemini, Codex, or another tool in the future, they can read the markdown files and write their own wiring — that's a community contribution, not something we architect for upfront. See D045 and D046 for rationale.
 
 ### 8. Enterprise-Friendly, Minimal Infrastructure
-Myna doesn't require new infrastructure and doesn't send data anywhere. For external services (email, Slack, calendar), it connects to whatever MCP servers your enterprise already provides. The only MCP Myna ships is a lightweight Obsidian CLI wrapper for vault operations — local-only, no network calls.
+Myna doesn't require new infrastructure and doesn't send data anywhere. For external services (email, Slack, calendar), it connects to whatever MCP servers your enterprise already provides. Myna itself ships no MCP servers — vault operations use Claude Code's built-in file tools (Read, Write, Edit, Grep, Glob).
 
 ### 9. Config-Driven, No Personal Data in Code
 All personal data (projects, people, channels, preferences) lives in config files that are gitignored. The system itself can be shared or open-sourced as-is.
@@ -105,26 +105,17 @@ Myna is **not an application**. There is no server, no API, no frontend. The del
 |-----------|-----------|
 | **Vault template** | Obsidian vault folder structure, file templates, Dataview dashboards |
 | **Agent instructions** | Markdown-based behavior specs that the AI model reads |
-| **Obsidian CLI MCP** | Lightweight MCP server wrapping Obsidian CLI — the only MCP Myna builds (see below) |
+| **Vault operations skill** | Steering skill that teaches Claude Code vault patterns (task queries, templates, paths) using built-in tools |
 | **Config templates** | `.example` files for projects, people, preferences (user fills in, gitignored) |
 | **Setup wizard** | Interactive conversation that gets you running fast (see below) |
 
 The "app" is your AI model, guided by Myna's instructions and connected to your company's tools via MCP.
 
-### The Obsidian CLI MCP
+### Vault Operations
 
-The one MCP server Myna ships. A thin wrapper around [Obsidian CLI](https://obsidian.md/cli) that exposes vault operations as structured MCP tools:
+Myna does NOT ship any MCP servers. All vault operations — reading files, writing entries, searching content, finding files — use Claude Code's built-in tools (Read, Write, Edit, Grep, Glob). A steering skill (`myna-steering-vault-ops`) teaches Claude the vault patterns: task query syntax, frontmatter parsing, template creation, daily note paths, backlink/tag searches.
 
-- **Search** — vault-wide search using Obsidian's index
-- **Tasks** — list/query tasks via the Tasks plugin
-- **Daily notes** — create, read, append to daily notes
-- **Create from template** — create notes using Obsidian templates
-- **Read/write** — structured file operations
-- **Eval** — run JavaScript (Dataview queries, custom logic)
-
-This is the vault interface, not enterprise infrastructure. Myna does NOT build MCPs for email, Slack, calendar, or other external services — those come from your company's existing MCP servers.
-
-The MCP is kept lightweight and thin so it's easy to update as Obsidian releases new CLI features. Falls back to raw file read/write if Obsidian isn't running.
+Myna does NOT build MCPs for email, Slack, calendar, or other external services — those come from your company's existing MCP servers.
 
 ### Setup
 

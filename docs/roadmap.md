@@ -11,7 +11,7 @@ This project has two first-class outputs:
 1. **Myna** — a working local-first AI assistant for tech professionals.
 2. **A methodology for having Claude autonomously build an agentic system end-to-end** — from feature ideas through architecture, foundations, and autonomous build, with concentrated human effort at design points and minimal oversight during the build.
 
-The methodology lives across `docs/foundations.md`, `docs/architecture.md`, `docs/instructions/autonomous-build-plan.md`, `docs/decisions.md` (especially D025–D044), and `docs/dev-journal.md`. It is intended to be reusable for building other agentic systems on any capable LLM.
+The methodology lives across `docs/design/foundations.md`, `docs/architecture.md`, `docs/instructions/autonomous-build-plan.md`, `docs/decisions.md` (especially D025–D044), and `docs/journal/dev-journal.md`. It is intended to be reusable for building other agentic systems on any capable LLM.
 
 Both Myna and the methodology ship. Process artifacts in this repo are treated as deliverables, not scaffolding. When updating a process artifact, the test is: "would this still make sense to someone using this playbook on a completely different agentic assistant?"
 
@@ -49,7 +49,7 @@ Myna is built via a **4-phase pipeline**: Design, Build, Install, Ship (D044). T
 | M1-T05 | Create domain feature skeletons | Done |
 | M1-T06 | Create `docs/features/cross-domain.md` | Done |
 | M1-T07 | Create `docs/features/non-functional.md` | Done |
-| M1-T08 | Create `docs/design-deliverables.md` | Done |
+| M1-T08 | Create `docs/design/design-deliverables.md` | Done |
 | M1-T09 | Claude refines feature lists for all domains | Done |
 | M1-T10 | User reviews refined feature lists | Done |
 | M1-T10b | Finalize build approach from first principles (evolved into D025–D037, then D044 restructure) | Done |
@@ -67,7 +67,7 @@ Myna is built via a **4-phase pipeline**: Design, Build, Install, Ship (D044). T
 
 | Task | Description | Status |
 |---|---|---|
-| P0-T01 | Write `docs/architecture.md` and `docs/foundations.md` | Done |
+| P0-T01 | Write `docs/architecture.md` and `docs/design/foundations.md` | Done |
 | P0-T02 | User review and iterate on architecture + foundations | Done |
 | P0-T03 | Write `docs/instructions/autonomous-build-plan.md` | Done |
 | P0-T04 | Record D044, update roadmap | Done |
@@ -94,19 +94,25 @@ Myna is built via a **4-phase pipeline**: Design, Build, Install, Ship (D044). T
 | P1-T12 | Main agent | Done |
 | P1-T13 | Cross-skill audit | Done |
 
-### Phase 2 — Installation Script
+### Phase 2 — Install (Native Claude Code Skills Rebuild)
 
-> **Operational guide:** `docs/instructions/phase-6-installation-script.md`
+> **Execution prompts:** `docs/prompts/p0-update-architecture.md` through `docs/prompts/p3-main-agent-and-docs.md`
+> **Overview:** `docs/prompts/skill-rebuild-overview.md`
 >
-> **Goal:** Shell script that wires Myna into Claude Code: generate CLAUDE.md, register MCP, create vault structure, copy config examples (D045, D047).
+> **Goal:** Rebuild Myna's entire skill system to use Claude Code's native skills mechanism. 24 feature skills + 6 steering skills as `SKILL.md` files. Rewrite main agent, update install script, update all supporting docs. No MCP server for vault ops — pure markdown with built-in tools.
 
 | Task | Description | Status |
 |---|---|---|
-| P2-T01 | Design the Claude Code install flow | Not started |
-| P2-T02 | Write the install script | Not started |
-| P2-T03 | Test on a clean environment | Not started |
-| P2-T04 | Document install flow | Not started |
-| P2-T05 | User final approval | Not started |
+| P2-T01 | Design the Claude Code install flow | Done |
+| P2-T02 | Write the install script (initial version) | Done |
+| P2-T04 | Document install flow | Done |
+| P2-T10 | P0: Update architecture.md + foundations.md for 24 native skills | Done |
+| P2-T11 | P0.5: Remove Obsidian MCP from architecture, add vault-ops steering | Done |
+| P2-T12 | P1: Write 6 steering skills | Done |
+| P2-T13 | P2: Write 24 feature skills (4 parallel subagents) | Not started |
+| P2-T14 | P3: Rewrite main.md + update install.sh + all supporting docs | Not started |
+| P2-T15 | Test on a clean environment | Not started |
+| P2-T16 | User final approval | Not started |
 
 ### Phase 3 — Ship
 
@@ -145,3 +151,5 @@ Myna is built via a **4-phase pipeline**: Design, Build, Install, Ship (D044). T
 | B016 | Pre-Read Preparation — "prep me for this doc" briefing for document review | Post-launch |
 | B017 | Brief freshness note — warn when vault data appears stale | Post-launch |
 | B018 | Draft lifecycle tracking — frontmatter states, "I sent the MBR" transitions | Post-launch |
+| B019 | `update` command — fetch latest repo and re-run install to refresh runtime artifacts (D049) | Backlog |
+| B020 | `--uninstall` flag — read `~/.myna/install-manifest.json` and remove agent file, `~/.myna/`, and MCP registration (D049) | Backlog |

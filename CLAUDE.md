@@ -7,7 +7,7 @@ Myna is a local-first personal assistant for tech professionals. It's a set of A
 **This project has two first-class outputs, not one:**
 
 1. **Myna itself** — the working assistant.
-2. **A methodology for having Claude autonomously build an agentic system end-to-end** — from feature ideas through architecture, foundations, and autonomous build, with concentrated human effort at design points and minimal oversight during the build. The methodology lives in `docs/foundations.md`, `docs/architecture.md`, `docs/instructions/autonomous-build-plan.md`, and `docs/decisions.md`. Intended to be reusable for building other agentic assistants on any capable LLM.
+2. **A methodology for having Claude autonomously build an agentic system end-to-end** — from feature ideas through architecture, foundations, and autonomous build, with concentrated human effort at design points and minimal oversight during the build. The methodology lives in `docs/design/foundations.md`, `docs/architecture.md`, `docs/instructions/autonomous-build-plan.md`, and `docs/decisions.md`. Intended to be reusable for building other agentic assistants on any capable LLM.
 
 Treat process artifacts (roadmap, decisions, foundations, instructions/\*, dev-journal) with the same care as product artifacts. Both ship. When updating any process artifact, ask: "would this still make sense to someone using this playbook to build a different agentic assistant?"
 
@@ -21,7 +21,7 @@ Treat process artifacts (roadmap, decisions, foundations, instructions/\*, dev-j
 | `docs/decisions.md` | Settled decisions — do not re-debate |
 | `docs/open-questions.md` | Unresolved questions — add here if you surface new ones |
 | `docs/roadmap.md` | Living task list, phase structure, backlog |
-| `docs/dev-journal.md` | Running log; see its header for entry triggers and format |
+| `docs/journal/dev-journal.md` | Running log; see its header for entry triggers and format |
 | `docs/instructions/autonomous-build-plan.md` | Recipe for the autonomous build phase |
 
 Approved features for every domain live in `docs/features/{domain}.md` under the `## Features` section. This is the only authoritative source for what's being built.
@@ -38,11 +38,11 @@ Do not invent a reading list or rules on the fly.
 
 ## Development Journal
 
-`docs/dev-journal.md` is raw material for a post-launch article. Write an entry any time something interesting happens during a session — decisions, surprises, user corrections, patterns, mistakes, unexpected ideas. Err on the side of too many entries; we'll filter later. Full list of triggers and the entry format: see the header of `dev-journal.md`.
+`docs/journal/dev-journal.md` is raw material for a post-launch article. Write an entry any time something interesting happens during a session — decisions, surprises, user corrections, patterns, mistakes, unexpected ideas. Err on the side of too many entries; we'll filter later. Full list of triggers and the entry format: see the header of `docs/journal/dev-journal.md`.
 
 ## Learning-Capture Discipline (D029)
 
-When the user corrects your direction or you discover a non-obvious pattern during build work, write it to the appropriate file **immediately**, not at the end of the session. Structural learnings → `docs/foundations.md`. Build recipe learnings → `docs/instructions/autonomous-build-plan.md`. Narrative → `docs/dev-journal.md`. Rationale: D029.
+When the user corrects your direction or you discover a non-obvious pattern during build work, write it to the appropriate file **immediately**, not at the end of the session. Structural learnings → `docs/design/foundations.md`. Build recipe learnings → `docs/instructions/autonomous-build-plan.md`. Narrative → `docs/journal/dev-journal.md`. Rationale: D029.
 
 **Test:** "If a fresh Claude session had only these files, would it succeed?" If no, the docs are incomplete — fix the docs, not the conversation.
 
@@ -71,13 +71,12 @@ Build pipeline is a **4-phase structure** (D044): Design (0), Build (1), Install
 
 | Artifact | Phase | Purpose |
 |---|---|---|
-| `docs/foundations.md` + `docs/architecture.md` | 0 Design | Architecture, data layer, patterns, feature-to-skill mapping |
+| `docs/design/foundations.md` + `docs/architecture.md` | 0 Design | Architecture, data layer, patterns, feature-to-skill mapping |
 | `docs/instructions/autonomous-build-plan.md` | 0 Design | Recipe for autonomous build |
-| `agents/skills/*.md` (14 skill files) | 1 Build | Skill instructions (plain markdown) |
-| `agents/steering/*.md` (4 files) | 1 Build | Cross-cutting rules |
-| `agents/main.md` | 1 Build | Main agent prompt |
-| `agents/mcp/obsidian-cli/` | 1 Build | MCP server code |
-| Install script | 2 Install | Generates CLAUDE.md; registers MCP; creates vault structure |
+| `agents/skills/myna-*/SKILL.md` (24 feature skills) | 2 Install | Native Claude Code skill files |
+| `agents/skills/myna-steering-*/SKILL.md` (6 steering skills) | 2 Install | Cross-cutting rules as preloaded skills |
+| `agents/main.md` | 2 Install | Main agent prompt |
+| Install script | 2 Install | Copies skills to `~/.claude/skills/`; generates agent file; creates vault structure |
 | README, setup guide, testing plan, v1.0 tag | 3 Ship | Public release |
 
 **Automated behavioral testing is NOT in the pipeline** (deferred per D033). **Open-source contribution model is NOT in the pipeline** (deferred post-launch per D036). **Done = Phase 3 complete** (D037); real-world testing and bug fixing are post-ship activities outside the pipeline.
