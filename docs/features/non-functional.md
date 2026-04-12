@@ -266,7 +266,7 @@ This applies to every file in the vault — not just timelines.
 
 #### Feature Toggles (D020)
 - Every feature has a toggle in workspace.md config (enabled/disabled)
-- Every agent instruction and steering file checks the toggle before offering or executing a feature
+- Every agent instruction and steering skill checks the toggle before offering or executing a feature
 - Disabled features are silently skipped — the agent doesn't mention them, suggest them, or include their output in dashboards/notes
 - Default on/off per feature determined by the user's role during setup — managers get people management on by default, ICs might have it off
 - Users can enable/disable features anytime via natural language ("disable self-tracking", "enable people management") or by editing workspace.md directly

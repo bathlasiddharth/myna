@@ -17,14 +17,14 @@ ls /tmp/myna-test-vault/myna
 # Expected: Projects/ People/ Meetings/ Drafts/ Journal/ Team/ ReviewQueue/ _system/
 ```
 
-Phase 2 (install script) does not yet exist, so wire up Claude Code manually:
+Install Myna using the install script:
 
-1. In `/tmp/myna-test-vault/`, create `CLAUDE.md` by concatenating:
-   - `agents/main.md` (from this repo)
-   - All 4 files in `agents/steering/`
-   - A skill directory block listing each skill in `agents/skills/*.md` by name and description
-2. Start Claude Code from `/tmp/myna-test-vault/` — it will auto-load `CLAUDE.md` as the system prompt.
-3. Register any MCP servers the tests use (optional). These tests are designed to work **without** real email/Slack/calendar MCP servers — mock data is pasted directly into prompts.
+```bash
+# From the Myna repo root
+./install.sh --vault-path /tmp/myna-test-vault
+```
+
+This copies 24 feature skills + 6 steering skills to `~/.claude/skills/myna-*/`, generates `~/.claude/agents/myna.md`, and creates the vault structure. Start Myna with `claude --agent myna`. Register any MCP servers the tests use (optional). These tests are designed to work **without** real email/Slack/calendar MCP servers — mock data is pasted directly into prompts.
 
 ### Before each test block that mutates the vault
 
@@ -53,7 +53,7 @@ Verify Myna loaded cleanly by running one sanity prompt:
 
 > **Prompt:** `help`
 
-**Pass:** Myna lists its 14 skills and mentions direct operations (vault search, task completion, file creation). Fail if Myna claims it cannot find its config files — check the vault copy.
+**Pass:** Myna lists its 24 skills and mentions direct operations (vault search, task completion, file creation). Fail if Myna claims it cannot find its config files — check the vault copy.
 
 ---
 

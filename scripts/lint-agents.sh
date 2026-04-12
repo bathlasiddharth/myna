@@ -5,9 +5,9 @@
 # Usage: bash scripts/lint-agents.sh
 # Exit:  0 = pass, 1+ = number of errors found
 #
-# These artifacts deploy standalone via CLAUDE.md. They must not reference
+# These artifacts deploy standalone via install.sh. They must not reference
 # design docs (foundations.md, architecture.md, decisions.md), repo paths
-# (docs/), or decision IDs (D001-D047) — those don't exist at runtime.
+# (docs/), or decision IDs (D001-D050) — those don't exist at runtime.
 
 set -eo pipefail
 cd "$(dirname "$0")/.."
@@ -21,27 +21,41 @@ pass() { printf '  \033[32mOK\033[0m    %s\n' "$1"; }
 header() { printf '\n\033[1m── %s ──\033[0m\n' "$1"; }
 
 # Collect artifact files (only files that ship to the user)
-skill_files=(agents/skills/*.md)
-steering_files=(agents/steering/*.md)
-all_artifacts=("${skill_files[@]}" "${steering_files[@]}" agents/main.md)
+# Skills are now in agents/skills/myna-*/SKILL.md (directory-per-skill)
+feature_files=()
+steering_files=()
+for dir in agents/skills/myna-*/; do
+  [ -d "$dir" ] || continue
+  skill_file="$dir/SKILL.md"
+  [ -f "$skill_file" ] || continue
+  name="$(basename "$dir")"
+  if [[ "$name" == myna-steering-* ]]; then
+    steering_files+=("$skill_file")
+  else
+    feature_files+=("$skill_file")
+  fi
+done
+
+all_artifacts=("${feature_files[@]}" "${steering_files[@]}" agents/main.md)
 [ -f agents/myna-agent-template.md ] && all_artifacts+=(agents/myna-agent-template.md)
 
 printf '\033[1mMyna Agent Artifact Lint\033[0m\n'
 echo "================================================"
-echo "Checking ${#all_artifacts[@]} artifact files"
+echo "Checking ${#all_artifacts[@]} artifact files (${#feature_files[@]} feature skills, ${#steering_files[@]} steering skills, 1 main agent)"
 
 # ══════════════════════════════════════════════════════════════
 # 1. SELF-CONTAINMENT
 #    Agent artifacts deploy standalone. They must not reference
 #    design docs, repo docs/ paths, or decision IDs.
-#    Steering file cross-references (conventions.md, safety.md)
-#    are fine — those are co-deployed.
 # ══════════════════════════════════════════════════════════════
 header "1. Self-containment"
 c1=0
 
 for f in "${all_artifacts[@]}"; do
-  name=$(basename "$f")
+  name=$(basename "$(dirname "$f")")/$(basename "$f")
+  # Simplify name for main.md and template
+  [[ "$f" == agents/main.md ]] && name="main.md"
+  [[ "$f" == agents/myna-agent-template.md ]] && name="myna-agent-template.md"
 
   # References to design docs
   hits=$(grep -nE 'foundations\.md|architecture\.md|decisions\.md' "$f" 2>/dev/null || true)
@@ -75,15 +89,15 @@ done
 
 # ══════════════════════════════════════════════════════════════
 # 2. REQUIRED SKILL SECTIONS
-#    Every skill must have: Purpose, Triggers, Inputs,
-#    Procedure, Output, Rules (per autonomous-build-plan.md)
+#    Every feature skill must have: Purpose, Triggers, Inputs,
+#    Procedure, Output, Rules
 # ══════════════════════════════════════════════════════════════
 header "2. Required skill sections"
 
 required_sections=("Purpose" "Triggers" "Inputs" "Procedure" "Output" "Rules")
 
-for f in "${skill_files[@]}"; do
-  name=$(basename "$f")
+for f in "${feature_files[@]}"; do
+  name="$(basename "$(dirname "$f")")"
   missing=()
   for section in "${required_sections[@]}"; do
     grep -q "^## ${section}" "$f" || missing+=("$section")
@@ -97,13 +111,12 @@ done
 
 # ══════════════════════════════════════════════════════════════
 # 3. WORKED EXAMPLES
-#    Every skill must have at least one worked example showing
-#    input → read → decide → write → output.
+#    Every feature skill must have at least one worked example.
 # ══════════════════════════════════════════════════════════════
 header "3. Worked examples"
 
-for f in "${skill_files[@]}"; do
-  name=$(basename "$f")
+for f in "${feature_files[@]}"; do
+  name="$(basename "$(dirname "$f")")"
   if grep -qE '^##+ .*(Example|Worked)' "$f"; then
     pass "$name"
   else
@@ -113,8 +126,8 @@ done
 
 # ══════════════════════════════════════════════════════════════
 # 4. SKILL DIRECTORY CROSS-REFERENCE
-#    Every skill in main.md's table has a file.
-#    Every skill file is listed in main.md.
+#    Every feature skill in main.md's table has a directory.
+#    Every feature skill directory is listed in main.md.
 # ══════════════════════════════════════════════════════════════
 header "4. Skill directory cross-reference"
 
@@ -125,36 +138,36 @@ while IFS= read -r skill; do
   [ -n "$skill" ] && main_skills+=("$skill")
 done < <(awk -F'|' '/^\| [0-9]/ { gsub(/^ +| +$/, "", $3); print $3 }' agents/main.md 2>/dev/null)
 
-# Forward: main.md → file exists
+# Forward: main.md → directory exists
 for skill in "${main_skills[@]}"; do
-  if [ -f "agents/skills/${skill}.md" ]; then
+  if [ -f "agents/skills/${skill}/SKILL.md" ]; then
     pass "$skill"
   else
-    fail "main.md lists '$skill' but agents/skills/${skill}.md missing"
+    fail "main.md lists '$skill' but agents/skills/${skill}/SKILL.md missing"
   fi
 done
 
-# Reverse: file → listed in main.md
-for f in "${skill_files[@]}"; do
-  name=$(basename "$f" .md)
+# Reverse: directory → listed in main.md
+for f in "${feature_files[@]}"; do
+  name="$(basename "$(dirname "$f")")"
   found=false
   for skill in "${main_skills[@]}"; do
     [ "$skill" = "$name" ] && found=true && break
   done
-  $found || warn "agents/skills/${name}.md not listed in main.md"
+  $found || warn "agents/skills/${name}/SKILL.md not listed in main.md"
 done
 
 # ══════════════════════════════════════════════════════════════
-# 5. STEERING FILE EXISTENCE
-#    All 4 required steering files must be present.
+# 5. STEERING SKILLS
+#    All 6 required steering skills must be present.
 # ══════════════════════════════════════════════════════════════
-header "5. Steering files"
+header "5. Steering skills"
 
-for name in safety conventions output system; do
-  if [ -f "agents/steering/${name}.md" ]; then
-    pass "${name}.md"
+for name in safety conventions output system memory vault-ops; do
+  if [ -f "agents/skills/myna-steering-${name}/SKILL.md" ]; then
+    pass "myna-steering-${name}"
   else
-    fail "${name}.md missing"
+    fail "myna-steering-${name}/SKILL.md missing"
   fi
 done
 
@@ -167,7 +180,10 @@ header "6. Safety keywords"
 c6=0
 
 for f in "${all_artifacts[@]}"; do
-  name=$(basename "$f")
+  name=$(basename "$(dirname "$f")")/$(basename "$f")
+  [[ "$f" == agents/main.md ]] && name="main.md"
+  [[ "$f" == agents/myna-agent-template.md ]] && name="myna-agent-template.md"
+
   hits=$(grep -niE '\b(sends?|sending|posts?|posting|delivers?|delivering)\b' "$f" 2>/dev/null || true)
   if [ -n "$hits" ]; then
     while IFS= read -r line; do
@@ -184,22 +200,23 @@ done
 [ "$c6" -eq 0 ] && pass "No send/post/deliver outside safety context"
 
 # ══════════════════════════════════════════════════════════════
-# 7. MCP TOOL EXISTENCE
-#    Verify the MCP server entry point compiles (if node available)
+# 7. SKILL FRONTMATTER
+#    Every SKILL.md must have name and description in frontmatter.
 # ══════════════════════════════════════════════════════════════
-header "7. MCP server"
+header "7. Skill frontmatter"
 
-if [ -f agents/mcp/myna-obsidian/src/index.ts ]; then
-  pass "Source exists: agents/mcp/myna-obsidian/src/index.ts"
-else
-  fail "MCP server source missing: agents/mcp/myna-obsidian/src/index.ts"
-fi
-
-if [ -f agents/mcp/myna-obsidian/package.json ]; then
-  pass "package.json exists"
-else
-  fail "package.json missing"
-fi
+for f in "${feature_files[@]}" "${steering_files[@]}"; do
+  name="$(basename "$(dirname "$f")")"
+  if head -5 "$f" | grep -q '^---'; then
+    if grep -q '^name:' "$f" && grep -q '^description:' "$f"; then
+      pass "$name"
+    else
+      fail "$name: missing name or description in frontmatter"
+    fi
+  else
+    fail "$name: no YAML frontmatter"
+  fi
+done
 
 # ══════════════════════════════════════════════════════════════
 # 8. CONFIG EXAMPLES

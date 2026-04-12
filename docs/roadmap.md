@@ -109,10 +109,11 @@ Myna is built via a **4-phase pipeline**: Design, Build, Install, Ship (D044). T
 | P2-T10 | P0: Update architecture.md + foundations.md for 24 native skills | Done |
 | P2-T11 | P0.5: Remove Obsidian MCP from architecture, add vault-ops steering | Done |
 | P2-T12 | P1: Write 6 steering skills | Done |
-| P2-T13 | P2: Write 24 feature skills (4 parallel subagents) | Not started |
-| P2-T14 | P3: Rewrite main.md + update install.sh + all supporting docs | Not started |
+| P2-T13 | P2: Write 24 feature skills (4 parallel subagents) | Done |
+| P2-T14 | P3: Rewrite main.md + update install.sh + all supporting docs | Done |
 | P2-T15 | Test on a clean environment | Not started |
 | P2-T16 | User final approval | Not started |
+| P2-T17 | P4: Update review commands + lint script for native skills | Not started |
 
 ### Phase 3 — Ship
 

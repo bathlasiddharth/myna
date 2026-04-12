@@ -137,7 +137,7 @@ claude --agent myna
 
 Then type:
 - `sync` — set up your day (daily note, meeting preps, priorities)
-- `what can you do?` — see all 14 skills
+- `what can you do?` — see all 24 skills
 - `capture: <anything>` — log information to your vault
 - `brief me on <project>` — get a project status summary
 
