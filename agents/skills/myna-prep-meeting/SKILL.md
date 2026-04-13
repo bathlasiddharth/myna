@@ -62,13 +62,13 @@ When not confident, ask the user once: "Is this a 1:1 with Sarah or a team meeti
 | Recurring (standup, sync, regular team) | `Meetings/Recurring/{meeting-slug}.md` |
 | Adhoc or one-off | `Meetings/Adhoc/{meeting-slug}.md` |
 
-If the file doesn't exist, create it from the appropriate template (see File Templates below). If it exists, append a new session section.
+If the file doesn't exist, create it from the appropriate template (see File Templates below). If it exists, prepend a new session section.
 
 ---
 
 ## Session Structure
 
-Each session is a top-level `## {YYYY-MM-DD} Session` block appended to the bottom of the meeting file. Within it, two sections:
+Each session is a top-level `## {YYYY-MM-DD} Session` block prepended to the top of the meeting file, after the frontmatter and tags. Within it, two sections:
 
 ```markdown
 ## 2026-04-10 Session
@@ -89,9 +89,11 @@ Each session is a top-level `## {YYYY-MM-DD} Session` block appended to the bott
 **Action Items:**
 
 **Decisions:**
+
+---
 ```
 
-For 1:1 files, sessions accumulate in one file, newest at the bottom.
+For 1:1 files, sessions accumulate in one file, newest at the top.
 For adhoc meetings, each meeting gets its own file (one session per file).
 
 ---
@@ -219,7 +221,7 @@ person: [[{person-slug}]]
 
 #meeting #1-1
 ```
-Sessions are appended below.
+Sessions are prepended below the tags (newest at top).
 
 ### Recurring File (create if missing)
 ```markdown
@@ -291,7 +293,7 @@ For batch (all remaining today):
 8. Read `Projects/auth-migration.md` timeline: 2 decisions since last 1:1, 1 active blocker
 9. Generate prep session with all sections, coaching note for pending feedback and 41-day career gap
 
-Written to `Meetings/1-1s/sarah-chen.md`:
+Prepended to `Meetings/1-1s/sarah-chen.md` (after frontmatter and tags, above any previous sessions):
 ```markdown
 ## 2026-04-10 Session
 
@@ -321,6 +323,8 @@ Written to `Meetings/1-1s/sarah-chen.md`:
 **Action Items:**
 
 **Decisions:**
+
+---
 ```
 
 Output: "Prep ready for 1:1 with Sarah — 11 items. obsidian://open?vault=...&file=Meetings/1-1s/sarah-chen.md"
