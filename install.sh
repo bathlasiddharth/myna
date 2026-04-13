@@ -503,53 +503,18 @@ step "Writing setup checklist"
 CHECKLIST_FILE="$MYNA_ROOT/_system/setup-checklist.md"
 
 if $DRY_RUN; then
-  echo "  [dry-run] Write $CHECKLIST_FILE"
+  echo "  [dry-run] cp $SCRIPT_DIR/docs/post-install-checklist.md → $CHECKLIST_FILE"
 else
-  {
-    cat <<CHECKLIST
-# Myna Setup Checklist
+  cp "$SCRIPT_DIR/docs/post-install-checklist.md" "$CHECKLIST_FILE"
 
-Complete these steps to finish setting up Myna.
+  if [ "$obsidian_configured" = "true" ]; then
+    TMPFILE=$(mktemp)
+    echo "*(Obsidian settings were auto-configured during install — skip section 4.)*" > "$TMPFILE"
+    echo "" >> "$TMPFILE"
+    cat "$CHECKLIST_FILE" >> "$TMPFILE"
+    mv "$TMPFILE" "$CHECKLIST_FILE"
+  fi
 
-## Required: Install Obsidian Plugins
-
-Install these from Obsidian → Settings → Community Plugins:
-
-- [ ] Dataview
-- [ ] Tasks
-- [ ] Periodic Notes
-- [ ] Templater
-
-## Required: Open Your Vault
-
-- [ ] Open Obsidian
-- [ ] Click "Open folder as vault"
-- [ ] Select: $VAULT_PATH
-CHECKLIST
-
-    if [ "$obsidian_configured" = false ]; then
-      cat <<CHECKLIST
-
-## Obsidian Settings to Configure Manually
-
-- [ ] Daily Notes: folder = Journal/Daily, template = _system/templates/daily-note
-- [ ] Periodic Notes: enable weekly notes, folder = Journal/Weekly
-- [ ] Dataview: enable Dataview JS and inline queries
-CHECKLIST
-    fi
-
-    cat <<CHECKLIST
-
-## Optional: Add Your Data
-
-- [ ] Add projects to _system/config/projects.yaml
-- [ ] Add people to _system/config/people.yaml
-- [ ] Review workspace settings in _system/config/workspace.yaml
-
----
-See docs/obsidian-setup.md for detailed setup instructions.
-CHECKLIST
-  } > "$CHECKLIST_FILE"
   info "Setup checklist: $CHECKLIST_FILE"
 fi
 

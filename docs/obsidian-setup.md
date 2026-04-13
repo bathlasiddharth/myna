@@ -42,28 +42,28 @@ Dashboards live in the `Dashboards/` folder of your vault. Open any `.md` file t
 Configure these manually after opening the vault (Settings → Core plugins or the relevant plugin settings):
 
 **Daily Notes** (Settings → Daily notes)
-- Folder: `Journal/Daily`
-- Template: `_system/templates/daily-note`
+- Folder: `myna/Journal/Daily`
+- Template: `myna/_system/templates/daily-note`
 
 **Periodic Notes** (Settings → Periodic Notes)
 - Enable weekly notes
-- Weekly folder: `Journal/Weekly`
-- Weekly template: `_system/templates/weekly-note`
+- Weekly folder: `myna/Journal/Weekly`
+- Weekly template: `myna/_system/templates/weekly-note`
 
 **Dataview** (Settings → Dataview)
 - Enable Dataview JS queries
 - Enable inline queries
 
 **Templates** (Settings → Templates)
-- Template folder: `_system/templates`
+- Template folder: `myna/_system/templates`
 
 ## Vault Structure
 
 | Folder | Purpose |
 |--------|---------|
-| `Projects/` | One file per project |
-| `People/` | One file per person |
-| `Meetings/` | 1-1s, Recurring, and Adhoc subfolders |
-| `Journal/` | Daily and weekly notes |
-| `Dashboards/` | The 10 Myna dashboards |
-| `_system/` | Config, templates, and setup checklist |
+| `myna/Projects/` | One file per project |
+| `myna/People/` | One file per person |
+| `myna/Meetings/` | 1-1s, Recurring, and Adhoc subfolders |
+| `myna/Journal/` | Daily and weekly notes |
+| `myna/Dashboards/` | The 10 Myna dashboards |
+| `myna/_system/` | Config, templates, and setup checklist |

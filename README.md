@@ -1,186 +1,118 @@
 # Myna
 
-A local-first personal assistant for tech professionals. AI agents that watch, organize, and draft — but never act on your behalf.
+**Myna** — a privacy-first AI assistant powered by Claude Code that works exclusively within your company's approved tools and never acts without your approval.
 
-## What Is Myna?
+It reads from your existing tools and writes everything to a local Obsidian vault as plain markdown. No cloud, no new infrastructure, nothing leaves your machine. The more you use it, the more it knows your world — your projects, your people, your preferences.
 
-Myna is a set of AI agent instructions that turn Claude Code into a personal assistant for tech employees. It manages the information layer of your job: emails, Slack messages, meetings, projects, people, and tasks. All instructions are plain markdown — inherently readable by any capable LLM, but designed and tested for Claude Code.
+**Drafts but never sends. Organizes but never decides. Surfaces but never hides.**
 
-You interact with Myna by typing natural language prompts inside your AI agent. Myna reads from your company's existing MCP-connected tools (email, Slack, calendar) and writes exclusively to your local Obsidian vault.
+## Who It's For
 
-**Myna drafts but never sends. Organizes but never decides. Surfaces but never hides.**
+Engineering managers, tech leads, and other leaders who manage multiple projects and communication channels. If you spend your day context-switching between email, Slack, calendar, and project tracking — and want an assistant that handles the tedious parts without risking mistakes — Myna is for you.
 
-## Who Is It For?
-
-Engineering managers, tech leads, senior engineers, and PMs who:
-- Manage multiple projects, people, and communication channels
-- Spend most of their time on information management rather than decision-making
-- Want an assistant that handles the tedious parts without risking mistakes
-- Work at enterprises with strict privacy/security requirements
-
-## How It Works
-
-```
-You (inside Claude Code)
-  │
-  │  "prep brief for my 1:1 with Sarah"
-  │
-  ▼
-Myna Agent Instructions
-  │                │
-  ▼                ▼
-Obsidian Vault     Company MCP Servers
-(local markdown)   (email, Slack, calendar)
-  writes here        reads from here
-```
-
-Myna reads from external sources via your company's existing MCP servers and writes only to a dedicated subfolder in your Obsidian vault. All data stays local as plain markdown.
+Myna runs on [Claude Code](https://claude.ai/code). Its instructions are plain markdown — adaptable to any AI assistant if your team uses something else.
 
 ## What Myna Does
 
 | Domain | Examples |
 |--------|----------|
+| **Context & Memory** | Learns your projects, people, and preferences — gets smarter the more you use it |
+| **Daily Workflow** | Morning sync, daily notes, weekly summaries, review queue |
 | **Email & Messaging** | Triage inbox, summarize threads, extract action items, draft replies |
 | **Meetings & Calendar** | Prep briefs, debrief after meetings, track decisions, block focus time |
 | **Projects & Tasks** | Maintain project files, manage tasks, context switching |
 | **People Management** | Person files, 1:1 prep, performance narratives, recognition |
-| **Daily Workflow** | Morning sync, daily notes, weekly summaries, review queue |
 | **Writing & Drafts** | Email drafts, message rewrites, status updates, doc review |
 | **Self Tracking** | Contribution logs, brag docs, promo packets, self-reviews |
+| **Review Queue** | Routes judgment calls to your approval queue — nothing ambiguous gets acted on automatically |
 
-## What Myna Ships
+## Quick Example
 
-Myna is **not an application**. There is no server, no API, no frontend.
+```
+$ myna
 
-| Component | What it is |
-|-----------|-----------|
-| **Vault template** | Obsidian folder structure, file templates, Dataview dashboards |
-| **Agent instructions** | Markdown behavior specs the AI model reads on every prompt |
-| **Config templates** | `.example` files for projects, people, preferences (gitignored) |
-| **Install script** | Shell script that installs Myna as a global Claude Code subagent, copies skills to `~/.claude/skills/`, and creates the vault structure |
+> sync
+↳ Daily note created, 3 meetings prepped, 2 overdue tasks flagged
+
+> prep for my 1:1 with Sarah
+↳ 11-item prep brief written to Meetings/1-1s/sarah-chen.md
+
+> what's blocked?
+↳ 2 blockers across auth-migration and platform-api
+
+> draft a reply to Marcus's email about the Q3 roadmap
+↳ Draft saved to Inbox/drafts/marcus-q3-roadmap.md
+```
 
 ## Core Principles
 
-- **Local-first** — All data lives in your Obsidian vault as plain markdown
-- **Draft, never send** — Every outbound communication requires your explicit action
-- **Human-in-the-loop** — Items requiring judgment go through a review queue
-- **Claude-first, not Claude-only** — Built for Claude Code, but all instructions are plain markdown readable by any LLM. Community can add support for other tools.
-- **Enterprise-friendly** — No new infrastructure, connects to your company's existing MCP servers
-- **Config-driven** — All personal data in gitignored config files; system is shareable as-is
-
-## What Myna Is NOT
-
-- Not an application — it's agent instructions + vault structure + config
-- Not a decision maker — it surfaces information; you decide
-- Not a sender — it drafts; you send
-- Not cloud-dependent — everything is local markdown
-- Not new infrastructure — uses your company's existing MCP servers
+- Local-first — all data in your Obsidian vault as plain markdown
+- Draft, never send — every outbound action requires your explicit approval
+- Human-in-the-loop — judgment calls go through a review queue, never auto-resolved
+- Enterprise-friendly — no new infrastructure, no cloud sync, connects to your existing MCP servers
+- Config-driven — personal data lives in your own config files; the system itself is shareable
+- Context-aware — knows your projects, people, and preferences; gets smarter the more you use it
 
 ## Installation
 
-### Prerequisites
-
-- [Node.js](https://nodejs.org/) >= 18
-- [Claude Code](https://claude.ai/code) CLI installed and authenticated
-- [Obsidian](https://obsidian.md/) installed with a vault created
-
-### Quick Start
+**Prerequisites:** [Claude Code](https://claude.ai/code) · [Obsidian](https://obsidian.md/)
 
 ```bash
 git clone https://github.com/bathlasiddharth/myna.git
 cd myna
-./install.sh --vault-path ~/path/to/your/obsidian/vault
+./install.sh
 ```
 
-The install script will:
-1. Copy 24 feature skills + 6 steering skills to `~/.claude/skills/`
-2. Generate a Claude Code agent file at `~/.claude/agents/myna.md`
-3. Create the Myna folder structure in your Obsidian vault
-4. Copy config example files
+Then open `myna/_system/setup-checklist.md` in your vault and follow the steps.
 
-After install, the cloned repo is no longer needed at runtime — you can delete it or keep it around for updates (`git pull && ./install.sh`).
-
-Open `_system/setup-checklist.md` in Obsidian and follow the steps. See [Obsidian Setup](docs/obsidian-setup.md) for the full setup guide.
-
-### Configure
-
-The install script creates starter config files in your vault. Edit them with your details:
+### Updating
 
 ```bash
-# Required — set your name, email, vault path
-$EDITOR ~/path/to/your/obsidian/vault/myna/_system/config/workspace.yaml
-
-# Add your active projects and people
-$EDITOR ~/path/to/your/obsidian/vault/myna/_system/config/projects.yaml
-$EDITOR ~/path/to/your/obsidian/vault/myna/_system/config/people.yaml
+git pull && ./update.sh
 ```
 
-Each config file has comments explaining the fields. See the `.example` files alongside them for full documentation with realistic examples.
+This updates skills and the agent file to the latest version. Your vault data and configs are never touched.
 
-### (Optional) External MCP Servers
+## Usage
 
-Myna reads from email, Slack, and calendar via MCP servers you provide. Register them with Claude Code:
+Run from any directory in your terminal — pick the mode that fits:
 
 ```bash
-claude mcp add gmail-mcp -- <your-gmail-mcp-command>
-claude mcp add slack-mcp -- <your-slack-mcp-command>
-claude mcp add gcal-mcp -- <your-gcal-mcp-command>
+myna          # full access — reads and writes only to your vault
+myna-ro       # read-only — browse and query without making changes
+myna-x        # no file access — conversation only
 ```
 
-Myna works without these — features that need them degrade gracefully.
-
-### Start Using Myna
-
-From any directory:
-
-```bash
-claude --agent myna
-```
-
-Then type:
-- `sync` — set up your day (daily note, meeting preps, priorities)
+First time? Try:
+- `sync` — set up your day
 - `what can you do?` — see all 24 skills
-- `capture: <anything>` — log information to your vault
-- `brief me on <project>` — get a project status summary
+- `brief me on <project>` — get a project status
 
-Myna is a global Claude Code subagent — `claude --agent myna` works from any working directory. The cloned repo is not on the runtime path.
+## What You Get
 
-### Install Options
+After running the install script:
 
-```
-./install.sh --help              # Full usage
-./install.sh --dry-run ...       # Preview without making changes
-./install.sh --subfolder name    # Custom subfolder (default: myna)
-./install.sh --vault-name Name   # Obsidian vault name for URIs
-```
+- `myna` command available from any directory (plus `myna-ro` and `myna-x` variants)
+- Structured Obsidian vault with 10 pre-built dashboards
+- 24 skills covering email, meetings, projects, people, and daily workflow
+- Config files ready to fill in with your projects and people
+- Post-install checklist guiding you through the remaining setup
 
 ## Status
 
-Phase 2 (Install) is in progress. See the [roadmap](docs/roadmap.md) for current progress.
+**Beta** — functional but in active development.
 
-## Two Goals, Not One
+## Built Entirely by Claude Code
 
-This project has two first-class outputs.
+Myna was designed, built, reviewed, and fixed entirely by Claude Code — from feature specs through architecture, implementation, and polish. No human wrote a line of code.
 
-**Primary goal:** Myna itself — a working local-first AI assistant you can install and use.
+[How it was built →](docs/how-it-was-built.md)
 
-**Second goal:** figuring out the methodology for having Claude autonomously build an agentic system end-to-end — from feature ideas through foundations, requirements, build, test, and fix — with concentrated human effort upfront and minimal oversight during the main build. The methodology that emerges (pipeline structure, templates, recipes, verification checklists, escalation rules, learning-capture discipline) is captured as it develops and is intended to be reusable for building other agentic assistants on top of Claude or any capable LLM.
-
-Myna is the first artifact. The methodology is the second. Both ship.
-
-The methodology lives across several files as it stabilizes: see [decisions D025–D029](docs/decisions.md) for the pipeline shape and autonomy model, the [roadmap](docs/roadmap.md) for how the phases map to real work, and `docs/design/foundations.md` + `docs/instructions/*` as they are written during the build. A companion article about the process is planned for post-launch.
-
-## Project Documentation
+## Documentation
 
 | Document | Purpose |
 |----------|---------|
-| [Vision](docs/vision.md) | North star — what Myna is, who it's for, core principles |
+| [Guide](docs/guide.md) | Full user guide — how it works, skills reference, config, workflows |
 | [Architecture](docs/architecture.md) | Runtime model — skills, steering, vault structure, MCP integration |
-| [Foundations](docs/design/foundations.md) | Data layer — templates, config schemas, file formats, conventions |
-| [Decisions](docs/decisions.md) | Settled architectural and design decisions |
-| [Open Questions](docs/open-questions.md) | Unresolved questions under discussion |
-| [Roadmap](docs/roadmap.md) | Milestones, tasks, and backlog |
-
-## License
-
-TBD
+| [Obsidian Setup](docs/obsidian-setup.md) | Plugin setup, dashboard overview, vault configuration |
+| [How It Was Built](docs/how-it-was-built.md) | The Claude Code methodology behind Myna |
