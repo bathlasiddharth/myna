@@ -66,21 +66,19 @@ One-line summary: "Process my messages" extracts structured data from configured
 
 ### Email Triage
 
-One-line summary: "Triage my inbox" reads inbox emails, recommends folder classification AND vault updates for each, and stages confirmed items in a dedicated triage review queue.
+One-line summary: "Triage my inbox" reads inbox emails, classifies each into a folder, and moves approved items — vault extraction (tasks, decisions, observations) is handled separately by Email Processing.
 
-- **Step 1 — Recommend (written to file):** the agent reads all inbox emails and writes recommendations to `ReviewQueue/review-triage.md`. For each email:
+- **Scope: classification only.** Triage decides *where an email goes*, not *what to extract from it*. Vault updates come from Email Processing, not triage.
+- **Step 1 — Classify (written to file):** the agent reads all inbox emails and writes classifications to `ReviewQueue/review-triage.md`. For each email:
   - **Folder classification:** which folder this email belongs in (see below)
-  - **Vault updates (only if applicable):** what should be updated in the vault — project timeline entries, tasks, contributions, person observations, recognition, blockers. Many emails won't have any vault updates (e.g., FYI newsletters, automated notifications, status emails with no action). The agent only recommends vault updates when there's actually something worth capturing — not every email deserves vault entries.
-  - **Project assignment (only if applicable):** which project this email relates to, if any
-  - Reasoning for each recommendation
-- **Step 2 — User edits the file:** user opens `review-triage.md` in Obsidian and edits at their pace — delete emails they don't care about, fix folder assignments, edit vault update recommendations, approve/reject per entry. Same checkbox-based approve flow as the other review queues. Faster than CLI for 50 emails — bulk-delete, rearrange, check off in one pass.
-- **Step 3 — Process:** "process triage" → agent reads the file, routes approved items to `review-work`/`review-people`/`review-self`, clears processed items from the file. Rejected/deleted items are gone. Skipped items stay for next time.
+  - Reasoning for the classification
+- **Step 2 — User edits the file:** user opens `review-triage.md` in Obsidian and edits at their pace — delete emails they don't care about, fix folder assignments, approve/reject per entry. Faster than CLI for 50 emails — bulk-delete, rearrange, check off in one pass.
+- **Step 3 — Process:** "process triage" → agent reads the file, moves approved emails into their classified folders using the email MCP, clears processed items from the file. Rejected/deleted items are gone. Skipped items stay for next time.
 - **Folder classification — two modes:**
   - **User-defined folders:** if the user has configured triage folders in the registry with descriptions (e.g., `FYI/` = "informational, no action", `Reply/` = "needs a response from me", `Follow-Up/` = "waiting on someone else"), the agent classifies into those folders
   - **Default categories:** if no folders are configured, the agent uses built-in categories: needs reply, FYI/no action, needs scheduling, follow-up/waiting, can archive
-  - Either way, the classification is a recommendation — Myna never moves emails between folders
+  - Either way, Myna moves approved emails into the classified folder using the email MCP
 - Can switch to one-by-one review mode if preferred
-- All output is informational — displayed on CLI for the user to act on in their email client
 
 ### Thread Summary
 
