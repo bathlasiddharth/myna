@@ -208,6 +208,63 @@ done
 
 info "Created ${#vault_dirs[@]} directories under $MYNA_ROOT/"
 
+# ── Configure Obsidian ────────────────────────────────────────
+
+step "Obsidian plugin configuration"
+
+obsidian_configured=false
+
+if $DRY_RUN; then
+  echo "  [dry-run] Would prompt: Configure Obsidian settings automatically? (y/n)"
+else
+  printf "Configure Obsidian settings automatically? This will write plugin configs to .obsidian/ in your vault. (y/n): "
+  read -r obsidian_answer
+  if [[ "$obsidian_answer" =~ ^[Yy]$ ]]; then
+    OBSIDIAN_DIR="$VAULT_PATH/.obsidian"
+    mkdir -p "$OBSIDIAN_DIR"
+
+    cat > "$OBSIDIAN_DIR/daily-notes.json" <<'JSON'
+{
+  "folder": "Journal/Daily",
+  "template": "_system/templates/daily-note",
+  "dateFormat": "YYYY-MM-DD",
+  "autorun": false
+}
+JSON
+
+    cat > "$OBSIDIAN_DIR/periodic-notes.json" <<'JSON'
+{
+  "daily": {
+    "enabled": true,
+    "folder": "Journal/Daily",
+    "template": "_system/templates/daily-note",
+    "format": "YYYY-MM-DD"
+  },
+  "weekly": {
+    "enabled": true,
+    "folder": "Journal/Weekly",
+    "template": "_system/templates/weekly-note",
+    "format": "YYYY-[W]WW"
+  }
+}
+JSON
+
+    cat > "$OBSIDIAN_DIR/dataview.json" <<'JSON'
+{
+  "enableDataviewJs": true,
+  "enableInlineDataview": true,
+  "enableInlineDataviewJs": false,
+  "prettyRenderInlineFields": true
+}
+JSON
+
+    obsidian_configured=true
+    info "Obsidian plugin configs written to $OBSIDIAN_DIR/"
+  else
+    info "Skipped — you can configure Obsidian settings manually (see setup checklist)"
+  fi
+fi
+
 # ── Copy Config Examples ──────────────────────────────────────
 
 step "Setting up config files"
@@ -230,7 +287,7 @@ for name in "${config_files[@]}"; do
   if $DRY_RUN; then
     echo "  [dry-run] cp $example_src → $example_dest"
     if [ ! -f "$config_dest" ]; then
-      echo "  [dry-run] cp $example_src → $config_dest (starter)"
+      echo "  [dry-run] Write empty schema: $config_dest"
     fi
   else
     # Always refresh .example files
@@ -238,7 +295,120 @@ for name in "${config_files[@]}"; do
 
     # Only create starter config if it doesn't exist (never overwrite user edits)
     if [ ! -f "$config_dest" ]; then
-      cp "$example_src" "$config_dest"
+      # Write empty schema stubs — user fills in their own data
+      case "$name" in
+        projects)
+          cat > "$config_dest" <<'YAML'
+projects: []
+YAML
+          ;;
+        people)
+          cat > "$config_dest" <<'YAML'
+people: []
+YAML
+          ;;
+        meetings)
+          cat > "$config_dest" <<'YAML'
+# Optional overrides. Most meetings need no entry — type inferred from calendar.
+meetings: []
+YAML
+          ;;
+        workspace)
+          cat > "$config_dest" <<'YAML'
+# Myna — Workspace Configuration
+# See _system/config/workspace.yaml.example for all options and comments.
+
+user:
+  name: ""
+  email: ""
+  role: ""
+
+vault:
+  path: ""
+  subfolder: myna
+
+timezone: ""
+work_hours:
+  start: "09:00"
+  end: "17:00"
+timestamp_format: "YYYY-MM-DD"
+
+journal:
+  archive_after_days: 30
+
+email:
+  processed_folder: per-project
+  common_folder: "Processed/"
+
+feedback_cycle_days: 30
+
+calendar_event_prefix: "[Myna]"
+calendar_event_types:
+  focus: Focus
+  task: Task
+  reminder: Reminder
+
+mcp_servers:
+  email: gmail-mcp
+  slack: slack-mcp
+  calendar: gcal-mcp
+
+prompt_logging: true
+ai_model: claude-code
+
+features:
+  email_processing: true
+  messaging_processing: true
+  email_triage: true
+  meeting_prep: true
+  process_meeting: true
+  time_blocks: true
+  calendar_reminders: true
+  people_management: true
+  self_tracking: true
+  team_health: true
+  attention_gap_detection: true
+  feedback_gap_detection: true
+  contribution_detection: true
+  milestones: true
+  weekly_summary: true
+  monthly_updates: true
+  park_resume: true
+YAML
+          ;;
+        communication-style)
+          cat > "$config_dest" <<'YAML'
+# Myna — Communication Style Configuration
+# See _system/config/communication-style.yaml.example for all options and comments.
+
+default_preset: professional
+
+presets_per_tier:
+  upward: ""
+  peer: ""
+  direct: ""
+  cross-team: ""
+
+sign_off: ""
+difficult_message_approach: ""
+
+email_preferences:
+  max_length: ""
+  greeting_style: ""
+messaging_preferences:
+  formality: ""
+  emoji_usage: ""
+YAML
+          ;;
+        tags)
+          cat > "$config_dest" <<'YAML'
+tags: []
+YAML
+          ;;
+        *)
+          cp "$example_src" "$config_dest"
+          ;;
+      esac
       info "Created starter: ${name}.yaml"
     else
       info "Preserved existing: ${name}.yaml"
@@ -326,6 +496,87 @@ MANIFEST
   info "Manifest: $MYNA_HOME/install-manifest.json"
 fi
 
+# ── Setup Checklist ───────────────────────────────────────────
+
+step "Writing setup checklist"
+
+CHECKLIST_FILE="$MYNA_ROOT/_system/setup-checklist.md"
+
+if $DRY_RUN; then
+  echo "  [dry-run] Write $CHECKLIST_FILE"
+else
+  {
+    cat <<CHECKLIST
+# Myna Setup Checklist
+
+Complete these steps to finish setting up Myna.
+
+## Required: Install Obsidian Plugins
+
+Install these from Obsidian → Settings → Community Plugins:
+
+- [ ] Dataview
+- [ ] Tasks
+- [ ] Periodic Notes
+- [ ] Templater
+
+## Required: Open Your Vault
+
+- [ ] Open Obsidian
+- [ ] Click "Open folder as vault"
+- [ ] Select: $VAULT_PATH
+CHECKLIST
+
+    if [ "$obsidian_configured" = false ]; then
+      cat <<CHECKLIST
+
+## Obsidian Settings to Configure Manually
+
+- [ ] Daily Notes: folder = Journal/Daily, template = _system/templates/daily-note
+- [ ] Periodic Notes: enable weekly notes, folder = Journal/Weekly
+- [ ] Dataview: enable Dataview JS and inline queries
+CHECKLIST
+    fi
+
+    cat <<CHECKLIST
+
+## Optional: Add Your Data
+
+- [ ] Add projects to _system/config/projects.yaml
+- [ ] Add people to _system/config/people.yaml
+- [ ] Review workspace settings in _system/config/workspace.yaml
+
+---
+See docs/obsidian-setup.md for detailed setup instructions.
+CHECKLIST
+  } > "$CHECKLIST_FILE"
+  info "Setup checklist: $CHECKLIST_FILE"
+fi
+
+# ── Shell Aliases ─────────────────────────────────────────────
+
+step "Adding shell aliases"
+
+if $DRY_RUN; then
+  echo "  [dry-run] Would detect shell rc file and add myna aliases"
+else
+  SHELL_RC=$([ "$SHELL" = "$(which zsh)" ] && echo "$HOME/.zshrc" || echo "$HOME/.bashrc")
+
+  if grep -q "alias myna=" "$SHELL_RC" 2>/dev/null; then
+    info "Shell aliases already present in $SHELL_RC — skipping"
+  else
+    cat >> "$SHELL_RC" <<ALIASES
+
+# Myna aliases
+alias myna='claude --agent myna --allowedTools "Read,Write,Edit,Glob,Grep,Bash(cd *),Bash(ls *),Bash(cat *)" --pathAllowlist "$VAULT_PATH"'
+alias myna-ro='claude --agent myna --allowedTools "Read,Glob,Grep" --pathAllowlist "$VAULT_PATH"'
+alias myna-x='claude --agent myna --allowedTools ""'
+ALIASES
+    info "Added myna aliases to $SHELL_RC"
+    warn "Run 'source $SHELL_RC' or open a new terminal to activate aliases"
+  fi
+fi
+
 # ── Summary ───────────────────────────────────────────────────
 
 echo ""
@@ -344,23 +595,30 @@ echo "  Config:        $MYNA_ROOT/_system/config/"
 echo "  Templates:     $MYNA_ROOT/_system/templates/ ($template_count files)"
 echo "  Dashboards:    $MYNA_ROOT/Dashboards/ ($dashboard_count files)"
 echo "  Manifest:      $MYNA_HOME/install-manifest.json"
+if ! $DRY_RUN; then
+  echo "  Checklist:     $CHECKLIST_FILE"
+fi
 echo ""
 
 if ! $DRY_RUN; then
   printf "${BOLD}Next steps:${NC}\n"
   echo ""
-  echo "  1. Edit your config files:"
+  echo "  1. Complete the setup checklist:"
+  printf "     ${BOLD}$CHECKLIST_FILE${NC}\n"
+  echo ""
+  echo "  2. Edit your config files:"
   echo "     \$EDITOR $CONFIG_DIR/workspace.yaml"
   echo "     \$EDITOR $CONFIG_DIR/projects.yaml"
   echo "     \$EDITOR $CONFIG_DIR/people.yaml"
   echo ""
-  echo "  2. (Optional) Register external MCP servers:"
+  echo "  3. (Optional) Register external MCP servers:"
   echo "     claude mcp add gmail-mcp -- <your-gmail-mcp-command>"
   echo "     claude mcp add slack-mcp -- <your-slack-mcp-command>"
   echo "     claude mcp add gcal-mcp -- <your-gcal-mcp-command>"
   echo ""
-  echo "  3. Launch Myna:"
-  printf "     ${BOLD}claude --agent myna${NC}\n"
+  echo "  4. Launch Myna:"
+  printf "     ${BOLD}myna${NC}  (after reloading your shell)\n"
+  printf "     ${BOLD}claude --agent myna${NC}  (immediately)\n"
   echo ""
   echo "  The cloned repo is no longer needed at runtime."
   echo "  To update: git pull && ./install.sh --vault-path $VAULT_PATH"
