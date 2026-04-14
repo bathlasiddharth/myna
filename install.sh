@@ -191,7 +191,6 @@ vault_dirs=(
   "_meta/learnings"
   "_system/config"
   "_system/templates"
-  "_system/dashboards"
   "_system/logs"
   "_system/sources"
   "_system/parked"
