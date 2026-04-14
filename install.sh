@@ -187,6 +187,7 @@ vault_dirs=(
   "Journal/Archive"
   "Team"
   "ReviewQueue"
+  "ReviewQueue/processed"
   "Dashboards"
   "_meta/learnings"
   "_system/config"

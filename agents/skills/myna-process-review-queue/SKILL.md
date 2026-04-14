@@ -7,7 +7,7 @@ argument-hint: "review my queue | process review queue | what's in my queue? | p
 
 # myna-process-review-queue
 
-Processes pending review queue items. Writes approved items to their destinations with `[Verified]` tag. Logs all processed items to `ReviewQueue/processed-{YYYY-MM-DD}.md` for audit trail.
+Processes pending review queue items. Writes approved items to their destinations with `[Verified]` tag. Logs all processed items to `ReviewQueue/processed/processed-{YYYY-MM-DD}.md` for audit trail.
 
 **Does NOT handle `review-email-triage.md`** — email triage is handled by myna-email-triage.
 
@@ -23,7 +23,7 @@ Queue files:
 - `ReviewQueue/review-people.md` — ambiguous observations, recognition
 - `ReviewQueue/review-self.md` — uncertain contribution candidates
 
-Audit trail: `ReviewQueue/processed-{YYYY-MM-DD}.md`
+Audit trail: `ReviewQueue/processed/processed-{YYYY-MM-DD}.md`
 
 ---
 
@@ -155,7 +155,7 @@ The `[Verified]` marker and provenance conventions are defined in myna-steering-
 
 ## Audit Trail
 
-After each processing run, append to `ReviewQueue/processed-{YYYY-MM-DD}.md`:
+After each processing run, append to `ReviewQueue/processed/processed-{YYYY-MM-DD}.md`:
 
 ```markdown
 ## Processed — {YYYY-MM-DD HH:MM}

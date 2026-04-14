@@ -102,7 +102,7 @@ If the template doesn't exist, create a minimal file with:
 | Meeting (adhoc) | `{vault}/{subfolder}/Meetings/Adhoc/{slug}.md` |
 | Draft | `{vault}/{subfolder}/Drafts/[{Type}] {topic}.md` |
 | Review queue | `{vault}/{subfolder}/ReviewQueue/review-{queue}.md` |
-| Processed audit | `{vault}/{subfolder}/ReviewQueue/processed-{YYYY-MM-DD}.md` |
+| Processed audit | `{vault}/{subfolder}/ReviewQueue/processed/processed-{YYYY-MM-DD}.md` |
 | Parked context | `{vault}/{subfolder}/_system/parked/{slug}.md` |
 | Config | `{vault}/{subfolder}/_system/config/{name}.yaml` |
 | Source | `{vault}/{subfolder}/_system/sources/{entity}.md` |
