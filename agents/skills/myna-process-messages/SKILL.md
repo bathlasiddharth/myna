@@ -164,7 +164,8 @@ For each email/message/document, extract every relevant item across all destinat
   Source: email from Sarah, 2026-04-05
   Interpretation: Sarah asked for your input on API deadline — no reply detected in thread
   Ambiguity: Unclear if already addressed offline
-  Proposed destination: - [ ] Reply to Sarah about API spec timeline 📅 2026-04-05 ⏫ [project:: Auth Migration] [type:: reply-needed] [person:: Sarah] [Inferred] (email, Sarah, 2026-04-05) in Projects/auth-migration.md
+  Proposed destination: [[Projects/auth-migration]] — Open Tasks
+  Content: - [ ] Reply to Sarah about API spec timeline 📅 2026-04-05 ⏫ [project:: Auth Migration] [type:: reply-needed] [person:: Sarah] [Inferred] (email, Sarah, 2026-04-05)
   ---
 ```
 

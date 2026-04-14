@@ -36,7 +36,7 @@ Each entry in a queue file follows this format:
   Source: {where this came from}
   Interpretation: {what the agent thinks it means}
   Ambiguity: {why this needs review — what's unclear}
-  Proposed destination: {destination file and section}
+  Proposed destination: [[{destination file (no extension)}]] — {section}
   Content: {the entry to write verbatim if approved}
   ---
 ```
@@ -64,7 +64,7 @@ Each entry in a queue file follows this format:
 Source: {source reference}
 Interpretation: {agent's interpretation}
 Ambiguity: {what's unclear}
-Proposed destination: {destination file + section}
+Proposed destination: [[{destination file (no extension)}]] — {section}
 Content if approved:
   {content}
 
@@ -96,7 +96,7 @@ Queue state: 5 items (3 in review-work, 1 in review-people, 1 in review-self)
 Source: email from James, April 3 — "someone should verify this"
 Interpretation: A task needs to be added to the auth-migration project
 Ambiguity: "someone" — can't determine owner. Could be you or James.
-Proposed destination: Projects/auth-migration.md — Open Tasks
+Proposed destination: [[Projects/auth-migration]] — Open Tasks
 Content if approved:
   - [ ] Verify Platform team confirmed Mar 15 deadline 📅 2026-04-10 [project:: Auth Migration] [type:: task] [Inferred]
 
@@ -243,7 +243,7 @@ Queue entry:
   Source: meeting 1:1 with Sarah, April 2
   Interpretation: Agent thinks you influenced the resolution, but it's not confirmed
   Ambiguity: Unclear whether you resolved it or Sarah did — discussion was about the blocker but action wasn't assigned
-  Proposed destination: Journal/contributions-2026-03-30.md
+  Proposed destination: [[Journal/contributions-2026-03-30]]
   Content: - [2026-04-02 | meeting 1:1 with Sarah] **unblocking-others:** Helped resolve API blocker for auth migration [Inferred] (meeting, 1:1 with Sarah, 2026-04-02)
   ---
 ```
@@ -256,7 +256,7 @@ Chat mode presentation:
 Source: 1:1 with Sarah, April 2 — discussed the API blocker
 Interpretation: You may have influenced the resolution, but it's not clear from the notes.
 Ambiguity: It's unclear whether you resolved this or Sarah did.
-Proposed destination: Journal/contributions-2026-03-30.md
+Proposed destination: [[Journal/contributions-2026-03-30]]
 Content if approved:
   [2026-04-02 | meeting] **unblocking-others:** Helped resolve API blocker for auth migration [Inferred]
 
