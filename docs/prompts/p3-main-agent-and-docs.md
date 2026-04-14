@@ -6,7 +6,7 @@
 
 ## Context
 
-Myna is a personal assistant for tech professionals built on Claude Code. All 24 feature skills and 6 steering skills have been written (P1 + P2). You're writing the main agent and install script from scratch, then updating all supporting docs.
+Myna is a Chief of Staff for tech professionals built on Claude Code. All 24 feature skills and 6 steering skills have been written (P1 + P2). You're writing the main agent and install script from scratch, then updating all supporting docs.
 
 **Read these files:**
 - `docs/architecture.md` — full file
@@ -32,7 +32,7 @@ Write a new main agent prompt designed for native Claude Code skills. The archit
 ```yaml
 ---
 name: myna
-description: Personal assistant for tech professionals
+description: Chief of Staff for tech professionals
 skills:
   - myna-steering-safety
   - myna-steering-conventions

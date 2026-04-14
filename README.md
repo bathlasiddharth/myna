@@ -1,6 +1,6 @@
 # Myna
 
-**Myna** — a privacy-first AI assistant powered by Claude Code that works exclusively within your company's approved tools and never acts without your approval.
+**Myna** — a privacy-first AI Chief of Staff powered by Claude Code that works exclusively within your company's approved tools and never acts without your approval.
 
 It reads from your existing tools and writes everything to a local Obsidian vault as plain markdown. No cloud, no new infrastructure, nothing leaves your machine. The more you use it, the more it knows your world — your projects, your people, your preferences.
 
@@ -8,7 +8,7 @@ It reads from your existing tools and writes everything to a local Obsidian vaul
 
 ## Who It's For
 
-Engineering managers, tech leads, and other leaders who manage multiple projects and communication channels. If you spend your day context-switching between email, Slack, calendar, and project tracking — and want an assistant that handles the tedious parts without risking mistakes — Myna is for you.
+Engineering managers, tech leads, and other leaders who manage multiple projects and communication channels. If you spend your day context-switching between email, Slack, calendar, and project tracking — and want a Chief of Staff that handles the tedious parts without risking mistakes — Myna is for you.
 
 Myna runs on [Claude Code](https://claude.ai/code). Its instructions are plain markdown — adaptable to any AI assistant if your team uses something else.
 
@@ -46,7 +46,7 @@ $ myna
 
 ## Core Principles
 
-- Local-first — all data in your Obsidian vault as plain markdown
+- Local-first — all data stays in your Obsidian vault as plain markdown, nothing leaves your machine
 - Draft, never send — every outbound action requires your explicit approval
 - Human-in-the-loop — judgment calls go through a review queue, never auto-resolved
 - Enterprise-friendly — no new infrastructure, no cloud sync, connects to your existing MCP servers

@@ -1,12 +1,12 @@
 # Myna — Vision
 
-> A local-first personal assistant for tech professionals. Agents that watch, organize, and draft — but never act on your behalf.
+> A local-first Chief of Staff for tech professionals. Agents that watch, organize, and draft — but never act on your behalf.
 
 ---
 
 ## What Is Myna?
 
-Myna is a set of AI agent instructions that turn Claude Code into a personal assistant for tech employees. It manages the information layer of your job: emails, Slack messages, meetings, projects, people, and tasks. All instructions are plain markdown — inherently readable by any capable LLM, but designed and tested for Claude Code.
+Myna is a set of AI agent instructions that turn Claude Code into a Chief of Staff for tech professionals. It manages the information layer of your job: emails, Slack messages, meetings, projects, people, and tasks. All instructions are plain markdown — inherently readable by any capable LLM, but designed and tested for Claude Code.
 
 You interact with Myna by typing natural language prompts inside Claude Code. Myna reads from your company's existing MCP-connected tools (email, Slack, calendar) and writes exclusively to your local Obsidian vault.
 

@@ -6,7 +6,7 @@
 
 ## Context
 
-Myna is a personal assistant for tech professionals built on Claude Code. We're restructuring the skill system to use Claude Code's **native skills mechanism** instead of manually loading skill files. This prompt updates the source-of-truth documentation before any skills are written.
+Myna is a Chief of Staff for tech professionals built on Claude Code. We're restructuring the skill system to use Claude Code's **native skills mechanism** instead of manually loading skill files. This prompt updates the source-of-truth documentation before any skills are written.
 
 **Read these files first:**
 - `docs/architecture.md` — current architecture (needs updating)
@@ -165,7 +165,7 @@ For the skill detail blocks: keep the same format as the current architecture (F
 ```yaml
 ---
 name: myna
-description: Personal assistant for tech professionals
+description: Chief of Staff for tech professionals
 skills:
   - myna-steering-safety
   - myna-steering-conventions

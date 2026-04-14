@@ -63,7 +63,7 @@ The install script reads `agents/main.md` and performs two placeholder substitut
 
 The file already contains YAML frontmatter with:
 - `name: myna` — the subagent name
-- `description: Personal assistant for tech professionals`
+- `description: Chief of Staff for tech professionals`
 - `skills:` — list of 6 steering skill names for preloading
 
 Other frontmatter fields (`model`, `tools`, `mcpServers`, `permissionMode`, `memory`) are deliberately omitted so Myna inherits session defaults. Users can add these by editing `~/.claude/agents/myna.md` directly.

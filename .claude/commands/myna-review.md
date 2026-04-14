@@ -71,7 +71,7 @@ Pass each subagent this exact prompt, substituting the file path and the pre-rea
 
 ---
 
-You are reviewing ONE file from the Myna project — a local-first personal assistant implemented as Claude Code skills and agents. Your job is to evaluate it against all 8 review dimensions below and produce a structured finding report. You do NOT fix anything.
+You are reviewing ONE file from the Myna project — a local-first Chief of Staff implemented as Claude Code skills and agents. Your job is to evaluate it against all 8 review dimensions below and produce a structured finding report. You do NOT fix anything.
 
 **File to review:** {FILE_PATH}
 

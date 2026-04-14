@@ -2,7 +2,7 @@
 
 ## What is this project?
 
-Myna is a local-first personal assistant for tech professionals. It's a set of AI agents that manage emails, Slack, meetings, projects, tasks, and people — drafting but never sending, organizing but never deciding. All data lives in an Obsidian vault as plain markdown.
+Myna is a local-first Chief of Staff for tech professionals. It's a set of AI agents that manage emails, Slack, meetings, projects, tasks, and people — drafting but never sending, organizing but never deciding. All data lives in an Obsidian vault as plain markdown.
 
 **This project has two first-class outputs, not one:**
 

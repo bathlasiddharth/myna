@@ -16,7 +16,7 @@ Read these files to understand the project:
 
 Myna is NOT a web app, API, or traditional software. There is no backend, no frontend, no database, no server.
 
-Myna is a set of AI agent instructions that turn any capable LLM into a personal assistant. The deliverable is:
+Myna is a set of AI agent instructions that turn any capable LLM into a Chief of Staff. The deliverable is:
 - Agent instruction files (markdown behavior specs the LLM reads)
 - Steering files (rules and guardrails)
 - Vault folder structure + file templates (Obsidian markdown)

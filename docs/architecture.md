@@ -2,7 +2,7 @@
 
 ## 1. Overview
 
-Myna is a set of AI agent instructions that turn Claude Code into a personal assistant for tech professionals. The user types natural language prompts inside Claude Code. Myna reads from external sources (email, Slack, calendar) via MCP servers and writes exclusively to a local Obsidian vault under a single `myna/` subfolder. All agent instructions are plain markdown — readable by any LLM, but designed and tested for Claude Code (D045, D046).
+Myna is a set of AI agent instructions that turn Claude Code into a Chief of Staff for tech professionals. The user types natural language prompts inside Claude Code. Myna reads from external sources (email, Slack, calendar) via MCP servers and writes exclusively to a local Obsidian vault under a single `myna/` subfolder. All agent instructions are plain markdown — readable by any LLM, but designed and tested for Claude Code (D045, D046).
 
 Architecturally, Myna is one main agent with 24 skills. The main agent handles routing and simple operations. Cross-cutting rules live in 6 steering skills, preloaded via the subagent's `skills:` frontmatter field. Feature skills are loaded on demand (progressive disclosure — only their name and description are in context until activated). Config lives in 6 YAML files read at session start.
 
@@ -502,7 +502,7 @@ Frontmatter:
 ```yaml
 ---
 name: myna
-description: Personal assistant for tech professionals
+description: Chief of Staff for tech professionals
 skills:
   - myna-steering-safety
   - myna-steering-conventions

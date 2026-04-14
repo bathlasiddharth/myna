@@ -6,7 +6,7 @@
 
 ## Context
 
-Myna is a personal assistant for tech professionals built on Claude Code. Steering rules are cross-cutting rules that must always be in context — safety, conventions, output formatting, system behavior, memory model, and vault operations. These are implemented as Claude Code skills with `user-invocable: false`, preloaded via the main agent's `skills:` frontmatter field.
+Myna is a Chief of Staff for tech professionals built on Claude Code. Steering rules are cross-cutting rules that must always be in context — safety, conventions, output formatting, system behavior, memory model, and vault operations. These are implemented as Claude Code skills with `user-invocable: false`, preloaded via the main agent's `skills:` frontmatter field.
 
 Myna does NOT ship an MCP server for vault operations. Skills interact with the vault using Claude Code's built-in tools (Read, Write, Edit, Grep, Glob). The `myna-steering-vault-ops` skill provides patterns for task queries, frontmatter parsing, template creation, and other vault operations. External MCPs (email, Slack, calendar) are still user-provided and registered via `claude mcp add`.
 

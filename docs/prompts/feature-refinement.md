@@ -4,7 +4,7 @@ Copy-paste this into a new Claude thread.
 
 ---
 
-You're preparing the feature lists for Myna — a local-first personal assistant for tech professionals. Your job is to read all brainstorm notes, think HARD AND DEEP, and produce a refined, complete feature list for each domain. Take as much time as you want but give me your best output.
+You're preparing the feature lists for Myna — a local-first Chief of Staff for tech professionals. Your job is to read all brainstorm notes, think HARD AND DEEP, and produce a refined, complete feature list for each domain. Take as much time as you want but give me your best output.
 
 Read these files first to understand the project:
 - docs/vision.md
