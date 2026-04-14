@@ -105,7 +105,7 @@ Collect in parallel:
 
 **Overdue delegations:** Grep `{vault}/{subfolder}/` for `- \[ \]` lines containing `[type:: delegation]` with `📅 {date}` before today. These are red-flag items.
 
-**Review queue counts:** Read `{vault}/{subfolder}/ReviewQueue/review-work.md`, `review-people.md`, `review-self.md`, and `review-triage.md`. Count unchecked items (`- \[ \]`) in each. If a file doesn't exist, treat its count as 0.
+**Review queue counts:** Read `{vault}/{subfolder}/ReviewQueue/review-work.md`, `review-people.md`, `review-self.md`, and `review-email-triage.md`. Count unchecked items (`- \[ \]`) in each. If a file doesn't exist, treat its count as 0.
 
 **Milestones** (if `features.milestones` is enabled): Read `people.yaml` and all People files. Find birthdays (`birthday: MM-DD`) or work anniversaries (`work_anniversary: YYYY-MM-DD`) within the next 7 days.
 
@@ -166,7 +166,7 @@ SORT due ASC
 
 ### Review Queue
 
-{total_count} items pending: [[review-work]] ({work_count}), [[review-people]] ({people_count}), [[review-self]] ({self_count}), [[review-triage]] ({triage_count}).
+{total_count} items pending: [[review-work]] ({work_count}), [[review-people]] ({people_count}), [[review-self]] ({self_count}), [[review-email-triage]] ({triage_count}).
 
 ### Milestones
 
@@ -194,7 +194,7 @@ SORT due ASC
 
 ### Review Queue
 
-{total_count} items pending: [[review-work]] ({work_count}), [[review-people]] ({people_count}), [[review-self]] ({self_count}), [[review-triage]] ({triage_count}).
+{total_count} items pending: [[review-work]] ({work_count}), [[review-people]] ({people_count}), [[review-self]] ({self_count}), [[review-email-triage]] ({triage_count}).
 
 ### Today's Meetings
 

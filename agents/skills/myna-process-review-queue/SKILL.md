@@ -1,6 +1,6 @@
 ---
 name: myna-process-review-queue
-description: Process review queue items across review-work, review-people, and review-self queues — interactively in chat or by processing items the user has already checked in Obsidian. Does NOT process review-triage.md (email folder recommendations — that's handled by myna-email-triage).
+description: Process review queue items across review-work, review-people, and review-self queues — interactively in chat or by processing items the user has already checked in Obsidian. Does NOT process review-email-triage.md (email folder recommendations — that's handled by myna-email-triage).
 user-invocable: true
 argument-hint: "review my queue | process review queue | what's in my queue? | process approved items | process [queue name]"
 ---
@@ -9,7 +9,7 @@ argument-hint: "review my queue | process review queue | what's in my queue? | p
 
 Processes pending review queue items. Writes approved items to their destinations with `[Verified]` tag. Logs all processed items to `ReviewQueue/processed-{YYYY-MM-DD}.md` for audit trail.
 
-**Does NOT handle `review-triage.md`** — email triage is handled by myna-email-triage.
+**Does NOT handle `review-email-triage.md`** — email triage is handled by myna-email-triage.
 
 ## Before You Start
 
@@ -213,7 +213,7 @@ Total: 6 items. Say 'review my queue' to go through them interactively, or open 
 
 **Queue files don't exist:** If a queue file doesn't exist, skip it silently. Do not create empty queue files.
 
-**review-triage.md:** If the user asks to process triage items, redirect: "Email triage is handled separately. Say 'process triage' to move approved emails to their folders."
+**review-email-triage.md:** If the user asks to process triage items, redirect: "Email triage is handled separately. Say 'process triage' to move approved emails to their folders."
 
 **Bulk write (file mode):** 5 or more checked items — present the full list and confirm before writing: "About to write {n} items to {n} files. Proceed?"
 
