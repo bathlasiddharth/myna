@@ -256,7 +256,7 @@ Myna synthesizes your 5 daily notes into a structured weekly review: projects pr
 triage my inbox
 ```
 
-Myna reads your inbox and writes folder recommendations to `ReviewQueue/review-triage.md`. You open the file in Obsidian, edit any recommendations, then say "process triage" to move the emails.
+Myna reads your inbox and writes folder recommendations to `ReviewQueue/review-email-triage.md`. You open the file in Obsidian, edit any recommendations, then say "process triage" to move the emails.
 
 ```
 process my email
@@ -303,4 +303,4 @@ The project's `email_folders` or `slack_channels` in `projects.yaml` may not mat
 
 **Review queue is growing but I'm not processing it**
 
-Say "process my review queue" to work through items interactively. For `review-triage.md` specifically, check items in Obsidian and then say "process triage" — that file is handled by myna-email-triage, not myna-process-review-queue.
+Say "process my review queue" to work through items interactively. For `review-email-triage.md` specifically, check items in Obsidian and then say "process triage" — that file is handled by myna-email-triage, not myna-process-review-queue.

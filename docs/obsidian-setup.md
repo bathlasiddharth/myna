@@ -22,7 +22,7 @@ Install and enable these four community plugins (Settings → Community plugins 
 
 ## Dashboards
 
-Dashboards live in the `Dashboards/` folder of your vault. Open any `.md` file there to view it. All dashboards require the Dataview plugin to be installed and enabled.
+Dashboards live in the `myna/Dashboards/` folder inside your vault. Open any `.md` file there to view it. All dashboards require the Dataview plugin to be installed and enabled.
 
 | Dashboard | What it shows |
 |-----------|---------------|
