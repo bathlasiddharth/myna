@@ -163,12 +163,12 @@ Phase 2 is underway. Sarah's API spec draft is in review. The Platform API depen
 ### 📋 Open Tasks
 
 **Your tasks:**
-- [ ] Review API spec v2 📅 2026-04-11 ⏫ [project:: Auth Migration]
-- [ ] Unblock Platform team dependency — follow up with James 📅 2026-04-11 🔼 [project:: Auth Migration]
+- [ ] Review API spec v2 📅 2026-04-11 ⏫ [project:: Auth Migration] [person:: [[Sam Bennett]]]
+- [ ] Unblock Platform team dependency — follow up with James 📅 2026-04-11 🔼 [project:: Auth Migration] [person:: [[Sam Bennett]]]
 
 **Delegated (waiting on others):**
-- [ ] Draft API spec v2 — Sarah, due 2026-04-10 [type:: delegation] [person:: sarah-chen]
-- [ ] Staging infrastructure setup — Alex, due 2026-04-14 [type:: delegation] [person:: alex-kumar]
+- [ ] Draft API spec v2 — Sarah, due 2026-04-10 [type:: delegation] [person:: [[Sarah Carter]]]
+- [ ] Staging infrastructure setup — Alex, due 2026-04-14 [type:: delegation] [person:: [[Alex Kumar]]]
 
 **Dependencies (waiting on other teams):**
 - [ ] Platform API endpoint spec — Platform team, due 2026-04-08 (overdue) [type:: dependency]
