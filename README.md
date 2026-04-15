@@ -26,23 +26,49 @@ Myna runs on [Claude Code](https://claude.ai/code). Its instructions are plain m
 | **Self Tracking** | Contribution logs, brag docs, promo packets, self-reviews |
 | **Review Queue** | Routes judgment calls to your approval queue — nothing ambiguous gets acted on automatically |
 
-## Quick Example
+## A Day With Myna
+
+A realistic workday for an Engineering Manager — the moments you'd actually reach for Myna:
 
 ```
-$ myna
-
+7:45 AM — coffee, laptop open
 > sync
-↳ Daily note created, 3 meetings prepped, 2 overdue tasks flagged
+↳ Daily note created; Phoenix blocker flagged; Sarah Mitchell OKR reply overdue
 
-> prep for my 1:1 with Sarah
-↳ 11-item prep brief written to Meetings/1-1s/sarah-chen.md
+7:55 AM — OK but what actually matters today?
+> what should I focus on today?
+↳ 5-7 ranked priorities with reasoning — no writes
 
-> what's blocked?
-↳ 2 blockers across auth-migration and platform-api
+8:10 AM — before your 9am 1:1 with Marcus
+> prep for my 1:1 with Marcus
+↳ Prep brief appended to Meetings/1-1s/marcus-walker.md — pending feedback, carry-forwards, personal notes
 
-> draft a reply to Marcus's email about the Q3 roadmap
-↳ Draft saved to Inbox/drafts/marcus-q3-roadmap.md
+9:35 AM — back at your desk after the 1:1
+> done with 1:1 with Marcus
+↳ Extracts delegations, observations, and personal notes to the right files
+
+9:50 AM — quick multi-thing capture
+> capture: Sarah handled Payments questions really well, atlas is unblocked on the spec side, and I need to review Sentinel phase 1 audit by next Friday
+↳ 3 entries routed to 3 files — recognition, timeline, task
+
+12:45 PM — VP asked for a Phoenix risk note
+> draft the Phoenix risk note for the VP portfolio review
+↳ BLUF, evidence-grounded, under 200 words — inline first, saves on approval
+
+1:00 PM — "can I just send this?"
+> send this to James: Atlas is on track, one cardinality risk...
+↳ Refuses. Myna drafts, never sends. Offers to draft instead.
+
+3:45 PM — the ambiguous pile
+> review my queue
+↳ Presents each item one at a time — source, proposed action, destination. Waits for you.
+
+5:30 PM — close the day
+> wrap up
+↳ Planned-vs-actual, contributions logged, tomorrow's note created with carry-forwards
 ```
+
+Full walkthrough: [A Day With Myna](docs/a-day-with-myna.md) · Browse the [test vault](tests/fixtures/vault/myna) to see the files Myna reads and writes
 
 ## Core Principles
 
@@ -113,6 +139,7 @@ Myna was designed, built, reviewed, and fixed entirely by Claude Code — from f
 | Document | Purpose |
 |----------|---------|
 | [Guide](docs/guide.md) | Full user guide — how it works, skills reference, config, workflows |
+| [A Day With Myna](docs/a-day-with-myna.md) | A realistic workday walkthrough showing how Myna helps Engineering Managers |
 | [Architecture](docs/architecture.md) | Runtime model — skills, steering, vault structure, MCP integration |
 | [Obsidian Setup](docs/obsidian-setup.md) | Plugin setup, dashboard overview, vault configuration |
 | [How It Was Built](docs/how-it-was-built.md) | The Claude Code methodology behind Myna |
