@@ -1,8 +1,8 @@
 # Myna
 
-**Myna** — a privacy-first AI Chief of Staff powered by Claude Code that works exclusively within your company's approved tools and never acts without your approval.
+**Myna** — a privacy-first AI agent that acts as your Chief of Staff, powered by Claude Code. Works exclusively within your company's approved tools and never acts without your approval.
 
-It reads from your existing tools and writes everything to a local Obsidian vault as plain markdown. No cloud, no new infrastructure, nothing leaves your machine. The more you use it, the more it knows your world — your projects, your people, your preferences.
+No cloud, no new infrastructure, nothing leaves your machine — unlike most AI assistants. It reads from your existing tools and writes everything to a local Obsidian vault as plain markdown. The more you use it, the more it knows your world — your projects, your people, your preferences.
 
 **Drafts but never sends. Organizes but never decides. Surfaces but never hides.**
 
