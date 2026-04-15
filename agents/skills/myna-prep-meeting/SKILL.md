@@ -75,7 +75,14 @@ Each session is a top-level `## {YYYY-MM-DD} Session` block prepended to the top
 
 ### Prep
 
-> Auto-generated before the meeting. Check off items discussed.
+#### Key Points
+> Strategic framing — read before you walk in.
+
+{2-5 bullets: what to lead with, recommended conversation order, any pre-meeting action needed.}
+
+---
+
+> Auto-generated items — check off as discussed.
 
 - [ ] {prep item}
 - [ ] {prep item}
@@ -95,6 +102,22 @@ Each session is a top-level `## {YYYY-MM-DD} Session` block prepended to the top
 
 For 1:1 files, sessions accumulate in one file, newest at the top.
 For adhoc meetings, each meeting gets its own file (one session per file).
+
+---
+
+## Key Points
+
+Write Key Points **after** generating all prep items — it's the synthesis layer, not a summary. 2–5 bullets max.
+
+Cover:
+- **What to lead with** — the most important thing to address first (an overdue item to own up front, a birthday, a win to name)
+- **Recommended conversation order** — the logical flow given what's on the agenda
+- **Pre-meeting action** — anything the user should do *before* sitting down (e.g., review a doc, check a number)
+- **The one thing not to miss** — a moment or topic that matters more than the checklist items suggest
+
+Keep it direct and specific. "Lead with the caching review — you're the bottleneck" beats "discuss project updates." If there's nothing strategic to surface, skip the pre-meeting action line rather than padding it.
+
+Key Points applies to all meeting types but is deepest for 1:1s. For standups and quick syncs, 1–2 bullets is enough.
 
 ---
 
@@ -299,7 +322,17 @@ Prepended to `Meetings/1-1s/sarah-chen.md` (after frontmatter and tags, above an
 
 ### Prep
 
-> Auto-generated before the meeting. Check off items discussed.
+#### Key Points
+> Strategic framing — read before you walk in.
+
+- Own the cert renewal miss up front — you're carrying it forward again.
+- Lead with Sarah's strong spec v2 work before raising the documentation feedback.
+- Career gap is 41 days — worth naming explicitly if the conversation opens up.
+- **Pre-meeting:** Review Sarah's diagram in the design doc before you sit down.
+
+---
+
+> Auto-generated items — check off as discussed.
 
 - [ ] **Follow-through check:** Did you send the cert renewal request? (not done — carried forward)
 - [ ] **Carry-forward:** Decision on OAuth 2.0 PKCE scope (carried from 2026-04-03)
