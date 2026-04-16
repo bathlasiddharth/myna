@@ -126,7 +126,7 @@ After running the install script:
 
 ## Status
 
-**Beta** — functional but in active development.
+**v1.0** — released.
 
 ## Built Entirely by Claude Code
 
