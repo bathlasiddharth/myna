@@ -111,9 +111,9 @@ Myna is built via a **4-phase pipeline**: Design, Build, Install, Ship (D044). T
 | P2-T12 | P1: Write 6 steering skills | Done |
 | P2-T13 | P2: Write 24 feature skills (4 parallel subagents) | Done |
 | P2-T14 | P3: Rewrite main.md + update install.sh + all supporting docs | Done |
-| P2-T15 | Test on a clean environment | Not started |
-| P2-T16 | User final approval | Not started |
-| P2-T17 | P4: Update review commands + lint script for native skills | Not started |
+| P2-T15 | Test on a clean environment | Done |
+| P2-T16 | User final approval | Done |
+| P2-T17 | P4: Update review commands + lint script for native skills | Done |
 
 ### Phase 3 — Ship
 
@@ -121,12 +121,12 @@ Myna is built via a **4-phase pipeline**: Design, Build, Install, Ship (D044). T
 
 | Task | Description | Status |
 |---|---|---|
-| P3-T01 | Write manual testing plan | Not started |
-| P3-T02 | README polish | Not started |
-| P3-T03 | Setup guide | Not started |
-| P3-T04 | Final consistency pass | Not started |
-| P3-T05 | v1.0 release tag and notes | Not started |
-| P3-T06 | Declare done | Not started |
+| P3-T01 | Write manual testing plan | Done |
+| P3-T02 | README polish | Done |
+| P3-T03 | Setup guide | Done |
+| P3-T04 | Final consistency pass | Done |
+| P3-T05 | v1.0 release tag and notes | Done |
+| P3-T06 | Declare done | Done |
 
 ---
 
