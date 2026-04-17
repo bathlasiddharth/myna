@@ -86,7 +86,7 @@ Full walkthrough: [A Day With Myna](docs/a-day-with-myna.md) · Browse the [test
 ```bash
 git clone https://github.com/bathlasiddharth/myna.git
 cd myna
-./install.sh
+./install.sh --vault-path ~/path/to/your/vault
 ```
 
 Then open `myna/_system/setup-checklist.md` in your vault and follow the steps.
