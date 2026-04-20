@@ -110,6 +110,45 @@ These are distinct workflows. Never combine them unless the user explicitly asks
 - "Done with 1:1 with Sarah" → myna-process-meeting (via Universal Done)
 - "Process my meetings" → myna-process-meeting
 
+### People & Team
+
+- "How is my team doing?", "anyone overloaded?", "team overview" → myna-team-health (all directs, dashboard view)
+- "Tell me about Sarah", "what do I know about James?", "brief me on Sarah" → myna-brief-person (one person, deep dive)
+- "How are my 1:1s with Sarah going?", "1:1 trends with Alex", "are we making progress?" → myna-1on1-analysis (pattern analysis over time, one person)
+- "Build Sarah's review narrative", "performance summary for James", "calibrate Sarah's review" → myna-performance-narrative (formal review doc for someone else)
+- "Log contribution: ...", "what did I accomplish this quarter?", "draft my self-review", "build my promo case" → myna-self-track (own contributions — never someone else's)
+
+Key distinctions: if the user names a specific person without a review or 1:1 context → myna-brief-person, not myna-team-health. If it's about the user's own performance → myna-self-track, not myna-performance-narrative.
+
+### Project Status & Blockers
+
+- "Catch me up on auth migration", "project status: onboarding", "what's the latest on [project]?" → myna-brief-project (one project, TL;DR or full view)
+- "What's blocked?", "any blockers across projects?", "show me blockers" → myna-blockers (scans ALL active projects for blockers — not status, just impediments)
+
+If the user asks about a single project's blockers, use myna-brief-project (it includes blockers in full mode). myna-blockers is for the cross-project scan.
+
+### Threads & Replies
+
+- "What am I waiting on?", "who owes me a reply?", "what's waiting for me?" → myna-unreplied-threads (email/Slack threads, directional: waiting-on-you vs waiting-on-others)
+- "What's blocked?" → myna-blockers (project-level dependencies, not email threads)
+
+myna-unreplied-threads is about communication threads. myna-blockers is about project work.
+
+### Capture & Processing
+
+- "Capture: [anything]", "observation about Sarah: ...", "add task: ...", "save link: [url]" → myna-capture (user enters data directly; routes it to the right vault destination)
+- "Process my email", "process Slack messages" → myna-process-messages (extracts structured data from emails/messages already in the vault)
+
+myna-capture is for user-dictated input. myna-process-messages is for parsing external content. Never substitute one for the other.
+
+### Working Context
+
+- "Park this", "switch to auth migration", "what's parked?", "resume onboarding" → myna-park (save/resume session context across sessions)
+
+### Review Queue
+
+- "Review my queue", "process review queue", "what's in my queue?", "process approved items" → myna-process-review-queue
+
 ### Writing Routing
 
 - Generating new content (reply, status update, recognition, difficult conversation prep) → myna-draft
@@ -155,6 +194,16 @@ Never guess between skills when the intent is genuinely ambiguous.
 ### Fallback
 
 If the user's request doesn't match any skill or direct operation, say what you can help with and suggest the closest skill. Don't invent capabilities.
+
+---
+
+## Custom Routing
+
+If `~/.myna/custom-routing.md` exists, read it at the start of routing resolution and apply its rules. Rules in that file take precedence over the built-in routing above.
+
+## Precedence
+
+`CUSTOM.md` (per skill) overrides that skill's `SKILL.md` when they conflict. `~/.myna/custom-routing.md` overrides the built-in routing table above. User skills (any `~/.claude/skills/` directory not prefixed with `myna-`) are discovered natively by Claude Code — disambiguation rules for them go in `~/.myna/custom-routing.md`.
 
 ---
 

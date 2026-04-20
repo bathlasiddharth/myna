@@ -123,6 +123,7 @@ After running the install script:
 - 24 skills covering email, meetings, projects, people, and daily workflow
 - Config files ready to fill in with your projects and people
 - Post-install checklist guiding you through the remaining setup
+- Customizable — add a `CUSTOM.md` to any skill directory to extend it, or drop your own skills into `~/.claude/skills/` (anything not prefixed with `myna-`). Both survive updates.
 
 ## Status
 

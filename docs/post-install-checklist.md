@@ -54,6 +54,8 @@ Open each file in your vault and fill in your details:
 - [ ] `myna/_system/config/meetings.yaml` — meeting type overrides (optional)
 - [ ] `myna/_system/config/communication-style.yaml` — your tone preference and feedback approach
 
+**Customization files (good to know).** Each skill directory at `~/.claude/skills/myna-*/` contains a `CUSTOM.md` file where you can add extra steps or behavioral tweaks for that skill. `~/.myna/custom-routing.md` is available for routing rules if you add your own skills. Both files are never overwritten by updates. Most users won't need these right away — they're there when you do.
+
 ## 7. Verify
 
 - [ ] Run `myna` in your terminal

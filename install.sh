@@ -119,6 +119,7 @@ info "Source files found"
 step "Installing skills to ~/.claude/skills/"
 
 SKILLS_DEST="$HOME/.claude/skills"
+MYNA_HOME="$HOME/.myna"
 
 # Count skills to install
 feature_count=0
@@ -139,9 +140,18 @@ for skill_dir in "$SCRIPT_DIR"/agents/skills/myna-*/; do
   if $DRY_RUN; then
     echo "  [dry-run] mkdir -p $dest_dir"
     echo "  [dry-run] cp $skill_dir/SKILL.md $dest_dir/SKILL.md"
+    echo "  [dry-run] create $dest_dir/CUSTOM.md (if not exists)"
   else
     mkdir -p "$dest_dir"
     cp "$skill_dir/SKILL.md" "$dest_dir/SKILL.md"
+    if [ ! -f "$dest_dir/CUSTOM.md" ]; then
+      cat > "$dest_dir/CUSTOM.md" <<'EOF'
+<!-- Customization file for this skill.
+     Add overrides, extra steps, or behavioral tweaks below.
+     This file is never overwritten by updates.
+     Content here takes precedence over SKILL.md when they conflict. -->
+EOF
+    fi
   fi
 done
 
@@ -464,12 +474,11 @@ info "Installed $dashboard_count dashboards"
 
 step "Writing install metadata"
 
-MYNA_HOME="$HOME/.myna"
-
 if $DRY_RUN; then
   echo "  [dry-run] mkdir -p $MYNA_HOME"
   echo "  [dry-run] Write version file: $MYNA_HOME/version"
   echo "  [dry-run] Write manifest: $MYNA_HOME/install-manifest.json"
+  echo "  [dry-run] create $MYNA_HOME/custom-routing.md (if not exists)"
 else
   mkdir -p "$MYNA_HOME"
 
@@ -494,6 +503,23 @@ else
 }
 MANIFEST
   info "Manifest: $MYNA_HOME/install-manifest.json"
+
+  # Custom routing file (never overwrite)
+  if [ ! -f "$MYNA_HOME/custom-routing.md" ]; then
+    cat > "$MYNA_HOME/custom-routing.md" <<'EOF'
+<!-- Custom routing rules for user-added skills.
+     This file is never overwritten by updates.
+     Rules here take precedence over Myna's built-in routing.
+
+     Format — add your routing rules as markdown below. Example:
+
+     ### Oncall Routing
+     - "oncall escalation", "page someone", "who's on call?" → my-oncall
+     - "standup update", "what did my team ship?" → my-amazon-standup
+-->
+EOF
+    info "Custom routing: $MYNA_HOME/custom-routing.md"
+  fi
 fi
 
 # ── Setup Checklist ───────────────────────────────────────────
@@ -555,6 +581,7 @@ echo "════════════════════════�
 echo ""
 echo "  Agent file:    $AGENT_FILE"
 echo "  Skills:        $SKILLS_DEST/myna-*/ ($feature_count feature + $steering_count steering)"
+echo "  Customization: $SKILLS_DEST/myna-*/CUSTOM.md (per skill) + $MYNA_HOME/custom-routing.md"
 echo "  Vault:         $MYNA_ROOT/"
 echo "  Config:        $MYNA_ROOT/_system/config/"
 echo "  Templates:     $MYNA_ROOT/_system/templates/ ($template_count files)"

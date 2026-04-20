@@ -927,6 +927,25 @@ All agent content — skills, steering, main agent, config schemas — is plain 
 
 The previous two-layer architecture (content layer + adapter layer, D038) has been superseded. See D046 for rationale. The previous project-CLAUDE.md install model (D047) has been superseded by D049.
 
+### Customization Model
+
+Users can extend or override Myna's behavior through three mechanisms, all of which survive updates.
+
+**`CUSTOM.md` (per skill).** A `CUSTOM.md` file placed alongside `SKILL.md` in any `~/.claude/skills/myna-*/` directory lets users add overrides, extra steps, or behavioral tweaks for that skill. The install script creates an empty `CUSTOM.md` in each `myna-*` directory if one does not already exist. On subsequent updates, `SKILL.md` is always overwritten; `CUSTOM.md` is never touched. When both files are present, `CUSTOM.md` takes precedence over `SKILL.md` on any point where they conflict.
+
+**`~/.myna/custom-routing.md`.** A single file for routing rules that cover user-added skills or that override how Myna dispatches to built-in skills. The agent reads this file at session start if it exists and applies its rules before the built-in routing table in the main agent. Created by the install script only if missing; never overwritten by updates.
+
+**User skill directories.** Any skill folder in `~/.claude/skills/` that does not carry the `myna-` prefix (e.g., `my-oncall/SKILL.md`) is treated as a user-owned skill. Claude Code discovers these natively alongside Myna's skills. The install script never creates, modifies, or deletes non-`myna-*` directories. Routing rules for user-added skills go in `~/.myna/custom-routing.md`.
+
+**Update behavior summary:**
+
+| Artifact | On update |
+|----------|-----------|
+| `~/.claude/skills/myna-*/SKILL.md` | Always overwritten |
+| `~/.claude/skills/myna-*/CUSTOM.md` | Never overwritten (created only if missing) |
+| `~/.myna/custom-routing.md` | Never overwritten (created only if missing) |
+| Non-`myna-*` skill directories | Never touched |
+
 ---
 
 ## 12. Draft-Never-Send
