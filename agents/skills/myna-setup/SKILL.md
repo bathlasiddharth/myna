@@ -35,11 +35,38 @@ All config files are at `{vault_path}/{subfolder}/_system/config/`.
 
 ---
 
+## Section 0.5: Choose Input Mode
+
+Before walking through configuration, present three input options:
+
+1. **Config UI** — Open a visual settings page in the browser. Recommended for first-time setup and bulk editing. Requires Python 3.
+2. **Guided interview** — Answer questions in chat. No extra tools needed.
+3. **Import from docs** — Paste or share documents; this skill extracts config from them.
+
+Show these as a numbered list and wait for the user to choose.
+
+**If option 1 (Config UI) is chosen:**
+1. Check if `python3` is available: `python3 --version`. If not found, tell the user Python 3 is required for the UI and offer to fall back to option 2 (guided interview) instead.
+2. Run `python3 ~/.myna/ui/server.py` in the background. Capture the PID and URL from stdout (lines starting with `PID:` and `URL:`). If PID capture fails, note it and proceed — the user can kill the server manually with `pkill -f server.py`.
+3. Tell the user: "Config UI is open at {url}. Make your changes in the browser and come back here when done."
+4. Wait. When the user returns, kill the server by sending SIGTERM to the captured PID (if available), or instruct `pkill -f server.py` as a fallback.
+5. Read all six config files and show a summary of what changed (compare against the pre-open state).
+6. Ask if they want to continue with the guided interview for anything that's still missing.
+
+**Python prerequisite note:** The config UI requires Python 3. If Python is not available, options 2 and 3 work without it.
+
+**If option 2 or 3 is chosen:** proceed with the existing sections below.
+
+---
+
 ## Section 1: Status Summary
 
 Read all six config files from `_system/config/`. Show a human-readable summary of what's configured and what's missing or blank. Always show this on every invocation, including re-runs.
 
 If everything is populated, show the summary and offer: 1) add more projects/people, 2) edit existing config, 3) review applied defaults, 4) move on. If gaps exist, offer to fill them in priority order (identity first).
+
+Also check `~/.myna/pending-imports.json`. If it contains file paths, mention it:
+"You have N files ready to import. Run `/myna-setup` and choose option 3 (Import from docs) to process them, or I can process them now if you'd like."
 
 ---
 
