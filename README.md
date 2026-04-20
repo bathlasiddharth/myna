@@ -81,7 +81,7 @@ Full walkthrough: [A Day With Myna](docs/a-day-with-myna.md) · Browse the [test
 
 ## Installation
 
-**Prerequisites:** [Claude Code](https://claude.ai/code) · [Obsidian](https://obsidian.md/)
+**Prerequisites:** [Claude Code](https://claude.ai/code) · [Obsidian](https://obsidian.md/) · Python 3 (for config UI)
 
 ```bash
 git clone https://github.com/bathlasiddharth/myna.git
