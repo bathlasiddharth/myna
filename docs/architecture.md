@@ -935,16 +935,16 @@ Users can extend or override Myna's behavior through three mechanisms, all of wh
 
 **`~/.myna/custom-routing.md`.** A single file for routing rules that cover user-added skills or that override how Myna dispatches to built-in skills. The agent reads this file at session start if it exists and applies its rules before the built-in routing table in the main agent. Created by the install script only if missing; never overwritten by updates.
 
-**User skill directories.** Any skill folder in `~/.claude/skills/` that does not carry the `myna-` prefix (e.g., `my-oncall/SKILL.md`) is treated as a user-owned skill. Claude Code discovers these natively alongside Myna's skills. The install script never creates, modifies, or deletes non-`myna-*` directories. Routing rules for user-added skills go in `~/.myna/custom-routing.md`.
+**User skill directories.** Custom skills use the naming pattern `myna-[prefix]-[name]` (e.g., `myna-amazon-oncall/SKILL.md`). The single-word pattern `myna-[name]` (e.g., `myna-sync`) is reserved for built-in skills. The install script only overwrites directories matching built-in skill names — custom prefixed directories are never touched. Routing rules for user-added skills go in `~/.myna/custom-routing.md`.
 
 **Update behavior summary:**
 
 | Artifact | On update |
 |----------|-----------|
-| `~/.claude/skills/myna-*/SKILL.md` | Always overwritten |
-| `~/.claude/skills/myna-*/CUSTOM.md` | Never overwritten (created only if missing) |
+| `~/.claude/skills/myna-[name]/SKILL.md` (built-in) | Always overwritten |
+| `~/.claude/skills/myna-[name]/CUSTOM.md` (built-in) | Never overwritten (created only if missing) |
 | `~/.myna/custom-routing.md` | Never overwritten (created only if missing) |
-| Non-`myna-*` skill directories | Never touched |
+| `~/.claude/skills/myna-[prefix]-[name]/` (user) | Never touched |
 
 ---
 

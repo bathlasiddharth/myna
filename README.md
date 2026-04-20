@@ -123,7 +123,18 @@ After running the install script:
 - 24 skills covering email, meetings, projects, people, and daily workflow
 - Config files ready to fill in with your projects and people
 - Post-install checklist guiding you through the remaining setup
-- Customizable — add a `CUSTOM.md` to any skill directory to extend it, or drop your own skills into `~/.claude/skills/` (anything not prefixed with `myna-`). Both survive updates.
+
+## Customization
+
+Myna is designed to be adapted to your workflow. All customizations survive updates.
+
+| What you want to do | How |
+|---|---|
+| **Tweak an existing skill** | Add a `CUSTOM.md` alongside the skill's `SKILL.md` in `~/.claude/skills/myna-*/`. Your overrides take precedence. |
+| **Add a new skill** | Create a folder in `~/.claude/skills/` named `myna-[yourprefix]-[skillname]` (e.g., `myna-amazon-oncall`). The `myna-[word]` pattern (single word after `myna-`) is reserved for built-in skills. Add routing rules to `~/.myna/custom-routing.md` so the agent knows when to use it. |
+| **Disable a skill** | Delete or rename its folder (e.g., `~/.claude/skills/myna-email-triage/`). |
+
+On update, the install script overwrites built-in `SKILL.md` files but never touches `CUSTOM.md`, `custom-routing.md`, or your custom skill directories. See [Customization Guide](docs/customization.md) for details.
 
 ## Status
 
@@ -164,6 +175,7 @@ All dev skills are prefixed `myna-dev-*` and only available when working inside 
 | Document | Purpose |
 |----------|---------|
 | [Guide](docs/guide.md) | Full user guide — how it works, skills reference, config, workflows |
+| [Customization](docs/customization.md) | How to tweak skills, add your own, and set up routing rules |
 | [A Day With Myna](docs/a-day-with-myna.md) | A realistic workday walkthrough showing how Myna helps Engineering Managers |
 | [Architecture](docs/architecture.md) | Runtime model — skills, steering, vault structure, MCP integration |
 | [Obsidian Setup](docs/obsidian-setup.md) | Plugin setup, dashboard overview, vault configuration |
