@@ -524,6 +524,36 @@ EOF
   fi
 fi
 
+# ── Config UI ────────────────────────────────────────────────
+
+step "Installing config UI"
+
+UI_SRC="$SCRIPT_DIR/ui"
+UI_DEST="$MYNA_HOME/ui"
+
+if [ -d "$UI_SRC" ]; then
+  if $DRY_RUN; then
+    echo "  [dry-run] mkdir -p $UI_DEST"
+    echo "  [dry-run] cp ui files → $UI_DEST"
+  else
+    mkdir -p "$UI_DEST"
+    cp "$UI_SRC"/*.py "$UI_DEST/" 2>/dev/null || true
+    cp "$UI_SRC"/*.html "$UI_DEST/" 2>/dev/null || true
+    cp "$UI_SRC"/*.css "$UI_DEST/" 2>/dev/null || true
+    cp "$UI_SRC"/*.js "$UI_DEST/" 2>/dev/null || true
+    info "Config UI installed to $UI_DEST/"
+  fi
+else
+  warn "UI files not found — skipping config UI installation"
+fi
+
+# Create imports directory
+if $DRY_RUN; then
+  echo "  [dry-run] mkdir -p $MYNA_HOME/imports/archived"
+else
+  mkdir -p "$MYNA_HOME/imports/archived" 2>/dev/null || true
+fi
+
 # ── Setup Checklist ───────────────────────────────────────────
 
 step "Writing setup checklist"
@@ -589,6 +619,7 @@ echo "  Config:        $MYNA_ROOT/_system/config/"
 echo "  Templates:     $MYNA_ROOT/_system/templates/ ($template_count files)"
 echo "  Dashboards:    $MYNA_ROOT/Dashboards/ ($dashboard_count files)"
 echo "  Manifest:      $MYNA_HOME/install-manifest.json"
+echo "  Config UI:     $UI_DEST/"
 if ! $DRY_RUN; then
   echo "  Checklist:     $CHECKLIST_FILE"
 fi
