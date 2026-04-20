@@ -134,6 +134,30 @@ Myna was designed, built, reviewed, and fixed entirely by Claude Code — from f
 
 [How it was built →](docs/how-it-was-built.md)
 
+## Contributing
+
+Myna includes project-scoped dev skills (in `.claude/skills/`) that guide the contributor workflow. Clone the repo, open it in Claude Code, and use these skills:
+
+### Workflow: Idea to Merge
+
+| Step | What you do | Dev skill |
+|------|------------|-----------|
+| 1. Design | Describe the problem or idea | `/myna-dev-brainstorm` |
+| 2. Package | Generate an autonomous implementation prompt | `/myna-dev-execution-prompt` |
+| 3. Build | Paste the prompt into a new session — it executes, reviews its own work, and pushes a feature branch | *(the prompt itself)* |
+| 4. Review | Review the branch | `/myna-dev-review` |
+| 5. Merge | Merge to main | |
+
+### Periodic QA
+
+| What | Dev skill |
+|------|-----------|
+| Full quality pipeline (lint → review → fix → verify) | `/myna-dev-improve` |
+| Cross-skill vault format consistency | `/myna-dev-consistency` |
+| Feature spec vs skill coverage audit | `/myna-dev-coverage` |
+
+All dev skills are prefixed `myna-dev-*` and only available when working inside the Myna repo — they don't get installed to users' machines.
+
 ## Documentation
 
 | Document | Purpose |
