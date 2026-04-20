@@ -45,6 +45,10 @@ function switchTab(tabName) {
     const list = document.getElementById('people-list');
     if (list && list.children.length === 0) populatePeople();
   }
+  if (tabName === 'files' && !filesTabLoaded) {
+    filesTabLoaded = true;
+    loadImports();
+  }
 }
 
 // ── Config loading ─────────────────────────────────────────────────────────
@@ -1076,9 +1080,140 @@ function collectPeopleData() {
   });
 }
 
+// ── Files tab ──────────────────────────────────────────────────────────────
+
+let filesTabLoaded = false;
+
+function initFilesTab() {
+  const zone = document.getElementById('upload-zone');
+  if (!zone) return;
+
+  zone.addEventListener('dragover', e => {
+    e.preventDefault();
+    zone.classList.add('drag-over');
+  });
+  zone.addEventListener('dragleave', (e) => {
+    if (!zone.contains(e.relatedTarget)) {
+      zone.classList.remove('drag-over');
+    }
+  });
+  zone.addEventListener('drop', e => {
+    e.preventDefault();
+    zone.classList.remove('drag-over');
+    if (e.dataTransfer.files.length > 0) {
+      handleFiles(e.dataTransfer.files);
+    }
+  });
+}
+
+function handleFileInputChange(e) {
+  if (e.target.files.length > 0) {
+    handleFiles(e.target.files);
+    e.target.value = ''; // reset so same file can be re-selected
+  }
+}
+
+async function handleFiles(fileList) {
+  const files = Array.from(fileList);
+  if (files.length === 0) return;
+
+  const formData = new FormData();
+  files.forEach(file => formData.append('file', file));
+
+  try {
+    const res = await fetch('/api/upload', { method: 'POST', body: formData });
+
+    if (!res.ok) {
+      let msg = 'Upload failed';
+      try { const body = await res.json(); msg = body.error || body.message || msg; } catch {}
+      showToast(msg, 'error');
+      return;
+    }
+
+    const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const section = document.getElementById('uploaded-files-section');
+    const list    = document.getElementById('uploaded-files-list');
+    section.classList.remove('hidden');
+
+    files.forEach(file => {
+      const row = document.createElement('div');
+      row.className = 'file-row';
+      row.innerHTML = `
+        <svg class="w-4 h-4 text-teal-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+        <div>
+          <div class="file-row-name">${escHtml(file.name)}</div>
+          <div class="file-row-meta">Uploaded at ${escHtml(now)}</div>
+        </div>
+      `;
+      list.appendChild(row);
+    });
+
+    const label = files.length === 1 ? '1 file uploaded' : `${files.length} files uploaded`;
+    showToast(label, 'success');
+    loadImports(); // refresh pending imports list after upload
+  } catch (err) {
+    showToast('Upload failed: ' + err.message, 'error');
+  }
+}
+
+async function loadImports() {
+  const loadingEl = document.getElementById('pending-imports-loading');
+  const contentEl = document.getElementById('pending-imports-content');
+  if (!loadingEl || !contentEl) return;
+
+  try {
+    const res = await fetch('/api/imports');
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    const files = Array.isArray(data.files) ? data.files : [];
+
+    loadingEl.classList.add('hidden');
+    contentEl.classList.remove('hidden');
+
+    if (files.length === 0) {
+      contentEl.innerHTML = '<p class="text-slate-400 text-sm">No pending imports</p>';
+      return;
+    }
+
+    const rows = files.map(f => {
+      const name = f.split('/').pop();
+      return `
+        <div class="file-row">
+          <svg class="w-4 h-4 text-slate-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+          <div>
+            <div class="file-row-name">${escHtml(name)}</div>
+            <div class="file-row-meta">${escHtml(f)}</div>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    contentEl.innerHTML = `
+      <h2 class="section-title mb-3">Pending imports</h2>
+      <div class="flex flex-col gap-1">${rows}</div>
+    `;
+  } catch (err) {
+    if (loadingEl) {
+      loadingEl.textContent = 'Could not load imports.';
+      loadingEl.classList.remove('hidden');
+    }
+  }
+}
+
+// ── Defaults footer ────────────────────────────────────────────────────────
+
+function toggleDefaults() {
+  const content  = document.getElementById('defaults-content');
+  const chevron  = document.getElementById('defaults-chevron');
+  const expanded = !content.classList.contains('hidden');
+  content.classList.toggle('hidden', expanded);
+  chevron.style.transform = expanded ? '' : 'rotate(180deg)';
+}
+
 // ── Init ───────────────────────────────────────────────────────────────────
 
 document.addEventListener('DOMContentLoaded', () => {
   switchTab('overview');
   loadConfig();
+  initFilesTab();
 });

@@ -750,20 +750,76 @@
         </div>
       </div>
 
-      <!-- ===================== FILES (placeholder) ===================== -->
+      <!-- ===================== FILES ===================== -->
       <div id="tab-files" class="tab-panel hidden p-8">
         <div class="max-w-xl">
           <h1 class="text-xl font-semibold text-slate-900 mb-1">Files</h1>
           <p class="text-slate-500 text-sm mb-8">Import data files and manage vault sources.</p>
-          <div class="placeholder-panel">
-            <svg class="w-8 h-8 text-slate-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-            <p class="text-slate-500 text-sm font-medium">Coming in task 3c</p>
-            <p class="text-slate-400 text-xs mt-1">File import and vault management will be available here.</p>
+
+          <!-- Upload zone -->
+          <div id="upload-zone" class="upload-zone" onclick="document.getElementById('file-input').click()">
+            <svg class="w-10 h-10 text-slate-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+            <p class="text-slate-600 text-sm font-medium">Drag and drop files here</p>
+            <p class="text-slate-400 text-xs mt-1 mb-4">or</p>
+            <button type="button" class="choose-files-btn" onclick="event.stopPropagation(); document.getElementById('file-input').click()">Choose files</button>
+            <input type="file" id="file-input" multiple class="hidden" onchange="handleFileInputChange(event)" />
+          </div>
+
+          <!-- Helper info box -->
+          <div class="bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 mt-4 mb-6 text-sm text-slate-600 leading-relaxed">
+            Upload project docs, team pages, Confluence exports, or any documents that describe your work context. Run <code class="bg-white border border-slate-200 rounded px-1.5 py-0.5 text-xs font-mono text-slate-700">/myna-setup import</code> in a Claude chat to process them.
+          </div>
+
+          <!-- Uploaded files (populated after upload) -->
+          <div id="uploaded-files-section" class="hidden mb-6">
+            <h2 class="section-title mb-3">Uploaded files</h2>
+            <div id="uploaded-files-list" class="flex flex-col gap-1"></div>
+          </div>
+
+          <!-- Pending imports -->
+          <div id="pending-imports-section">
+            <div id="pending-imports-loading" class="text-slate-400 text-sm">Loading...</div>
+            <div id="pending-imports-content" class="hidden"></div>
           </div>
         </div>
       </div>
 
     </main>
+  </div>
+
+  <!-- Defaults footer -->
+  <div class="defaults-footer">
+    <div class="max-w-screen-xl mx-auto px-6">
+      <button type="button" class="defaults-trigger" onclick="toggleDefaults()" id="defaults-trigger">
+        <span class="text-slate-500 text-xs font-medium">Defaults</span>
+        <svg id="defaults-chevron" class="w-3.5 h-3.5 text-slate-400 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+      </button>
+      <div id="defaults-content" class="hidden py-3">
+        <dl class="defaults-list">
+          <div class="defaults-row">
+            <dt class="defaults-label">Timestamp format</dt>
+            <dd class="defaults-value">YYYY-MM-DD</dd>
+          </div>
+          <div class="defaults-row">
+            <dt class="defaults-label">Prompt logging</dt>
+            <dd class="defaults-value">true</dd>
+          </div>
+          <div class="defaults-row">
+            <dt class="defaults-label">AI model</dt>
+            <dd class="defaults-value">claude-code</dd>
+          </div>
+          <div class="defaults-row">
+            <dt class="defaults-label">Calendar prefix</dt>
+            <dd class="defaults-value">[Myna]</dd>
+          </div>
+          <div class="defaults-row">
+            <dt class="defaults-label">Calendar event types</dt>
+            <dd class="defaults-value">Focus / Task / Reminder</dd>
+          </div>
+        </dl>
+        <p class="text-slate-400 text-xs italic mt-3">These are internal defaults. Edit <code class="font-mono not-italic">workspace.yaml</code> directly to change them.</p>
+      </div>
+    </div>
   </div>
 
   <!-- Toast container -->
