@@ -202,7 +202,7 @@ For prep items that involve sensitive or high-stakes topics, add a coaching sugg
 - **Overdue delegation** → how to follow up without micromanaging
 - **Difficult or uncomfortable topic** → approach based on relationship tier
 
-Use relationship tier from people.yaml and `communication-style.yaml` `difficult_message_approach` field.
+Use relationship tier from people.yaml and the matching preset from `communication-style.yaml`.
 
 **Coaching format** — use a subtle note, not a lecture:
 ```

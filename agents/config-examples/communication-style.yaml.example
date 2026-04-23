@@ -24,7 +24,6 @@ presets_per_tier:
 
 # Email formatting
 sign_off: "Best"                        # Email sign-off (e.g., Best, Thanks, Cheers)
-difficult_message_approach: direct-but-kind  # Style for tough conversations
 
 # Advanced preferences
 email_preferences:

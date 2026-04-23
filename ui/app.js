@@ -194,7 +194,6 @@ function populateCommunication() {
   setCommStyleValue('comm-cross-team',     tier['cross-team'] || '');
 
   setValue('comm-sign-off',           cs.sign_off       || '');
-  setValue('comm-difficult-approach', cs.difficult_message_approach || '');
   setValue('comm-email-length',       ep.max_length     || '');
   setValue('comm-email-greeting',     ep.greeting_style || '');
   setValue('comm-msg-formality',      mp.formality      || '');
@@ -310,11 +309,7 @@ function renderCommunicationCard() {
   setBadge(badge, isConfigured ? 'configured' : 'empty', isConfigured ? 'Configured' : 'Not set');
 
   if (cs.default_preset) {
-    const lines = [kv('Default', capitalize(cs.default_preset))];
-    if (cs.difficult_message_approach) {
-      lines.push(kv('Difficult msgs', formatSlug(cs.difficult_message_approach)));
-    }
-    body.innerHTML = lines.join('');
+    body.innerHTML = kv('Default', capitalize(cs.default_preset));
   } else {
     body.innerHTML = '<span class="text-slate-400 text-sm">Not configured</span>';
   }
@@ -443,7 +438,6 @@ function getCommunicationData() {
       'cross-team': getCommStyleValue('comm-cross-team')  || null,
     },
     sign_off:                   document.getElementById('comm-sign-off').value.trim(),
-    difficult_message_approach: document.getElementById('comm-difficult-approach').value,
     email_preferences: {
       max_length:     document.getElementById('comm-email-length').value,
       greeting_style: document.getElementById('comm-email-greeting').value,

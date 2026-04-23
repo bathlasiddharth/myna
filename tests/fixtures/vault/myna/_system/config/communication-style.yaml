@@ -7,7 +7,6 @@ presets_per_tier:
   cross-team: diplomatic
 
 sign_off: "Thanks"
-difficult_message_approach: direct-but-kind
 
 email_preferences:
   max_length: medium

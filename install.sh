@@ -426,7 +426,6 @@ presets_per_tier:
   cross-team: ""
 
 sign_off: ""
-difficult_message_approach: ""
 
 email_preferences:
   max_length: ""

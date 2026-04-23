@@ -13,7 +13,7 @@ Generates polished professional writing from vault context. Outputs shown inline
 
 Read at session start:
 - `_system/config/workspace.yaml` — user identity, feature toggles
-- `_system/config/communication-style.yaml` — tone presets, sign-off, BLUF settings, difficult_message_approach
+- `_system/config/communication-style.yaml` — tone presets, sign-off, BLUF settings
 - `_system/config/people.yaml` — relationship tiers, aliases
 - `_system/config/projects.yaml` — project aliases
 
@@ -331,7 +331,7 @@ A couple of options: Alex has context on the API layer and could do a lighter pa
 
 **Steps:**
 1. Understand the situation from the user's description.
-2. Read `communication-style.yaml` — `difficult_message_approach` field (default: direct-but-kind).
+2. Read `communication-style.yaml` — apply the tier preset for the person's relationship tier.
 3. Read the person's file if named — get tier and any relevant communication notes.
 4. Generate prep guide with four sections:
    - **Suggested opening** — how to start. Sets the tone without being accusatory.

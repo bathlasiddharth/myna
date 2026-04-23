@@ -62,7 +62,6 @@ CONFIG_DEFAULTS = {
         "default_preset": "professional",
         "presets_per_tier": {"upward": "", "peer": "", "direct": "", "cross-team": ""},
         "sign_off": "",
-        "difficult_message_approach": "",
         "email_preferences": {"max_length": "", "greeting_style": ""},
         "messaging_preferences": {"formality": "", "emoji_usage": ""},
     },
