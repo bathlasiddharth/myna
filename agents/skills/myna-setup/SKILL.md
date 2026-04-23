@@ -68,6 +68,13 @@ If everything is populated, show the summary and offer: 1) add more projects/peo
 Also check `~/.myna/pending-imports.json`. If it contains file paths, mention it:
 "You have N files ready to import. Tell me to import them and I'll process them now, or you can come back to this later."
 
+**If the user asks to import files while the config UI server is still running:**
+1. Tell the user: "Pausing config UI to run import, will restart after."
+2. Kill the server (SIGTERM to the captured PID, or `pkill -f server.py` as fallback).
+3. Run the import.
+4. Restart the server: `python3 ~/.myna/ui/server.py` in the background, capture new PID and URL.
+5. Tell the user: "Config UI is back at {url}."
+
 ---
 
 ## Section 2: Identity and Preferences
