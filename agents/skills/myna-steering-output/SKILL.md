@@ -54,7 +54,9 @@ Show rewrites, reviews, briefings, summaries, and query results inline by defaul
 
 ## File Links
 
-When creating, updating, or referencing a vault file, include both the Obsidian URI and the full disk path so the user can navigate from the terminal or Obsidian.
+When referencing a vault file in chat output, use wikilink format: `[[path/to/file]]`. Never use plain file paths — they open in Chrome, not Obsidian.
+
+When creating or updating a vault file, also include the Obsidian URI and the full disk path so the user can navigate from the terminal or Obsidian.
 
 ## Follow-Up Suggestions
 
