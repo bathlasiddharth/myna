@@ -189,7 +189,7 @@ Generates or updates meeting prep for a specific meeting or all remaining meetin
 
 **Reads:** calendar MCP, person files, project files, task items, meeting history (carry-forward), communication-style.yaml, meetings.yaml
 
-**Writes:** `Meetings/1-1s/{person}.md`, `Meetings/Recurring/{name}.md`, or `Meetings/Adhoc/{name}.md` — Prep section
+**Writes:** `Meetings/1-1s/{person}.md`, `Meetings/Recurring/{name}.md`, or `Meetings/Adhoc/{YYYY-MM-DD}-{name}.md` — Prep section
 
 **Meeting type determines prep depth:** 1:1 (follow-through, pending feedback, coaching), project meeting (tasks, timeline, blockers), standup (updates, delegations), design review (doc link, decisions), cross-team (dependencies, recent comms).
 

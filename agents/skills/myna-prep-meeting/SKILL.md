@@ -60,7 +60,7 @@ When not confident, ask the user once: "Is this a 1:1 with Sarah or a team meeti
 |---|---|
 | 1:1 | `Meetings/1-1s/{person-slug}.md` |
 | Recurring (standup, sync, regular team) | `Meetings/Recurring/{meeting-slug}.md` |
-| Adhoc or one-off | `Meetings/Adhoc/{meeting-slug}.md` |
+| Adhoc or one-off | `Meetings/Adhoc/{YYYY-MM-DD}-{meeting-slug}.md` |
 
 If the file doesn't exist, create it from the appropriate template (see File Templates below). If it exists, prepend a new session section.
 

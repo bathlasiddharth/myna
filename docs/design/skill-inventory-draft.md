@@ -85,7 +85,7 @@ Working file for Phase 0. Maps every approved feature to a consolidated skill.
 
 **Reads:** calendar MCP, person files, project files, task files, meeting history (previous sessions), communication-style.yaml, meetings.yaml (overrides)
 
-**Writes:** `Meetings/1-1s/{person}.md`, `Meetings/Recurring/{name}.md`, or `Meetings/Adhoc/{name}.md` — Prep section only
+**Writes:** `Meetings/1-1s/{person}.md`, `Meetings/Recurring/{name}.md`, or `Meetings/Adhoc/{YYYY-MM-DD}-{name}.md` — Prep section only
 
 **Example:**
 > User: "prep for my 1:1 with Sarah"

@@ -99,7 +99,7 @@ If the template doesn't exist, create a minimal file with:
 | Person | `{vault}/{subfolder}/People/{slug}.md` |
 | Meeting (1:1) | `{vault}/{subfolder}/Meetings/1-1s/{person-slug}.md` |
 | Meeting (recurring) | `{vault}/{subfolder}/Meetings/Recurring/{slug}.md` |
-| Meeting (adhoc) | `{vault}/{subfolder}/Meetings/Adhoc/{slug}.md` |
+| Meeting (adhoc) | `{vault}/{subfolder}/Meetings/Adhoc/{YYYY-MM-DD}-{slug}.md` |
 | Draft | `{vault}/{subfolder}/Drafts/[{Type}] {topic}.md` |
 | Review queue | `{vault}/{subfolder}/ReviewQueue/review-{queue}.md` |
 | Processed audit | `{vault}/{subfolder}/ReviewQueue/processed/processed-{YYYY-MM-DD}.md` |

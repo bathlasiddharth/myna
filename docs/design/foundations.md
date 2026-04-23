@@ -64,7 +64,7 @@ myna/
 **Naming conventions:**
 - Project files: `{project-name}.md` — lowercase, hyphens for spaces (e.g., `auth-migration.md`)
 - Person files: `{full-name}.md` — lowercase, hyphens (e.g., `sarah-chen.md`)
-- Meeting files: same slug convention. 1:1s use person name, recurring/adhoc use meeting name.
+- Meeting files: same slug convention. 1:1s use person name, recurring uses meeting name, adhoc uses `{YYYY-MM-DD}-{meeting-name}` (date first, for chronological sort).
 - Daily notes: `DailyNote-{YYYY-MM-DD}.md`
 - Weekly notes: `WeeklyNote-{YYYY-MM-DD}.md` where the date is Monday of that week
 - Draft files: `[{Type}] {topic}.md` (e.g., `[Email] Reply to James.md`, `[Status] Auth Migration April.md`, `[Self] Q1 brag doc.md`). Types: Email, Meeting, Status, Escalation, Recognition, Self, Say-No, Conversation-Prep
@@ -251,7 +251,7 @@ project: {project-name or null}
 
 ### 2.5 Meeting File — Adhoc
 
-`Meetings/Adhoc/{meeting-name}.md`
+`Meetings/Adhoc/{YYYY-MM-DD}-{meeting-name}.md`
 
 Same structure as recurring but with `type: adhoc` and no session appending — one file per meeting.
 

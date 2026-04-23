@@ -22,7 +22,7 @@ One-line summary: One file per meeting with two sections — Prep (auto-generate
 - File organization by inferred type:
   - `Meetings/1-1s/{person-name}.md` — one file per person, sessions appended chronologically
   - `Meetings/Recurring/{meeting-name}.md` — team meetings, standups, syncs
-  - `Meetings/Adhoc/{meeting-name}.md` — one-off meetings
+  - `Meetings/Adhoc/{YYYY-MM-DD}-{meeting-name}.md` — one-off meetings
 - **Meeting file has two sections:**
 
 #### Section 1: Prep (auto-generated before the meeting)
