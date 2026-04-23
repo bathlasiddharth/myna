@@ -131,7 +131,10 @@ function populateIdentity() {
   // Work hours — parse HH:MM 24-hour into hour/minute/AM-PM dropdowns
   setTimePicker('work-start', wh.start || '09:00');
   setTimePicker('work-end',   wh.end   || '17:00');
-  setValue('feedback-cycle',   ws.feedback_cycle_days != null ? ws.feedback_cycle_days : '');
+  // Map stored days to months for the dropdown (default: 1 month)
+  const cycleMonths = ws.feedback_cycle_days != null ? Math.round(ws.feedback_cycle_days / 30) : 1;
+  const clampedMonths = Math.min(3, Math.max(1, cycleMonths));
+  setValue('feedback-cycle', String(clampedMonths));
   setValue('journal-archive',  journal.archive_after_days != null ? journal.archive_after_days : '');
 
   // Timezone — check if it's in the known list, else use "other".
@@ -372,7 +375,7 @@ function getIdentityData() {
       start: getTimePicker('work-start'),
       end:   getTimePicker('work-end'),
     },
-    feedback_cycle_days: parseInt(document.getElementById('feedback-cycle').value, 10) || existing.feedback_cycle_days,
+    feedback_cycle_days: (parseInt(document.getElementById('feedback-cycle').value, 10) || 1) * 30,
     journal: {
       ...(existing.journal || {}),
       archive_after_days: parseInt(document.getElementById('journal-archive').value, 10) || (existing.journal || {}).archive_after_days,

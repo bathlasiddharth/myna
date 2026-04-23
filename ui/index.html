@@ -296,10 +296,11 @@
               <div class="grid grid-cols-2 gap-4">
                 <div class="field-group">
                   <label class="field-label" for="feedback-cycle">Feedback cycle</label>
-                  <div class="relative">
-                    <input type="number" id="feedback-cycle" class="field-input pr-12" min="1" max="365" placeholder="30" />
-                    <span class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm pointer-events-none">days</span>
-                  </div>
+                  <select id="feedback-cycle" class="field-input" onchange="saveTab('identity')">
+                    <option value="1">Every 1 month</option>
+                    <option value="2">Every 2 months</option>
+                    <option value="3">Every 3 months</option>
+                  </select>
                 </div>
                 <div class="field-group">
                   <label class="field-label" for="journal-archive">Journal archive after</label>
