@@ -11,7 +11,7 @@ Guided, conversational configuration for Myna. Reads and writes the same YAML fi
 
 ## Design Principles
 
-1. **Priority order.** Walk through sections in order of importance: identity first, communication style last. User can stop anytime; whatever is saved so far works.
+1. **Priority order.** Walk through sections in order of importance: identity first, integrations last. User can stop anytime; whatever is saved so far works.
 2. **Options first, free text as escape hatch.** For structured choices, present numbered options with a final "other" option for custom input. Use free text only when the answer is genuinely open-ended.
 3. **Infer from data, confirm don't ask.** When users share docs, extract information from them. Show numbered results for confirmation/correction — don't interview them from scratch.
 4. **Present options explicitly.** When there are multiple input modes, always show them as numbered options so the user knows what's available before choosing.
@@ -100,22 +100,21 @@ Do not ask about: `timestamp_format`, `prompt_logging`, `ai_model`, `calendar_ev
 
 ---
 
-## Section 3: Integrations
+## Section 3: Communication Style
 
-Writes to `workspace.yaml`. Walk through in two parts:
+Writes to `communication-style.yaml`. Present numbered options for each question — always include a custom option last.
 
-**MCP servers** (`mcp_servers` key). Walk through the three functions Myna supports, one at a time:
-- Email MCP server name
-- Calendar MCP server name
-- Messaging (Slack, Teams, etc.) MCP server name
+- Default writing style (options: 1) Professional, 2) Conversational, 3) Executive, 4) Casual, 5) Coaching, 6) Diplomatic, 7) Concise, 8) Custom)
+- Sign-off preference (options: 1) Best, 2) Thanks, 3) Cheers, 4) Custom)
+- Tone for difficult messages (options: 1) Direct-but-kind, 2) Diplomatic, 3) Straightforward, 4) Custom)
 
-Say once upfront: "Just type the MCP server name for each, or 'skip' to move on." Don't verify the server works. Don't suggest product names — just ask for the server name the user registered with Claude Code.
+Then offer per-tier overrides (upward / peer / direct / cross-team) as an optional step — present the option but don't push if they skip.
 
-**Notes forwarding email** (`email.notes_email` key). Ask: "What email address do you forward emails to when you want Myna to draft a reply? (Used by the DraftReplies workflow — skip if you don't use this.)" Save the answer to `email.notes_email` in `workspace.yaml`. If the user skips, leave the field unset.
+Schema reference: `_system/config/communication-style.yaml.example`.
 
 ---
 
-## Section 4: Projects and People
+## Section 4: People and Projects
 
 The most important section. Always present three explicit options upfront before asking anything:
 
@@ -149,17 +148,18 @@ Schema references: `_system/config/projects.yaml.example`, `_system/config/peopl
 
 ---
 
-## Section 5: Communication Style
+## Section 5: Integrations
 
-Writes to `communication-style.yaml`. Present numbered options for each question — always include a custom option last.
+Writes to `workspace.yaml`. Walk through in two parts:
 
-- Default writing style (options: 1) Professional, 2) Conversational, 3) Executive, 4) Casual, 5) Coaching, 6) Diplomatic, 7) Concise, 8) Custom)
-- Sign-off preference (options: 1) Best, 2) Thanks, 3) Cheers, 4) Custom)
-- Tone for difficult messages (options: 1) Direct-but-kind, 2) Diplomatic, 3) Straightforward, 4) Custom)
+**MCP servers** (`mcp_servers` key). Walk through the three functions Myna supports, one at a time:
+- Email MCP server name
+- Calendar MCP server name
+- Messaging (Slack, Teams, etc.) MCP server name
 
-Then offer per-tier overrides (upward / peer / direct / cross-team) as an optional step — present the option but don't push if they skip.
+Say once upfront: "Just type the MCP server name for each, or 'skip' to move on." Don't verify the server works. Don't suggest product names — just ask for the server name the user registered with Claude Code.
 
-Schema reference: `_system/config/communication-style.yaml.example`.
+**Notes forwarding email** (`email.notes_email` key). Ask: "What email address do you forward emails to when you want Myna to draft a reply? (Used by the DraftReplies workflow — skip if you don't use this.)" Save the answer to `email.notes_email` in `workspace.yaml`. If the user skips, leave the field unset.
 
 ---
 
