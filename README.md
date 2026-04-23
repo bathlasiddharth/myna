@@ -94,10 +94,12 @@ Then run `/myna-setup` for guided configuration — it walks you through identit
 ### Updating
 
 ```bash
-git pull && ./update.sh
+myna-update
 ```
 
-This updates skills and the agent file to the latest version. Your vault data and configs are never touched.
+This pulls the latest from your cloned repo and re-runs the install script. Your vault data, configs, and `CUSTOM.md` overrides are never touched.
+
+> **Keep the cloned repo folder.** `myna update` pulls from it — deleting the repo means you can no longer run updates. If you lose it, re-clone and re-run `./install.sh`.
 
 ## Usage
 
