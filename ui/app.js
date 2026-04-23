@@ -133,7 +133,8 @@ function populateIdentity() {
   setValue('feedback-cycle',   ws.feedback_cycle_days != null ? ws.feedback_cycle_days : '');
   setValue('journal-archive',  journal.archive_after_days != null ? journal.archive_after_days : '');
 
-  // Timezone — check if it's in the known list, else use "other"
+  // Timezone — check if it's in the known list, else use "other".
+  // If no timezone is saved, auto-detect from the browser and pre-populate.
   const tz = ws.timezone || '';
   const tzSelect = document.getElementById('user-timezone');
   const knownOptions = Array.from(tzSelect.options).map(o => o.value);
@@ -144,6 +145,23 @@ function populateIdentity() {
     const custom = document.getElementById('user-timezone-custom');
     custom.value = tz;
     custom.classList.remove('hidden');
+  } else {
+    // No saved value — auto-detect system timezone and pre-populate if possible
+    try {
+      const detected = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      if (detected) {
+        if (knownOptions.includes(detected)) {
+          tzSelect.value = detected;
+        } else {
+          tzSelect.value = '_other';
+          const custom = document.getElementById('user-timezone-custom');
+          custom.value = detected;
+          custom.classList.remove('hidden');
+        }
+      }
+    } catch (e) {
+      // Intl API not available — leave the field empty
+    }
   }
 
   // Email filing radio
