@@ -392,15 +392,15 @@
 
               <div class="field-group">
                 <label class="field-label" for="comm-default-preset">Default preset</label>
-                <select id="comm-default-preset" class="field-input">
-                  <option value="professional">Professional</option>
-                  <option value="conversational">Conversational</option>
-                  <option value="executive">Executive</option>
-                  <option value="casual">Casual</option>
-                  <option value="coaching">Coaching</option>
-                  <option value="diplomatic">Diplomatic</option>
-                  <option value="concise">Concise</option>
+                <select id="comm-default-preset" class="field-input" onchange="handleCommStyleChange('default')">
+                  <option value="">Select a style</option>
+                  <option value="direct-and-concise">Direct and concise</option>
+                  <option value="warm-and-collaborative">Warm and collaborative</option>
+                  <option value="formal-and-polished">Formal and polished</option>
+                  <option value="casual-and-friendly">Casual and friendly</option>
+                  <option value="_custom">Custom</option>
                 </select>
+                <input type="text" id="comm-default-preset-custom" class="field-input mt-2 hidden" placeholder="Describe your communication style" />
               </div>
             </div>
 
@@ -410,58 +410,54 @@
 
               <div class="field-group">
                 <label class="field-label" for="comm-upward">Upward (manager, leadership)</label>
-                <select id="comm-upward" class="field-input">
+                <select id="comm-upward" class="field-input" onchange="handleCommStyleChange('upward')">
                   <option value="">Use default</option>
-                  <option value="professional">Professional</option>
-                  <option value="conversational">Conversational</option>
-                  <option value="executive">Executive</option>
-                  <option value="casual">Casual</option>
-                  <option value="coaching">Coaching</option>
-                  <option value="diplomatic">Diplomatic</option>
-                  <option value="concise">Concise</option>
+                  <option value="direct-and-concise">Direct and concise</option>
+                  <option value="warm-and-collaborative">Warm and collaborative</option>
+                  <option value="formal-and-polished">Formal and polished</option>
+                  <option value="casual-and-friendly">Casual and friendly</option>
+                  <option value="_custom">Custom</option>
                 </select>
+                <input type="text" id="comm-upward-custom" class="field-input mt-2 hidden" placeholder="Describe your communication style" />
               </div>
 
               <div class="field-group">
                 <label class="field-label" for="comm-peer">Peer</label>
-                <select id="comm-peer" class="field-input">
+                <select id="comm-peer" class="field-input" onchange="handleCommStyleChange('peer')">
                   <option value="">Use default</option>
-                  <option value="professional">Professional</option>
-                  <option value="conversational">Conversational</option>
-                  <option value="executive">Executive</option>
-                  <option value="casual">Casual</option>
-                  <option value="coaching">Coaching</option>
-                  <option value="diplomatic">Diplomatic</option>
-                  <option value="concise">Concise</option>
+                  <option value="direct-and-concise">Direct and concise</option>
+                  <option value="warm-and-collaborative">Warm and collaborative</option>
+                  <option value="formal-and-polished">Formal and polished</option>
+                  <option value="casual-and-friendly">Casual and friendly</option>
+                  <option value="_custom">Custom</option>
                 </select>
+                <input type="text" id="comm-peer-custom" class="field-input mt-2 hidden" placeholder="Describe your communication style" />
               </div>
 
               <div class="field-group">
                 <label class="field-label" for="comm-direct">Direct reports</label>
-                <select id="comm-direct" class="field-input">
+                <select id="comm-direct" class="field-input" onchange="handleCommStyleChange('direct')">
                   <option value="">Use default</option>
-                  <option value="professional">Professional</option>
-                  <option value="conversational">Conversational</option>
-                  <option value="executive">Executive</option>
-                  <option value="casual">Casual</option>
-                  <option value="coaching">Coaching</option>
-                  <option value="diplomatic">Diplomatic</option>
-                  <option value="concise">Concise</option>
+                  <option value="direct-and-concise">Direct and concise</option>
+                  <option value="warm-and-collaborative">Warm and collaborative</option>
+                  <option value="formal-and-polished">Formal and polished</option>
+                  <option value="casual-and-friendly">Casual and friendly</option>
+                  <option value="_custom">Custom</option>
                 </select>
+                <input type="text" id="comm-direct-custom" class="field-input mt-2 hidden" placeholder="Describe your communication style" />
               </div>
 
               <div class="field-group">
                 <label class="field-label" for="comm-cross-team">Cross-team</label>
-                <select id="comm-cross-team" class="field-input">
+                <select id="comm-cross-team" class="field-input" onchange="handleCommStyleChange('cross-team')">
                   <option value="">Use default</option>
-                  <option value="professional">Professional</option>
-                  <option value="conversational">Conversational</option>
-                  <option value="executive">Executive</option>
-                  <option value="casual">Casual</option>
-                  <option value="coaching">Coaching</option>
-                  <option value="diplomatic">Diplomatic</option>
-                  <option value="concise">Concise</option>
+                  <option value="direct-and-concise">Direct and concise</option>
+                  <option value="warm-and-collaborative">Warm and collaborative</option>
+                  <option value="formal-and-polished">Formal and polished</option>
+                  <option value="casual-and-friendly">Casual and friendly</option>
+                  <option value="_custom">Custom</option>
                 </select>
+                <input type="text" id="comm-cross-team-custom" class="field-input mt-2 hidden" placeholder="Describe your communication style" />
               </div>
             </div>
 

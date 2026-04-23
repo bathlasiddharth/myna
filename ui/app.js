@@ -187,17 +187,51 @@ function populateCommunication() {
   const ep   = cs.email_preferences || {};
   const mp   = cs.messaging_preferences || {};
 
-  setValue('comm-default-preset',     cs.default_preset || '');
-  setValue('comm-upward',             tier.upward       || '');
-  setValue('comm-peer',               tier.peer         || '');
-  setValue('comm-direct',             tier.direct       || '');
-  setValue('comm-cross-team',         tier['cross-team'] || '');
+  setCommStyleValue('comm-default-preset', cs.default_preset || '');
+  setCommStyleValue('comm-upward',         tier.upward       || '');
+  setCommStyleValue('comm-peer',           tier.peer         || '');
+  setCommStyleValue('comm-direct',         tier.direct       || '');
+  setCommStyleValue('comm-cross-team',     tier['cross-team'] || '');
+
   setValue('comm-sign-off',           cs.sign_off       || '');
   setValue('comm-difficult-approach', cs.difficult_message_approach || '');
   setValue('comm-email-length',       ep.max_length     || '');
   setValue('comm-email-greeting',     ep.greeting_style || '');
   setValue('comm-msg-formality',      mp.formality      || '');
   setValue('comm-msg-emoji',          mp.emoji_usage    || '');
+}
+
+/**
+ * Populate a communication style select + its companion custom input.
+ * If the stored value matches a known option it sets it directly.
+ * If it doesn't match (legacy or freeform value), it selects "_custom"
+ * and puts the raw value into the companion text input.
+ */
+function setCommStyleValue(selectId, value) {
+  const sel    = document.getElementById(selectId);
+  const custom = document.getElementById(selectId + '-custom');
+  if (!sel) return;
+
+  const knownValues = ['', 'direct-and-concise', 'warm-and-collaborative',
+    'formal-and-polished', 'casual-and-friendly', '_custom'];
+
+  if (!value) {
+    sel.value = '';
+    if (custom) { custom.classList.add('hidden'); custom.value = ''; }
+    return;
+  }
+
+  if (knownValues.includes(value)) {
+    sel.value = value;
+    if (custom) { custom.classList.add('hidden'); custom.value = ''; }
+  } else {
+    // Unknown/legacy/custom value — show custom input
+    sel.value = '_custom';
+    if (custom) {
+      custom.value = value;
+      custom.classList.remove('hidden');
+    }
+  }
 }
 
 function populateFeatures() {
@@ -401,12 +435,12 @@ function getIntegrationsData() {
 
 function getCommunicationData() {
   return {
-    default_preset: document.getElementById('comm-default-preset').value,
+    default_preset: getCommStyleValue('comm-default-preset'),
     presets_per_tier: {
-      upward:       document.getElementById('comm-upward').value || null,
-      peer:         document.getElementById('comm-peer').value || null,
-      direct:       document.getElementById('comm-direct').value || null,
-      'cross-team': document.getElementById('comm-cross-team').value || null,
+      upward:       getCommStyleValue('comm-upward')      || null,
+      peer:         getCommStyleValue('comm-peer')        || null,
+      direct:       getCommStyleValue('comm-direct')      || null,
+      'cross-team': getCommStyleValue('comm-cross-team')  || null,
     },
     sign_off:                   document.getElementById('comm-sign-off').value.trim(),
     difficult_message_approach: document.getElementById('comm-difficult-approach').value,
@@ -419,6 +453,20 @@ function getCommunicationData() {
       emoji_usage: document.getElementById('comm-msg-emoji').value,
     },
   };
+}
+
+/**
+ * Read a communication style select: if "_custom" is chosen, return the
+ * companion text input's value instead.
+ */
+function getCommStyleValue(selectId) {
+  const sel = document.getElementById(selectId);
+  if (!sel) return '';
+  if (sel.value === '_custom') {
+    const custom = document.getElementById(selectId + '-custom');
+    return custom ? custom.value.trim() : '';
+  }
+  return sel.value;
 }
 
 function getFeaturesData() {
@@ -513,6 +561,27 @@ function savedBtnLabel(tabName) {
     people:        'Save people',
   };
   return labels[tabName] || 'Save';
+}
+
+// ── Communication style change handler ────────────────────────────────────
+
+/**
+ * Show or hide the free-text custom input for a communication style select.
+ * fieldKey is 'default', 'upward', 'peer', 'direct', or 'cross-team'.
+ */
+function handleCommStyleChange(fieldKey) {
+  const selectId = fieldKey === 'default' ? 'comm-default-preset' : 'comm-' + fieldKey;
+  const customId = selectId + '-custom';
+  const sel    = document.getElementById(selectId);
+  const custom = document.getElementById(customId);
+  if (!sel || !custom) return;
+  if (sel.value === '_custom') {
+    custom.classList.remove('hidden');
+    custom.focus();
+  } else {
+    custom.classList.add('hidden');
+    custom.value = '';
+  }
 }
 
 // ── Timezone change handler ────────────────────────────────────────────────
@@ -1341,4 +1410,16 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
+
+  // Auto-save on blur for communication style custom inputs (Design Decision #7)
+  ['comm-default-preset', 'comm-upward', 'comm-peer', 'comm-direct', 'comm-cross-team'].forEach(selectId => {
+    const customInput = document.getElementById(selectId + '-custom');
+    if (customInput) {
+      customInput.addEventListener('blur', () => {
+        if (document.getElementById(selectId).value === '_custom') {
+          saveTab('communication');
+        }
+      });
+    }
+  });
 });
