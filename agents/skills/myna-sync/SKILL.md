@@ -274,10 +274,17 @@ Daily note: obsidian://open?vault={vault}&file={path} | {disk-path}
 
 Then print the Briefing bullets as a quick-scan list.
 
-Then suggest:
-- "Say 'process my email' to extract vault data from recent messages."
-- "Say 'prep for [meeting]' for deeper prep on any meeting."
-- "Say 'wrap up' at the end of the day."
+If there are meetings today, print a numbered list of them:
+
+```
+1. {HH:MM} {meeting title}
+2. {HH:MM} {meeting title}
+...
+```
+
+Then ask: "Want me to prep any of these? Say a number or 'all'."
+
+If there are no meetings today, skip the list and the question.
 
 ---
 
