@@ -988,8 +988,8 @@ function buildProjectCard(proj, idx) {
           <div class="tag-input" data-tag-field="aliases-${idx}"><div class="tags-container"><input type="text" class="tag-text-input" placeholder="Add..."></div></div>
         </div>
         <div class="field-group">
-          <label class="field-label">Email folders</label>
-          <div class="tag-input" data-tag-field="email_folders-${idx}"><div class="tags-container"><input type="text" class="tag-text-input" placeholder="Add..."></div></div>
+          <label class="field-label">Email Folders</label>
+          <div class="tag-input" data-tag-field="email_folders-${idx}"><div class="tags-container"><input type="text" class="tag-text-input" placeholder="Type a folder and press Enter"></div></div>
         </div>
         <div class="field-group">
           <label class="field-label">Slack channels</label>
@@ -1025,6 +1025,10 @@ function buildProjectCard(proj, idx) {
         placeholder: 'Type a channel and press Enter',
         normalize: normalizeSlackChannel,
         ghostPreview: true,
+      });
+    } else if (field === 'email_folders') {
+      tagInputs.projects[idx][field] = new TagInput(el, proj[field] || [], {
+        placeholder: 'Type a folder and press Enter',
       });
     } else {
       tagInputs.projects[idx][field] = new TagInput(el, proj[field] || []);
