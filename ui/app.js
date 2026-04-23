@@ -128,8 +128,9 @@ function populateIdentity() {
     roleCustom.classList.remove('hidden');
   }
 
-  setValue('work-start',       wh.start        || '');
-  setValue('work-end',         wh.end          || '');
+  // Work hours — parse HH:MM 24-hour into hour/minute/AM-PM dropdowns
+  setTimePicker('work-start', wh.start || '09:00');
+  setTimePicker('work-end',   wh.end   || '17:00');
   setValue('feedback-cycle',   ws.feedback_cycle_days != null ? ws.feedback_cycle_days : '');
   setValue('journal-archive',  journal.archive_after_days != null ? journal.archive_after_days : '');
 
@@ -368,8 +369,8 @@ function getIdentityData() {
     },
     timezone: tz,
     work_hours: {
-      start: document.getElementById('work-start').value,
-      end:   document.getElementById('work-end').value,
+      start: getTimePicker('work-start'),
+      end:   getTimePicker('work-end'),
     },
     feedback_cycle_days: parseInt(document.getElementById('feedback-cycle').value, 10) || existing.feedback_cycle_days,
     journal: {
@@ -637,6 +638,58 @@ function formatSlug(slug) {
 function deepClone(obj) {
   try { return JSON.parse(JSON.stringify(obj)); }
   catch { return { ...obj }; }
+}
+
+// ── Time picker helpers ────────────────────────────────────────────────────
+
+/**
+ * Parse a "HH:MM" 24-hour string and set the hour/minute/AM-PM dropdowns.
+ * prefix is "work-start" or "work-end".
+ */
+function setTimePicker(prefix, hhmm) {
+  if (!hhmm) return;
+  const parts = String(hhmm).split(':');
+  let h = parseInt(parts[0], 10);
+  const m = parts[1] ? parts[1].slice(0, 2) : '00';
+
+  const ampm = h >= 12 ? 'PM' : 'AM';
+  let hour12 = h % 12;
+  if (hour12 === 0) hour12 = 12;
+
+  // Snap minute to nearest quarter
+  const validMinutes = ['00', '15', '30', '45'];
+  const snapMinute = validMinutes.includes(m) ? m : '00';
+
+  const hourEl   = document.getElementById(prefix + '-hour');
+  const minuteEl = document.getElementById(prefix + '-minute');
+  const ampmEl   = document.getElementById(prefix + '-ampm');
+
+  if (hourEl)   hourEl.value   = String(hour12);
+  if (minuteEl) minuteEl.value = snapMinute;
+  if (ampmEl)   ampmEl.value   = ampm;
+}
+
+/**
+ * Read the hour/minute/AM-PM dropdowns for prefix and return "HH:MM" 24-hour.
+ */
+function getTimePicker(prefix) {
+  const hourEl   = document.getElementById(prefix + '-hour');
+  const minuteEl = document.getElementById(prefix + '-minute');
+  const ampmEl   = document.getElementById(prefix + '-ampm');
+
+  if (!hourEl || !minuteEl || !ampmEl) return '';
+
+  let h = parseInt(hourEl.value, 10);
+  const m = minuteEl.value || '00';
+  const ampm = ampmEl.value;
+
+  if (ampm === 'AM') {
+    if (h === 12) h = 0;
+  } else {
+    if (h !== 12) h += 12;
+  }
+
+  return String(h).padStart(2, '0') + ':' + m;
 }
 
 // ── TagInput component ─────────────────────────────────────────────────────

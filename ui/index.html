@@ -230,12 +230,62 @@
 
               <div class="grid grid-cols-2 gap-4">
                 <div class="field-group">
-                  <label class="field-label" for="work-start">Work hours start</label>
-                  <input type="time" id="work-start" class="field-input" />
+                  <label class="field-label">Work hours start</label>
+                  <div class="time-picker-group">
+                    <select id="work-start-hour" class="field-input time-picker-select" onchange="saveTab('identity')">
+                      <option value="1">1</option>
+                      <option value="2">2</option>
+                      <option value="3">3</option>
+                      <option value="4">4</option>
+                      <option value="5">5</option>
+                      <option value="6">6</option>
+                      <option value="7">7</option>
+                      <option value="8">8</option>
+                      <option value="9" selected>9</option>
+                      <option value="10">10</option>
+                      <option value="11">11</option>
+                      <option value="12">12</option>
+                    </select>
+                    <select id="work-start-minute" class="field-input time-picker-select" onchange="saveTab('identity')">
+                      <option value="00" selected>00</option>
+                      <option value="15">15</option>
+                      <option value="30">30</option>
+                      <option value="45">45</option>
+                    </select>
+                    <select id="work-start-ampm" class="field-input time-picker-select" onchange="saveTab('identity')">
+                      <option value="AM" selected>AM</option>
+                      <option value="PM">PM</option>
+                    </select>
+                  </div>
                 </div>
                 <div class="field-group">
-                  <label class="field-label" for="work-end">Work hours end</label>
-                  <input type="time" id="work-end" class="field-input" />
+                  <label class="field-label">Work hours end</label>
+                  <div class="time-picker-group">
+                    <select id="work-end-hour" class="field-input time-picker-select" onchange="saveTab('identity')">
+                      <option value="1">1</option>
+                      <option value="2">2</option>
+                      <option value="3">3</option>
+                      <option value="4">4</option>
+                      <option value="5" selected>5</option>
+                      <option value="6">6</option>
+                      <option value="7">7</option>
+                      <option value="8">8</option>
+                      <option value="9">9</option>
+                      <option value="10">10</option>
+                      <option value="11">11</option>
+                      <option value="12">12</option>
+                    </select>
+                    <select id="work-end-minute" class="field-input time-picker-select" onchange="saveTab('identity')">
+                      <option value="00" selected>00</option>
+                      <option value="15">15</option>
+                      <option value="30">30</option>
+                      <option value="45">45</option>
+                    </select>
+                    <select id="work-end-ampm" class="field-input time-picker-select" onchange="saveTab('identity')">
+                      <option value="AM">AM</option>
+                      <option value="PM" selected>PM</option>
+                    </select>
+                  </div>
                 </div>
               </div>
             </div>
