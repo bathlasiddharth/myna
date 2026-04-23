@@ -16,6 +16,8 @@
 
 window.config = null;
 let activeTab = 'overview';
+// Track which tabs have already had help listeners attached to avoid duplicates
+const helpListenersAttached = new Set();
 
 // ── Tab switching ──────────────────────────────────────────────────────────
 
@@ -49,6 +51,11 @@ function switchTab(tabName) {
     filesTabLoaded = true;
     loadImports();
   }
+
+  // Update help panel
+  renderHelpPanel(tabName);
+  // Attach help listeners after any dynamic rendering (use setTimeout to let DOM settle)
+  setTimeout(() => attachHelpListeners(tabName), 0);
 }
 
 // ── Config loading ─────────────────────────────────────────────────────────
@@ -102,6 +109,11 @@ function populateForms() {
   populateFeatures();
   populateProjects();
   populatePeople();
+  // Attach help listeners for all static tabs now that DOM is ready
+  ['identity', 'communication', 'integrations', 'features'].forEach(tab => attachHelpListeners(tab));
+  // Re-render help panel in case the active tab has no listeners yet
+  renderHelpPanel(activeTab);
+  attachHelpListeners(activeTab);
 }
 
 function populateIdentity() {
@@ -1163,6 +1175,8 @@ function renderProjectsList() {
   projectsData.forEach((proj, idx) => {
     list.appendChild(buildProjectCard(proj, idx));
   });
+  // Re-attach help listeners after DOM is updated
+  setTimeout(() => attachHelpListeners('projects'), 0);
 }
 
 function buildProjectCard(proj, idx) {
@@ -1359,6 +1373,8 @@ function renderPeopleList() {
   peopleData.forEach((person, idx) => {
     list.appendChild(buildPersonCard(person, idx));
   });
+  // Re-attach help listeners after DOM is updated
+  setTimeout(() => attachHelpListeners('people'), 0);
 }
 
 function buildPersonCard(person, idx) {
@@ -1692,12 +1708,258 @@ function toggleDefaults() {
   chevron.style.transform = expanded ? '' : 'rotate(180deg)';
 }
 
+// ── Help panel ─────────────────────────────────────────────────────────────
+
+/**
+ * Field-level help content for each tab.
+ * Structure:
+ *   HELP_CONTENT[tabName] = {
+ *     intro: string,
+ *     fields: [{ id: 'element-id', label: 'Field name', desc: 'Explanation' }, ...]
+ *   }
+ * id matches the form element id (or a logical key for grouped fields).
+ */
+const HELP_CONTENT = {
+  identity: {
+    intro: 'Your personal profile and working preferences. Myna uses these to personalise daily notes, schedule suggestions, and the cadence of feedback reminders.',
+    fields: [
+      { id: 'user-name',        label: 'Name',               desc: 'Your full name, used in draft greetings and the header of your daily note.' },
+      { id: 'user-email',       label: 'Email',              desc: 'Your primary email address. Used to identify emails you sent or received when processing your inbox.' },
+      { id: 'user-role',        label: 'Role',               desc: 'Your job title. Myna surfaces role-relevant features — for example, team-health summaries are shown to managers but hidden for individual contributors.' },
+      { id: 'user-timezone',    label: 'Timezone',           desc: 'Your local timezone. Used when converting meeting times, scheduling focus blocks, and anchoring daily note dates.' },
+      { id: 'work-start-hour',  label: 'Work hours start',   desc: 'The start of your working day. Myna avoids scheduling focus blocks or reminders outside this window.' },
+      { id: 'work-end-hour',    label: 'Work hours end',     desc: 'The end of your working day. Calendar events and reminders are kept within start-to-end unless you override them.' },
+      { id: 'feedback-cycle',   label: 'Feedback cycle',     desc: 'How often you aim to give written feedback to each direct report. Myna flags anyone who is overdue when this interval passes without a logged feedback entry.' },
+      { id: 'journal-archive',  label: 'Journal archive after', desc: 'Daily notes older than this many days are moved to an archive folder. Keeps your active vault uncluttered without deleting anything.' },
+    ],
+  },
+  communication: {
+    intro: 'Writing style settings that shape every draft Myna produces — emails, messages, and status updates. A good default plus per-tier overrides covers nearly all situations.',
+    fields: [
+      { id: 'comm-default-preset',   label: 'Default preset',        desc: 'The baseline tone for all drafts unless overridden. Choose the style that fits most of your everyday communications.' },
+      { id: 'comm-upward',           label: 'Upward (manager, leadership)', desc: 'Override tone when drafting messages to your manager or senior leadership. Leave blank to use the default.' },
+      { id: 'comm-peer',             label: 'Peer',                  desc: 'Override tone for peer-level colleagues. Useful if you are more formal with your manager but looser with teammates.' },
+      { id: 'comm-direct',           label: 'Direct reports',        desc: 'Override tone for messages to your direct reports. Many managers prefer a warmer or more direct style here.' },
+      { id: 'comm-cross-team',       label: 'Cross-team',            desc: 'Override tone for colleagues outside your immediate team — stakeholders, partner teams, or cross-functional peers.' },
+      { id: 'comm-sign-off',         label: 'Sign-off',              desc: 'The closing phrase appended to email drafts, e.g. "Thanks" or "Best regards". Leave blank to skip a sign-off.' },
+      { id: 'comm-email-length',     label: 'Max email length',      desc: 'Soft target for draft length. Short keeps replies to 1-3 sentences; Medium allows a few short paragraphs; Long gives Myna room to be thorough.' },
+      { id: 'comm-email-greeting',   label: 'Greeting style',        desc: 'How email drafts open — first name only ("Hi Sarah"), formal ("Dear Ms. Chen"), or no greeting at all.' },
+      { id: 'comm-email-filing',     label: 'Processed email filing', desc: 'Where processed emails land after Myna handles them. Per-project keeps each project tidy; one shared folder is simpler if you prefer a flat layout.' },
+      { id: 'comm-msg-formality',    label: 'Messaging formality',   desc: 'Casual drafts read like Slack; Professional drafts suit more formal team channels or external partners.' },
+      { id: 'comm-msg-emoji',        label: 'Emoji usage',           desc: 'How often Myna includes emoji in message drafts. None keeps it text-only; Minimal adds one or two where natural; Moderate uses them freely.' },
+    ],
+  },
+  people: {
+    intro: 'Your network of team members, managers, and collaborators. Myna uses this list to link emails and messages to individuals, track relationship health, and surface overdue connections.',
+    fields: [
+      { id: 'person-display-name',    label: 'Display name',          desc: 'Short name used in Myna\'s output — typically a first name. This is what appears in daily notes and briefings.' },
+      { id: 'person-full-name',       label: 'Full name',             desc: 'Full legal or formal name. Used in formal email salutations and document references.' },
+      { id: 'person-email',           label: 'Email',                 desc: 'Their email address. Myna matches incoming emails to this person and links them in project files.' },
+      { id: 'person-slack',           label: 'Slack handle',          desc: 'Their Slack username (e.g. @sarah). Used to link Slack messages and draft @mentions.' },
+      { id: 'person-tier',            label: 'Relationship tier',     desc: 'How you relate to this person. The tier controls communication style overrides and determines which team-health checks apply.' },
+      { id: 'person-role',            label: 'Role',                  desc: 'Their job title. Shown in briefings so you have context before a meeting or message.' },
+      { id: 'person-team',            label: 'Team',                  desc: 'The team or department they belong to. Helps Myna group people and provide team-level summaries.' },
+      { id: 'person-feedback-cycle',  label: 'Feedback cycle (days)', desc: 'How often you aim to give this person written feedback. Overrides the global default set in Identity.' },
+      { id: 'person-birthday',        label: 'Birthday (MM-DD)',      desc: 'Their birthday in MM-DD format. Myna surfaces this in your daily note so you can send a note on the day.' },
+      { id: 'person-anniversary',     label: 'Work anniversary',      desc: 'Their work start date. Myna mentions upcoming anniversaries in the daily note as a prompt to recognise milestones.' },
+      { id: 'person-aliases',         label: 'Aliases',               desc: 'Alternative names or nicknames for this person. Myna uses these to recognise them in emails and messages even when a different name is used.' },
+    ],
+  },
+  projects: {
+    intro: 'Active work streams you want Myna to track. Each project groups its emails, Slack channels, and key people so Myna can route information and produce focused briefings.',
+    fields: [
+      { id: 'proj-name',         label: 'Name',            desc: 'The project\'s canonical name. Used as the vault folder name and referenced in all project-related notes.' },
+      { id: 'proj-status',       label: 'Status',          desc: 'Active projects appear in daily briefs and routing. Paused projects are kept but skipped in daily summaries. Complete projects are archived.' },
+      { id: 'proj-desc',         label: 'Description',     desc: 'A short summary of what the project is about. Myna uses this as context when generating status updates or briefings.' },
+      { id: 'proj-aliases',      label: 'Aliases',         desc: 'Other names this project goes by — shorthand, codenames, or common abbreviations. Myna uses these to recognise the project in emails and messages.' },
+      { id: 'proj-email-folders', label: 'Email folders',  desc: 'Email folders or labels whose contents belong to this project. Myna reads these when building project context.' },
+      { id: 'proj-slack-channels', label: 'Slack channels', desc: 'Slack channels tied to this project. Myna pulls messages from these channels when summarising project activity.' },
+      { id: 'proj-key-people',   label: 'Key people',      desc: 'The main stakeholders or contributors for this project. Myna includes their recent activity and open items in project briefings.' },
+    ],
+  },
+  integrations: {
+    intro: 'MCP server connections that give Myna read access to your email, calendar, and messaging tools. All data stays local — Myna never sends or posts anything.',
+    fields: [
+      { id: 'mcp-email',    label: 'Email MCP server',     desc: 'The name of the MCP server registered with Claude Code that provides access to your email account. Run "claude mcp list" in a terminal to see available servers.' },
+      { id: 'mcp-calendar', label: 'Calendar MCP server',  desc: 'The MCP server that connects to your calendar. Used for meeting prep, focus-block creation, and reading upcoming events.' },
+      { id: 'mcp-slack',    label: 'Messaging MCP server', desc: 'The MCP server for Slack or another messaging platform. Used to process messages and draft replies. Leave blank if you paste messages manually.' },
+    ],
+  },
+  features: {
+    intro: 'Toggle individual Myna capabilities on or off. Disabled features are silently skipped — no errors, no partial output. Start with the features you need most and enable others as you get comfortable.',
+    fields: [
+      { id: 'feat-email_processing',       label: 'Email processing',        desc: 'Reads incoming emails and files them into project notes with action items extracted. Requires an Email MCP server.' },
+      { id: 'feat-messaging_processing',   label: 'Messaging processing',    desc: 'Processes Slack messages and DMs to extract action items and decisions, then routes them to project files.' },
+      { id: 'feat-email_triage',           label: 'Email triage',            desc: 'Sorts your inbox into four folders: Reply, FYI, Follow-Up, and Schedule — so you always know what needs action.' },
+      { id: 'feat-meeting_prep',           label: 'Meeting prep',            desc: 'Generates a prep brief before each meeting, pulling in relevant project context, open items, and attendee notes.' },
+      { id: 'feat-process_meeting',        label: 'Process meeting',         desc: 'After a meeting, extracts decisions and action items from your notes and closes them out in project files.' },
+      { id: 'feat-time_blocks',            label: 'Time blocks',             desc: 'Creates labelled focus-time events on your calendar so your day is protected. Uses the Calendar MCP server.' },
+      { id: 'feat-calendar_reminders',     label: 'Calendar reminders',      desc: 'Sets calendar reminders for tasks and follow-ups that have deadlines. Requires a Calendar MCP server.' },
+      { id: 'feat-people_management',      label: 'People management',       desc: 'Maintains a person file for each team member — logs interactions, open items, and context over time.' },
+      { id: 'feat-team_health',            label: 'Team health',             desc: 'Adds a team health snapshot to your daily note: who has open blockers, who you haven\'t connected with recently. Best for managers.' },
+      { id: 'feat-attention_gap_detection', label: 'Attention gap detection', desc: 'Flags direct reports or key people you haven\'t interacted with in longer than your configured attention interval.' },
+      { id: 'feat-feedback_gap_detection', label: 'Feedback gap detection',  desc: 'Alerts you when a feedback cycle is overdue for a direct report based on your configured feedback cadence.' },
+      { id: 'feat-milestones',             label: 'Milestones',              desc: 'Surfaces birthdays and work anniversaries in the daily note so you can acknowledge them in the moment.' },
+      { id: 'feat-self_tracking',          label: 'Self-tracking',           desc: 'Maintains a brag doc of your contributions and can generate self-review documents at performance-cycle time.' },
+      { id: 'feat-contribution_detection', label: 'Contribution detection',  desc: 'Automatically scans your activity and logs notable contributions to your brag doc without you needing to capture them manually.' },
+      { id: 'feat-weekly_summary',         label: 'Weekly summary',          desc: 'Generates a structured summary of the week\'s work — decisions made, items shipped, and things still in flight.' },
+      { id: 'feat-monthly_updates',        label: 'Monthly updates',         desc: 'Drafts a monthly status update suitable for sharing with your manager or leadership team.' },
+      { id: 'feat-park_resume',            label: 'Park & resume',           desc: 'Saves your working context (open items, current focus, recent decisions) so you can resume exactly where you left off in a new session.' },
+    ],
+  },
+  overview: {
+    intro: 'A summary of your current Myna configuration. Click any section to navigate directly to its settings.',
+    fields: [],
+  },
+  files: {
+    intro: 'Upload documents that describe your work context — project docs, team pages, Confluence exports, org charts. Run /myna-setup import in a Claude chat to process them into vault files.',
+    fields: [],
+  },
+};
+
+/**
+ * Render the help panel for the given tab.
+ * Populates #help-intro and #help-fields with the tab's content.
+ */
+function renderHelpPanel(tabName) {
+  const panel = document.getElementById('help-panel');
+  const introEl  = document.getElementById('help-intro');
+  const fieldsEl = document.getElementById('help-fields');
+  if (!panel || !introEl || !fieldsEl) return;
+
+  const content = HELP_CONTENT[tabName];
+  if (!content) {
+    introEl.innerHTML  = '';
+    fieldsEl.innerHTML = '';
+    return;
+  }
+
+  const hasFields = content.fields && content.fields.length > 0;
+
+  // Intro section — only show border when there are field items below
+  introEl.className = hasFields ? 'help-intro' : 'help-intro help-intro--no-border';
+  introEl.innerHTML = `
+    <div class="help-intro-title">About this section</div>
+    <div class="help-intro-text">${escHtml(content.intro)}</div>
+  `;
+
+  // Field explanations
+  if (!hasFields) {
+    fieldsEl.innerHTML = '';
+    return;
+  }
+
+  fieldsEl.innerHTML = content.fields.map(f =>
+    `<div class="help-field-item" data-help-id="${escHtmlAttr(f.id)}">
+      <div class="help-field-name">${escHtml(f.label)}</div>
+      <div class="help-field-desc">${escHtml(f.desc)}</div>
+    </div>`
+  ).join('');
+}
+
+/**
+ * Highlight the help-panel entry whose data-help-id matches fieldId.
+ * Pass null to clear all highlights.
+ */
+function highlightHelpField(fieldId) {
+  document.querySelectorAll('.help-field-item').forEach(el => {
+    el.classList.toggle('highlighted', !!fieldId && el.dataset.helpId === fieldId);
+  });
+
+  // Scroll the highlighted item into view within the panel
+  if (fieldId) {
+    const target = document.querySelector(`.help-field-item[data-help-id="${CSS.escape(fieldId)}"]`);
+    if (target) target.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  }
+}
+
+/**
+ * Attach focus/blur listeners to all focusable form fields in a tab panel.
+ * On focus: highlights the matching help entry.
+ * On blur:  clears the highlight.
+ */
+function attachHelpListeners(tabName) {
+  const panel = document.getElementById('tab-' + tabName);
+  if (!panel) return;
+  const content = HELP_CONTENT[tabName];
+  if (!content || !content.fields || content.fields.length === 0) return;
+
+  // For static tabs, avoid adding duplicate listeners on repeat calls.
+  // Projects/people are re-rendered and need fresh listeners each time.
+  const isDynamic = tabName === 'projects' || tabName === 'people';
+  if (!isDynamic && helpListenersAttached.has(tabName)) return;
+
+  const fieldIds = new Set(content.fields.map(f => f.id));
+
+  panel.querySelectorAll('input, select, textarea').forEach(el => {
+    // Determine which help id to use for this element
+    const helpId = resolveHelpId(el, tabName, fieldIds);
+    if (!helpId) return;
+
+    el.addEventListener('focus', () => highlightHelpField(helpId));
+    el.addEventListener('blur',  () => highlightHelpField(null));
+  });
+
+  if (!isDynamic) helpListenersAttached.add(tabName);
+}
+
+/**
+ * Given a form element, return the help panel field id it maps to.
+ * Checks in order: exact id match, then class-based match for dynamically
+ * generated entity-card fields (projects / people).
+ */
+function resolveHelpId(el, tabName, fieldIds) {
+  // Direct id match
+  if (el.id && fieldIds.has(el.id)) return el.id;
+
+  // For dynamically built people/projects cards, match by CSS class
+  const classMap = {
+    // Projects
+    'proj-name':    'proj-name',
+    'proj-status':  'proj-status',
+    'proj-desc':    'proj-desc',
+    // People
+    'person-display-name':   'person-display-name',
+    'person-full-name':      'person-full-name',
+    'person-email':          'person-email',
+    'person-slack':          'person-slack',
+    'person-tier':           'person-tier',
+    'person-role':           'person-role',
+    'person-team':           'person-team',
+    'person-feedback-cycle': 'person-feedback-cycle',
+    'person-birthday':       'person-birthday',
+    'person-anniversary':    'person-anniversary',
+    // Feature toggle inputs all use feat-* ids
+  };
+
+  for (const [cls, helpId] of Object.entries(classMap)) {
+    if (el.classList.contains(cls) && fieldIds.has(helpId)) return helpId;
+  }
+
+  // TagInput and PeopleMultiSelect inner text inputs: map by container's data attribute
+  const tagContainer = el.closest('[data-tag-field]');
+  if (tagContainer) {
+    const field = tagContainer.dataset.tagField; // e.g. "aliases-0" or "slack_channels-2"
+    const baseName = field.replace(/-\d+$/, '');  // strip trailing index
+    if (baseName === 'aliases' && tabName === 'projects') return 'proj-aliases';
+    if (baseName === 'email_folders') return 'proj-email-folders';
+    if (baseName === 'slack_channels') return 'proj-slack-channels';
+    if (baseName === 'person-aliases') return 'person-aliases';
+  }
+
+  const peopleContainer = el.closest('[data-people-field]');
+  if (peopleContainer) return 'proj-key-people';
+
+  return null;
+}
+
 // ── Init ───────────────────────────────────────────────────────────────────
 
 document.addEventListener('DOMContentLoaded', () => {
   switchTab('overview');
   loadConfig();
   initFilesTab();
+  renderHelpPanel('overview');
 
   // ── Identity: text inputs → save on blur ──────────────────────────────────
   ['user-name', 'user-email'].forEach(id => {

@@ -42,7 +42,7 @@
   <div class="flex max-w-screen-xl mx-auto min-h-[calc(100vh-49px)]">
 
     <!-- Sidebar -->
-    <nav class="w-56 bg-slate-900 flex-shrink-0 py-6 flex flex-col gap-1">
+    <nav class="w-56 bg-slate-900 flex-shrink-0 py-6 flex flex-col gap-1" id="main-nav">
       <div class="px-4 pb-3">
         <p class="text-slate-500 text-xs font-medium uppercase tracking-wider">Configuration</p>
       </div>
@@ -787,6 +787,15 @@
       </div>
 
     </main>
+
+    <!-- Help panel -->
+    <aside id="help-panel" class="help-panel">
+      <div class="help-panel-inner">
+        <div id="help-intro" class="help-intro"></div>
+        <div id="help-fields" class="help-fields"></div>
+      </div>
+    </aside>
+
   </div>
 
   <!-- Defaults footer -->
