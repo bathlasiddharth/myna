@@ -229,7 +229,16 @@ These are simple enough that the main agent handles them without activating a sk
 
 ### Task Move
 
-"Move [task] to [project]" → remove from current location, add to target project file with same metadata.
+Two variants — both keep the task open (unchecked):
+
+**Move to a different project:** "Move [task] to [project]" → remove from current location, add to target project file with same metadata. Never mark complete.
+
+**Reschedule to a different date:** "Move [task] to [date]" / "Reschedule [task] to [date]" →
+1. Find the task. Update its `📅` date field in-place (in the project file or wherever it lives canonically).
+2. If the task appears in a daily note for the old date: replace that line with `- [>] {task title} (moved to {YYYY-MM-DD})` — no strikethrough, no `[x]`. If the task was in a daily note and has no canonical home elsewhere, remove the old-date line and add it as `- [ ] {full task line with updated date}` to the new date's daily note (create the note if it doesn't exist).
+3. The task appears as open (`- [ ]`) wherever it lives after the move.
+
+**Change log on any field change:** Whenever any task field is updated (date, owner, project, status), append a change log note to that task's line as an indented bullet: `  - [changelog] {field} changed: {old value} → {new value} ({YYYY-MM-DD})`
 
 ### File Creation from Template
 
