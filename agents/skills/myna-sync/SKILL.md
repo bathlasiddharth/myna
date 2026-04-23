@@ -182,7 +182,7 @@ date: {YYYY-MM-DD}
 
 ### Dashboards
 
-[[home]] · [[tasks]] · [[overdue]] · [[delegations]] · [[blockers]] · [[projects]] · [[people]] · [[meetings]] · [[weekly]]
+[[home]] · [[tasks]] · [[this-week]] · [[overdue]] · [[delegations]] · [[blockers]] · [[projects]] · [[people]] · [[meetings]] · [[weekly]]
 ```
 
 ### Re-run Snapshot Format (prepended at top)
