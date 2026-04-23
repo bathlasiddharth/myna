@@ -109,21 +109,19 @@ Check `journal.archive_after_days` (default: 30). Use Glob to find all `Journal/
 
 Collect in parallel:
 
-**Calendar:** Read today's (or tomorrow's) calendar events via the calendar MCP. For each event, note: title, start time, end time, attendees (count only — not names), and any existing meeting file path. If calendar MCP is unavailable, skip calendar sections and note it in the output.
+**Calendar:** Read today's (or tomorrow's) calendar events via the calendar MCP. For each event, note: title, start time, end time, attendees (count only — not names), and any existing meeting file path. If calendar MCP is unavailable, skip the meetings section and note it in the output.
 
-**Overdue & due today:** Grep `{vault}/{subfolder}/Projects/` and the current daily note for `- \[ \]` with `📅 {date}` on or before target date.
+**Due today:** Grep `{vault}/{subfolder}/Projects/` for `- \[ \]` with `📅 {target-date}`. Group by project file.
 
-**No ETA:** Grep the same paths for `- \[ \]` lines with `⏫` and no `📅` date field. These are high-priority tasks with no deadline — keep them separate from overdue items.
+**Overdue (for briefing signal only):** Grep `{vault}/{subfolder}/Projects/` for `- \[ \]` with `📅 {date}` before target date. Count total; surface the top 3 by priority for the briefing. Full list belongs in [[overdue]] dashboard.
 
-Cap the combined Immediate Attention list at 15 items — prioritize overdue tasks over No ETA items.
+**Overdue delegations (for briefing signal only):** Grep `{vault}/{subfolder}/` for `- \[ \]` lines containing `[type:: delegation]` with `📅 {date}` before today. Count total; surface any as red-flag bullets in the briefing. Full list belongs in [[delegations]] dashboard.
 
-**Overdue delegations:** Grep `{vault}/{subfolder}/` for `- \[ \]` lines containing `[type:: delegation]` with `📅 {date}` before today. These are red-flag items.
+**Blockers:** Grep `{vault}/{subfolder}/Projects/` for `> \[!blocker\]` callout blocks. For each match, read a window of ~5 surrounding lines. Skip if `resolved:: true` or `status:: resolved` appears within the same callout block. Surface unresolved ones as briefing bullets.
 
-**Review queue counts:** Read `{vault}/{subfolder}/ReviewQueue/review-work.md`, `review-people.md`, `review-self.md`, and `review-email-triage.md`. Count unchecked items (`- \[ \]`) in each. If a file doesn't exist, treat its count as 0.
+**Milestones** (if `features.milestones` is enabled): Read `people.yaml` and all People files. Find birthdays (`birthday: MM-DD`) or work anniversaries (`work_anniversary: YYYY-MM-DD`) within the next 7 days. Surface as briefing bullets.
 
-**Milestones** (if `features.milestones` is enabled): Read `people.yaml` and all People files. Find birthdays (`birthday: MM-DD`) or work anniversaries (`work_anniversary: YYYY-MM-DD`) within the next 7 days.
-
-**Blockers:** Grep `{vault}/{subfolder}/Projects/` for `> \[!blocker\]` callout blocks. For each match, read a window of ~5 surrounding lines. Skip if `resolved:: true` or `status:: resolved` appears within the same callout block. Surface only unresolved ones.
+**Review queue counts:** Read `{vault}/{subfolder}/ReviewQueue/review-work.md`, `review-people.md`, `review-self.md`, and `review-email-triage.md`. Count unchecked items (`- \[ \]`) in each. If a file doesn't exist, treat its count as 0. Include total in briefing only if non-zero.
 
 ---
 
@@ -150,56 +148,37 @@ date: {YYYY-MM-DD}
 
 ## Sync — {HH:MM}
 
-### Capacity Check
+### Briefing
 
-{available_focus_hours} hrs focus time vs {task_effort_hours} hrs task effort due today.
-{Over-capacity flag if effort > focus: "Over capacity by {N} hrs — consider deferring or delegating."}
-
-### Immediate Attention
-
-{1–5 highest-priority items: overdue tasks, overdue delegations, approaching deadlines, blockers. One line each.}
-
-### Overdue & Due Today
-
-```dataview
-TASK
-FROM "actual-subfolder-value"
-WHERE !completed AND due AND due <= date(today)
-SORT priority DESC
-LIMIT 20
-```
-
-### No ETA
-
-```dataview
-TASK
-FROM "actual-subfolder-value"
-WHERE !completed AND !due
-SORT priority DESC
-LIMIT 10
-```
-
-### Delegations
-
-```dataview
-TASK
-FROM "actual-subfolder-value"
-WHERE !completed AND type = "delegation"
-SORT due ASC
-```
-
-### Review Queue
-
-{total_count} items pending: [[review-work]] ({work_count}), [[review-people]] ({people_count}), [[review-self]] ({self_count}), [[review-email-triage]] ({triage_count}).
-
-### Milestones
-
-{Upcoming birthdays/anniversaries if milestones enabled, else omit this section entirely.}
+{3–7 bullets covering what matters most today. AI-generated signal, not raw data. Include:}
+- Overdue tasks that need attention today (count + top items by priority)
+- Overdue delegations as red-flag items
+- Unresolved blockers
+- Prep warnings for today's meetings (e.g., "Design review at 2 PM — no prep file yet")
+- Capacity flag if task effort exceeds focus time ("Over capacity by {N} hrs")
+- Milestones within 7 days (if features.milestones enabled)
+- Review queue if non-zero ("{N} items in review queue")
 
 ### Today's Meetings
 
-{For each calendar event today, one checkbox linking to the prep file:}
-- [ ] {HH:MM} [[{meeting-file}]] — {meeting title}
+{For each calendar event today, one bullet linking to the prep file with prep status:}
+- [ ] {HH:MM} [[{meeting-file}]] — {meeting title} {prep-status}
+
+{prep-status is one of: "(prep ready)", "(no prep yet)", or "(basic prep from sync)"}
+
+### Tasks Due Today
+
+```dataview
+TASK
+FROM "actual-subfolder-value"
+WHERE !completed AND due = date(today)
+GROUP BY file.link
+SORT priority DESC
+```
+
+### Dashboards
+
+[[home]] · [[tasks]] · [[overdue]] · [[delegations]] · [[blockers]] · [[projects]] · [[people]] · [[meetings]] · [[weekly]]
 ```
 
 ### Re-run Snapshot Format (prepended at top)
@@ -207,25 +186,16 @@ SORT due ASC
 ```markdown
 ## Sync — {HH:MM}
 
-### Capacity Check
+### Briefing
 
-{available_focus_hours} hrs focus time vs {task_effort_hours} hrs task effort.
-{Delta from previous sync: "Since last sync: {N} tasks completed, {M} meetings added."}
-
-### Immediate Attention
-
-{Updated priority items.}
-
-### Review Queue
-
-{total_count} items pending: [[review-work]] ({work_count}), [[review-people]] ({people_count}), [[review-self]] ({self_count}), [[review-email-triage]] ({triage_count}).
+{Updated briefing bullets. Include delta if notable: "Since last sync: {N} tasks completed, {M} meetings added."}
 
 ### Today's Meetings
 
-- [ ] {HH:MM} [[{meeting-file}]] — {meeting title}
+- [ ] {HH:MM} [[{meeting-file}]] — {meeting title} {prep-status}
 ```
 
-Note: re-run snapshots are more compact — they omit Dataview sections (those live in the permanent part of the note and update automatically) and focus on what changed.
+Note: re-run snapshots are compact — they omit Dataview sections (those live in the permanent part of the note and update automatically) and focus on what changed. Dashboards link row is permanent and not repeated in re-run snapshots.
 
 ---
 
@@ -291,14 +261,14 @@ Meeting file is wiki-linked in the daily note's Today's Meetings section.
 Print the sync summary. Keep it short — one line per category. Include the Obsidian URI and full disk path for the daily note created or updated.
 
 ```
-Sync complete ({HH:MM}). {N} meetings today ({M} hrs), {O} tasks overdue, {P} delegations overdue, {Q} items in review queue.
+Sync complete ({HH:MM}). {N} meetings today ({M} hrs), {O} tasks due today, {P} overdue.
 Daily note: obsidian://open?vault={vault}&file={path} | {disk-path}
 {If first sync of week: "Weekly note created for week of {date}."}
 {If archived: "{N} journal notes archived."}
-{If calendar unavailable: "Calendar unavailable — meeting sections skipped."}
+{If calendar unavailable: "Calendar unavailable — meetings section skipped."}
 ```
 
-Then print the Immediate Attention items as a quick-scan list.
+Then print the Briefing bullets as a quick-scan list.
 
 Then suggest:
 - "Say 'process my email' to extract vault data from recent messages."
@@ -317,21 +287,22 @@ User says: "good morning"
 2. Auto-archive check: no daily notes older than 30 days.
 3. No daily note for today → create `Journal/DailyNote-2026-04-07.md`.
 4. Calendar: 3 meetings today (weekly sync 10:00 AM, 1:1 with Sarah 2:00 PM, design review 4:00 PM). Total: 2.5 hrs.
-5. Tasks: 2 overdue tasks, 4 due today (estimated 5 hrs effort). Over-capacity warning.
+5. Tasks: 2 overdue, 4 due today (estimated 5 hrs effort).
 6. Delegations: 1 overdue — Alex was supposed to send infra proposal by last Friday.
 7. Review queue: 3 in review-work, 1 in review-self.
 8. Milestones: Sarah's birthday in 3 days.
 9. Meetings.yaml check: "1:1 with Sarah" → matches alias → `Meetings/1-1s/sarah-chen.md`. Append new session. "Design Review" → adhoc → `Meetings/Adhoc/design-review-2026-04-07.md`.
-10. Output: "Sync complete (8:47 AM). 3 meetings today (2.5 hrs), 2 tasks overdue, 1 delegation overdue, 4 items in review queue. Weekly note created for week of 2026-04-07."
+10. Briefing bullets: over-capacity warning, 2 overdue tasks (top by priority), 1 overdue delegation (Alex — infra proposal), Sarah's birthday in 3 days, 4 review queue items.
+11. Output: "Sync complete (8:47 AM). 3 meetings today (2.5 hrs), 4 tasks due today, 2 overdue. Weekly note created for week of 2026-04-07."
 
 ### Example 2: Re-sync mid-afternoon
 
 User says: "sync"
 
 1. Daily note already exists with an 8:47 AM snapshot.
-2. Compare: 2 tasks completed since morning, 1 new meeting added (ad-hoc at 3 PM), queue unchanged.
-3. Prepend a new "Sync — 2:15 PM" snapshot at the top showing the current state. Previous snapshot left intact.
-4. Output: "Sync complete (2:15 PM). 1 meeting remaining (1 hr), 2 tasks completed since morning, 1 overdue task remaining, 4 items in review queue."
+2. Compare: 2 tasks completed since morning, 1 new meeting added (ad-hoc at 3 PM).
+3. Prepend a new "Sync — 2:15 PM" snapshot (Briefing + Today's Meetings only). Previous snapshot left intact. Dataview and Dashboards sections are permanent — not repeated.
+4. Output: "Sync complete (2:15 PM). 1 meeting remaining (1 hr), 2 tasks due today, 2 overdue."
 
 ### Example 3: Plan tomorrow
 
@@ -348,10 +319,10 @@ User says: "plan tomorrow"
 
 ## Edge Cases
 
-**No calendar MCP:** Skip Today's Meetings and meeting prep sections. Note in output. Daily note still created with tasks and queue.
+**No calendar MCP:** Skip Today's Meetings section and meeting prep. Note in output. Daily note still created with Briefing, Tasks Due Today, and Dashboards.
 
-**No tasks due today:** Capacity Check shows 0 hrs task effort. Immediate Attention is empty — say "(nothing urgent today)".
+**No tasks due today:** Tasks Due Today Dataview renders empty. Briefing says "(nothing due today)".
 
 **Re-run "plan tomorrow" after user edits:** Read existing tomorrow note. If user has written in Morning Focus, do not overwrite it. Prepend a new snapshot (same as normal re-run).
 
-**Feature toggles:** If `features.meeting_prep` is false, skip meeting file creation entirely. If `features.milestones` is false, omit the Milestones section.
+**Feature toggles:** If `features.meeting_prep` is false, skip meeting file creation entirely and omit prep-status from meeting bullets. If `features.milestones` is false, omit milestones from the Briefing.
