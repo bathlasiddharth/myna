@@ -111,7 +111,7 @@ Collect in parallel:
 
 **Calendar:** Read today's (or tomorrow's) calendar events via the calendar MCP. For each event, note: title, start time, end time, attendees (count only — not names), and any existing meeting file path. If calendar MCP is unavailable, skip the meetings section and note it in the output.
 
-**Due today:** Grep `{vault}/{subfolder}/Projects/` for `- \[ \]` with `📅 {target-date}`. Group by project file.
+**Due today:** Grep `{vault}/{subfolder}/Projects/` for `- \[ \]` with `📅 {target-date}`. Group by project file. Also grep outside `Projects/` for tasks with `📅 {target-date}` — these are "General" tasks with no project. Retain the full task text and source file for each result.
 
 **Overdue (for briefing signal only):** Grep `{vault}/{subfolder}/Projects/` for `- \[ \]` with `📅 {date}` before target date. Count total; surface the top 3 by priority for the briefing. Full list belongs in [[overdue]] dashboard.
 
@@ -133,7 +133,7 @@ Collect in parallel:
 
 ### Daily Note Structure (new file)
 
-Substitute `{vault.subfolder}` with the actual subfolder value from `workspace.yaml` when writing the Dataview blocks.
+Substitute all `{...}` placeholders with actual values from config and gathered data.
 
 ```markdown
 ---
@@ -168,13 +168,17 @@ date: {YYYY-MM-DD}
 
 ### Tasks Due Today
 
-```dataview
-TASK
-FROM "actual-subfolder-value"
-WHERE !completed AND due = date(today)
-GROUP BY file.link
-SORT priority DESC
-```
+{One sentence AI-generated summary — surface signal, not just a count. E.g.: "Alpha launch has the most due today (4 tasks), and the blocker on payments is the highest-priority item." If nothing is due, write: "(nothing due today)".}
+
+{For each project that has tasks due today, render a sub-header and task list:}
+
+#### {Project Name}
+
+- [ ] {task title} 📅 {date} {priority if set}
+
+#### General
+
+{Tasks with no project association go here. If none, omit this sub-header.}
 
 ### Dashboards
 
@@ -206,7 +210,7 @@ For each calendar event today, if `features.meeting_prep` is enabled:
 1. Determine the meeting file path from the event title and attendees:
    - 2 attendees (you + 1 person) → `Meetings/1-1s/{person-slug}.md`
    - Recurring event → `Meetings/Recurring/{meeting-slug}.md`
-   - One-off → `Meetings/Adhoc/{meeting-slug}.md`
+   - One-off → `Meetings/Adhoc/{YYYY-MM-DD}-{meeting-slug}.md`
    - Check `meetings.yaml` for manual overrides
 
 2. If the meeting file doesn't exist, create it. Check `_system/templates/` for a matching template file (e.g., `meeting-1-1.md`, `meeting-recurring.md`, `meeting-adhoc.md`). If a template exists, use it; if not, create a minimal file:
@@ -231,7 +235,7 @@ For each calendar event today, if `features.meeting_prep` is enabled:
    #meeting #recurring
    ```
 
-   For **adhoc meetings** (`Meetings/Adhoc/{slug}.md`):
+   For **adhoc meetings** (`Meetings/Adhoc/{YYYY-MM-DD}-{slug}.md`):
    ```markdown
    ---
    type: adhoc
@@ -321,7 +325,7 @@ User says: "plan tomorrow"
 
 **No calendar MCP:** Skip Today's Meetings section and meeting prep. Note in output. Daily note still created with Briefing, Tasks Due Today, and Dashboards.
 
-**No tasks due today:** Tasks Due Today Dataview renders empty. Briefing says "(nothing due today)".
+**No tasks due today:** Tasks Due Today section shows only the summary line "(nothing due today)". Omit all project sub-headers.
 
 **Re-run "plan tomorrow" after user edits:** Read existing tomorrow note. If user has written in Morning Focus, do not overwrite it. Prepend a new snapshot (same as normal re-run).
 
