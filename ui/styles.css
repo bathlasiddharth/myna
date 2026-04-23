@@ -750,6 +750,110 @@ select.field-input {
   user-select: none;
 }
 
+/* ----- People multi-select component ----- */
+.people-select {
+  position: relative;
+}
+
+.people-select-box {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.3125rem;
+  padding: 0.375rem 0.625rem;
+  min-height: 2.375rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.375rem;
+  background-color: #fff;
+  cursor: text;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.people-select-box:focus-within {
+  border-color: #14b8a6;
+  box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.12);
+}
+
+.people-select-input {
+  border: none;
+  outline: none;
+  font-size: 0.875rem;
+  color: #1e293b;
+  background: transparent;
+  min-width: 5rem;
+  flex: 1;
+  padding: 0.125rem 0;
+}
+
+.people-select-input::placeholder {
+  color: #94a3b8;
+}
+
+.people-select-dropdown {
+  position: absolute;
+  top: calc(100% + 2px);
+  left: 0;
+  right: 0;
+  z-index: 20;
+  background-color: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.375rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  max-height: 12rem;
+  overflow-y: auto;
+  display: none;
+}
+
+.people-select-dropdown.open {
+  display: block;
+}
+
+.people-select-option {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  color: #1e293b;
+  cursor: pointer;
+  transition: background-color 0.1s ease;
+}
+
+.people-select-option:hover,
+.people-select-option.highlighted {
+  background-color: #f0fdfa;
+  color: #0d9488;
+}
+
+.people-select-option.no-match {
+  color: #94a3b8;
+  cursor: default;
+}
+
+.people-select-option.no-match:hover {
+  background-color: transparent;
+  color: #94a3b8;
+}
+
+/* Warning chip for unknown names */
+.tag-pill.tag-unknown {
+  background-color: #fff7ed; /* orange-50 */
+  color: #9a3412;             /* orange-800 */
+  border: 1px solid #fed7aa; /* orange-200 */
+}
+
+.tag-pill.tag-unknown .tag-remove-btn {
+  color: #c2410c;
+}
+
+.tag-pill.tag-unknown .tag-remove-btn:hover {
+  color: #9a3412;
+}
+
+/* Inline warning below the field */
+.people-select-warning {
+  margin-top: 0.375rem;
+  font-size: 0.8125rem;
+  color: #c2410c; /* orange-700 */
+}
+
 /* ----- File upload zone ----- */
 .upload-zone {
   display: flex;

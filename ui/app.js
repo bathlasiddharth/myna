@@ -918,6 +918,215 @@ function normalizeSlackChannel(val) {
   return '#' + s;
 }
 
+// ── PeopleMultiSelect component ────────────────────────────────────────────
+
+/**
+ * Multi-select for Key People that validates against the People config.
+ * - Selected names shown as chips (teal if known, orange if not found in People config)
+ * - Typing filters the People dropdown; selecting adds the chip
+ * - An inline warning is shown for any selected name not found in People config
+ * - Does NOT create People config entries automatically
+ */
+class PeopleMultiSelect {
+  constructor(container, initialValues = []) {
+    this.container = container;
+    this.selected = [];
+    this._buildDOM();
+    // Populate from People config (may already be loaded)
+    this.availableNames = getPeopleNames();
+    this.setValues(initialValues);
+  }
+
+  _buildDOM() {
+    // Box: chips + text input
+    this.box = document.createElement('div');
+    this.box.className = 'people-select-box';
+
+    this.input = document.createElement('input');
+    this.input.type = 'text';
+    this.input.className = 'people-select-input';
+    this.input.placeholder = 'Search people...';
+    this.box.appendChild(this.input);
+
+    // Dropdown
+    this.dropdown = document.createElement('div');
+    this.dropdown.className = 'people-select-dropdown';
+
+    // Warning line below
+    this.warning = document.createElement('div');
+    this.warning.className = 'people-select-warning';
+    this.warning.style.display = 'none';
+
+    this.container.appendChild(this.box);
+    this.container.appendChild(this.dropdown);
+    this.container.appendChild(this.warning);
+
+    // Events
+    this.input.addEventListener('input', () => this._onInput());
+    this.input.addEventListener('keydown', (e) => this._onKeyDown(e));
+    this.input.addEventListener('focus', () => this._openDropdown());
+
+    // Click on the box focuses the input
+    this.box.addEventListener('click', (e) => {
+      if (e.target === this.box) this.input.focus();
+    });
+
+    // Close dropdown on outside click
+    document.addEventListener('mousedown', (e) => {
+      if (!this.container.contains(e.target)) {
+        this._closeDropdown();
+      }
+    });
+
+    this._highlightedIdx = -1;
+  }
+
+  _onInput() {
+    this._openDropdown();
+    this._renderDropdown();
+  }
+
+  _onKeyDown(e) {
+    const opts = this._visibleOptions();
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      this._highlightedIdx = Math.min(this._highlightedIdx + 1, opts.length - 1);
+      this._renderDropdown();
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      this._highlightedIdx = Math.max(this._highlightedIdx - 1, 0);
+      this._renderDropdown();
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      if (this._highlightedIdx >= 0 && opts[this._highlightedIdx]) {
+        this._selectName(opts[this._highlightedIdx]);
+      }
+    } else if (e.key === 'Escape') {
+      this._closeDropdown();
+    } else if (e.key === 'Backspace' && this.input.value === '' && this.selected.length > 0) {
+      this._removeByIndex(this.selected.length - 1);
+    }
+  }
+
+  _visibleOptions() {
+    const query = this.input.value.trim().toLowerCase();
+    return this.availableNames.filter(name =>
+      !this.selected.includes(name) &&
+      (query === '' || name.toLowerCase().includes(query))
+    );
+  }
+
+  _openDropdown() {
+    this._highlightedIdx = -1;
+    this._renderDropdown();
+    this.dropdown.classList.add('open');
+  }
+
+  _closeDropdown() {
+    this.dropdown.classList.remove('open');
+    this._highlightedIdx = -1;
+  }
+
+  _renderDropdown() {
+    const opts = this._visibleOptions();
+    const query = this.input.value.trim();
+    this.dropdown.innerHTML = '';
+
+    if (opts.length === 0) {
+      const el = document.createElement('div');
+      el.className = 'people-select-option no-match';
+      el.textContent = query
+        ? `"${query}" not found — add them in the People section first`
+        : 'No more people to add';
+      this.dropdown.appendChild(el);
+      return;
+    }
+
+    opts.forEach((name, i) => {
+      const el = document.createElement('div');
+      el.className = 'people-select-option' + (i === this._highlightedIdx ? ' highlighted' : '');
+      el.textContent = name;
+      el.addEventListener('mousedown', (e) => {
+        e.preventDefault(); // keep focus on input
+        this._selectName(name);
+      });
+      this.dropdown.appendChild(el);
+    });
+  }
+
+  _selectName(name) {
+    if (!this.selected.includes(name)) {
+      this.selected.push(name);
+      this._renderChips();
+      this._updateWarning();
+    }
+    this.input.value = '';
+    this._closeDropdown();
+    this.input.focus();
+  }
+
+  _removeByIndex(idx) {
+    this.selected.splice(idx, 1);
+    this._renderChips();
+    this._updateWarning();
+  }
+
+  _renderChips() {
+    // Remove existing chips
+    this.box.querySelectorAll('.tag-pill').forEach(p => p.remove());
+
+    this.selected.forEach((name, idx) => {
+      const isKnown = this.availableNames.includes(name);
+      const pill = document.createElement('span');
+      pill.className = 'tag-pill' + (isKnown ? '' : ' tag-unknown');
+      pill.innerHTML = `${escHtml(name)}<button type="button" class="tag-remove-btn" aria-label="Remove ${escHtml(name)}">&#x2715;</button>`;
+      pill.querySelector('.tag-remove-btn').addEventListener('click', (e) => {
+        e.stopPropagation();
+        this._removeByIndex(idx);
+      });
+      this.box.insertBefore(pill, this.input);
+    });
+  }
+
+  _updateWarning() {
+    const unknowns = this.selected.filter(n => !this.availableNames.includes(n));
+    if (unknowns.length > 0) {
+      const names = unknowns.map(n => `"${n}"`).join(', ');
+      this.warning.textContent = `${names} not found in People config — add them in the People section first.`;
+      this.warning.style.display = '';
+    } else {
+      this.warning.textContent = '';
+      this.warning.style.display = 'none';
+    }
+  }
+
+  getValues() {
+    return [...this.selected];
+  }
+
+  setValues(values) {
+    this.selected = (Array.isArray(values) ? values : []).filter(v => v && String(v).trim());
+    this.availableNames = getPeopleNames();
+    this._renderChips();
+    this._updateWarning();
+  }
+}
+
+/**
+ * Return display names for all people in the People config.
+ * Uses display_name if set, falls back to full_name, then name.
+ */
+function getPeopleNames() {
+  if (!window.config) return [];
+  const raw = window.config.people;
+  const arr = Array.isArray(raw) ? raw
+            : Array.isArray(raw && raw.people) ? raw.people
+            : [];
+  return arr
+    .map(p => (p.display_name || p.full_name || p.name || '').trim())
+    .filter(Boolean);
+}
+
 // ── Projects tab ───────────────────────────────────────────────────────────
 
 // projectsData: array of project objects (source of truth for collapsed items)
@@ -997,7 +1206,7 @@ function buildProjectCard(proj, idx) {
         </div>
         <div class="field-group">
           <label class="field-label">Key people</label>
-          <div class="tag-input" data-tag-field="key_people-${idx}"><div class="tags-container"><input type="text" class="tag-text-input" placeholder="Add..."></div></div>
+          <div class="people-select" data-people-field="key_people-${idx}"></div>
         </div>
       </div>
       <div class="entity-form-actions">
@@ -1015,9 +1224,9 @@ function buildProjectCard(proj, idx) {
   `;
 
   // Wire up tag inputs synchronously on the detached card element
-  const fields = ['aliases', 'email_folders', 'slack_channels', 'key_people'];
+  const tagFields = ['aliases', 'email_folders', 'slack_channels'];
   if (!tagInputs.projects[idx]) tagInputs.projects[idx] = {};
-  fields.forEach(field => {
+  tagFields.forEach(field => {
     const el = card.querySelector(`[data-tag-field="${field}-${idx}"]`);
     if (!el) return;
     if (field === 'slack_channels') {
@@ -1034,6 +1243,12 @@ function buildProjectCard(proj, idx) {
       tagInputs.projects[idx][field] = new TagInput(el, proj[field] || []);
     }
   });
+
+  // Wire up Key People multi-select (validates against People config)
+  const keyPeopleEl = card.querySelector(`[data-people-field="key_people-${idx}"]`);
+  if (keyPeopleEl) {
+    tagInputs.projects[idx].key_people = new PeopleMultiSelect(keyPeopleEl, proj.key_people || []);
+  }
 
   return card;
 }
