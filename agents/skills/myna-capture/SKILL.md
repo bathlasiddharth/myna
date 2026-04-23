@@ -56,7 +56,7 @@ When the user says "capture: [text]", decompose the input into its components an
    b. Assign a provenance marker.
    c. Write to the destination file — append-only.
    d. Inferred contributions: check `self_tracking` toggle first. If disabled, skip.
-3. If entity resolution fails (no match), ask before writing.
+3. If entity resolution fails (no match), complete the capture — write the entry to the daily note as a plain note — and silently add a review queue item to `ReviewQueue/review-people.md` for the unrecognized person. Do not ask the user inline.
 4. Report all destinations written.
 
 **Entry formats by destination:**
@@ -355,7 +355,9 @@ pending-feedback: false
 
 ## ⚠️ Edge Cases
 
-**Entity not found:** "I don't recognize '[name]' — is this a new project/person? (yes to create, no to just write a note)"
+**Entity not found (person):** Complete the capture — write the entry to the daily note as a plain note — then silently add a review queue item to `ReviewQueue/review-people.md`: `- [ ] Unknown person '[name]' mentioned in capture — create person file or update people.yaml (capture, {date})`. Report to the user that the entry was written and a review item was queued.
+
+**Entity not found (project):** "I don't recognize '[name]' — is this a new project? (yes to create, no to just write a note)"
 
 **Multiple matches:** "I found both 'Auth Migration' and 'Auth Service' — which one?"
 
