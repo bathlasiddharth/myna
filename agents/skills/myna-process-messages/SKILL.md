@@ -50,7 +50,9 @@ After processing all emails in a folder, move each email to its processed folder
 - `per-project` (default): move to `{project-email-folder}/Processed/`
 - `common`: move to the path configured in `email.common_folder`
 
-On next run, only unprocessed emails (not in Processed/) are read.
+Attempt the move silently — no mid-flow prompt. If the email MCP does not support move operations, fall back to marking the email as read. Do not ask the user which action to take; choose automatically and note the outcome at the end of the run.
+
+On next run, only unprocessed emails (not in Processed/) are read. For mark-read fallback, re-reads are prevented by the read flag; emails already read are skipped if they appear again.
 
 **Layer 1 — Slack: Timestamp tracking**
 After successfully processing a channel, update its entry in `_system/logs/processed-channels.md` with the timestamp of the last message processed. On next run, only messages after this timestamp are fetched. If the file doesn't exist (first run), create it with the format below before writing the first timestamp.
@@ -239,6 +241,7 @@ After processing:
 
 Projects updated: {list}
 Review queue: {review-work: N}, {review-people: N}, {review-self: N}
+Post-processing: {emails moved to Processed/ | emails marked as read (move not supported by MCP)}
 ```
 
 If nothing was processed (all already processed or empty):
