@@ -122,6 +122,10 @@ Show all extracted data as a **numbered human-readable list** — never as YAML.
 
 Write YAML only when the user selects option 1 (or after corrections are applied via option 2 or 3 and the user selects option 1). When the user provides timeline information (even rough like "Q3" or "end of May"), include it in the project description field.
 
+**relationship_tier on import:** Do not default `relationship_tier` to "direct" or any other value. Leave it blank (omit the field) unless the source doc explicitly states the relationship. After writing to `people.yaml`, show: "N people saved without a relationship tier." Then offer:
+1. Set tiers now — present the people with blank tiers as a numbered list and let the user assign each.
+2. Defer to later — create a reminder task in `_system/ReviewQueue/` as a markdown file named `set-relationship-tiers-{date}.md` with a checklist of the people who need tiers set.
+
 Schema references: `_system/config/projects.yaml.example`, `_system/config/people.yaml.example`.
 
 ---
@@ -158,6 +162,7 @@ Suggest next steps: run `myna` and type `sync` to start the day.
 
 - Read the existing config file before writing. Preserve any fields the user didn't change.
 - For `projects.yaml` and `people.yaml`: append new entries — never overwrite existing ones.
+- For `people.yaml`: omit `relationship_tier` unless the source explicitly states it. Never default to "direct".
 - Write valid YAML matching the schemas in `_system/config/*.yaml.example`.
 - `vault.path` and `vault.subfolder` in `workspace.yaml` are set by the install script — don't ask about them, don't overwrite them.
 - Internal plumbing fields — keep at defaults, never ask: `timestamp_format`, `prompt_logging`, `ai_model`, `calendar_event_prefix`, `calendar_event_types`.
