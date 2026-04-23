@@ -23,18 +23,7 @@ Open Obsidian → Settings → Community Plugins → Browse. Install:
 - [ ] Click "Open folder as vault"
 - [ ] Select your vault path (the one you provided during install)
 
-## 4. Configure Obsidian Settings
-
-*(Skip this section if you chose automatic configuration during install.)*
-
-Go to Settings in Obsidian and configure:
-
-- [ ] **Daily Notes** — folder: `myna/Journal/Daily`, template: `myna/_system/templates/daily-note`
-- [ ] **Periodic Notes** — enable weekly notes, folder: `myna/Journal/Weekly`, template: `myna/_system/templates/weekly-note`
-- [ ] **Dataview** — enable Dataview JS and inline queries (Settings → Dataview)
-- [ ] **Templates** — template folder: `myna/_system/templates`
-
-## 5. Register External MCP Servers with Claude Code *(optional)*
+## 4. Register External MCP Servers with Claude Code *(optional)*
 
 If you use Gmail, Slack, or Google Calendar MCP servers, register their binaries with Claude Code now. This is a one-time OS-level step that makes the server available to Claude Code — it is not Myna configuration.
 
@@ -44,7 +33,7 @@ If you use Gmail, Slack, or Google Calendar MCP servers, register their binaries
 
 Skip this if you don't have MCP servers installed yet. Myna works without them — features that need them degrade gracefully. When you run `/myna-setup` in the next step, it will ask which server names to use.
 
-## 6. Configure Myna
+## 5. Configure Myna
 
 Option A: Run `/myna-setup` and choose "Open config UI" for a visual editor.
 Option B: Run `/myna-setup` for a guided chat interview.
@@ -58,11 +47,24 @@ Option C: Edit the files directly:
 
 **Customization files (good to know).** Each skill directory at `~/.claude/skills/myna-*/` contains a `CUSTOM.md` file where you can add extra steps or behavioral tweaks for that skill. `~/.myna/custom-routing.md` is available for routing rules if you add your own skills. Both files are never overwritten by updates. Most users won't need these right away — they're there when you do.
 
-## 7. Verify
+## 6. Verify
 
 - [ ] Run `myna` in your terminal
 - [ ] Type: `what can you do?`
 - [ ] You should see a list of 24 skills
+
+---
+
+## 7. Configure Obsidian Settings *(optional)*
+
+This step is not required for Myna to function — it only improves the Obsidian experience (correct template paths, dashboard queries, and plugin behaviour). Skip it if you chose automatic configuration during install, or come back to it later.
+
+Go to Settings in Obsidian and configure:
+
+- [ ] **Daily Notes** — folder: `myna/Journal/Daily`, template: `myna/_system/templates/daily-note`
+- [ ] **Periodic Notes** — enable weekly notes, folder: `myna/Journal/Weekly`, template: `myna/_system/templates/weekly-note`
+- [ ] **Dataview** — enable Dataview JS and inline queries (Settings → Dataview)
+- [ ] **Templates** — template folder: `myna/_system/templates`
 
 ---
 
