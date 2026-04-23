@@ -161,8 +161,8 @@ Different from the observation capture above: this is a recognition entry specif
    - Due date (resolve relative dates to absolute: "by Friday" → `2026-04-11`)
    - Priority (explicit or inferred from language — "urgent", "ASAP" → high)
    - Effort estimate (if mentioned)
-   - Type: task (default), delegation (if "ask Alex to..."), dependency (if "waiting on..."), reply-needed (if "need a reply from...")
-   - Person (for delegations)
+   - Type: task (default), delegation (only if explicit delegation language: "delegate to X", "hand this off to X"), dependency (if "waiting on..."), reply-needed (if "need a reply from...")
+   - Person (for delegations and project tasks with an owner)
 2. Mark each field as `explicit` or `(inferred)`.
 3. **Write directly if all fields are explicit.** If any field is inferred, add `[review-status:: pending]` and write to review queue.
 
@@ -173,14 +173,23 @@ Different from the observation capture above: this is a recognition entry specif
 
 Include only fields that have values.
 
+**Type rules:**
+- `task` — user is doing it themselves (default)
+- `delegation` — user uses explicit delegation language: "delegate this to X", "hand this off to X"
+- `dependency` — "waiting on X"
+- `reply-needed` — "need a reply from X"
+
+When the user specifies a project AND a person for a task WITHOUT delegation language (e.g., "Add task 'review PR' to Project Alpha for Sarah"), create `[type:: task]` with `[person:: [[Sarah]]]` as the owner — not a delegation.
+
 **Person field rules:**
-- Self-assigned tasks (`[type:: task]`): always include `[person:: [[{user.name}]]]` using `user.name` from workspace.yaml
+- Self-assigned tasks (`[type:: task]` with no explicit owner): always include `[person:: [[{user.name}]]]` using `user.name` from workspace.yaml
+- Project tasks with an explicit owner (`[type:: task]` with a named person): `[person:: [[{their-name}]]]`
 - Delegations / dependencies / reply-needed: `[person:: [[{their-name}]]]` using the name as it appears in people.yaml
 - Never use a plain string — always wiki-link with `[[ ]]`
 
 **Destination:** Project file at `Projects/{project-slug}.md` under Open Tasks section, or daily note if no project.
 
-**Worked example:**
+**Worked examples:**
 
 User: "add task: review Sarah's design doc by Friday, high priority"
 
@@ -200,6 +209,29 @@ If user says "auth migration":
 ```
 
 All fields explicit → write directly, no review queue.
+
+User: "Add task 'review PR' to Project Alpha for Sarah"
+
+Parse:
+- Title: Review PR
+- Project: Project Alpha (explicit)
+- Person: Sarah (explicit owner, no delegation language)
+- Type: task (not delegation — no delegation language used)
+
+```
+- [ ] Review PR [project:: Project Alpha] [type:: task] [person:: [[Sarah Chen]]] [Auto] (capture, 2026-04-05)
+```
+
+User: "delegate the onboarding doc review to Sarah"
+
+Parse:
+- Title: Onboarding doc review
+- Person: Sarah (explicit delegation language used)
+- Type: delegation
+
+```
+- [ ] Onboarding doc review [project:: {project}] [type:: delegation] [person:: [[Sarah Chen]]] [Auto] (capture, 2026-04-05)
+```
 
 ---
 
