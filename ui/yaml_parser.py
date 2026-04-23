@@ -106,6 +106,8 @@ def _parse_inline_list(raw: str) -> list:
     result = []
     for item in items:
         item = item.strip()
+        if item == "":
+            continue
         if len(item) >= 2 and (
             (item[0] == '"' and item[-1] == '"') or
             (item[0] == "'" and item[-1] == "'")
@@ -330,11 +332,15 @@ def _parse_lines(lines: list) -> dict:
                 else:
                     # Scalar item that contains a colon but no key-value separator.
                     ls["current_item"] = None
-                    the_list.append(_parse_scalar(item_content))
+                    scalar = _parse_scalar(item_content)
+                    if scalar != "":
+                        the_list.append(scalar)
             else:
                 # Plain scalar list item (e.g., "- Sarah Chen")
                 ls["current_item"] = None
-                the_list.append(_parse_scalar(item_content))
+                scalar = _parse_scalar(item_content)
+                if scalar != "":
+                    the_list.append(scalar)
 
             continue
 

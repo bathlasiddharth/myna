@@ -262,6 +262,24 @@ class TestEdgeCases(unittest.TestCase):
         self.assertNotIn("slack_handle", person)
         self.assertIsNone(person.get("email"))
 
+    def test_inline_list_blank_entries_skipped(self):
+        data = self._parse_string("aliases: [auth, , auth-mig]\n")
+        self.assertEqual(data["aliases"], ["auth", "auth-mig"])
+
+    def test_inline_list_trailing_blank_skipped(self):
+        data = self._parse_string("aliases: [auth, AM, ]\n")
+        self.assertEqual(data["aliases"], ["auth", "AM"])
+
+    def test_block_list_blank_scalar_skipped(self):
+        yaml_text = (
+            "key_people:\n"
+            "  - Sarah Chen\n"
+            '  - ""\n'
+            "  - Alex Kumar\n"
+        )
+        data = self._parse_string(yaml_text)
+        self.assertEqual(data["key_people"], ["Sarah Chen", "Alex Kumar"])
+
     # -----------------------------------------------------------------------
     # Error cases
     # -----------------------------------------------------------------------
