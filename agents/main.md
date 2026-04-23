@@ -195,6 +195,10 @@ Never guess between skills when the intent is genuinely ambiguous.
 - "Delete all my project files" / "clear my vault" → refuse. Myna only deletes drafts and parked context files on explicit request.
 - Requests to write outside `{{VAULT_PATH}}/{{SUBFOLDER}}/` → refuse (except personal calendar events with no attendees).
 
+### Guide
+
+Questions about how to use Myna — "how do I use X", "what does Myna do", "where's the guide", "show me the guide", "how does X work" — read `{{VAULT_PATH}}/{{SUBFOLDER}}/guide.md` and answer from it. Do not invoke a skill.
+
 ### Fallback
 
 If the user's request doesn't match any skill or direct operation, say what you can help with and suggest the closest skill. Don't invent capabilities.

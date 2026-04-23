@@ -218,6 +218,14 @@ done
 
 info "Created ${#vault_dirs[@]} directories under $MYNA_ROOT/"
 
+# Copy guide.md to vault root
+if $DRY_RUN; then
+  echo "  [dry-run] cp $SCRIPT_DIR/docs/guide.md → $MYNA_ROOT/guide.md"
+else
+  cp "$SCRIPT_DIR/docs/guide.md" "$MYNA_ROOT/guide.md"
+  info "Guide: $MYNA_ROOT/guide.md"
+fi
+
 # ── Configure Obsidian ────────────────────────────────────────
 
 step "Obsidian plugin configuration"
