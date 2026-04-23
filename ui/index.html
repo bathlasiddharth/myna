@@ -185,13 +185,19 @@
 
               <div class="field-group">
                 <label class="field-label" for="user-role">Role</label>
-                <select id="user-role" class="field-input">
+                <select id="user-role" class="field-input" onchange="handleRoleChange()">
                   <option value="">Select a role</option>
+                  <option value="cto">CTO</option>
+                  <option value="director-of-engineering">Director of Engineering</option>
                   <option value="engineering-manager">Engineering Manager</option>
-                  <option value="tech-lead">Tech Lead</option>
-                  <option value="senior-engineer">Senior Engineer</option>
-                  <option value="pm">PM</option>
+                  <option value="product-manager">Product Manager</option>
+                  <option value="security-engineer">Security Engineer</option>
+                  <option value="software-developer">Software Developer</option>
+                  <option value="technical-program-manager">Technical Program Manager</option>
+                  <option value="vp-of-engineering">VP of Engineering</option>
+                  <option value="_custom">Custom...</option>
                 </select>
+                <input type="text" id="user-role-custom" class="field-input mt-2 hidden" placeholder="Enter your role" />
               </div>
             </div>
 

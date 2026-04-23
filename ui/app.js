@@ -114,7 +114,20 @@ function populateIdentity() {
 
   setValue('user-name',        user.name       || '');
   setValue('user-email',       user.email      || '');
-  setValue('user-role',        user.role       || '');
+
+  // Role — check if the stored value is a known option, else treat as custom
+  const roleVal = user.role || '';
+  const roleSelect = document.getElementById('user-role');
+  const knownRoles = Array.from(roleSelect.options).map(o => o.value);
+  if (roleVal && knownRoles.includes(roleVal)) {
+    roleSelect.value = roleVal;
+  } else if (roleVal) {
+    roleSelect.value = '_custom';
+    const roleCustom = document.getElementById('user-role-custom');
+    roleCustom.value = roleVal;
+    roleCustom.classList.remove('hidden');
+  }
+
   setValue('work-start',       wh.start        || '');
   setValue('work-end',         wh.end          || '');
   setValue('feedback-cycle',   ws.feedback_cycle_days != null ? ws.feedback_cycle_days : '');
@@ -321,13 +334,19 @@ function getIdentityData() {
 
   const filingEl = document.querySelector('input[name="email-filing"]:checked');
 
+  const roleSelect = document.getElementById('user-role');
+  let roleValue = roleSelect.value;
+  if (roleValue === '_custom') {
+    roleValue = document.getElementById('user-role-custom').value.trim();
+  }
+
   return {
     ...existing,
     user: {
       ...(existing.user || {}),
       name:  document.getElementById('user-name').value.trim(),
       email: document.getElementById('user-email').value.trim(),
-      role:  document.getElementById('user-role').value,
+      role:  roleValue,
     },
     timezone: tz,
     work_hours: {
@@ -488,6 +507,20 @@ function handleTimezoneChange() {
   }
 }
 
+// ── Role change handler ────────────────────────────────────────────────────
+
+function handleRoleChange() {
+  const sel    = document.getElementById('user-role');
+  const custom = document.getElementById('user-role-custom');
+  if (sel.value === '_custom') {
+    custom.classList.remove('hidden');
+    custom.focus();
+  } else {
+    custom.classList.add('hidden');
+    custom.value = '';
+  }
+}
+
 // ── Toast ──────────────────────────────────────────────────────────────────
 
 function showToast(message, type) {
@@ -557,10 +590,18 @@ function capitalize(str) {
 
 function formatRole(role) {
   const map = {
-    'engineering-manager': 'Engineering Manager',
-    'tech-lead':           'Tech Lead',
-    'senior-engineer':     'Senior Engineer',
-    'pm':                  'PM',
+    'cto':                       'CTO',
+    'director-of-engineering':   'Director of Engineering',
+    'engineering-manager':       'Engineering Manager',
+    'product-manager':           'Product Manager',
+    'security-engineer':         'Security Engineer',
+    'software-developer':        'Software Developer',
+    'technical-program-manager': 'Technical Program Manager',
+    'vp-of-engineering':         'VP of Engineering',
+    // legacy values kept for backward compatibility
+    'tech-lead':                 'Tech Lead',
+    'senior-engineer':           'Senior Engineer',
+    'pm':                        'PM',
   };
   return map[role] || role;
 }
@@ -1216,4 +1257,14 @@ document.addEventListener('DOMContentLoaded', () => {
   switchTab('overview');
   loadConfig();
   initFilesTab();
+
+  // Auto-save on blur for custom role input (Design Decision #7)
+  const roleCustomInput = document.getElementById('user-role-custom');
+  if (roleCustomInput) {
+    roleCustomInput.addEventListener('blur', () => {
+      if (document.getElementById('user-role').value === '_custom') {
+        saveTab('identity');
+      }
+    });
+  }
 });
