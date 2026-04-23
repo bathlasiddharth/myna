@@ -169,6 +169,8 @@ Briefly mention that `meetings.yaml` and `tags.yaml` exist for power users but m
 
 Show a final summary of everything configured in this session. Then show the defaults that were applied silently — the internal plumbing fields: `timestamp_format: YYYY-MM-DD`, `prompt_logging: true`, `ai_model: claude-code`, `calendar_event_prefix: [Myna]`, `calendar_event_types: Focus/Task/Reminder`. Let the user know these can be changed directly in `workspace.yaml` if needed. No hidden defaults.
 
+**Onboarding checklist:** Create `{vault_path}/{subfolder}/_system/Onboarding.md` with a checklist of any setup items not yet completed in this session (e.g., integrations not configured, projects/people not imported, communication style not set). Do not include items the user already completed. Then append exactly one task to today's daily note: `- [ ] Complete Myna onboarding checklist [[_system/Onboarding]]`. Use the full relative wikilink — `[[_system/Onboarding]]` not `[[Onboarding]]`.
+
 Suggest next steps: run `myna` and type `sync` to start the day.
 
 ---
