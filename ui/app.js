@@ -761,9 +761,12 @@ function getTimePicker(prefix) {
 // ── TagInput component ─────────────────────────────────────────────────────
 
 class TagInput {
-  constructor(container, initialValues = []) {
+  constructor(container, initialValues = [], options = {}) {
     this.container = container;
     this.tags = [];
+    this.placeholder = options.placeholder || 'Add...';
+    this.normalize = options.normalize || null; // optional fn(value) => string
+    this.ghostPreview = options.ghostPreview || false;
     this._buildDOM();
     this.setValues(initialValues);
   }
@@ -781,9 +784,12 @@ class TagInput {
       this.input = document.createElement('input');
       this.input.type = 'text';
       this.input.className = 'tag-text-input';
-      this.input.placeholder = 'Add...';
       this.tagsContainer.appendChild(this.input);
     }
+    this.input.placeholder = this.placeholder;
+
+    // Ghost preview element (created lazily on first input)
+    this.ghostEl = null;
 
     this.input.addEventListener('keydown', (e) => {
       if ((e.key === 'Enter' || e.key === ',') && !e.isComposing) {
@@ -794,12 +800,22 @@ class TagInput {
       }
     });
 
-    // Comma typed triggers add too
+    // Comma typed triggers add too; also updates ghost preview
     this.input.addEventListener('input', () => {
       if (this.input.value.endsWith(',')) {
         this.input.value = this.input.value.slice(0, -1);
         this._addFromInput();
+      } else {
+        this._updateGhost();
       }
+    });
+
+    this.input.addEventListener('blur', () => {
+      this._hideGhost();
+    });
+
+    this.input.addEventListener('focus', () => {
+      this._updateGhost();
     });
 
     // Click on the container focuses the input
@@ -810,13 +826,47 @@ class TagInput {
     });
   }
 
+  _normalizeValue(val) {
+    if (this.normalize) return this.normalize(val);
+    return val;
+  }
+
+  _updateGhost() {
+    if (!this.ghostPreview) return;
+    const raw = this.input.value.trim();
+    if (!raw) {
+      this._hideGhost();
+      return;
+    }
+    const preview = this._normalizeValue(raw);
+    if (!this.ghostEl) {
+      this.ghostEl = document.createElement('span');
+      this.ghostEl.className = 'tag-pill tag-ghost';
+    }
+    this.ghostEl.textContent = preview;
+    // Insert ghost just before the input
+    if (this.ghostEl.parentNode !== this.tagsContainer) {
+      this.tagsContainer.insertBefore(this.ghostEl, this.input);
+    }
+  }
+
+  _hideGhost() {
+    if (this.ghostEl && this.ghostEl.parentNode) {
+      this.ghostEl.parentNode.removeChild(this.ghostEl);
+    }
+  }
+
   _addFromInput() {
     const val = this.input.value.trim();
-    if (val && !this.tags.includes(val)) {
-      this.tags.push(val);
-      this._renderTags();
+    if (val) {
+      const normalized = this._normalizeValue(val);
+      if (!this.tags.includes(normalized)) {
+        this.tags.push(normalized);
+        this._renderTags();
+      }
     }
     this.input.value = '';
+    this._hideGhost();
   }
 
   _removeTag(idx) {
@@ -825,8 +875,8 @@ class TagInput {
   }
 
   _renderTags() {
-    // Remove existing pills (keep the input)
-    this.tagsContainer.querySelectorAll('.tag-pill').forEach(p => p.remove());
+    // Remove existing pills (keep the input and ghost)
+    this.tagsContainer.querySelectorAll('.tag-pill:not(.tag-ghost)').forEach(p => p.remove());
 
     this.tags.forEach((tag, idx) => {
       const pill = document.createElement('span');
@@ -836,7 +886,11 @@ class TagInput {
         e.stopPropagation();
         this._removeTag(idx);
       });
-      this.tagsContainer.insertBefore(pill, this.input);
+      // Insert before ghost (if present) or before input
+      const insertBefore = this.ghostEl && this.ghostEl.parentNode === this.tagsContainer
+        ? this.ghostEl
+        : this.input;
+      this.tagsContainer.insertBefore(pill, insertBefore);
     });
   }
 
@@ -853,6 +907,15 @@ class TagInput {
     this.tags = [];
     this._renderTags();
   }
+}
+
+// Normalize a raw string to Slack #channel-name format:
+// lowercase, spaces → hyphens, leading # stripped then re-added.
+function normalizeSlackChannel(val) {
+  let s = val.toLowerCase().trim();
+  s = s.replace(/^#+/, '');       // strip any leading #
+  s = s.replace(/\s+/g, '-');     // spaces → hyphens
+  return '#' + s;
 }
 
 // ── Projects tab ───────────────────────────────────────────────────────────
@@ -930,7 +993,7 @@ function buildProjectCard(proj, idx) {
         </div>
         <div class="field-group">
           <label class="field-label">Slack channels</label>
-          <div class="tag-input" data-tag-field="slack_channels-${idx}"><div class="tags-container"><input type="text" class="tag-text-input" placeholder="Add..."></div></div>
+          <div class="tag-input" data-tag-field="slack_channels-${idx}"><div class="tags-container"><input type="text" class="tag-text-input" placeholder="Type a channel and press Enter"></div></div>
         </div>
         <div class="field-group">
           <label class="field-label">Key people</label>
@@ -956,7 +1019,16 @@ function buildProjectCard(proj, idx) {
   if (!tagInputs.projects[idx]) tagInputs.projects[idx] = {};
   fields.forEach(field => {
     const el = card.querySelector(`[data-tag-field="${field}-${idx}"]`);
-    if (el) tagInputs.projects[idx][field] = new TagInput(el, proj[field] || []);
+    if (!el) return;
+    if (field === 'slack_channels') {
+      tagInputs.projects[idx][field] = new TagInput(el, proj[field] || [], {
+        placeholder: 'Type a channel and press Enter',
+        normalize: normalizeSlackChannel,
+        ghostPreview: true,
+      });
+    } else {
+      tagInputs.projects[idx][field] = new TagInput(el, proj[field] || []);
+    }
   });
 
   return card;

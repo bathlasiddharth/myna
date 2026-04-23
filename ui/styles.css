@@ -740,6 +740,16 @@ select.field-input {
   color: #94a3b8;
 }
 
+/* Ghost chip preview — shown while typing, before committing */
+.tag-pill.tag-ghost {
+  opacity: 0.45;
+  border: 1px dashed #5eead4; /* teal-300 */
+  background-color: #f0fdfa; /* teal-50 */
+  color: #0d9488;             /* teal-600 */
+  pointer-events: none;
+  user-select: none;
+}
+
 /* ----- File upload zone ----- */
 .upload-zone {
   display: flex;
