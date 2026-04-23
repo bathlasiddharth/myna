@@ -114,11 +114,13 @@ The most important section. Always present three explicit options upfront before
 
 When extracting from docs or user input, populate both `projects.yaml` and `people.yaml`. Cross-reference: people mentioned in projects get added to people config; projects mentioned for people get linked.
 
-Show all extracted data as a **numbered human-readable list** — never as YAML. For corrections, present two options:
-1. **Inline corrections** — reference by number in chat (e.g., "3: remove", "5: she's tech lead not senior"). Multiple corrections in one message are fine. Best for small batches.
-2. **Export to file** — write extracted data to a human-readable file (not YAML) in the vault, let the user edit it in their editor, then read it back and confirm. Best for large batches.
+Show all extracted data as a **numbered human-readable list** — never as YAML. Then present these options:
 
-Write YAML only after the user confirms. When the user provides timeline information (even rough like "Q3" or "end of May"), include it in the project description field.
+1. **Write to config** — save as-is and continue.
+2. **Inline corrections** — reference by number in chat (e.g., "3: remove", "5: she's tech lead not senior"). Multiple corrections in one message are fine. Best for small batches.
+3. **Export to file** — write extracted data to a human-readable file (not YAML) in the vault, let the user edit it in their editor, then read it back. Best for large batches.
+
+Write YAML only when the user selects option 1 (or after corrections are applied via option 2 or 3 and the user selects option 1). When the user provides timeline information (even rough like "Q3" or "end of May"), include it in the project description field.
 
 Schema references: `_system/config/projects.yaml.example`, `_system/config/people.yaml.example`.
 
