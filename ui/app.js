@@ -19,6 +19,41 @@ let activeTab = 'overview';
 // Track which tabs have already had help listeners attached to avoid duplicates
 const helpListenersAttached = new Set();
 
+// ── Theme ───────────────────────────────────────────────────────────────────
+// Theme is applied before render via inline script in <head>. This section
+// owns the toggle function and the OS-level media query listener.
+
+function toggleTheme() {
+  const html = document.documentElement;
+  const isDark = html.getAttribute('data-theme') === 'dark';
+
+  // Briefly add a transition class so color changes animate smoothly
+  html.classList.add('theme-transitioning');
+  requestAnimationFrame(function () {
+    if (isDark) {
+      html.removeAttribute('data-theme');
+      localStorage.setItem('myna-theme', 'light');
+    } else {
+      html.setAttribute('data-theme', 'dark');
+      localStorage.setItem('myna-theme', 'dark');
+    }
+    setTimeout(function () { html.classList.remove('theme-transitioning'); }, 200);
+  });
+}
+
+// Listen for OS-level theme changes (only applies when no stored override)
+if (window.matchMedia) {
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function (e) {
+    if (!localStorage.getItem('myna-theme')) {
+      if (e.matches) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      } else {
+        document.documentElement.removeAttribute('data-theme');
+      }
+    }
+  });
+}
+
 // ── Tab switching ──────────────────────────────────────────────────────────
 
 function switchTab(tabName) {

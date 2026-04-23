@@ -4,6 +4,17 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Myna — Settings</title>
+  <!-- Apply theme before render to avoid flash -->
+  <script>
+    (function() {
+      var stored = localStorage.getItem('myna-theme');
+      if (stored === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      } else if (!stored && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      }
+    })();
+  </script>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="./styles.css" />
   <script>
@@ -25,16 +36,36 @@
 <body class="bg-slate-50 text-slate-800 font-sans antialiased min-h-screen">
 
   <!-- Top bar -->
-  <header class="bg-white border-b border-slate-200 px-6 py-3 flex items-center justify-between sticky top-0 z-10">
-    <div class="flex items-center gap-3">
-      <span class="text-teal-600 font-semibold text-lg tracking-tight">Myna</span>
-      <span class="text-slate-300">|</span>
-      <span class="text-slate-500 text-sm">Settings</span>
+  <header class="top-nav">
+    <div class="top-nav-left">
+      <span class="brand">Myna</span>
+      <span class="brand-divider" aria-hidden="true">|</span>
+      <span class="brand-subtitle">Settings</span>
     </div>
-    <div id="connection-status" class="flex items-center gap-2 text-sm">
-      <span id="status-dot" class="w-2 h-2 rounded-full bg-slate-300"></span>
-      <span id="status-text" class="text-slate-400">Connecting...</span>
-      <button id="retry-btn" class="hidden text-teal-600 hover:text-teal-700 underline text-xs ml-1" onclick="loadConfig()">Retry</button>
+    <div class="top-nav-right">
+      <div id="connection-status" class="status-indicator">
+        <span id="status-dot" class="w-2 h-2 rounded-full bg-slate-300" style="flex-shrink:0"></span>
+        <span id="status-text">Connecting...</span>
+        <button id="retry-btn" class="hidden text-teal-600 hover:text-teal-700 underline text-xs ml-1" onclick="loadConfig()">Retry</button>
+      </div>
+      <button
+        id="theme-toggle"
+        class="theme-toggle"
+        aria-label="Toggle dark mode"
+        onclick="toggleTheme()"
+        title="Toggle light/dark mode"
+      >
+        <!-- Moon icon (shown in light mode) -->
+        <svg class="icon-moon" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+        </svg>
+        <!-- Sun icon (shown in dark mode) -->
+        <svg class="icon-sun" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707M17.657 17.657l-.707.707M6.343 6.343l-.707.707M12 8a4 4 0 100 8 4 4 0 000-8z"/>
+        </svg>
+      </button>
     </div>
   </header>
 
@@ -42,9 +73,9 @@
   <div class="flex max-w-screen-xl mx-auto min-h-[calc(100vh-49px)]">
 
     <!-- Sidebar -->
-    <nav class="w-56 bg-slate-900 flex-shrink-0 py-6 flex flex-col gap-1" id="main-nav">
-      <div class="px-4 pb-3">
-        <p class="text-slate-500 text-xs font-medium uppercase tracking-wider">Configuration</p>
+    <nav class="sidebar w-56 flex-shrink-0 py-6 flex flex-col gap-1" id="main-nav">
+      <div class="pb-3">
+        <span class="nav-section-label">Configuration</span>
       </div>
       <button class="nav-tab active" data-tab="overview" onclick="switchTab('overview')">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
@@ -71,8 +102,8 @@
         Integrations
       </button>
 
-      <div class="px-4 pt-5 pb-2">
-        <p class="text-slate-600 text-xs font-medium uppercase tracking-wider">Data</p>
+      <div class="pt-5 pb-2">
+        <span class="nav-section-label">Data</span>
       </div>
       <button class="nav-tab" data-tab="features" onclick="switchTab('features')">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
@@ -322,8 +353,8 @@
           <h1 class="text-xl font-semibold text-slate-900 mb-1">Integrations</h1>
           <p class="text-slate-500 text-sm mb-8">Connect Myna to your email, calendar, and messaging tools via MCP servers.</p>
 
-          <div class="bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 mb-8 text-sm text-slate-600 leading-relaxed">
-            Enter the MCP server names you registered with Claude Code. Run <code class="bg-white border border-slate-200 rounded px-1.5 py-0.5 text-xs font-mono text-slate-700">claude mcp list</code> to see your registered servers. Leave empty if not set up — Myna works without them.
+          <div class="info-box mb-8">
+            Enter the MCP server names you registered with Claude Code. Run <code>claude mcp list</code> to see your registered servers. Leave empty if not set up — Myna works without them.
           </div>
 
           <form id="integrations-form" onsubmit="return false;">
@@ -768,8 +799,8 @@
           </div>
 
           <!-- Helper info box -->
-          <div class="bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 mt-4 mb-6 text-sm text-slate-600 leading-relaxed">
-            Upload project docs, team pages, Confluence exports, or any documents that describe your work context. Run <code class="bg-white border border-slate-200 rounded px-1.5 py-0.5 text-xs font-mono text-slate-700">/myna-setup import</code> in a Claude chat to process them.
+          <div class="info-box mt-4 mb-6">
+            Upload project docs, team pages, Confluence exports, or any documents that describe your work context. Run <code>/myna-setup import</code> in a Claude chat to process them.
           </div>
 
           <!-- Uploaded files (populated after upload) -->
