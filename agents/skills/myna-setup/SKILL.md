@@ -102,12 +102,16 @@ Do not ask about: `timestamp_format`, `prompt_logging`, `ai_model`, `calendar_ev
 
 ## Section 3: Integrations
 
-Writes to `workspace.yaml` → `mcp_servers`. Walk through the three functions Myna supports, one at a time:
+Writes to `workspace.yaml`. Walk through in two parts:
+
+**MCP servers** (`mcp_servers` key). Walk through the three functions Myna supports, one at a time:
 - Email MCP server name
 - Calendar MCP server name
 - Messaging (Slack, Teams, etc.) MCP server name
 
 Say once upfront: "Just type the MCP server name for each, or 'skip' to move on." Don't verify the server works. Don't suggest product names — just ask for the server name the user registered with Claude Code.
+
+**Notes forwarding email** (`email.notes_email` key). Ask: "What email address do you forward emails to when you want Myna to draft a reply? (Used by the DraftReplies workflow — skip if you don't use this.)" Save the answer to `email.notes_email` in `workspace.yaml`. If the user skips, leave the field unset.
 
 ---
 
