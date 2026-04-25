@@ -150,17 +150,26 @@ Myna was designed, built, reviewed, and fixed entirely by Claude Code — from f
 
 ## Contributing
 
-Myna includes project-scoped dev skills (in `.claude/skills/`) that guide the contributor workflow. Clone the repo, open it in Claude Code, and use these skills:
+Myna includes project-scoped dev skills (in `.claude/skills/`) that guide contributor workflow. Clone the repo, open it in Claude Code, and use them. See [CONTRIBUTING.md](CONTRIBUTING.md) for the full guide.
 
-### Workflow: Idea to Merge
+### Two Workflows
 
-| Step | What you do | Dev skill |
-|------|------------|-----------|
-| 1. Design | Describe the problem or idea | `/myna-dev-brainstorm` |
-| 2. Package | Generate an autonomous implementation prompt | `/myna-dev-execution-prompt` |
-| 3. Build | Paste the prompt into a new session — it executes, reviews its own work, and pushes a feature branch | *(the prompt itself)* |
-| 4. Review | Review the branch | `/myna-dev-review` |
-| 5. Merge | Merge to main | |
+**New features and design changes** — when you want to explore an idea or change an existing behavior:
+
+| Step | Skill | What happens |
+|------|-------|-------------|
+| 1. Design | `/myna-dev-brainstorm` | Interactive design session — validates idea, explores options, converges on decisions. Say "generate prompt" when settled. |
+| 2. Package | `/myna-dev-build-prompt` | Generates an autonomous execution prompt in `tmp/[name]/` |
+| 3. Build | *(run the prompt)* | Paste the prompt into a new session — it implements, reviews its own work, and pushes a feature branch |
+| 4. Merge | | Review the PR and merge |
+
+**Bug fixes and small changes** — when the problem and fix are already clear:
+
+| Step | Skill | What happens |
+|------|-------|-------------|
+| 1. Diagnose | `/myna-dev-diagnose` | Validates the problem, generates options. Say "add this" when settled. |
+| 2. Queue | `/myna-dev-task-add` | Drafts a task entry for `tmp/tasks.md` — shows it for approval before writing |
+| 3. Execute | `/myna-dev-execute-tasks` | Runs all pending tasks sequentially on a single fix branch, each with a review loop, then creates a PR |
 
 ### Periodic QA
 
@@ -169,6 +178,7 @@ Myna includes project-scoped dev skills (in `.claude/skills/`) that guide the co
 | Full quality pipeline (lint → review → fix → verify) | `/myna-dev-improve` |
 | Cross-skill vault format consistency | `/myna-dev-consistency` |
 | Feature spec vs skill coverage audit | `/myna-dev-coverage` |
+| Manual review of agent artifacts | `/myna-dev-review` |
 
 All dev skills are prefixed `myna-dev-*` and only available when working inside the Myna repo — they don't get installed to users' machines.
 

@@ -1,7 +1,7 @@
 ---
-name: myna-dev-execution-prompt
+name: myna-dev-build-prompt
 description: |
-  Generate a self-contained execution prompt for Myna development — a fresh session can run it autonomously to implement changes, update docs, review its own work, and push to a feature branch. Use after /myna-dev-brainstorm or any design discussion. Triggers: "write the execution prompt", "create the build prompt", "crystallize this", "package this for implementation".
+  Generate a self-contained execution prompt for Myna development — a fresh session can run it autonomously to implement changes, update docs, review its own work, and push to a feature branch. Use after /myna-dev-brainstorm or any design discussion. Triggers: "generate prompt", "write the execution prompt", "crystallize this", "package this for implementation".
 argument-hint: "[prompt name, e.g. customization-layer]"
 user-invocable: true
 allowed-tools:
@@ -18,9 +18,17 @@ effort: max
 
 # Myna Execution Prompt Generator
 
-You are a senior Myna contributor who just watched a design session. Your job: write the implementation spec that a fresh Claude Code session can execute autonomously — no human involvement until the branch is ready for review.
+You are a senior Myna contributor who just finished a design discussion. Your job: write an execution prompt that a fresh Claude Code session can run autonomously — no questions asked, no human involvement until the branch is ready for review.
 
-The output is a markdown file at `docs/prompts/[name].md` that gets copy-pasted into a new session.
+**The standard:** when the session completes, the user should be able to read the summary, open the PR diff, and merge — not fix things first. Zero human rework is the goal.
+
+**The mental model:** you are briefing a team of engineers, not writing a recipe. Each task subagent gets a clear problem statement, context, and definition of done — then figures out the implementation itself. The prompt captures *what* and *why*, not *how*.
+
+**Built-in quality loop:** every task subagent reviews its own work before reporting back — spawning a dedicated review subagent, fixing Critical and Important issues, and iterating up to 3 rounds. The prompt you write must include this loop. Quality is enforced autonomously, not left to the human reviewer.
+
+The output is a markdown file at `tmp/[name]/[prefix]-prompt.md`.
+
+**Prefix rule:** derive a 2-5 char prefix from the prompt name — first letter of each hyphen-separated word. `beta-fixes` → `bf`, `config-ui` → `cu`, `customization-layer` → `cl`. Use this prefix on every file in the session folder so tab titles are identifiable.
 
 ---
 
@@ -112,12 +120,22 @@ Every task runs as a subagent (Agent tool). This eliminates context bleed betwee
 
 **Parallelization rule:** only parallelize when you have verified the file sets are completely disjoint. If there is any doubt, make it sequential. Wrong parallelization causes merge conflicts; unnecessary sequencing just costs time — and session length is not a concern.
 
+### Doc Updates
+Check whether any of these need updating based on the changes. If yes, add a dedicated final sequential task — always last, always after all implementation tasks are merged (docs depend on knowing what actually changed):
+- `docs/architecture.md` — structural changes
+- `docs/decisions.md` — new decisions settled (next D-number in sequence)
+- `docs/open-questions.md` — new questions surfaced
+- `README.md` — user-facing behavior changes
+- `docs/post-install-checklist.md` — setup/install changes
+
+If none of these are affected, skip the doc task — don't add a placeholder.
+
 ### Risk Assessment
 - **High risk:** `agents/main.md` (routing), `install.sh` (user-facing), skill files with complex logic → stricter review.
 - **Low risk:** doc updates, config changes, new files → lighter review.
 
 ### Review Persona
-Match reviewer lens to the work. Each task gets a dedicated review subagent — write the subagent prompt in the task's `#### Review — Agent tool` block. The subagent reads the changed files and checks the assertions. Persona examples: "Principal Engineer checking correctness", "Product Manager checking UX flow", "SRE checking shell safety".
+Match reviewer lens to the work. Each task gets a dedicated review subagent invoked via `/myna-dev-review --task`. Persona examples: "Principal Engineer checking correctness", "Product Manager checking UX flow", "SRE checking shell safety". Bake the relevant persona into the task's `--criteria` or the Context block so the reviewer has the right lens.
 
 ### Model Selection
 Default to Sonnet. Use Opus only for ambiguous requirements or complex existing code.
@@ -129,7 +147,7 @@ Split into multiple prompts if 8+ tasks spanning unrelated domains, or tasks hav
 
 ## Phase 3: Generate
 
-Write the prompt to `docs/prompts/[name].md`. The name is either specified by the user or derived from the feature name.
+Write the prompt to `tmp/[name]/[prefix]-prompt.md`. The name is either specified by the user or derived from the feature name. Derive the prefix (first letter of each hyphen-separated word) and use it on every file in the session folder.
 
 ### Prompt Structure
 
@@ -138,7 +156,9 @@ Write the prompt to `docs/prompts/[name].md`. The name is either specified by th
 
 [1-2 sentence description.]
 
-**You are the orchestrator.** Your only job is sequencing, branch management, and coordination — you do not implement tasks. Each task subagent (ST-N) owns its implementation, review loop, and commit. You own branches, the run log, merges, and the final push.
+**Goal:** zero human rework. When this session completes, the user reads the summary, opens the PR diff, and merges — without fixing anything first. Each task subagent is responsible for its own quality: implement → review → fix → commit. The review loop is not optional.
+
+**You are the orchestrator.** Your only job is sequencing, branch management, and coordination — you do not implement tasks. Each task subagent (T-N) owns its implementation, review loop, and commit. You own branches, the run log, merges, and the final push.
 
 **Setup — do this before spawning any subagent:**
 
@@ -148,26 +168,21 @@ Write the prompt to `docs/prompts/[name].md`. The name is either specified by th
    ```
 2. Create branches for parallel tasks only (sequential task branches are created just before spawning each one):
    ```
-   git checkout -b feat/[feature]-st-1 feat/[feature-name]
-   git checkout -b feat/[feature]-st-2 feat/[feature-name]
+   git checkout -b feat/[feature]-t-1 feat/[feature-name]
+   git checkout -b feat/[feature]-t-2 feat/[feature-name]
    git checkout feat/[feature-name]
    ```
-3. Commit the execution prompt doc:
-   ```
-   git add docs/prompts/[name].md
-   git commit -m "docs: add [name] execution prompt"
-   ```
-4. Create the run log at `tmp/[feature]-run.md`:
+3. Create the run log at `tmp/[feature]/[prefix]-run.md`:
    ```markdown
    # [feature] — [date]
 
    ## Tasks
-   - [ ] ST-1: [Task title] — branch `feat/[feature]-st-1` — pending
-   - [ ] ST-2: [Task title] — branch `feat/[feature]-st-2` — pending
-   - [ ] ST-3: [Task title] — branch `feat/[feature]-st-3` — pending
+   - [ ] T-1: [Task title] — branch `feat/[feature]-t-1` — pending
+   - [ ] T-2: [Task title] — branch `feat/[feature]-t-2` — pending
+   - [ ] T-3: [Task title] — branch `feat/[feature]-t-3` — pending
 
    ## Reviews
-   (none yet)
+   (none yet — reports appear as tmp/[feature]/reviews/[short-name]-rN.md)
 
    ## Unresolved
    (none)
@@ -176,11 +191,11 @@ Write the prompt to `docs/prompts/[name].md`. The name is either specified by th
 **Execution plan**
 
 Parallel (spawn all simultaneously — zero file overlap verified):
-- ST-1: [Task title] — `feat/[feature]-st-1` — touches `[file A]` only
-- ST-2: [Task title] — `feat/[feature]-st-2` — touches `[file B]` only
+- T-1: [Task title] — `feat/[feature]-t-1` — touches `[file A]` only
+- T-2: [Task title] — `feat/[feature]-t-2` — touches `[file B]` only
 
 Sequential (spawn one at a time after parallel merges):
-- ST-3: [Task title] — `feat/[feature]-st-3`
+- T-3: [Task title] — `feat/[feature]-t-3`
 
 After each subagent reports back:
 - **If "Done":** update run log (mark complete, add review round count and report path), merge + delete branch, proceed
@@ -189,14 +204,14 @@ After each subagent reports back:
 Merge + delete (Done path only):
 ```
 git checkout feat/[feature-name]
-git merge feat/[feature]-st-N
-git branch -d feat/[feature]-st-N && git push origin --delete feat/[feature]-st-N
+git merge feat/[feature]-t-N
+git branch -d feat/[feature]-t-N && git push origin --delete feat/[feature]-t-N
 ```
 Resolve any conflicts before proceeding.
 
 **For sequential tasks:** create the branch just before spawning — after the prior task's branch is merged:
 ```
-git checkout -b feat/[feature]-st-N feat/[feature-name]
+git checkout -b feat/[feature]-t-N feat/[feature-name]
 ```
 
 ## Context
@@ -207,45 +222,72 @@ git checkout -b feat/[feature]-st-N feat/[feature-name]
 
 ---
 
-## ST-1: [Task title] — parallel
+## T-1: [Task title] — parallel
 
 Spawn this subagent with the Agent tool. Prompt:
 
-> **Context:** [Myna project context, relevant conventions]
+> **Problem:** [What's wrong and why it matters.]
 >
-> **Your job:** [What needs to change and why. Constraints: what not to do.]
+> **Correct behavior:** [What the system should do — described, not coded.]
 >
-> **Acceptance criteria:**
-> - [Specific assertion]
-> - [Specific assertion]
+> **Context:** [Relevant background the subagent needs to understand the problem.]
 >
-> **Steps:**
-> 1. `git checkout feat/[feature]-st-1` (branch already exists)
-> 2. Read these files: `[file1]`, `[file2]` — verify current state before changing anything
-> 3. Implement the task
-> 4. Commit: `[type]([scope]): [what changed]`
-> 5. Review loop (max 3 rounds):
->    - Spawn a review subagent (Agent tool): `Run /myna-dev-review --task "[feature]-st-1" --base "feat/[feature-name]" --criteria "[acceptance criteria as comma-separated assertions]". Report back the stdout summary and report path.`
->    - Read the summary. Fix any Critical or Important issues → `git commit -m "fix: ..."` → re-spawn review.
->    - Repeat until clean or 3 rounds done. If still unresolved, note the report path and issues.
-> 6. Push: `git push origin feat/[feature]-st-1`
-> 7. Report back: "Done — [round count] review round(s)" or "Unresolved: [list] — report: tmp/reviews/task-[feature]-st-1.md"
+> **Suggested files:** `[file1]`, `[file2]` — use your own judgment if the right change belongs elsewhere.
+>
+> **Don't touch:** [What to leave alone.]
+>
+> **Done when:**
+> - [Specific, verifiable assertion]
+> - [Specific, verifiable assertion]
+>
+> ---
+> **After implementing,** invoke:
+> ```
+> /myna-dev-task-protocol --branch feat/[feature]-t-1 --base feat/[feature-name] --criteria "[done-when assertions as comma-separated string]" --short-name [short-name] --feature [feature] --commit-msg "[type]([scope]): [description]"
+> ```
+> `--short-name`: 2-3 words from this task title, lowercase hyphen-separated (e.g. `base-guard`, `email-sort`).
+> `--commit-msg`: the conventional commit message for your implementation.
+> Branch `feat/[feature]-t-1` already exists — check it out before implementing.
 
 ---
 
-## ST-2: [Task title] — parallel
+## T-2: [Task title] — parallel
 
 Spawn this subagent with the Agent tool. Prompt:
 
-> [Same structure as ST-1, adapted for this task. Branch: `feat/[feature]-st-2`.]
+> [Same structure as T-1. Branch: `feat/[feature]-t-2`.]
 
 ---
 
-## ST-3: [Task title] — sequential (after parallel merges)
+## T-3: [Task title] — sequential (after parallel merges)
 
 Spawn this subagent with the Agent tool. Prompt:
 
-> [Same structure as ST-1, adapted for this task. Branch: `feat/[feature]-st-3`.]
+> [Same structure as T-1. Branch: `feat/[feature]-t-3`. Create branch just before spawning: `git checkout -b feat/[feature]-t-3 feat/[feature-name]`.]
+
+---
+
+## T-N: Doc updates — sequential (always last, omit if no docs affected)
+
+Spawn this subagent with the Agent tool. Prompt:
+
+> **Problem:** The implementation tasks changed [X]. The following docs are now stale or incomplete: [list only affected docs].
+>
+> **Correct behavior:** Each listed doc reflects the actual changes made — new decisions recorded with the next D-number, architecture section updated to match new structure, open questions added if surfaced.
+>
+> **Context:** Read the implementation diffs on `feat/[feature-name]` before editing — update only what the changes actually affect, not a general refresh.
+>
+> **Suggested files:** [list only affected docs from: `docs/architecture.md`, `docs/decisions.md`, `docs/open-questions.md`, `README.md`, `docs/post-install-checklist.md`]
+>
+> **Done when:**
+> - [Specific assertion per doc, e.g. "decisions.md contains entry D0XX for [decision]"]
+>
+> ---
+> **After implementing,** invoke:
+> ```
+> /myna-dev-task-protocol --branch feat/[feature]-t-N --base feat/[feature-name] --criteria "[done-when assertions]" --short-name doc-updates --feature [feature] --commit-msg "docs([scope]): [description]"
+> ```
+> Create branch before implementing: `git checkout -b feat/[feature]-t-N feat/[feature-name]`
 
 ---
 
@@ -260,7 +302,7 @@ If any tasks are marked failed in the run log: stop — do not push. Report unre
 Otherwise: `git push origin feat/[feature-name]`
 
 ## Summary
-Write `tmp/[feature]-summary.md`:
+Write `tmp/[feature]/[prefix]-summary.md`:
 ```markdown
 # [feature] — session summary
 
@@ -268,17 +310,18 @@ Write `tmp/[feature]-summary.md`:
 **Date:** [date]
 
 ## Tasks
-- ST-1: [title] — done (N review rounds)
-- ST-2: [title] — failed (see tmp/reviews/task-[feature]-st-2.md)
+- T-1: [title] — done (1 review round) — tmp/[feature]/reviews/[t-1-short-name]-r1.md
+- T-2: [title] — done (2 review rounds) — tmp/[feature]/reviews/[t-2-short-name]-r1.md, [t-2-short-name]-r2.md
+- T-3: [title] — failed — tmp/[feature]/reviews/[t-3-short-name]-r1.md, [t-3-short-name]-r2.md, [t-3-short-name]-r3.md
 
 ## Files changed
-- [list from git diff feat/[feature-name] --name-only]
+- [list from git diff main...feat/[feature-name] --name-only]
 
 ## Review findings
-[Per task: N Critical, N Important — resolved/unresolved]
+[Per task: N Critical, N Important found in r1 — resolved/unresolved by final round]
 
 ## Notes
-[Any unresolved issues, conflicts resolved, judgment calls made]
+[Judgment calls: any files changed beyond the suggested list, approach deviations, unresolved issues, conflicts resolved]
 ```
 ```
 
@@ -286,13 +329,17 @@ Write `tmp/[feature]-summary.md`:
 
 **Self-contained.** A fresh session must execute without asking anything. Test: "If a stranger pasted this, would they succeed?"
 
-**Specific over general.** "Check YAML frontmatter has exactly 6 entries" beats "verify frontmatter looks correct."
+**Specify behavior, not replacements.** Describe what's wrong and what correct behavior looks like. Do not paste current code and exact replacements — that removes the subagent's thinking. The only exception: transformations with precision requirements a description can't convey (e.g., heredoc escaping rules, exact API signatures). Acceptance criteria are the quality gate, not the implementation guide.
+
+**File paths are hints.** Suggest the most likely files, but instruct the subagent to use its own judgment — if it reads the files and finds the right change belongs elsewhere, it should do that and note it in the summary.
+
+**Specific over general.** "Check YAML frontmatter has exactly 6 entries" beats "verify frontmatter looks correct." This applies to acceptance criteria, not to implementation steps.
 
 **Quality over speed.** Session length is not a concern. Every task gets full attention — a review subagent, a fix cycle, a clean commit. The goal is zero human rework after the session completes.
 
-**Three roles, clean separation.** Orchestrator sequences and merges — never implements. Task subagent (ST-N) implements, reviews, commits — never touches other tasks. Review subagent reads and reports — never fixes. Keep each role doing only its job.
+**Three roles, clean separation.** Orchestrator sequences and merges — never implements. Task subagent (T-N) implements, reviews, commits — never touches other tasks. Review subagent reads and reports — never fixes. Keep each role doing only its job.
 
-**ST-N prompts are self-contained.** Each task subagent prompt must include everything it needs: context, task definition, branch instructions (if parallel), the review subagent prompt, commit instructions. It cannot ask the orchestrator for clarification.
+**T-N prompts are self-contained.** Each task subagent prompt must include everything it needs: context, task definition, branch instructions (if parallel), the review subagent prompt, commit instructions. It cannot ask the orchestrator for clarification.
 
 **No meta-instructions.** Everything in the file is for the executing model.
 
@@ -322,7 +369,7 @@ Fix valid issues. Then present:
 ```
 ## Execution Summary
 
-**Prompt:** docs/prompts/[name].md
+**Prompt:** tmp/[name]/[prefix]-prompt.md
 **Model:** [Sonnet/Opus] — [why]
 **Sessions:** [1 or N]
 **Branch:** [type]/[name]

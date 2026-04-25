@@ -28,15 +28,16 @@ Parse for:
 
 **`--uncommitted`:** resolve to only files with uncommitted git changes under `agents/`. Use `git status --short agents/` to identify them.
 
-**`--task "[label]" --base "[base-branch]"`:** task review mode. Intended for use by task subagents (ST-N) in execution prompts. If `--task` is present but `--base` is missing, error out: "Task mode requires --base. Usage: --task \"label\" --base \"branch-name\""
-- Scope: files changed on the current branch vs `[base-branch]`, resolved via `git diff [base-branch]...HEAD --name-only -- agents/`. This is reliable regardless of commit timing.
-- Label: used for the output filename, e.g. `--task "beta-fixes-st-2"` → saves to `tmp/reviews/task-beta-fixes-st-2.md`
-- Report: saved to `tmp/reviews/task-[label].md` (not `docs/reviews/`) — these files are gitignored. Create `tmp/reviews/` if it doesn't exist.
+**`--task "[label]" --base "[base]"`:** task review mode. Intended for use by task subagents via `myna-dev-task-protocol`. `--base` accepts a branch name or commit SHA. If `--task` is present but `--base` is missing, error out: "Task mode requires --base. Usage: --task \"label\" --base \"branch-or-sha\""
+- Agents scope: `git diff [base]...HEAD --name-only -- agents/` — files eligible for 8-dimension review.
+- If agents scope is non-empty: run all 8 dimensions against those files, then check `--criteria`.
+- If agents scope is empty but `--criteria` is provided: skip the 8 dimensions, check `--criteria` against all changed files (`git diff [base]...HEAD --name-only`). This covers tasks that touch docs/, install.sh, ui/, etc.
+- If agents scope is empty and no `--criteria`: error out: "No files matched the scope — check your arguments."
+- Label format: `[feature]/[short-name]-rN` — e.g. `--task "config-ui/base-guard-r1"`. Parse: everything before `/` = feature name → folder `tmp/[feature]/reviews/`; everything after `/` = filename (without `.md`). So `config-ui/base-guard-r1` → `tmp/config-ui/reviews/base-guard-r1.md`.
+- Report: saved to `tmp/[feature]/reviews/[short-name]-rN.md` — these files are gitignored. Create the folder if it doesn't exist.
 - No convergence tracking, no report numbering
-- `--criteria "[comma-separated assertions]"`: optional task-specific acceptance criteria checked after the 8 dimensions
+- `--criteria "[comma-separated assertions]"`: task-specific acceptance criteria. Always checked — against agents/ files if present, against all changed files otherwise.
 - Print a brief summary to stdout after saving: findings count by severity + CLEAN/ISSUES FOUND + path to report file
-
-If the resolved scope is empty, error out: "No files matched the scope — check your arguments."
 
 ---
 
@@ -121,7 +122,7 @@ Each non-Nitpick issue gets three options and a recommendation. Quote specific t
 
 **Standard mode:** save to `docs/reviews/review-{NNN}.md` (next number in sequence).
 
-**Task mode (`--task`):** save to `tmp/reviews/task-[label].md`. Create `tmp/reviews/` if it doesn't exist.
+**Task mode (`--task`):** save to `tmp/[feature]/reviews/[short-name]-rN.md` (derived from label as described above). Create the directory if it doesn't exist.
 
 After saving, print summary:
 
@@ -138,7 +139,7 @@ Files reviewed: {count}
 Task mode:
 ```
 Task Review complete.
-Report: tmp/reviews/task-[label].md
+Report: tmp/[feature]/reviews/[short-name]-rN.md
 
 {N} Critical  {N} Important  {N} Minor  {N} Nitpick
 {CLEAN | ISSUES FOUND}
