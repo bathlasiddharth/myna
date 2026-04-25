@@ -623,41 +623,47 @@ if $DRY_RUN; then
 else
   SHELL_RC=$([ "$SHELL" = "$(which zsh)" ] && echo "$HOME/.zshrc" || echo "$HOME/.bashrc")
 
-  if grep -q "alias myna=" "$SHELL_RC" 2>/dev/null; then
+  if grep -qE "alias myna=|myna\(\)" "$SHELL_RC" 2>/dev/null; then
     info "Shell aliases already present in $SHELL_RC — skipping"
   else
     REPO_DIR="$SCRIPT_DIR"
     cat >> "$SHELL_RC" <<ALIASES
 
 # Myna aliases
-alias myna='claude --agent myna --add-dir "$VAULT_PATH"'
-alias myna-ro='claude --agent myna --allowedTools "Read,Glob,Grep" --add-dir "$VAULT_PATH"'
-alias myna-x='claude --agent myna --allowedTools ""'
-myna-update() {
-  local manifest="\$HOME/.myna/install-manifest.json"
-  local repo_dir="${REPO_DIR}"
-  if [ ! -d "\$repo_dir" ]; then
-    echo "Error: Myna repo not found at \$repo_dir"
-    echo ""
-    echo "The repo is required for updates. To re-install from scratch:"
-    echo "  git clone https://github.com/bathlasiddharth/myna.git"
-    echo "  cd myna"
-    echo "  ./install.sh --vault-path <your-vault-path>"
-    return 1
+myna() {
+  if [ "\$1" = "update" ]; then
+    local manifest="\$HOME/.myna/install-manifest.json"
+    local repo_dir="${REPO_DIR}"
+    if [ ! -d "\$repo_dir" ]; then
+      echo "Error: Myna repo not found at \$repo_dir"
+      echo ""
+      echo "The repo is required for updates. To re-install from scratch:"
+      echo "  git clone https://github.com/bathlasiddharth/myna.git"
+      echo "  cd myna"
+      echo "  ./install.sh --vault-path <your-vault-path>"
+      return 1
+    fi
+    local vault_path
+    vault_path=\$(python3 -c "import json,sys; d=json.load(open('\$manifest')); print(d['vault_path'])" 2>/dev/null)
+    if [ -z "\$vault_path" ]; then
+      echo "Error: Could not read vault_path from \$manifest"
+      echo "Try running the install script directly:"
+      echo "  cd \$repo_dir && git pull && ./install.sh --vault-path <your-vault-path>"
+      return 1
+    fi
+    echo "Pulling latest from \$repo_dir ..."
+    (cd "\$repo_dir" && git pull) || { echo "Error: git pull failed"; return 1; }
+    echo "Re-running install script ..."
+    "\$repo_dir/install.sh" --vault-path "\$vault_path"
+  else
+    claude --agent myna \
+      --allowedTools "Read,Edit,Write,Glob,Grep,Bash(git *),Bash(pandoc *),Bash(pkill python*),mcp__myna-obsidian__*,mcp__claude_ai_Gmail__*,mcp__claude_ai_Google_Calendar__*,mcp__claude_ai_Google_Drive__*" \
+      --add-dir "${VAULT_PATH}" \
+      "\$@"
   fi
-  local vault_path
-  vault_path=\$(python3 -c "import json,sys; d=json.load(open('\$manifest')); print(d['vault_path'])" 2>/dev/null)
-  if [ -z "\$vault_path" ]; then
-    echo "Error: Could not read vault_path from \$manifest"
-    echo "Try running the install script directly:"
-    echo "  cd \$repo_dir && git pull && ./install.sh --vault-path <your-vault-path>"
-    return 1
-  fi
-  echo "Pulling latest from \$repo_dir ..."
-  (cd "\$repo_dir" && git pull) || { echo "Error: git pull failed"; return 1; }
-  echo "Re-running install script ..."
-  "\$repo_dir/install.sh" --vault-path "\$vault_path"
 }
+alias myna-ro='claude --agent myna --allowedTools "Read,Glob,Grep" --add-dir "${VAULT_PATH}"'
+alias myna-x='claude --agent myna --allowedTools ""'
 ALIASES
     info "Added myna aliases to $SHELL_RC"
     warn "Run 'source $SHELL_RC' or open a new terminal to activate aliases"
@@ -702,5 +708,5 @@ if ! $DRY_RUN; then
   printf "     ${BOLD}claude --agent myna${NC}  (immediately)\n"
   echo ""
   printf "  ${BOLD}Keep the cloned repo.${NC} It is needed for ${BOLD}myna update${NC} to work.\n"
-  echo "  To update: myna-update  (or: cd $SCRIPT_DIR && git pull && ./install.sh --vault-path $VAULT_PATH)"
+  echo "  To update: myna update  (or: cd $SCRIPT_DIR && git pull && ./install.sh --vault-path $VAULT_PATH)"
 fi
