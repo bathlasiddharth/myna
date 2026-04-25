@@ -319,23 +319,6 @@ for name in "${config_files[@]}"; do
           cat > "$config_dest" <<'YAML'
 # Run /myna-setup for guided configuration.
 projects: []
-
-# ---
-# Email Triage Configuration
-# Controls how "triage my inbox" classifies emails.
-# ---
-triage:
-  inbox_source: ""
-  folders:
-    - name: Reply
-      description: "Needs a response from me"
-    - name: FYI
-      description: "Informational, no action needed"
-    - name: Follow-Up
-      description: "Waiting on someone else — check back later"
-    - name: Schedule
-      description: "Needs a meeting or calendar action"
-  draft_replies_folder: ""
 YAML
           ;;
         people)
@@ -376,6 +359,23 @@ journal:
 email:
   processed_folder: per-project
   common_folder: "Processed/"
+
+# ---
+# Email Triage Configuration
+# Controls how "triage my inbox" classifies emails.
+# ---
+triage:
+  inbox_source: ""
+  folders:
+    - name: Reply
+      description: "Needs a response from me"
+    - name: FYI
+      description: "Informational, no action needed"
+    - name: Follow-Up
+      description: "Waiting on someone else — check back later"
+    - name: Schedule
+      description: "Needs a meeting or calendar action"
+  draft_replies_folder: ""
 
 feedback_cycle_days: 30
 
