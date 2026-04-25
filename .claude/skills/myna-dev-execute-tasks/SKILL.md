@@ -189,6 +189,10 @@ After all pending tasks have been processed, write `tmp/[date]/summary.md`:
 **If all tasks are done (no failures):**
 
 ```bash
+git push origin fix/[date]
+```
+
+```bash
 gh pr create \
   --title "fix: queue run [date] — [N] tasks" \
   --body "$(cat <<'EOF'

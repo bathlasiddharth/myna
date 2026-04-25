@@ -146,15 +146,7 @@ Proceed to Step 5.
 
 ---
 
-## Step 5 — Push
-
-```bash
-git push origin [branch]
-```
-
----
-
-## Step 6 — Report Back
+## Step 5 — Report Back
 
 Determine which rounds ran (r1 always, r2 if ISSUES FOUND in r1, r3 if ISSUES FOUND in r2).
 
