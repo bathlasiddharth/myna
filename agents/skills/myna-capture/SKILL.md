@@ -56,7 +56,9 @@ When the user says "capture: [text]", decompose the input into its components an
    b. Assign a provenance marker.
    c. Write to the destination file — append-only.
    d. Inferred contributions: check `self_tracking` toggle first. If disabled, skip.
-3. If entity resolution fails (no match), complete the capture — write the entry to the daily note as a plain note — and silently add a review queue item to `ReviewQueue/review-people.md` for the unrecognized person. Do not ask the user inline.
+3. If entity resolution fails (ambiguous match or no match), apply the two-phase approach — ask the user inline first, and simultaneously add a review queue item as a safety net:
+   - **Ambiguous match:** Ask inline: "I found multiple matches for '[name]': [list candidates]. Which one?" Present candidates and wait for the user to pick. Once the user responds, resolve the entity, write the entry to the correct destination, and remove the queue item. The queue item persists only if no response arrives (batch run, no interaction).
+   - **No match:** Ask inline: "I don't recognize '[name]' — want to add them to people.yaml and create a person file? (yes / no, just write a plain note)" Add a review queue item to `ReviewQueue/review-people.md` simultaneously. Once the user responds — either way — remove the queue item and proceed accordingly. The queue item persists only if no response arrives.
 4. Report all destinations written.
 
 **Entry formats by destination:**
@@ -387,11 +389,11 @@ pending-feedback: false
 
 ## ⚠️ Edge Cases
 
-**Entity not found (person):** Complete the capture — write the entry to the daily note as a plain note — then silently add a review queue item to `ReviewQueue/review-people.md`: `- [ ] Unknown person '[name]' mentioned in capture — create person file or update people.yaml (capture, {date})`. Report to the user that the entry was written and a review item was queued.
+**Entity not found (person):** Ask inline: "I don't recognize '[name]' — want to add them to people.yaml and create a person file? (yes / no, just write a plain note)". At the same time, add a review queue item to `ReviewQueue/review-people.md`: `- [ ] Unknown person '[name]' mentioned in capture — create person file or update people.yaml (capture, {date})`. Once the user responds — either way — remove the queue item and proceed accordingly (create person file, or write entry to daily note as plain note). The queue item persists only if no inline response arrives (batch run, no interaction).
 
 **Entity not found (project):** "I don't recognize '[name]' — is this a new project? (yes to create, no to just write a note)"
 
-**Multiple matches:** "I found both 'Auth Migration' and 'Auth Service' — which one?"
+**Multiple matches (person):** Ask inline: "I found multiple matches for '[name]': [list candidates]. Which one?" At the same time, add a review queue item to `ReviewQueue/review-people.md`: `- [ ] Ambiguous person '[name]' in capture — candidates: [list] (capture, {date})`. Once the user picks, resolve the entity, write the entry to the correct destination, and remove the queue item. The queue item persists only if no inline response arrives (batch run, no interaction).
 
 **self_tracking disabled:** Skip all contribution log writes silently. Don't mention it.
 
