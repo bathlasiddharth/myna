@@ -124,7 +124,7 @@ The most important section. Always present three explicit options upfront before
 
 **Reading files by type (for option 1):**
 - **PDF**: Use Claude Code's Read tool directly — it handles PDFs natively. Do not write a script.
-- **docx**: Check `pandoc --version` first. If available, run `pandoc -t plain <file>` to extract text. If pandoc is not found, fall back to `python3 -c "import docx; ..."` (python-docx). Do not write custom parsing scripts.
+- **docx**: Check `pandoc --version` first. If available, run `pandoc -t plain <file>` to extract text. If pandoc is not found, check if python-docx is available by running `python3 -c "import docx"`. If it is, extract text with: `python3 -c "import docx, sys; d=docx.Document(sys.argv[1]); print('\n'.join(p.text for p in d.paragraphs))" <file>`. If neither pandoc nor python-docx is available, tell the user: "I can't read .docx files directly. Please install either pandoc (`brew install pandoc` or your OS package manager) or python-docx (`pip install python-docx`), then re-run setup. Alternatively, paste the document contents directly into the chat." Do not write custom parsing scripts.
 
 When extracting from docs or user input, populate both `projects.yaml` and `people.yaml`. Cross-reference: people mentioned in projects get added to people config; projects mentioned for people get linked.
 
@@ -189,3 +189,4 @@ Suggest next steps: run `myna` and type `sync` to start the day.
 - Internal plumbing fields — keep at defaults, never ask: `timestamp_format`, `prompt_logging`, `calendar_event_prefix`, `calendar_event_types`.
 - `meetings.yaml` and `tags.yaml` are not part of the guided flow — don't write them unless the user explicitly asks.
 - **Import write-back: write only what was in the review file.** When writing config after an import review (option 3 in Section 4), write only the entries and fields present in the review file. Do not add blocks, sections, or fields — such as triage, defaults, or schema examples — that were not explicitly included by the user.
+- **Filter blank values from all list fields before writing.** Before writing any YAML config file, drop every item in every list field that is an empty string, null, or whitespace-only string. This applies to all list fields across all config files — do not enumerate fields by name. Only non-empty, non-null values with at least one non-whitespace character are written.
