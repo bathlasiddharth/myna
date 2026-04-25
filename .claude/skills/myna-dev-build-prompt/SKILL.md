@@ -166,12 +166,15 @@ Write the prompt to `tmp/[name]/[prefix]-prompt.md`. The name is either specifie
    ```
    git checkout -b feat/[feature-name]
    ```
-2. Create branches for parallel tasks only (sequential task branches are created just before spawning each one):
+2. Create branches and worktrees for parallel tasks only (sequential task branches are created just before spawning each one):
    ```
-   git checkout -b feat/[feature]-t-1 feat/[feature-name]
-   git checkout -b feat/[feature]-t-2 feat/[feature-name]
-   git checkout feat/[feature-name]
+   git branch feat/[feature]-t-1 feat/[feature-name]
+   git branch feat/[feature]-t-2 feat/[feature-name]
+   mkdir -p tmp/[feature]/worktrees
+   git worktree add tmp/[feature]/worktrees/t-1 feat/[feature]-t-1
+   git worktree add tmp/[feature]/worktrees/t-2 feat/[feature]-t-2
    ```
+   Each worktree is an isolated working directory with its own HEAD — parallel subagents won't race on `git checkout`.
 3. Create the run log at `tmp/[feature]/[prefix]-run.md`:
    ```markdown
    # [feature] — [date]
@@ -205,7 +208,11 @@ Merge + delete (Done path only):
 ```
 git checkout feat/[feature-name]
 git merge feat/[feature]-t-N
-git branch -d feat/[feature]-t-N && git push origin --delete feat/[feature]-t-N
+git branch -d feat/[feature]-t-N
+```
+For parallel tasks, also remove the worktree before deleting the branch:
+```
+git worktree remove tmp/[feature]/worktrees/t-N
 ```
 Resolve any conflicts before proceeding.
 
@@ -247,7 +254,8 @@ Spawn this subagent with the Agent tool. Prompt:
 > ```
 > `--short-name`: 2-3 words from this task title, lowercase hyphen-separated (e.g. `base-guard`, `email-sort`).
 > `--commit-msg`: the conventional commit message for your implementation.
-> Branch `feat/[feature]-t-1` already exists — check it out before implementing.
+>
+> **Working directory:** `cd tmp/[feature]/worktrees/t-1` before reading or editing any files, and run all git commands from there. The branch `feat/[feature]-t-1` is already checked out in this worktree — do not run `git checkout`.
 
 ---
 
