@@ -68,7 +68,6 @@ mcp_servers:
 # System
 # ---
 prompt_logging: true                  # Log user prompts to _system/logs/prompts.md (default: true)
-ai_model: claude-code                 # Reference only — not enforced
 
 # ---
 # Feature Toggles
@@ -90,6 +89,21 @@ features:
   feedback_gap_detection: true
   contribution_detection: true
   milestones: true                    # Birthdays/anniversaries in daily note
+  observations_logging: true
+  recognition_tracking: true
+  person_briefing: true
+  one_on_one_analysis: true
+  performance_narrative: true
   weekly_summary: true
   monthly_updates: true
   park_resume: true
+  meeting_summaries: true
+  email_draft_reply: true
+  message_rewriting: true
+  document_processing: true
+  pre_read_prep: true
+  difficult_conversation: true
+  help_me_say_no: true
+  quick_capture: true
+  link_manager: true
+  auto_tagging: true
