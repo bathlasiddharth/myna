@@ -42,6 +42,7 @@ The output is a markdown file at `docs/prompts/[name].md` that gets copy-pasted 
 
 ### Git Conventions
 - Conventional commits: `feat:`, `fix:`, `docs:`, `chore:`, `refactor:`
+- Scope is the feature or area being changed — `feat(setup):`, `feat(config-ui):`, `fix(capture):`. Never use task IDs or group IDs as scope (no `feat(G1):`, `fix(C15):`).
 - Never auto-commit — only when explicitly asked
 - Never add Co-Authored-By lines
 - Atomic commits — one logical change per commit
@@ -99,19 +100,24 @@ Say "agreed" to accept all recommendations, or specify what to change.
 ## Phase 2: Assess
 
 ### Scope
-- **Small (1-2 tasks):** Simple direct prompt. Inline review checklist.
-- **Medium (3-4 tasks):** Sequential tasks with review after each.
-- **Large (5+ tasks):** Coordinator with subagent delegation, parallel phases, per-task review.
+- **Small (1-2 tasks):** Simple direct prompt. Every task still gets a review subagent + fix cycle.
+- **Medium (3-4 tasks):** Sequential tasks, review subagent after each.
+- **Large (5+ tasks):** Parallel branches where safe, sequential otherwise. Review subagent after each task.
 
 ### Task Dependencies
-Map parallel vs sequential. Parallel only when tasks touch different files.
+Every task runs as a subagent (Agent tool). This eliminates context bleed between tasks and gives each task full isolated attention. The only decision to make is: **parallel** or **sequential**?
+
+- **Parallel subagents** (5+ tasks only): tasks with zero file overlap and no dependency on each other. Each gets its own branch and runs simultaneously. The orchestrator merges all branches after. Only parallelize when you are certain there is no chance of conflicts — verify the exact files each task touches.
+- **Sequential subagents**: everything else. Run one at a time on the feature branch. Use when tasks share files, depend on a prior task's output, or file overlap is uncertain.
+
+**Parallelization rule:** only parallelize when you have verified the file sets are completely disjoint. If there is any doubt, make it sequential. Wrong parallelization causes merge conflicts; unnecessary sequencing just costs time — and session length is not a concern.
 
 ### Risk Assessment
 - **High risk:** `agents/main.md` (routing), `install.sh` (user-facing), skill files with complex logic → stricter review.
 - **Low risk:** doc updates, config changes, new files → lighter review.
 
 ### Review Persona
-Match reviewer lens to the work. Specify in the generated prompt: "Review as [role] looking for [what matters]."
+Match reviewer lens to the work. Each task gets a dedicated review subagent — write the subagent prompt in the task's `#### Review — Agent tool` block. The subagent reads the changed files and checks the assertions. Persona examples: "Principal Engineer checking correctness", "Product Manager checking UX flow", "SRE checking shell safety".
 
 ### Model Selection
 Default to Sonnet. Use Opus only for ambiguous requirements or complex existing code.
@@ -127,55 +133,153 @@ Write the prompt to `docs/prompts/[name].md`. The name is either specified by th
 
 ### Prompt Structure
 
-Adapt to scope — Small prompts skip coordinator blocks and review manifesto.
-
 ```markdown
 # [Title]
 
 [1-2 sentence description.]
 
-[Only for Medium/Large:]
-**You are a coordinator.** [delegation instructions]
+**You are the orchestrator.** Your only job is sequencing, branch management, and coordination — you do not implement tasks. Each task subagent (ST-N) owns its implementation, review loop, and commit. You own branches, the run log, merges, and the final push.
 
-[Only for Medium/Large:]
-**Quality over speed.** Take the time to do each task well. A longer session with high-quality output is better than rushing to finish. Read files thoroughly before editing, review your own work, and don't cut corners on later tasks.
+**Setup — do this before spawning any subagent:**
 
-[Only for Medium/Large:]
-**Goal: zero human rework.** After you commit, the user should be able to merge without changes. Run review → fix cycles until the review comes back clean. Maximum 3 cycles — if issues persist after 3 rounds, stop and document what's unresolved. But most work should converge in 1-2 cycles.
+1. Create the feature branch:
+   ```
+   git checkout -b feat/[feature-name]
+   ```
+2. Create branches for parallel tasks only (sequential task branches are created just before spawning each one):
+   ```
+   git checkout -b feat/[feature]-st-1 feat/[feature-name]
+   git checkout -b feat/[feature]-st-2 feat/[feature-name]
+   git checkout feat/[feature-name]
+   ```
+3. Commit the execution prompt doc:
+   ```
+   git add docs/prompts/[name].md
+   git commit -m "docs: add [name] execution prompt"
+   ```
+4. Create the run log at `tmp/[feature]-run.md`:
+   ```markdown
+   # [feature] — [date]
+
+   ## Tasks
+   - [ ] ST-1: [Task title] — branch `feat/[feature]-st-1` — pending
+   - [ ] ST-2: [Task title] — branch `feat/[feature]-st-2` — pending
+   - [ ] ST-3: [Task title] — branch `feat/[feature]-st-3` — pending
+
+   ## Reviews
+   (none yet)
+
+   ## Unresolved
+   (none)
+   ```
+
+**Execution plan**
+
+Parallel (spawn all simultaneously — zero file overlap verified):
+- ST-1: [Task title] — `feat/[feature]-st-1` — touches `[file A]` only
+- ST-2: [Task title] — `feat/[feature]-st-2` — touches `[file B]` only
+
+Sequential (spawn one at a time after parallel merges):
+- ST-3: [Task title] — `feat/[feature]-st-3`
+
+After each subagent reports back:
+- **If "Done":** update run log (mark complete, add review round count and report path), merge + delete branch, proceed
+- **If "Unresolved":** update run log (mark failed, note report path and issues), leave branch unmerged, skip tasks that depend on this one, continue unblocked tasks
+
+Merge + delete (Done path only):
+```
+git checkout feat/[feature-name]
+git merge feat/[feature]-st-N
+git branch -d feat/[feature]-st-N && git push origin --delete feat/[feature]-st-N
+```
+Resolve any conflicts before proceeding.
+
+**For sequential tasks:** create the branch just before spawning — after the prior task's branch is merged:
+```
+git checkout -b feat/[feature]-st-N feat/[feature-name]
+```
 
 ## Context
-[What the executing session needs to know.]
+[What all subagents need to know — project background, conventions, key constraints.]
 
 ## Design Decisions (already settled — do not re-debate)
 [Numbered decisions from the brainstorm + clarifications.]
 
-## What to read first
-[Specific file list. Include CLAUDE.md — it has git conventions.]
+---
 
-## Changes to make
+## ST-1: [Task title] — parallel
 
-### Task 1: [Title]
-[Specific instructions. File paths. What to change, what NOT to change.]
+Spawn this subagent with the Agent tool. Prompt:
 
-#### Review criteria [Review as [role]]
-- [ ] [Specific assertion]
-- [ ] [Specific assertion]
+> **Context:** [Myna project context, relevant conventions]
+>
+> **Your job:** [What needs to change and why. Constraints: what not to do.]
+>
+> **Acceptance criteria:**
+> - [Specific assertion]
+> - [Specific assertion]
+>
+> **Steps:**
+> 1. `git checkout feat/[feature]-st-1` (branch already exists)
+> 2. Read these files: `[file1]`, `[file2]` — verify current state before changing anything
+> 3. Implement the task
+> 4. Commit: `[type]([scope]): [what changed]`
+> 5. Review loop (max 3 rounds):
+>    - Spawn a review subagent (Agent tool): `Run /myna-dev-review --task "[feature]-st-1" --base "feat/[feature-name]" --criteria "[acceptance criteria as comma-separated assertions]". Report back the stdout summary and report path.`
+>    - Read the summary. Fix any Critical or Important issues → `git commit -m "fix: ..."` → re-spawn review.
+>    - Repeat until clean or 3 rounds done. If still unresolved, note the report path and issues.
+> 6. Push: `git push origin feat/[feature]-st-1`
+> 7. Report back: "Done — [round count] review round(s)" or "Unresolved: [list] — report: tmp/reviews/task-[feature]-st-1.md"
 
-### Task 2: [Title]
-...
+---
 
-[Only for Medium/Large:]
-## Review discipline
-Only flag issues that would cause real problems — execution failures, wrong output, broken functionality. Don't flag stylistic preferences or theoretical concerns. A clean review is valid. Test: "would this actually break something?" If no, skip it.
+## ST-2: [Task title] — parallel
+
+Spawn this subagent with the Agent tool. Prompt:
+
+> [Same structure as ST-1, adapted for this task. Branch: `feat/[feature]-st-2`.]
+
+---
+
+## ST-3: [Task title] — sequential (after parallel merges)
+
+Spawn this subagent with the Agent tool. Prompt:
+
+> [Same structure as ST-1, adapted for this task. Branch: `feat/[feature]-st-3`.]
+
+---
 
 ## Quality checks
-[Concrete verification — syntax checks, grep assertions, counts]
+- All task branches merged and deleted
+- Run log has no pending or in-progress items
+- No unresolved issues carried forward
 
-## Commit and push
-1. Create a new branch: `feat/[feature-name]` (or `fix/` or `docs/` per conventional commits)
-2. Stage all changed files — include this prompt file (`docs/prompts/[name].md`)
-3. Commit: `[type]: [description]` — no Co-Authored-By
-4. Push to origin
+## Final push
+If any tasks are marked failed in the run log: stop — do not push. Report unresolved items with report paths.
+
+Otherwise: `git push origin feat/[feature-name]`
+
+## Summary
+Write `tmp/[feature]-summary.md`:
+```markdown
+# [feature] — session summary
+
+**Branch:** feat/[feature-name]
+**Date:** [date]
+
+## Tasks
+- ST-1: [title] — done (N review rounds)
+- ST-2: [title] — failed (see tmp/reviews/task-[feature]-st-2.md)
+
+## Files changed
+- [list from git diff feat/[feature-name] --name-only]
+
+## Review findings
+[Per task: N Critical, N Important — resolved/unresolved]
+
+## Notes
+[Any unresolved issues, conflicts resolved, judgment calls made]
+```
 ```
 
 ### Writing Principles
@@ -184,11 +288,13 @@ Only flag issues that would cause real problems — execution failures, wrong ou
 
 **Specific over general.** "Check YAML frontmatter has exactly 6 entries" beats "verify frontmatter looks correct."
 
-**Right-sized.** Match structure to complexity. A 2-line doc update doesn't need a subagent.
+**Quality over speed.** Session length is not a concern. Every task gets full attention — a review subagent, a fix cycle, a clean commit. The goal is zero human rework after the session completes.
+
+**Three roles, clean separation.** Orchestrator sequences and merges — never implements. Task subagent (ST-N) implements, reviews, commits — never touches other tasks. Review subagent reads and reports — never fixes. Keep each role doing only its job.
+
+**ST-N prompts are self-contained.** Each task subagent prompt must include everything it needs: context, task definition, branch instructions (if parallel), the review subagent prompt, commit instructions. It cannot ask the orchestrator for clarification.
 
 **No meta-instructions.** Everything in the file is for the executing model.
-
-**Coordinator discipline.** Each subagent prompt is self-contained. Parallel only when files don't overlap. Review between phases.
 
 **Doc updates are real tasks.** Same treatment as code changes — instructions, review criteria, quality checks.
 

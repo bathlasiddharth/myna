@@ -17,6 +17,7 @@ $ARGUMENTS
 
 Parse for:
 - **Scope:** file paths, glob patterns, `--uncommitted`, or no arguments (default scope below)
+- **`--task "[label]"`:** task review mode — see below
 - Anything else: error out with a note on valid usage
 
 **Default scope** (no arguments): all of the following:
@@ -26,6 +27,14 @@ Parse for:
 - `agents/config-examples/*.yaml.example`
 
 **`--uncommitted`:** resolve to only files with uncommitted git changes under `agents/`. Use `git status --short agents/` to identify them.
+
+**`--task "[label]" --base "[base-branch]"`:** task review mode. Intended for use by task subagents (ST-N) in execution prompts. If `--task` is present but `--base` is missing, error out: "Task mode requires --base. Usage: --task \"label\" --base \"branch-name\""
+- Scope: files changed on the current branch vs `[base-branch]`, resolved via `git diff [base-branch]...HEAD --name-only -- agents/`. This is reliable regardless of commit timing.
+- Label: used for the output filename, e.g. `--task "beta-fixes-st-2"` → saves to `tmp/reviews/task-beta-fixes-st-2.md`
+- Report: saved to `tmp/reviews/task-[label].md` (not `docs/reviews/`) — these files are gitignored. Create `tmp/reviews/` if it doesn't exist.
+- No convergence tracking, no report numbering
+- `--criteria "[comma-separated assertions]"`: optional task-specific acceptance criteria checked after the 8 dimensions
+- Print a brief summary to stdout after saving: findings count by severity + CLEAN/ISSUES FOUND + path to report file
 
 If the resolved scope is empty, error out: "No files matched the scope — check your arguments."
 
@@ -110,9 +119,13 @@ Each non-Nitpick issue gets three options and a recommendation. Quote specific t
 
 ## Report
 
-Save to `docs/reviews/review-{NNN}.md` (next number in sequence).
+**Standard mode:** save to `docs/reviews/review-{NNN}.md` (next number in sequence).
+
+**Task mode (`--task`):** save to `tmp/reviews/task-[label].md`. Create `tmp/reviews/` if it doesn't exist.
 
 After saving, print summary:
+
+Standard mode:
 ```
 Myna Review — Cycle {NNN} complete.
 Report: docs/reviews/review-{NNN}.md
@@ -122,4 +135,14 @@ Convergence: {CONVERGED | CONTINUE}
 Files reviewed: {count}
 ```
 
-Convergence = 0 Critical + 0 Important.
+Task mode:
+```
+Task Review complete.
+Report: tmp/reviews/task-[label].md
+
+{N} Critical  {N} Important  {N} Minor  {N} Nitpick
+{CLEAN | ISSUES FOUND}
+Files reviewed: {count}
+```
+
+Convergence (standard mode only) = 0 Critical + 0 Important.
