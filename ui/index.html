@@ -85,6 +85,10 @@
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
         Identity
       </button>
+      <button class="nav-tab" data-tab="calendar" onclick="switchTab('calendar')">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+        Calendar
+      </button>
       <button class="nav-tab" data-tab="communication" onclick="switchTab('communication')">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
         Communication
@@ -126,7 +130,7 @@
 
           <div class="grid grid-cols-2 gap-4" id="overview-grid">
             <!-- Identity card -->
-            <div class="overview-card" id="card-identity">
+            <div class="overview-card" id="card-identity" onclick="switchTab('identity')">
               <div class="flex items-center justify-between mb-3">
                 <span class="card-title">Identity</span>
                 <span class="status-badge" id="badge-identity"></span>
@@ -136,8 +140,19 @@
               </div>
             </div>
 
+            <!-- Calendar card -->
+            <div class="overview-card" id="card-calendar" onclick="switchTab('calendar')">
+              <div class="flex items-center justify-between mb-3">
+                <span class="card-title">Calendar</span>
+                <span class="status-badge" id="badge-calendar"></span>
+              </div>
+              <div class="card-body" id="overview-calendar-body">
+                <span class="text-slate-400 text-sm">Loading...</span>
+              </div>
+            </div>
+
             <!-- Integrations card -->
-            <div class="overview-card" id="card-integrations">
+            <div class="overview-card" id="card-integrations" onclick="switchTab('integrations')">
               <div class="flex items-center justify-between mb-3">
                 <span class="card-title">Integrations</span>
                 <span class="status-badge" id="badge-integrations"></span>
@@ -148,7 +163,7 @@
             </div>
 
             <!-- Communication card -->
-            <div class="overview-card" id="card-communication">
+            <div class="overview-card" id="card-communication" onclick="switchTab('communication')">
               <div class="flex items-center justify-between mb-3">
                 <span class="card-title">Communication Style</span>
                 <span class="status-badge" id="badge-communication"></span>
@@ -159,7 +174,7 @@
             </div>
 
             <!-- Features card -->
-            <div class="overview-card" id="card-features">
+            <div class="overview-card" id="card-features" onclick="switchTab('features')">
               <div class="flex items-center justify-between mb-3">
                 <span class="card-title">Features</span>
                 <span class="status-badge" id="badge-features"></span>
@@ -170,7 +185,7 @@
             </div>
 
             <!-- Projects card -->
-            <div class="overview-card" id="card-projects">
+            <div class="overview-card" id="card-projects" onclick="switchTab('projects')">
               <div class="flex items-center justify-between mb-3">
                 <span class="card-title">Projects</span>
                 <span class="status-badge" id="badge-projects"></span>
@@ -181,7 +196,7 @@
             </div>
 
             <!-- People card -->
-            <div class="overview-card" id="card-people">
+            <div class="overview-card" id="card-people" onclick="switchTab('people')">
               <div class="flex items-center justify-between mb-3">
                 <span class="card-title">People</span>
                 <span class="status-badge" id="badge-people"></span>
@@ -328,9 +343,9 @@
                 <div class="field-group">
                   <label class="field-label" for="feedback-cycle">Feedback cycle</label>
                   <select id="feedback-cycle" class="field-input" onchange="saveTab('identity')">
-                    <option value="1">Every 1 month</option>
-                    <option value="2">Every 2 months</option>
-                    <option value="3">Every 3 months</option>
+                    <option value="14">Every 2 weeks</option>
+                    <option value="30" selected>Every month</option>
+                    <option value="90">Quarterly</option>
                   </select>
                 </div>
                 <div class="field-group">
@@ -339,6 +354,53 @@
                     <input type="number" id="journal-archive" class="field-input pr-12" min="1" max="365" placeholder="30" />
                     <span class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm pointer-events-none">days</span>
                   </div>
+                </div>
+              </div>
+
+              <div class="field-group">
+                <label class="field-label" for="date-format">Date format</label>
+                <select id="date-format" class="field-input" onchange="saveTab('identity')">
+                  <option value="YYYY-MM-DD">YYYY-MM-DD (2026-04-24)</option>
+                  <option value="MM/DD/YYYY">MM/DD/YYYY (04/24/2026)</option>
+                  <option value="DD/MM/YYYY">DD/MM/YYYY (24/04/2026)</option>
+                  <option value="DD-MM-YYYY">DD-MM-YYYY (24-04-2026)</option>
+                  <option value="MMMM D, YYYY">MMMM D, YYYY (April 24, 2026)</option>
+                </select>
+              </div>
+            </div>
+
+          </form>
+        </div>
+      </div>
+
+      <!-- ===================== CALENDAR ===================== -->
+      <div id="tab-calendar" class="tab-panel hidden p-8">
+        <div class="max-w-xl">
+          <h1 class="text-xl font-semibold text-slate-900 mb-1">Calendar</h1>
+          <p class="text-slate-500 text-sm mb-8">How Myna labels the calendar events it creates.</p>
+
+          <form id="calendar-form" onsubmit="return false;">
+            <div class="form-section">
+              <h2 class="section-title">Event Labels</h2>
+
+              <div class="field-group">
+                <label class="field-label" for="calendar-prefix">Event prefix</label>
+                <input type="text" id="calendar-prefix" class="field-input font-mono" placeholder="[Myna]" />
+                <p class="field-hint">Prepended to every calendar event Myna creates, e.g. <code>[Myna]:Focus</code>.</p>
+              </div>
+
+              <div class="grid grid-cols-3 gap-4">
+                <div class="field-group">
+                  <label class="field-label" for="calendar-type-focus">Focus label</label>
+                  <input type="text" id="calendar-type-focus" class="field-input" placeholder="Focus" />
+                </div>
+                <div class="field-group">
+                  <label class="field-label" for="calendar-type-task">Task label</label>
+                  <input type="text" id="calendar-type-task" class="field-input" placeholder="Task" />
+                </div>
+                <div class="field-group">
+                  <label class="field-label" for="calendar-type-reminder">Reminder label</label>
+                  <input type="text" id="calendar-type-reminder" class="field-input" placeholder="Reminder" />
                 </div>
               </div>
             </div>
@@ -363,7 +425,7 @@
 
               <div class="field-group">
                 <label class="field-label" for="mcp-email">Email MCP server</label>
-                <input type="text" id="mcp-email" class="field-input font-mono" placeholder="e.g. gmail-mcp" />
+                <input type="text" id="mcp-email" class="field-input font-mono" placeholder="e.g. gmail-mcp" oninput="updateDraftRepliesVisibility(); saveTab('integrations')" />
               </div>
 
               <div class="field-group">
@@ -374,6 +436,16 @@
               <div class="field-group">
                 <label class="field-label" for="mcp-slack">Messaging MCP server</label>
                 <input type="text" id="mcp-slack" class="field-input font-mono" placeholder="e.g. slack-mcp" />
+              </div>
+            </div>
+
+            <div class="form-section" id="draft-replies-section" style="display:none">
+              <h2 class="section-title">Draft Replies</h2>
+
+              <div class="field-group">
+                <label class="field-label" for="notes-email">Notes forwarding email</label>
+                <input type="email" id="notes-email" class="field-input" placeholder="e.g. notes@yourapp.com" />
+                <p class="field-hint">Forward email threads to this address with your notes in the body to trigger a draft reply. Used by the DraftReplies workflow.</p>
               </div>
             </div>
 
@@ -594,6 +666,16 @@
                     <span class="toggle-track"></span>
                   </label>
                 </div>
+                <div class="feature-row">
+                  <div class="feature-info">
+                    <span class="feature-name">Meeting summaries from email</span>
+                    <span class="feature-desc">Auto-import Zoom / Teams AI summaries into meeting files</span>
+                  </div>
+                  <label class="toggle-switch">
+                    <input type="checkbox" id="feat-meeting_summaries" class="toggle-input" />
+                    <span class="toggle-track"></span>
+                  </label>
+                </div>
               </div>
             </div>
 
@@ -676,6 +758,56 @@
                     <span class="toggle-track"></span>
                   </label>
                 </div>
+                <div class="feature-row">
+                  <div class="feature-info">
+                    <span class="feature-name">Observations &amp; feedback logging</span>
+                    <span class="feature-desc">Log observations and coaching moments to person files over time</span>
+                  </div>
+                  <label class="toggle-switch">
+                    <input type="checkbox" id="feat-observations_logging" class="toggle-input" />
+                    <span class="toggle-track"></span>
+                  </label>
+                </div>
+                <div class="feature-row">
+                  <div class="feature-info">
+                    <span class="feature-name">Recognition tracking</span>
+                    <span class="feature-desc">Track recognition given and received across the team</span>
+                  </div>
+                  <label class="toggle-switch">
+                    <input type="checkbox" id="feat-recognition_tracking" class="toggle-input" />
+                    <span class="toggle-track"></span>
+                  </label>
+                </div>
+                <div class="feature-row">
+                  <div class="feature-info">
+                    <span class="feature-name">Person briefing</span>
+                    <span class="feature-desc">Generate a briefing on any person before a meeting or conversation</span>
+                  </div>
+                  <label class="toggle-switch">
+                    <input type="checkbox" id="feat-person_briefing" class="toggle-input" />
+                    <span class="toggle-track"></span>
+                  </label>
+                </div>
+                <div class="feature-row">
+                  <div class="feature-info">
+                    <span class="feature-name">1:1 pattern analysis</span>
+                    <span class="feature-desc">Analyze patterns across your 1:1 meetings with each person</span>
+                  </div>
+                  <label class="toggle-switch">
+                    <input type="checkbox" id="feat-one_on_one_analysis" class="toggle-input" />
+                    <span class="toggle-track"></span>
+                  </label>
+                </div>
+                <div class="feature-row">
+                  <div class="feature-info">
+                    <span class="feature-name">Performance narrative</span>
+                    <span class="feature-desc">Generate performance review narratives for team members</span>
+                  </div>
+                  <label class="toggle-switch">
+                    <input type="checkbox" id="feat-performance_narrative" class="toggle-input" />
+                    <span class="toggle-track"></span>
+                  </label>
+                </div>
               </div>
             </div>
 
@@ -732,6 +864,72 @@
             </div>
 
             <div class="form-section">
+              <h2 class="section-title">Writing &amp; Drafts</h2>
+              <div class="feature-list">
+                <div class="feature-row">
+                  <div class="feature-info">
+                    <span class="feature-name">Email draft reply</span>
+                    <span class="feature-desc">Draft replies to emails with full thread and project context</span>
+                  </div>
+                  <label class="toggle-switch">
+                    <input type="checkbox" id="feat-email_draft_reply" class="toggle-input" />
+                    <span class="toggle-track"></span>
+                  </label>
+                </div>
+                <div class="feature-row">
+                  <div class="feature-info">
+                    <span class="feature-name">Message rewriting</span>
+                    <span class="feature-desc">Rewrite messages for tone, clarity, or audience</span>
+                  </div>
+                  <label class="toggle-switch">
+                    <input type="checkbox" id="feat-message_rewriting" class="toggle-input" />
+                    <span class="toggle-track"></span>
+                  </label>
+                </div>
+                <div class="feature-row">
+                  <div class="feature-info">
+                    <span class="feature-name">Document processing</span>
+                    <span class="feature-desc">Extract action items and decisions from documents and specs</span>
+                  </div>
+                  <label class="toggle-switch">
+                    <input type="checkbox" id="feat-document_processing" class="toggle-input" />
+                    <span class="toggle-track"></span>
+                  </label>
+                </div>
+                <div class="feature-row">
+                  <div class="feature-info">
+                    <span class="feature-name">Pre-read preparation</span>
+                    <span class="feature-desc">Generate a briefing before reading a long document</span>
+                  </div>
+                  <label class="toggle-switch">
+                    <input type="checkbox" id="feat-pre_read_prep" class="toggle-input" />
+                    <span class="toggle-track"></span>
+                  </label>
+                </div>
+                <div class="feature-row">
+                  <div class="feature-info">
+                    <span class="feature-name">Difficult conversation prep</span>
+                    <span class="feature-desc">Help prepare for high-stakes or challenging conversations</span>
+                  </div>
+                  <label class="toggle-switch">
+                    <input type="checkbox" id="feat-difficult_conversation" class="toggle-input" />
+                    <span class="toggle-track"></span>
+                  </label>
+                </div>
+                <div class="feature-row">
+                  <div class="feature-info">
+                    <span class="feature-name">Help me say no</span>
+                    <span class="feature-desc">Draft diplomatic declines for requests or invitations</span>
+                  </div>
+                  <label class="toggle-switch">
+                    <input type="checkbox" id="feat-help_me_say_no" class="toggle-input" />
+                    <span class="toggle-track"></span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-section">
               <h2 class="section-title">Context</h2>
               <div class="feature-list">
                 <div class="feature-row">
@@ -741,6 +939,36 @@
                   </div>
                   <label class="toggle-switch">
                     <input type="checkbox" id="feat-park_resume" class="toggle-input" />
+                    <span class="toggle-track"></span>
+                  </label>
+                </div>
+                <div class="feature-row">
+                  <div class="feature-info">
+                    <span class="feature-name">Quick capture</span>
+                    <span class="feature-desc">Capture anything and route it to the right place automatically</span>
+                  </div>
+                  <label class="toggle-switch">
+                    <input type="checkbox" id="feat-quick_capture" class="toggle-input" />
+                    <span class="toggle-track"></span>
+                  </label>
+                </div>
+                <div class="feature-row">
+                  <div class="feature-info">
+                    <span class="feature-name">Link manager</span>
+                    <span class="feature-desc">Save and retrieve links organized by project or person</span>
+                  </div>
+                  <label class="toggle-switch">
+                    <input type="checkbox" id="feat-link_manager" class="toggle-input" />
+                    <span class="toggle-track"></span>
+                  </label>
+                </div>
+                <div class="feature-row">
+                  <div class="feature-info">
+                    <span class="feature-name">Auto-tagging</span>
+                    <span class="feature-desc">Automatically tag entries based on project and people context</span>
+                  </div>
+                  <label class="toggle-switch">
+                    <input type="checkbox" id="feat-auto_tagging" class="toggle-input" />
                     <span class="toggle-track"></span>
                   </label>
                 </div>

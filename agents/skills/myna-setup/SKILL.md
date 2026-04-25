@@ -96,7 +96,7 @@ Complete essentials before moving to preferences.
 - Email filing: how processed emails are organized (options: 1) Per-project folders, 2) One shared folder)
 - Feature areas: present four areas and let the user disable any they don't need — 1) Email & messaging, 2) Meetings & calendar, 3) People & team management, 4) Personal tracking. Map the user's choices to the 17 individual toggle fields in `workspace.yaml`. Default is all enabled.
 
-Do not ask about: `timestamp_format`, `prompt_logging`, `ai_model`, `calendar_event_prefix`, `calendar_event_types`. These are internal plumbing — keep at defaults.
+Do not ask about: `timestamp_format`, `prompt_logging`, `calendar_event_prefix`, `calendar_event_types`. These can be edited via the Myna config UI or directly in `workspace.yaml`.
 
 ---
 
@@ -171,7 +171,7 @@ Briefly mention that `meetings.yaml` and `tags.yaml` exist for power users but m
 
 ## Section 7: Wrap-Up
 
-Show a final summary of everything configured in this session. Then show the defaults that were applied silently — the internal plumbing fields: `timestamp_format: YYYY-MM-DD`, `prompt_logging: true`, `ai_model: claude-code`, `calendar_event_prefix: [Myna]`, `calendar_event_types: Focus/Task/Reminder`. Let the user know these can be changed directly in `workspace.yaml` if needed. No hidden defaults.
+Show a final summary of everything configured in this session. Then show the defaults that were applied silently — the internal plumbing fields: `timestamp_format: YYYY-MM-DD`, `prompt_logging: true`, `calendar_event_prefix: [Myna]`, `calendar_event_types: Focus/Task/Reminder`. Let the user know that `timestamp_format` and calendar event settings can be changed via the Myna config UI (Identity and Calendar tabs), and `prompt_logging` can be edited directly in `workspace.yaml`. No hidden defaults.
 
 **Onboarding checklist:** Create `{vault_path}/{subfolder}/_system/Onboarding.md` with a checklist of any setup items not yet completed in this session (e.g., integrations not configured, projects/people not imported, communication style not set). Do not include items the user already completed. Then append exactly one task to today's daily note: `- [ ] Complete Myna onboarding checklist [[_system/Onboarding]]`. Use the full relative wikilink — `[[_system/Onboarding]]` not `[[Onboarding]]`.
 
@@ -186,6 +186,6 @@ Suggest next steps: run `myna` and type `sync` to start the day.
 - For `people.yaml`: omit `relationship_tier` unless the source explicitly states it. Never default to "direct".
 - Write valid YAML matching the schemas in `_system/config/*.yaml.example`.
 - `vault.path` and `vault.subfolder` in `workspace.yaml` are set by the install script — don't ask about them, don't overwrite them.
-- Internal plumbing fields — keep at defaults, never ask: `timestamp_format`, `prompt_logging`, `ai_model`, `calendar_event_prefix`, `calendar_event_types`.
+- Internal plumbing fields — keep at defaults, never ask: `timestamp_format`, `prompt_logging`, `calendar_event_prefix`, `calendar_event_types`.
 - `meetings.yaml` and `tags.yaml` are not part of the guided flow — don't write them unless the user explicitly asks.
 - **Import write-back: write only what was in the review file.** When writing config after an import review (option 3 in Section 4), write only the entries and fields present in the review file. Do not add blocks, sections, or fields — such as triage, defaults, or schema examples — that were not explicitly included by the user.

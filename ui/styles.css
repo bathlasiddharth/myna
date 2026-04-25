@@ -381,6 +381,13 @@ html.theme-transitioning *:not(svg):not(path):not(script) {
   color: var(--text-muted);
 }
 
+.field-hint {
+  margin-top: 0.35rem;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
 .field-input:focus {
   border-color: var(--accent);
   box-shadow: 0 0 0 3px var(--accent-ring);
@@ -599,6 +606,7 @@ select.field-input {
   border-radius: var(--radius-md);
   padding: 1.25rem;
   transition: box-shadow var(--transition), border-color var(--transition);
+  cursor: pointer;
 }
 
 .overview-card:hover {
@@ -1409,6 +1417,11 @@ select.field-input {
   border-radius: var(--radius);
   border: 1px solid transparent;
   transition: background-color var(--transition), border-color var(--transition);
+  cursor: pointer;
+}
+
+.help-field-item:hover:not(.highlighted) {
+  background-color: var(--surface-hover);
 }
 
 .help-field-item.highlighted {

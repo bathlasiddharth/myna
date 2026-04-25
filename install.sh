@@ -391,7 +391,6 @@ mcp_servers:
   calendar: ""
 
 prompt_logging: true
-ai_model: claude-code
 
 features:
   email_processing: true
@@ -408,9 +407,24 @@ features:
   feedback_gap_detection: true
   contribution_detection: true
   milestones: true
+  observations_logging: true
+  recognition_tracking: true
+  person_briefing: true
+  one_on_one_analysis: true
+  performance_narrative: true
   weekly_summary: true
   monthly_updates: true
   park_resume: true
+  meeting_summaries: true
+  email_draft_reply: true
+  message_rewriting: true
+  document_processing: true
+  pre_read_prep: true
+  difficult_conversation: true
+  help_me_say_no: true
+  quick_capture: true
+  link_manager: true
+  auto_tagging: true
 YAML
           ;;
         communication-style)

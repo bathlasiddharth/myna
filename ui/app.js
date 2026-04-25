@@ -139,13 +139,14 @@ function setStatus(state) {
 function populateForms() {
   if (!window.config) return;
   populateIdentity();
+  populateCalendar();
   populateIntegrations();
   populateCommunication();
   populateFeatures();
   populateProjects();
   populatePeople();
   // Attach help listeners for all static tabs now that DOM is ready
-  ['identity', 'communication', 'integrations', 'features'].forEach(tab => attachHelpListeners(tab));
+  ['identity', 'calendar', 'communication', 'integrations', 'features'].forEach(tab => attachHelpListeners(tab));
   // Re-render help panel in case the active tab has no listeners yet
   renderHelpPanel(activeTab);
   attachHelpListeners(activeTab);
@@ -177,11 +178,17 @@ function populateIdentity() {
   // Work hours — parse HH:MM 24-hour into hour/minute/AM-PM dropdowns
   setTimePicker('work-start', wh.start || '09:00');
   setTimePicker('work-end',   wh.end   || '17:00');
-  // Map stored days to months for the dropdown (default: 1 month)
-  const cycleMonths = ws.feedback_cycle_days != null ? Math.round(ws.feedback_cycle_days / 30) : 1;
-  const clampedMonths = Math.min(3, Math.max(1, cycleMonths));
-  setValue('feedback-cycle', String(clampedMonths));
+  // Map stored days to the nearest dropdown option (14 / 30 / 90)
+  const cycleDays = ws.feedback_cycle_days != null ? ws.feedback_cycle_days : 30;
+  const cycleOption = cycleDays <= 20 ? '14' : cycleDays <= 60 ? '30' : '90';
+  setValue('feedback-cycle', cycleOption);
   setValue('journal-archive',  journal.archive_after_days != null ? journal.archive_after_days : '');
+
+  // Date format — fall back to default if not set
+  const fmt = ws.timestamp_format || 'YYYY-MM-DD';
+  const fmtSelect = document.getElementById('date-format');
+  const knownFmts = Array.from(fmtSelect.options).map(o => o.value);
+  fmtSelect.value = knownFmts.includes(fmt) ? fmt : 'YYYY-MM-DD';
 
   // Timezone — check if it's in the known list, else use "other".
   // If no timezone is saved, auto-detect from the browser and pre-populate.
@@ -216,11 +223,30 @@ function populateIdentity() {
 
 }
 
+function populateCalendar() {
+  const ws = window.config.workspace || {};
+  const types = ws.calendar_event_types || {};
+  setValue('calendar-prefix',       ws.calendar_event_prefix || '[Myna]');
+  setValue('calendar-type-focus',    types.focus    || 'Focus');
+  setValue('calendar-type-task',     types.task     || 'Task');
+  setValue('calendar-type-reminder', types.reminder || 'Reminder');
+}
+
 function populateIntegrations() {
-  const mcp = (window.config.workspace || {}).mcp_servers || {};
+  const ws  = window.config.workspace || {};
+  const mcp = ws.mcp_servers || {};
   setValue('mcp-email',    mcp.email    || '');
   setValue('mcp-calendar', mcp.calendar || '');
   setValue('mcp-slack',    mcp.slack    || '');
+  setValue('notes-email',  (ws.email || {}).notes_email || '');
+  updateDraftRepliesVisibility();
+}
+
+function updateDraftRepliesVisibility() {
+  const emailMcp = document.getElementById('mcp-email');
+  const section  = document.getElementById('draft-replies-section');
+  if (!emailMcp || !section) return;
+  section.style.display = emailMcp.value.trim() ? '' : 'none';
 }
 
 function populateCommunication() {
@@ -280,19 +306,9 @@ function setCommStyleValue(selectId, value) {
 
 function populateFeatures() {
   const features = (window.config.workspace || {}).features || {};
-  const featureKeys = [
-    'email_processing', 'messaging_processing', 'email_triage',
-    'meeting_prep', 'process_meeting',
-    'time_blocks', 'calendar_reminders',
-    'people_management', 'team_health', 'attention_gap_detection',
-    'feedback_gap_detection', 'milestones',
-    'self_tracking', 'contribution_detection',
-    'weekly_summary', 'monthly_updates',
-    'park_resume'
-  ];
-  featureKeys.forEach(key => {
-    const el = document.getElementById('feat-' + key);
-    if (el) el.checked = features[key] !== false; // default true if missing
+  document.querySelectorAll('#tab-features input[type="checkbox"][id^="feat-"]').forEach(el => {
+    const key = el.id.replace(/^feat-/, '');
+    el.checked = features[key] !== false; // default true if missing
   });
 }
 
@@ -302,6 +318,7 @@ function renderOverview() {
   if (!window.config) return;
 
   renderIdentityCard();
+  renderCalendarCard();
   renderIntegrationsCard();
   renderCommunicationCard();
   renderFeaturesCard();
@@ -326,6 +343,22 @@ function renderIdentityCard() {
   } else {
     body.innerHTML = '<span class="text-slate-400 text-sm">Not configured</span>';
   }
+}
+
+function renderCalendarCard() {
+  const ws = window.config.workspace || {};
+  const body  = document.getElementById('overview-calendar-body');
+  const badge = document.getElementById('badge-calendar');
+  const prefix = ws.calendar_event_prefix;
+  const types  = ws.calendar_event_types || {};
+
+  const isConfigured = !!(prefix || types.focus || types.task || types.reminder);
+  setBadge(badge, 'configured', 'Configured');
+
+  body.innerHTML = [
+    kv('Prefix', prefix || '[Myna]'),
+    kv('Labels', [types.focus || 'Focus', types.task || 'Task', types.reminder || 'Reminder'].join(' · ')),
+  ].join('');
 }
 
 function renderIntegrationsCard() {
@@ -365,13 +398,16 @@ function renderFeaturesCard() {
   const body  = document.getElementById('overview-features-body');
   const badge = document.getElementById('badge-features');
 
-  const total   = Object.keys(features).length;
-  const enabled = Object.values(features).filter(Boolean).length;
-  const isConfigured = total > 0;
+  // Count from DOM — authoritative list, defaults missing keys to enabled
+  const allToggles = Array.from(document.querySelectorAll('#tab-features input[type="checkbox"][id^="feat-"]'));
+  const total   = allToggles.length;
+  const enabled = allToggles.filter(el => {
+    const key = el.id.replace(/^feat-/, '');
+    return features[key] !== false;
+  }).length;
 
-  setBadge(badge, isConfigured ? 'configured' : 'empty', isConfigured ? `${enabled}/${total} on` : 'Not set');
-
-  body.innerHTML = isConfigured
+  setBadge(badge, total > 0 ? 'configured' : 'empty', total > 0 ? `${enabled}/${total} on` : 'Not set');
+  body.innerHTML = total > 0
     ? kv('Enabled', `${enabled} of ${total} features`)
     : '<span class="text-slate-400 text-sm">Not configured</span>';
 }
@@ -410,6 +446,7 @@ function renderPeopleCard() {
 
 function getTabData(tabName) {
   if (tabName === 'identity')      return getIdentityData();
+  if (tabName === 'calendar')      return getCalendarData();
   if (tabName === 'integrations')  return getIntegrationsData();
   if (tabName === 'communication') return getCommunicationData();
   if (tabName === 'features')      return getFeaturesData();
@@ -447,23 +484,42 @@ function getIdentityData() {
       start: getTimePicker('work-start'),
       end:   getTimePicker('work-end'),
     },
-    feedback_cycle_days: (parseInt(document.getElementById('feedback-cycle').value, 10) || 1) * 30,
+    feedback_cycle_days: parseInt(document.getElementById('feedback-cycle').value, 10) || 30,
     journal: {
       ...(existing.journal || {}),
       archive_after_days: parseInt(document.getElementById('journal-archive').value, 10) || (existing.journal || {}).archive_after_days,
     },
+    timestamp_format: document.getElementById('date-format').value || 'YYYY-MM-DD',
     email: existing.email || {},
+  };
+}
+
+function getCalendarData() {
+  const existing = deepClone(window.config && window.config.workspace || {});
+  return {
+    ...existing,
+    calendar_event_prefix: document.getElementById('calendar-prefix').value.trim() || '[Myna]',
+    calendar_event_types: {
+      focus:    document.getElementById('calendar-type-focus').value.trim()    || 'Focus',
+      task:     document.getElementById('calendar-type-task').value.trim()     || 'Task',
+      reminder: document.getElementById('calendar-type-reminder').value.trim() || 'Reminder',
+    },
   };
 }
 
 function getIntegrationsData() {
   const existing = deepClone(window.config && window.config.workspace || {});
+  const notesEmail = document.getElementById('notes-email').value.trim();
   return {
     ...existing,
     mcp_servers: {
       email:    document.getElementById('mcp-email').value.trim(),
       calendar: document.getElementById('mcp-calendar').value.trim(),
       slack:    document.getElementById('mcp-slack').value.trim(),
+    },
+    email: {
+      ...(existing.email || {}),
+      notes_email: notesEmail || (existing.email || {}).notes_email || '',
     },
   };
 }
@@ -522,20 +578,10 @@ function getCommStyleValue(selectId) {
 
 function getFeaturesData() {
   const existing = deepClone(window.config && window.config.workspace || {});
-  const featureKeys = [
-    'email_processing', 'messaging_processing', 'email_triage',
-    'meeting_prep', 'process_meeting',
-    'time_blocks', 'calendar_reminders',
-    'people_management', 'team_health', 'attention_gap_detection',
-    'feedback_gap_detection', 'milestones',
-    'self_tracking', 'contribution_detection',
-    'weekly_summary', 'monthly_updates',
-    'park_resume'
-  ];
   const features = {};
-  featureKeys.forEach(key => {
-    const el = document.getElementById('feat-' + key);
-    if (el) features[key] = el.checked;
+  document.querySelectorAll('#tab-features input[type="checkbox"][id^="feat-"]').forEach(el => {
+    const key = el.id.replace(/^feat-/, '');
+    features[key] = el.checked;
   });
   return { ...existing, features };
 }
@@ -544,6 +590,7 @@ function getFeaturesData() {
 
 const CONFIG_NAME_MAP = {
   identity:      'workspace',
+  calendar:      'workspace',
   integrations:  'workspace',
   features:      'workspace',
   communication: 'communication-style',
@@ -1764,8 +1811,9 @@ const HELP_CONTENT = {
       { id: 'user-timezone',    label: 'Timezone',           desc: 'Your local timezone. Used when converting meeting times, scheduling focus blocks, and anchoring daily note dates.' },
       { id: 'work-start-hour',  label: 'Work hours start',   desc: 'The start of your working day. Myna avoids scheduling focus blocks or reminders outside this window.' },
       { id: 'work-end-hour',    label: 'Work hours end',     desc: 'The end of your working day. Calendar events and reminders are kept within start-to-end unless you override them.' },
-      { id: 'feedback-cycle',   label: 'Feedback cycle',     desc: 'How often you aim to give written feedback to each direct report. Myna flags anyone who is overdue when this interval passes without a logged feedback entry.' },
+      { id: 'feedback-cycle',   label: 'Feedback cycle',     desc: 'How often you aim to give written feedback to each direct report. Myna flags anyone overdue when this interval passes without a logged feedback entry. Options: every 2 weeks, monthly, or quarterly.' },
       { id: 'journal-archive',  label: 'Journal archive after', desc: 'Daily notes older than this many days are moved to an archive folder. Keeps your active vault uncluttered without deleting anything.' },
+      { id: 'date-format',      label: 'Date format',         desc: 'The date format used in vault file names and note headers. YYYY-MM-DD sorts chronologically in Obsidian; choose another if you prefer a different display.' },
     ],
   },
   communication: {
@@ -1812,34 +1860,67 @@ const HELP_CONTENT = {
       { id: 'proj-key-people',   label: 'Key people',      desc: 'The main stakeholders or contributors for this project. Myna includes their recent activity and open items in project briefings.' },
     ],
   },
+  calendar: {
+    intro: 'Controls how Myna labels the calendar events it creates — focus blocks, task reminders, and other entries. The prefix and type labels combine to form each event title.',
+    fields: [
+      { id: 'calendar-prefix',       label: 'Event prefix',      desc: 'A tag prepended to every calendar event Myna creates, e.g. "[Myna]". Lets you visually distinguish Myna-created events from manual entries at a glance.' },
+      { id: 'calendar-type-focus',   label: 'Focus label',       desc: 'The label appended for focus-block events. The full title will be like "[Myna]:Focus" — edit this if another term fits your workflow better.' },
+      { id: 'calendar-type-task',    label: 'Task label',        desc: 'The label for task-deadline events. Combined with the prefix to form the calendar event title.' },
+      { id: 'calendar-type-reminder', label: 'Reminder label',   desc: 'The label for reminder events such as follow-up prompts. Combined with the prefix to form the calendar event title.' },
+    ],
+  },
   integrations: {
     intro: 'MCP server connections that give Myna read access to your email, calendar, and messaging tools. All data stays local — Myna never sends or posts anything.',
     fields: [
-      { id: 'mcp-email',    label: 'Email MCP server',     desc: 'The name of the MCP server registered with Claude Code that provides access to your email account. Run "claude mcp list" in a terminal to see available servers.' },
-      { id: 'mcp-calendar', label: 'Calendar MCP server',  desc: 'The MCP server that connects to your calendar. Used for meeting prep, focus-block creation, and reading upcoming events.' },
-      { id: 'mcp-slack',    label: 'Messaging MCP server', desc: 'The MCP server for Slack or another messaging platform. Used to process messages and draft replies. Leave blank if you paste messages manually.' },
+      { id: 'mcp-email',    label: 'Email MCP server',          desc: 'The name of the MCP server registered with Claude Code that provides access to your email account. Run "claude mcp list" in a terminal to see available servers.' },
+      { id: 'mcp-calendar', label: 'Calendar MCP server',       desc: 'The MCP server that connects to your calendar. Used for meeting prep, focus-block creation, and reading upcoming events.' },
+      { id: 'mcp-slack',    label: 'Messaging MCP server',      desc: 'The MCP server for Slack or another messaging platform. Used to process messages and draft replies. Leave blank if you paste messages manually.' },
+      { id: 'notes-email',  label: 'Notes forwarding email',    desc: 'Forward an email thread to this address with your notes in the body to trigger a draft reply. Myna reads your notes, pulls project context, and drafts a response using your communication style.' },
     ],
   },
   features: {
     intro: 'Toggle individual Myna capabilities on or off. Disabled features are silently skipped — no errors, no partial output. Start with the features you need most and enable others as you get comfortable.',
     fields: [
-      { id: 'feat-email_processing',       label: 'Email processing',        desc: 'Reads incoming emails and files them into project notes with action items extracted. Requires an Email MCP server.' },
-      { id: 'feat-messaging_processing',   label: 'Messaging processing',    desc: 'Processes Slack messages and DMs to extract action items and decisions, then routes them to project files.' },
-      { id: 'feat-email_triage',           label: 'Email triage',            desc: 'Sorts your inbox into four folders: Reply, FYI, Follow-Up, and Schedule — so you always know what needs action.' },
-      { id: 'feat-meeting_prep',           label: 'Meeting prep',            desc: 'Generates a prep brief before each meeting, pulling in relevant project context, open items, and attendee notes.' },
-      { id: 'feat-process_meeting',        label: 'Process meeting',         desc: 'After a meeting, extracts decisions and action items from your notes and closes them out in project files.' },
-      { id: 'feat-time_blocks',            label: 'Time blocks',             desc: 'Creates labelled focus-time events on your calendar so your day is protected. Uses the Calendar MCP server.' },
-      { id: 'feat-calendar_reminders',     label: 'Calendar reminders',      desc: 'Sets calendar reminders for tasks and follow-ups that have deadlines. Requires a Calendar MCP server.' },
-      { id: 'feat-people_management',      label: 'People management',       desc: 'Maintains a person file for each team member — logs interactions, open items, and context over time.' },
-      { id: 'feat-team_health',            label: 'Team health',             desc: 'Adds a team health snapshot to your daily note: who has open blockers, who you haven\'t connected with recently. Best for managers.' },
-      { id: 'feat-attention_gap_detection', label: 'Attention gap detection', desc: 'Flags direct reports or key people you haven\'t interacted with in longer than your configured attention interval.' },
-      { id: 'feat-feedback_gap_detection', label: 'Feedback gap detection',  desc: 'Alerts you when a feedback cycle is overdue for a direct report based on your configured feedback cadence.' },
-      { id: 'feat-milestones',             label: 'Milestones',              desc: 'Surfaces birthdays and work anniversaries in the daily note so you can acknowledge them in the moment.' },
-      { id: 'feat-self_tracking',          label: 'Self-tracking',           desc: 'Maintains a brag doc of your contributions and can generate self-review documents at performance-cycle time.' },
-      { id: 'feat-contribution_detection', label: 'Contribution detection',  desc: 'Automatically scans your activity and logs notable contributions to your brag doc without you needing to capture them manually.' },
-      { id: 'feat-weekly_summary',         label: 'Weekly summary',          desc: 'Generates a structured summary of the week\'s work — decisions made, items shipped, and things still in flight.' },
-      { id: 'feat-monthly_updates',        label: 'Monthly updates',         desc: 'Drafts a monthly status update suitable for sharing with your manager or leadership team.' },
-      { id: 'feat-park_resume',            label: 'Park & resume',           desc: 'Saves your working context (open items, current focus, recent decisions) so you can resume exactly where you left off in a new session.' },
+      // Email & Messaging
+      { id: 'feat-email_processing',        label: 'Email processing',              desc: 'Reads incoming emails and files them into project notes with action items extracted. Requires an Email MCP server.' },
+      { id: 'feat-messaging_processing',    label: 'Messaging processing',          desc: 'Processes Slack messages and DMs to extract action items and decisions, then routes them to project files.' },
+      { id: 'feat-email_triage',            label: 'Email triage',                  desc: 'Sorts your inbox into four folders: Reply, FYI, Follow-Up, and Schedule — so you always know what needs action.' },
+      // Meetings
+      { id: 'feat-meeting_prep',            label: 'Meeting prep',                  desc: 'Generates a prep brief before each meeting, pulling in relevant project context, open items, and attendee notes.' },
+      { id: 'feat-process_meeting',         label: 'Process meeting',               desc: 'After a meeting, extracts decisions and action items from your notes and closes them out in project files.' },
+      { id: 'feat-meeting_summaries',       label: 'Meeting summaries from email',  desc: 'Automatically imports Zoom or Teams AI-generated summaries into your meeting files so notes and decisions are captured without manual copying.' },
+      // Calendar
+      { id: 'feat-time_blocks',             label: 'Time blocks',                   desc: 'Creates labelled focus-time events on your calendar so your day is protected. Uses the Calendar MCP server.' },
+      { id: 'feat-calendar_reminders',      label: 'Calendar reminders',            desc: 'Sets calendar reminders for tasks and follow-ups that have deadlines. Requires a Calendar MCP server.' },
+      // People & Team
+      { id: 'feat-people_management',       label: 'People management',             desc: 'Maintains a person file for each team member — logs interactions, open items, and context over time.' },
+      { id: 'feat-team_health',             label: 'Team health',                   desc: 'Adds a team health snapshot to your daily note: who has open blockers, who you haven\'t connected with recently. Best for managers.' },
+      { id: 'feat-attention_gap_detection', label: 'Attention gap detection',       desc: 'Flags direct reports or key people you haven\'t interacted with in longer than your configured attention interval.' },
+      { id: 'feat-feedback_gap_detection',  label: 'Feedback gap detection',        desc: 'Alerts you when a feedback cycle is overdue for a direct report based on your configured feedback cadence.' },
+      { id: 'feat-milestones',              label: 'Milestones',                    desc: 'Surfaces birthdays and work anniversaries in the daily note so you can acknowledge them in the moment.' },
+      { id: 'feat-observations_logging',    label: 'Observations & feedback logging', desc: 'Logs observations, feedback given, and coaching moments to each person file — builds longitudinal context over time.' },
+      { id: 'feat-recognition_tracking',    label: 'Recognition tracking',          desc: 'Tracks recognition you give and receive, and surfaces it at self-review time. Useful for building a full picture of team contributions.' },
+      { id: 'feat-person_briefing',         label: 'Person briefing',               desc: 'Generates a briefing on any person before a meeting or conversation — recent interactions, open items, shared projects, and context.' },
+      { id: 'feat-one_on_one_analysis',     label: '1:1 pattern analysis',          desc: 'Analyzes patterns across your 1:1 meetings with a person — recurring topics, action item follow-through, and relationship health.' },
+      { id: 'feat-performance_narrative',   label: 'Performance narrative',         desc: 'Generates a performance review narrative for a team member from logged observations, feedback, and contributions.' },
+      // Tracking
+      { id: 'feat-self_tracking',           label: 'Self-tracking',                 desc: 'Maintains a brag doc of your contributions and can generate self-review documents at performance-cycle time.' },
+      { id: 'feat-contribution_detection',  label: 'Contribution detection',        desc: 'Automatically scans your activity and logs notable contributions to your brag doc without you needing to capture them manually.' },
+      // Summaries
+      { id: 'feat-weekly_summary',          label: 'Weekly summary',                desc: 'Generates a structured summary of the week\'s work — decisions made, items shipped, and things still in flight.' },
+      { id: 'feat-monthly_updates',         label: 'Monthly updates',               desc: 'Drafts a monthly status update suitable for sharing with your manager or leadership team.' },
+      // Writing & Drafts
+      { id: 'feat-email_draft_reply',       label: 'Email draft reply',             desc: 'Drafts a reply to an email thread with full context — project files, open items, and your communication style applied.' },
+      { id: 'feat-message_rewriting',       label: 'Message rewriting',             desc: 'Rewrites a draft message for tone, clarity, or audience — from direct-and-concise to diplomatic, or from casual to formal.' },
+      { id: 'feat-document_processing',     label: 'Document processing',           desc: 'Extracts action items, decisions, and key context from documents, PRDs, or specs and routes them to the right project files.' },
+      { id: 'feat-pre_read_prep',           label: 'Pre-read preparation',          desc: 'Generates a briefing before you read a long document — what it is, why it matters, and what to watch for.' },
+      { id: 'feat-difficult_conversation',  label: 'Difficult conversation prep',   desc: 'Helps you prepare for high-stakes or challenging conversations — structures the key points and anticipates likely responses.' },
+      { id: 'feat-help_me_say_no',          label: 'Help me say no',                desc: 'Drafts a diplomatic decline for a request, meeting invite, or commitment — maintains the relationship while holding the boundary.' },
+      // Context
+      { id: 'feat-park_resume',             label: 'Park & resume',                 desc: 'Saves your working context (open items, current focus, recent decisions) so you can resume exactly where you left off in a new session.' },
+      { id: 'feat-quick_capture',           label: 'Quick capture',                 desc: 'Routes anything you say to the right place — task, observation, project note, or idea — without you specifying the destination.' },
+      { id: 'feat-link_manager',            label: 'Link manager',                  desc: 'Saves and retrieves links organized by project or person, so references stay findable alongside the context they belong to.' },
+      { id: 'feat-auto_tagging',            label: 'Auto-tagging',                  desc: 'Automatically adds project and person tags to new entries based on context, so your vault stays organized without manual taxonomy.' },
     ],
   },
   overview: {
@@ -1933,7 +2014,31 @@ function attachHelpListeners(tabName) {
 
     el.addEventListener('focus', () => highlightHelpField(helpId));
     el.addEventListener('blur',  () => highlightHelpField(null));
+
+    // Labels without a `for` attribute (dynamically generated cards) don't
+    // fire focus when clicked. Wire click directly on the .field-label so
+    // clicking the label highlights the sidebar entry too.
+    const fieldGroup = el.closest('.field-group');
+    if (fieldGroup) {
+      const label = fieldGroup.querySelector('.field-label');
+      if (label && !label._helpClickAttached) {
+        label.addEventListener('click', () => highlightHelpField(helpId));
+        label._helpClickAttached = true;
+      }
+    }
   });
+
+  // Feature toggles: checkboxes inside <label> don't reliably fire focus via
+  // label/track clicks. Use click on the entire feature-row instead.
+  if (tabName === 'features') {
+    panel.querySelectorAll('.feature-row').forEach(row => {
+      const checkbox = row.querySelector('input[type="checkbox"]');
+      if (!checkbox) return;
+      const helpId = resolveHelpId(checkbox, tabName, fieldIds);
+      if (!helpId) return;
+      row.addEventListener('click', () => highlightHelpField(helpId));
+    });
+  }
 
   if (!isDynamic) helpListenersAttached.add(tabName);
 }
@@ -1995,6 +2100,26 @@ document.addEventListener('DOMContentLoaded', () => {
   loadConfig();
   initFilesTab();
   renderHelpPanel('overview');
+
+  // ── Sidebar help panel: click item → focus corresponding form element ──────
+  const helpFieldsEl = document.getElementById('help-fields');
+  if (helpFieldsEl) {
+    helpFieldsEl.addEventListener('click', (e) => {
+      const item = e.target.closest('.help-field-item');
+      if (!item) return;
+      const helpId = item.dataset.helpId;
+      if (!helpId) return;
+
+      highlightHelpField(helpId);
+
+      const el = document.getElementById(helpId);
+      if (!el) return;
+      // Scroll the row (for feature toggles) or the element itself into view
+      const scrollTarget = el.closest('.feature-row') || el.closest('.field-group') || el;
+      scrollTarget.scrollIntoView({ block: 'center', behavior: 'smooth' });
+      el.focus();
+    });
+  }
 
   // ── Identity: text inputs → save on blur ──────────────────────────────────
   ['user-name', 'user-email'].forEach(id => {
