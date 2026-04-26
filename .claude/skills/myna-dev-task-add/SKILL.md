@@ -61,7 +61,16 @@ Use this structure:
 **Done when:**
 - [Specific, verifiable assertion — not "it works" but "the skill's frontmatter contains X" or "vault writes use path Y"]
 - [Add as many as needed to fully define completion]
+
+**changelog:** [yes | no]
+**changelog-line:** [- [Added/Fixed/Changed] Description of what changed from the user's perspective.]
 ```
+
+The `changelog` field defaults to `no`. Set to `yes` for any task that produces a change a user running Myna would notice: new behavior, new skill, fixed bug, changed output format. Set to `no` for internal refactors, dev tooling changes, and doc cleanup.
+
+The `changelog-line` field is only required when `changelog: yes`. Format: `- [Added/Fixed/Changed] Description of what changed from the user's perspective.` Omit when `changelog: no`.
+
+**Inferring changelog fields:** if the task clearly introduces new user-facing behavior (new skill, new output, behavior fix), set `changelog: yes` and draft a line. If it's purely internal (refactoring skill internals, updating dev tooling, fixing docs), set `changelog: no` and omit `changelog-line`. When unsure, default to `no` — the user can always change it before approving.
 
 **Title:** imperative, concise (5-8 words). "Add base guard to calendar skill" not "Calendar skill base guard fix".
 
@@ -97,6 +106,9 @@ Here's the task draft:
 
 **Done when:**
 - [...]
+
+**changelog:** [yes | no]
+**changelog-line:** [...] *(omit if changelog: no)*
 ---
 
 Say "add it" to append to the queue, or tell me what to change.

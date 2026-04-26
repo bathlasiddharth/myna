@@ -144,6 +144,7 @@ Wait for the subagent to complete and report back.
 **If "Done":**
 - Update `tmp/tasks.md` table row: status → `done`, fill in review rounds and report paths
 - Update `tmp/[date]/run.md` table row: same
+- **Changelog:** if the task's `changelog` field is `yes` and a `changelog-line` field is present, append that line to the `[Unreleased]` section in `CHANGELOG.md` at the repo root. Read the current `[Unreleased]` block, append the line under it, and write back. Do this once per task at completion — not per commit within the task. Skip silently if `changelog: no` or the field is absent.
 - Continue to the next task
 
 **If "Unresolved":**
