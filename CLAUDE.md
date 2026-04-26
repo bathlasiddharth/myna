@@ -47,6 +47,7 @@ When the user corrects your direction or you discover a non-obvious pattern duri
 - Keep commits atomic — one logical change per commit.
 - Commit messages describe what was accomplished, not which files changed. Subject: lead with the most important change in plain language. Body: explain what was done and why — the decisions made, problems solved — not a list of edits.
 - **Never add Co-Authored-By lines.**
+- Update `[Unreleased]` in `CHANGELOG.md` for user-facing changes — new behavior, bug fixes a user would notice, new skills. Skip for internal refactors, dev tooling changes, and doc cleanup. One entry per meaningful change, not per commit.
 
 ## Ground Rules
 
