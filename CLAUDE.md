@@ -7,7 +7,7 @@ Myna is a local-first Chief of Staff for tech professionals. It's a set of AI ag
 **This project has two first-class outputs, not one:**
 
 1. **Myna itself** — the working assistant.
-2. **A methodology for having Claude autonomously build an agentic system end-to-end** — from feature ideas through architecture, foundations, and autonomous build, with concentrated human effort at design points and minimal oversight during the build. The methodology lives in `docs/design/foundations.md`, `docs/design/architecture.md`, and `docs/decisions.md`. Intended to be reusable for building other agentic assistants on any capable LLM.
+2. **A methodology for having Claude autonomously build an agentic system end-to-end** — from feature ideas through architecture, foundations, and autonomous build, with concentrated human effort at design points and minimal oversight during the build. The methodology lives in `docs/design/foundations.md`, `docs/design/architecture.md`, `docs/design/product-decisions.md`, and `docs/design/architecture-decisions.md`. Intended to be reusable for building other agentic assistants on any capable LLM.
 
 Treat process artifacts (decisions, foundations) with the same care as product artifacts. Both ship. When updating any process artifact, ask: "would this still make sense to someone using this playbook to build a different agentic assistant?"
 
@@ -18,7 +18,8 @@ Treat process artifacts (decisions, foundations) with the same care as product a
 | File | Purpose |
 |---|---|
 | `docs/vision.md` | North star |
-| `docs/decisions.md` | Settled decisions — do not re-debate |
+| `docs/design/product-decisions.md` | Product and behavior decisions — do not re-debate |
+| `docs/design/architecture-decisions.md` | Runtime and install decisions — do not re-debate |
 | `docs/design/architecture.md` | Runtime model, skill inventory, vault structure |
 | `docs/design/foundations.md` | Vault folder structure, canonical file formats |
 
@@ -50,9 +51,9 @@ When the user corrects your direction or you discover a non-obvious pattern duri
 ## Ground Rules
 
 1. **Vision is authoritative.** If a requirement contradicts `docs/vision.md`, vision wins.
-2. **Decisions are settled.** Don't re-open items in `docs/decisions.md` unless the user explicitly asks.
-3. **Add open questions.** If you surface a question not answered by existing docs, capture it in `docs/decisions.md` as an unresolved item.
-4. **Add decisions.** If the user settles a question during your conversation, add it to `docs/decisions.md`.
+2. **Decisions are settled.** Don't re-open items in `docs/design/product-decisions.md` or `docs/design/architecture-decisions.md` unless the user explicitly asks.
+3. **Add open questions.** If you surface a question not answered by existing docs, capture it in the appropriate decisions file as an unresolved item.
+4. **Add decisions.** If the user settles a question during your conversation, add it to `docs/design/product-decisions.md` for behavior/feature questions, or `docs/design/architecture-decisions.md` for runtime/install questions.
 5. **Claude-first, not Claude-only (D046).** Myna v1 targets Claude Code. Agent instructions can reference Claude Code capabilities directly. Content stays plain markdown — inherently readable by any LLM — but we don't architect for other runtimes upfront.
 6. **Draft, never send.** Myna never sends emails, posts messages, or takes external actions (except personal calendar events with no attendees).
 

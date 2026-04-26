@@ -131,7 +131,8 @@ Run these any time — not part of a specific change:
 | File | Purpose |
 |------|---------|
 | `docs/vision.md` | North star — what Myna is and is not |
-| `docs/decisions.md` | Settled decisions — don't re-debate |
+| `docs/design/product-decisions.md` | Product and behavior decisions — don't re-debate |
+| `docs/design/architecture-decisions.md` | Runtime and install decisions — don't re-debate |
 | `docs/design/architecture.md` | Runtime model, skill inventory, vault structure |
 | `docs/design/foundations.md` | Vault folder structure, canonical file formats |
 | `docs/features/` | Approved features per domain — authoritative source |

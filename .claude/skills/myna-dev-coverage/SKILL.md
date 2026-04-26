@@ -69,6 +69,6 @@ Overall coverage: {pct}%
 - Feature spec files are always read in full regardless of scope.
 - Non-functional requirements are enforced by steering skills — don't audit feature skills against them.
 - "Mentioned" is not coverage.
-- Do not flag deferred features as gaps (check decisions.md).
+- Do not flag deferred features as gaps (check product-decisions.md).
 - Do not manufacture gaps. Different implementation that produces correct output = FULL.
 - Steering-covered behaviors relied on correctly by feature skill = FULL.
