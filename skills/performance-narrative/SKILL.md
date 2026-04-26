@@ -1,9 +1,11 @@
 ---
-name: myna-performance-narrative
+name: performance-narrative
 description: Generate a performance narrative for a team member's review cycle from observations, recognition, contributions, and meeting notes. Also calibrates consistency across multiple narratives. Invoke for "build Sarah's review narrative", "performance summary for Sarah", "review my narratives" (calibration mode).
 user-invocable: true
 argument-hint: "[person name] [optional: time period] | review my narratives"
 ---
+
+If vault_path is not in context, read `~/.myna/config.yaml` first. If the file does not exist, tell the user to run `/myna:init` and stop.
 
 # Performance Narrative
 

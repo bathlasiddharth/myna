@@ -1,11 +1,13 @@
 ---
-name: myna-draft-replies
+name: draft-replies
 description: Process the DraftReplies email folder — reads emails the user forwarded with drafting instructions, creates reply drafts and follow-up meeting drafts in the vault. Only reads the DraftReplies folder. Does not process other email folders.
 user-invocable: true
 argument-hint: '"process my draft replies", "any draft requests?", "check my drafts folder"'
 ---
 
-# myna-draft-replies
+If vault_path is not in context, read `~/.myna/config.yaml` first. If the file does not exist, tell the user to run `/myna:init` and stop.
+
+# draft-replies
 
 Process the `DraftReplies` email folder. This is a dedicated workflow: the user forwards emails into `DraftReplies` with instructions about what to draft, and this skill converts them into draft files in `Drafts/`.
 

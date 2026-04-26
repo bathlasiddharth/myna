@@ -1,11 +1,13 @@
 ---
-name: myna-capture
+name: capture
 description: Route user input to vault destinations — quick capture, observations, recognition, tasks (single or recurring), links (save or find), project/person file management. One input can produce multiple entries.
 user-invocable: true
 argument-hint: "capture: [anything] | observation about [person]: [text] | add task: [description] | create recurring task: [description] | save link: [url] for [entity] | update status of [project]"
 ---
 
-# myna-capture
+If vault_path is not in context, read `~/.myna/config.yaml` first. If the file does not exist, tell the user to run `/myna:init` and stop.
+
+# capture
 
 Routes user-entered data to the right vault destinations. One capture can produce multiple entries — one per destination. Nothing is silently dropped.
 
@@ -141,7 +143,7 @@ User: "observation about Alex: he consistently delivers accurate effort estimate
 
 **Trigger:** "recognition for Sarah: [text]", "log that Sarah [accomplishment]"
 
-Different from the observation capture above: this is a recognition entry specifically (for compiling into recognition drafts later via myna-draft).
+Different from the observation capture above: this is a recognition entry specifically (for compiling into recognition drafts later via `/myna:draft`).
 
 **How:**
 1. Resolve person.

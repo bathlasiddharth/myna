@@ -1,13 +1,15 @@
 ---
-name: myna-plan
+name: plan
 description: Planning advice — analyzes your workload, meetings, and tasks to suggest what to focus on. Three modes: Plan Day (schedule and priorities), Priority Coaching (top 3 with reasoning), Week Optimization (meetings to skip, best focus slots). Never writes to vault — all output is inline.
 user-invocable: true
 argument-hint: "[day | week | priorities | am I over-committed?]"
 ---
 
-# myna-plan
+If vault_path is not in context, read `~/.myna/config.yaml` first. If the file does not exist, tell the user to run `/myna:init` and stop.
 
-Ephemeral planning advice. Reads the vault and calendar, shows recommendations inline. **Never writes to the vault.** If you want to act on the advice — block time, defer a task — use myna-sync, myna-calendar, or myna-capture.
+# plan
+
+Ephemeral planning advice. Reads the vault and calendar, shows recommendations inline. **Never writes to the vault.** If you want to act on the advice — block time, defer a task — use `/myna:sync`, `/myna:calendar`, or `/myna:capture`.
 
 ---
 

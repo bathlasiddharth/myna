@@ -1,11 +1,13 @@
 ---
-name: myna-calendar
+name: calendar
 description: Create personal calendar time blocks, reminders, and task breakdowns. Finds free slots, proposes options, user confirms. Three-layer safety on every write — no attendees, ever. Does not handle meeting prep or scheduling with others.
 user-invocable: true
 argument-hint: "reserve [duration] [when] for [what] | remind me [what] at [time] | break down [task]"
 ---
 
-# myna-calendar
+If vault_path is not in context, read `~/.myna/config.yaml` first. If the file does not exist, tell the user to run `/myna:init` and stop.
+
+# calendar
 
 Creates personal calendar events (time blocks and reminders) and breaks down tasks into subtasks. Every calendar write is personal-only — no attendees, ever.
 
@@ -55,7 +57,7 @@ Event type labels (`[Myna:Focus]`, `[Myna:Task]`, `[Myna:Reminder]`) and the bas
 
 **Step 4: Create the event**
 
-Only after explicit user confirmation. Apply myna-steering-safety three-layer calendar protection: verify no attendees and title has configured prefix before calling the MCP tool. If either check fails, stop and report.
+Only after explicit user confirmation. Apply the three-layer calendar protection from the safety steering skill: verify no attendees and title has configured prefix before calling the MCP tool. If either check fails, stop and report.
 
 Call the calendar MCP's create_event tool with:
 - `title`: `[Myna:Focus] {purpose}` (using configured type label)

@@ -1,9 +1,11 @@
 ---
-name: myna-blockers
+name: blockers
 description: Scan all active projects for blockers — explicit blocker callouts in project timelines, overdue dependency tasks, and overdue tasks. Invoke for "what's blocked?", "show me blockers", "any blockers across projects?".
 user-invocable: true
 argument-hint: "[optional: project name to scope to one project]"
 ---
+
+If vault_path is not in context, read `~/.myna/config.yaml` first. If the file does not exist, tell the user to run `/myna:init` and stop.
 
 # Blocker Detection
 
@@ -74,7 +76,7 @@ If no blockers found:
 No open blockers across [N] active projects.
 ```
 
-After output, suggest: "Say 'escalate this blocker' to draft a message via myna-draft."
+After output, suggest: "Say 'escalate this blocker' to draft a message via `/myna:draft`."
 
 ---
 

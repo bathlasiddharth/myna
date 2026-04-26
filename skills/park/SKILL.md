@@ -1,11 +1,13 @@
 ---
-name: myna-park
+name: park
 description: Save working context for zero-loss resumption in a new session. Resume by name or list all parked items. "Switch to [project]" parks current context and loads project status.
 user-invocable: true
 argument-hint: "park this | park: [topic name] | resume [topic] | resume (show list) | what's parked? | switch to [project]"
 ---
 
-# myna-park
+If vault_path is not in context, read `~/.myna/config.yaml` first. If the file does not exist, tell the user to run `/myna:init` and stop.
+
+# park
 
 Saves context for later resumption. The point: a brand new session should be able to read the parked file and pick up exactly where you left off — zero orientation needed.
 
