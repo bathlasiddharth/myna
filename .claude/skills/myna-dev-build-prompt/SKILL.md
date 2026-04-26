@@ -205,16 +205,24 @@ After each subagent reports back:
 - **If "Unresolved":** update run log (mark failed, note report path and issues), leave branch unmerged, skip tasks that depend on this one, continue unblocked tasks
 
 Merge + delete (Done path only):
+
+**Parallel tasks** — rebase in the worktree first so the merge is always a fast-forward, then remove the worktree:
 ```
+git -C tmp/[feature]/worktrees/t-N rebase feat/[feature-name]
 git checkout feat/[feature-name]
-git merge feat/[feature]-t-N
+git merge --ff-only feat/[feature]-t-N
+git worktree remove tmp/[feature]/worktrees/t-N
 git branch -d feat/[feature]-t-N
 ```
-For parallel tasks, also remove the worktree before deleting the branch:
+
+**Sequential tasks** — the feature branch hasn't moved since this task branched, so fast-forward succeeds directly:
 ```
-git worktree remove tmp/[feature]/worktrees/t-N
+git checkout feat/[feature-name]
+git merge --ff-only feat/[feature]-t-N
+git branch -d feat/[feature]-t-N
 ```
-Resolve any conflicts before proceeding.
+
+If `--ff-only` fails, stop and report — do not fall back to a merge commit.
 
 **For sequential tasks:** create the branch just before spawning — after the prior task's branch is merged:
 ```
@@ -331,6 +339,16 @@ Write `tmp/[feature]/[prefix]-summary.md`:
 ## Notes
 [Judgment calls: any files changed beyond the suggested list, approach deviations, unresolved issues, conflicts resolved]
 ```
+
+Then print the final output to the user:
+```
+Done — [N] tasks, [N] failed.
+Branch: feat/[feature-name]
+
+Run log:  tmp/[feature]/[prefix]-run.md
+Summary:  tmp/[feature]/[prefix]-summary.md
+
+[any manual steps needed]
 ```
 
 ### Writing Principles

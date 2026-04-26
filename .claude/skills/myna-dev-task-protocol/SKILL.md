@@ -103,10 +103,10 @@ Read `tmp/[feature]/reviews/[short-name]-r1.md`.
 
 Fix every **Critical** and **Important** issue. For **Minor** and **Nitpick**: use judgment — fix if trivial and clearly correct, skip if uncertain or time-consuming.
 
-Stage and commit your fixes (same discipline as Step 2 — only files you changed):
+Amend the original commit (same discipline as Step 2 — only files you changed):
 ```bash
 git add [specific files]
-git commit -m "fix([scope]): address review findings r1"
+git commit --amend --no-edit
 ```
 
 Run round 2:
@@ -127,10 +127,10 @@ Read `tmp/[feature]/reviews/[short-name]-r2.md`.
 
 Fix Critical and Important issues. Same judgment rule for Minor/Nitpick.
 
-Stage and commit:
+Amend the original commit:
 ```bash
 git add [specific files]
-git commit -m "fix([scope]): address review findings r2"
+git commit --amend --no-edit
 ```
 
 Run round 3:
