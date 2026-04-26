@@ -98,6 +98,10 @@ Here's what I extracted. Confirm or adjust:
 
 **Doc updates I plan to include:** [list]
 
+**Changelog entries this run will add** (from tasks marked changelog: yes — edit before approving):
+- [Added/Fixed/Changed] [description]
+*(omit section if no tasks are marked changelog: yes)*
+
 Say "agreed" to accept all recommendations, or specify what to change.
 ```
 
@@ -233,6 +237,10 @@ git checkout -b feat/[feature]-t-N feat/[feature-name]
 
 ## Design Decisions (already settled — do not re-debate)
 [Numbered decisions from the brainstorm + clarifications.]
+
+## Changelog entries approved for this run
+*(omit section if no tasks are marked changelog: yes)*
+- T-[N]: [approved changelog-line from the task]
 
 ---
 
