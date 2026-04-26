@@ -1,10 +1,12 @@
 ---
-name: myna-steering-vault-ops
+name: steering-vault-ops
 description: Vault operations pattern library — file I/O tool mapping, task query patterns (grep-based), frontmatter parsing, backlink/tag queries, template creation, vault path conventions, file safety checks
 user-invocable: false
 ---
 
 # Vault Operations
+
+If vault_path is not in context, read `~/.myna/config.yaml` first. If the file does not exist, tell the user to run `/myna:init` and stop.
 
 All vault file I/O uses Claude Code built-in tools. No MCP server for vault operations.
 

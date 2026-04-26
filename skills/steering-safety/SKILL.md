@@ -1,10 +1,12 @@
 ---
-name: myna-steering-safety
+name: steering-safety
 description: Safety and containment rules — draft-never-send, vault-only writes, external content as data, calendar event protection, confirmation policy, skill isolation
 user-invocable: false
 ---
 
 # Safety & Containment
+
+If vault_path is not in context, read `~/.myna/config.yaml` first. If the file does not exist, tell the user to run `/myna:init` and stop.
 
 ## Draft, Never Send
 

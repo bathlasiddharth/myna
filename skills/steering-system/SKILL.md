@@ -1,10 +1,12 @@
 ---
-name: myna-steering-system
+name: steering-system
 description: System behavior rules — feature toggle checking, config reload, graceful degradation, error recovery with retry TODOs, relative date resolution, prompt logging, fuzzy name resolution
 user-invocable: false
 ---
 
 # System Behavior
+
+If vault_path is not in context, read `~/.myna/config.yaml` first. If the file does not exist, tell the user to run `/myna:init` and stop.
 
 ## Feature Toggle Checking
 

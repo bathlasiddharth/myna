@@ -1,10 +1,12 @@
 ---
-name: myna-steering-output
+name: steering-output
 description: Output quality rules — human voice, no AI tells, BLUF for professional writing, file links, follow-up suggestions, output density, inline-first display
 user-invocable: false
 ---
 
 # Output Quality
+
+If vault_path is not in context, read `~/.myna/config.yaml` first. If the file does not exist, tell the user to run `/myna:init` and stop.
 
 ## Voice
 

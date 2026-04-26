@@ -1,10 +1,12 @@
 ---
-name: myna-steering-conventions
+name: steering-conventions
 description: Data conventions — provenance markers, date+source format, append-only discipline, Obsidian formatting (tags, wiki-links, callouts, Dataview, Tasks plugin syntax), review queue entry format
 user-invocable: false
 ---
 
 # Data Conventions
+
+If vault_path is not in context, read `~/.myna/config.yaml` first. If the file does not exist, tell the user to run `/myna:init` and stop.
 
 ## Provenance Markers
 
