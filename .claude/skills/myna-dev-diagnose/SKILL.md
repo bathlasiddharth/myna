@@ -36,7 +36,8 @@ Before asking the user anything, read the relevant sources and evaluate the prob
 
 Always read:
 - `docs/vision.md` — local-first CoS for tech professionals, draft-never-send, vault-only
-- `docs/decisions.md` — settled decisions; note any D-numbers that bear on this
+- `docs/design/product-decisions.md` — product/behavior decisions; note any D-numbers that bear on this
+- `docs/design/architecture-decisions.md` — runtime/install decisions; note any D-numbers that bear on this
 
 Selectively read based on what's described:
 - `docs/design/architecture.md` — if the problem touches skill routing, install, or agent structure
@@ -68,7 +69,7 @@ Work through each. If a dimension is clearly fine, note it silently — don't na
 - Does this involve any external action beyond read + draft + vault write? Calendar events with attendees, sending emails, posting Slack messages, submitting forms — all blocked. Personal calendar events with no attendees are the only exception.
 
 **Settled decisions**
-- Check every D-number in `docs/decisions.md` that bears on this. If a decision settles the question, surface it: "D0XX already settles this: [quote the decision]." Do not generate options that contradict settled decisions unless the user explicitly asks to revisit one.
+- Check every D-number in `docs/design/product-decisions.md` and `docs/design/architecture-decisions.md` that bears on this. If a decision settles the question, surface it: "D0XX already settles this: [quote the decision]." Do not generate options that contradict settled decisions unless the user explicitly asks to revisit one.
 
 **Deferred features**
 - Is this something already explicitly deferred? If yes, flag it: "This was deferred per [D-number / roadmap note]. Is there a reason to revisit now?"

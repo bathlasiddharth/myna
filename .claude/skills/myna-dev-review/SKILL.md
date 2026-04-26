@@ -55,7 +55,7 @@ Read ALL of these before touching any file in scope:
 
 4. **`docs/features/*.md`** — the feature spec files. Cross-reference each in-scope skill against its owning feature spec to evaluate completeness. Match skill → feature spec via the architecture.md "Features covered:" line.
 
-5. **`docs/decisions.md`** — settled decisions. Pay attention to: draft-never-send, vault-only writes, no skill chaining, deferred features (don't raise issues for out-of-scope things), Golden Rule, D046 (Claude-first).
+5. **`docs/design/product-decisions.md`** and **`docs/design/architecture-decisions.md`** — settled decisions. Pay attention to: draft-never-send, vault-only writes, no skill chaining, deferred features (don't raise issues for out-of-scope things), Golden Rule, D046 (Claude-first).
 
 Build a mental map of: each in-scope skill → its feature owner(s) → the vault destinations it writes to → the steering skills that govern its behavior. You need all three layers to review well.
 

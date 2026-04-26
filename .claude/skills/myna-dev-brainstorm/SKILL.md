@@ -58,7 +58,8 @@ Check `$ARGUMENTS`:
 - `agents/skills/myna-*/SKILL.md` — all skills
 - `install.sh` — install/update script
 - `docs/design/architecture.md` — full architecture
-- `docs/decisions.md` — settled decisions (don't re-debate)
+- `docs/design/product-decisions.md` — product and behavior decisions (don't re-debate)
+- `docs/design/architecture-decisions.md` — runtime and install decisions (don't re-debate)
 - `docs/design/foundations.md` — vault structure, data layer, config schemas
 - `CLAUDE.md` — project instructions, git conventions
 
@@ -78,13 +79,13 @@ Listen to the user's description. Then:
 
 1. **Read the relevant files** — not all docs, just the files related to the problem. If it's about routing, read `agents/main.md`. If it's about a skill, read that skill. If it's about install, read `install.sh`. Ground yourself in what actually exists.
 2. **Read `docs/vision.md`** — the authority on what Myna is and is not.
-3. **Read `docs/decisions.md`** — check if this touches any settled decisions. If it does, flag it immediately.
+3. **Read `docs/design/product-decisions.md` and `docs/design/architecture-decisions.md`** — check if this touches any settled decisions. If it does, flag it immediately.
 4. **For skill duplication:** read the actual skill files — `agents/skills/myna-*/SKILL.md` and `agents/skills/myna-steering-*/SKILL.md`. Do not rely on architecture.md — it may be outdated.
 6. **Evaluate validity** before presenting options:
 
    - **Vision fit:** Does this keep data in the vault and work offline? Does it fit "Chief of Staff for EMs, tech leads, PMs, tech executives"? Does it assist the user or decide for them?
    - **Draft-never-send:** Does this involve any external action beyond read + draft + vault write?
-   - **Settled decisions:** Does `docs/decisions.md` already resolve this? If yes, surface the D-number and quote the decision — don't present options that contradict it unless the user explicitly asks to revisit.
+   - **Settled decisions:** Do `docs/design/product-decisions.md` or `docs/design/architecture-decisions.md` already resolve this? If yes, surface the D-number and quote the decision — don't present options that contradict it unless the user explicitly asks to revisit.
    - **Architecture fit:** Is this consistent with native Claude Code skills, vault-only writes, no MCP server? Anything requiring a new runtime component is out of scope for v1 (D046).
    - **Skill duplication:** Does an existing skill already handle this? Would the fix be in a feature skill (one domain) or a steering skill (all skills)?
    - **Accuracy and blast radius:** If this involves Myna making autonomous judgments — how bad is it if Myna is wrong? Flag if the consequence is high.
@@ -131,7 +132,7 @@ If the user's choice opens new design questions, present them in the same batche
 - If the user says "agreed" or accepts a recommendation, move on. Don't revisit.
 - If the user pushes back, explore their direction — don't defend your recommendation.
 - If you realize the problem is different than initially stated (from reading the code), say so and reframe.
-- If this touches a settled decision in `docs/decisions.md`, flag it: "This would revisit D0XX. Are you sure?"
+- If this touches a settled decision in `docs/design/product-decisions.md` or `docs/design/architecture-decisions.md`, flag it: "This would revisit D0XX. Are you sure?"
 - If this surfaces a new open question that isn't being resolved now, flag it in your summary so the user can decide what to do with it.
 
 ### Step 4: Converge
@@ -164,7 +165,7 @@ Ready for implementation? Say "generate prompt" and I'll package this into an au
 - **Don't present a wall of text.** This is a conversation, not a design doc. Keep each message focused.
 - **Don't ask one question at a time.** Batch related questions. But don't batch unrelated ones — if routing and install are separate concerns, handle them in separate rounds.
 - **Don't keep going after the design is settled.** When decisions are made, summarize and stop. Don't probe for edge cases that won't affect implementation.
-- **Don't re-debate settled decisions** from `docs/decisions.md` unless the user explicitly asks.
+- **Don't re-debate settled decisions** from `docs/design/product-decisions.md` or `docs/design/architecture-decisions.md` unless the user explicitly asks.
 - **Don't present implementation options for invalid ideas.** If a proposal conflicts with a settled decision, vision principle, or architecture constraint, surface the conflict clearly before any options. Ask if they want to revisit or explore an alternative — don't silently adapt the idea into something valid and present that instead.
 - **Don't build the solution.** This skill designs; `myna-dev-build-prompt` packages; a fresh session builds. Stay in design mode.
 - **Don't skip reading the code.** Your recommendations must be grounded in what actually exists, not what you assume exists. Read the relevant files before presenting options.

@@ -6,7 +6,7 @@
 # Exit:  0 = pass, 1+ = number of errors found
 #
 # These artifacts deploy standalone via install.sh. They must not reference
-# design docs (foundations.md, architecture.md, decisions.md), repo paths
+# design docs (foundations.md, architecture.md, product-decisions.md, architecture-decisions.md), repo paths
 # (docs/), or decision IDs (D001-D050) — those don't exist at runtime.
 
 set -eo pipefail
