@@ -17,6 +17,14 @@ Each entry:
 
 ---
 
+### D053 — Plugin distribution via Claude Code plugin marketplace
+**Date:** 2026-04-26
+**Context:** The install-script model (D049) required users to clone the Myna repo and run `./install.sh` from the command line. This created friction: users needed git, a cloned repo that had to stay on disk for updates, and awareness of shell paths. The Claude Code plugin system provides a first-class distribution and update mechanism — installation is a single `/plugin install` command, updates are automatic, and the user never needs to touch a shell script.
+**Decision:** Myna distributes as a Claude Code plugin instead of a standalone install script. Plugin name: `myna`. Install command: `/plugin install myna@agentflock` (after adding the agentflock marketplace via `/plugin marketplace add agentflock/plugins`). All skills live at `skills/*/SKILL.md` inside the plugin directory; the main agent lives at `agents/agent.md`. The skill namespace is `myna:` — skills are invoked as `/myna:{name}` (e.g., `/myna:sync`, `/myna:setup`), the agent is referenced as `myna:agent`. Vault path and subfolder are stored in `~/.myna/config.yaml`, written by `/myna:init` on first run. First-time setup flow: `/myna:init` (vault directory creation and config.yaml) → `/myna:setup` (guided identity, projects, people, communication style). Shell alias `alias myna="claude --agent myna:agent"` is optional but recommended for the `myna` shorthand. Vault config YAML files and `~/.myna/config.yaml` are never overwritten by plugin updates.
+**Alternatives rejected:** Keep the install-script model from D049 (friction for new users — requires git clone, shell execution, and keeping the repo directory; no automatic updates). Hybrid of install script + plugin (two install paths to maintain). Manual copy of skill files to `~/.claude/skills/` (same friction as the install script without the update mechanism).
+
+---
+
 ### D052 — Three-mechanism customization layer for update-safe skill overrides
 **Date:** 2026-04-19
 **Context:** Users who customize skills or add routing rules lose their changes when they run the install script to update Myna. The upstream SKILL.md files are always overwritten on update, so any in-place edits are destroyed. A clean separation was needed between upstream content (overwritten on update) and user content (preserved).

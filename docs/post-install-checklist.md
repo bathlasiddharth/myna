@@ -1,12 +1,12 @@
 # Myna Post-Install Checklist
 
-Complete these steps to finish setting up Myna.
+Complete these steps to finish setting up Myna after running `/plugin install myna@agentflock`.
 
-## 1. Activate Shell Aliases
+## 1. Run First-Time Setup
 
-Run this to activate the `myna`, `myna-ro`, and `myna-x` commands:
-
-- [ ] `source ~/.zshrc` (or `source ~/.bashrc` if using bash)
+- [ ] In Claude Code, run `/myna:init` — creates the vault directory structure and writes `~/.myna/config.yaml`
+- [ ] When `/myna:init` finishes, run `/myna:setup` — guided configuration for identity, projects, people, and communication style
+- [ ] (Optional) Add a shell alias: `alias myna="claude --agent myna:agent"` to your `~/.zshrc` or `~/.bashrc`, then `source` it
 
 ## 2. Install Obsidian Plugins
 
@@ -31,12 +31,14 @@ If you use Gmail, Slack, or Google Calendar MCP servers, register their binaries
 - [ ] Slack: `claude mcp add slack-mcp -- <your-slack-mcp-command>`
 - [ ] Google Calendar: `claude mcp add gcal-mcp -- <your-gcal-mcp-command>`
 
-Skip this if you don't have MCP servers installed yet. Myna works without them — features that need them degrade gracefully. When you run `/myna-setup` in the next step, it will ask which server names to use.
+Skip this if you don't have MCP servers installed yet. Myna works without them — features that need them degrade gracefully. When you run `/myna:setup`, it will ask which server names to use.
 
 ## 5. Configure Myna
 
-Option A: Run `/myna-setup` and choose "Open config UI" for a visual editor.
-Option B: Run `/myna-setup` for a guided chat interview.
+If you didn't complete configuration during step 1, run `/myna:setup` now. Three input modes are available:
+
+Option A: Run `/myna:setup` and choose "Open config UI" for a visual editor.
+Option B: Run `/myna:setup` for a guided chat interview.
 Option C: Edit the files directly:
 
 - [ ] `myna/_system/config/workspace.yaml` — your name, email, timezone, enable/disable features
@@ -45,13 +47,13 @@ Option C: Edit the files directly:
 - [ ] `myna/_system/config/meetings.yaml` — meeting type overrides (optional)
 - [ ] `myna/_system/config/communication-style.yaml` — your tone preference and feedback approach
 
-**Customization files (good to know).** Each skill directory at `~/.claude/skills/myna-*/` contains a `CUSTOM.md` file where you can add extra steps or behavioral tweaks for that skill. `~/.myna/custom-routing.md` is available for routing rules if you add your own skills. Both files are never overwritten by updates. Most users won't need these right away — they're there when you do.
+**Customization files (good to know).** `~/.myna/custom-routing.md` is available for routing rules if you add your own skills. It's never overwritten by plugin updates. Most users won't need this right away.
 
 ## 6. Verify
 
-- [ ] Run `myna` in your terminal
-- [ ] Type: `what can you do?`
+- [ ] In Claude Code, type: `what can you do?`
 - [ ] You should see a list of 24 skills
+- [ ] Or if you set the shell alias: run `myna` in your terminal and type the same
 
 ---
 

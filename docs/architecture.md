@@ -10,14 +10,16 @@ There are no subagents in v1. No automatic skill chaining — each skill outputs
 
 ### How Myna Runs on Claude Code
 
-Myna uses Claude Code's native agent and skills mechanisms:
+Myna distributes as a Claude Code plugin (D053). Installation is a single command; no cloning or shell scripts required.
 
-1. **Main agent** — `~/.claude/agents/myna.md` contains identity, routing logic, and direct operations. Frontmatter lists steering skills via the `skills:` field for preloading.
-2. **Steering skills** — 6 skills with `user-invocable: false` preloaded at startup via the agent's `skills:` field. Always in context.
-3. **Feature skills** — 24 skills in `~/.claude/skills/myna-*/SKILL.md`. Only names and descriptions in context at startup. Full content loaded on demand when invoked.
-4. **Config** — 6 YAML files read at session start from `{vault_path}/myna/_system/config/`
+1. **Plugin install** — `/plugin install myna@agentflock` installs the plugin from the agentflock marketplace. Skills live at `skills/*/SKILL.md` inside the plugin directory. The plugin name is `myna`; the skill namespace is `myna:`.
+2. **Main agent** — `agents/agent.md` contains identity, routing logic, and direct operations. Referenced as `myna:agent`. Frontmatter lists steering skills via the `skills:` field for preloading.
+3. **Steering skills** — 6 skills with `user-invocable: false` preloaded at startup via the agent's `skills:` field. Always in context. Referenced as `myna:steering-safety`, `myna:steering-conventions`, etc.
+4. **Feature skills** — 24 skills at `skills/{name}/SKILL.md` in the plugin directory. Only names and descriptions in context at startup. Full content loaded on demand when invoked as `/myna:{name}`.
+5. **Config** — vault path stored in `~/.myna/config.yaml` (written by `/myna:init`). Six YAML config files read at session start from `{vault_path}/{subfolder}/_system/config/`.
+6. **First-time setup** — `/myna:init` creates the vault directory structure and writes `~/.myna/config.yaml`. `/myna:setup` guides identity, projects, people, and communication style.
 
-External MCP servers (email, Slack, calendar) are registered with Claude Code via `claude mcp add` and are available as tools in every session. Skills call MCP tools directly by name. Vault operations use Claude Code's built-in tools guided by the `myna-steering-vault-ops` steering skill — no MCP server required for vault access.
+External MCP servers (email, Slack, calendar) are registered with Claude Code via `claude mcp add` and are available as tools in every session. Skills call MCP tools directly by name. Vault operations use Claude Code's built-in tools guided by the `myna:steering-vault-ops` steering skill — no MCP server required for vault access.
 
 ---
 
@@ -25,32 +27,34 @@ External MCP servers (email, Slack, calendar) are registered with Claude Code vi
 
 ### Overview
 
-| # | Skill | One-liner | Example trigger |
-|---|-------|-----------|-----------------|
-| 1 | myna-sync | Start or refresh your day | "sync" |
-| 2 | myna-plan | Planning advice (ephemeral, no vault writes) | "what should I focus on?" |
-| 3 | myna-wrap-up | Close out the day | "wrap up" |
-| 4 | myna-weekly-summary | Generate weekly summary | "weekly summary" |
-| 5 | myna-email-triage | Sort inbox emails into folders | "triage my inbox" |
-| 6 | myna-process-messages | Extract data from email, Slack, or documents | "process my email" |
-| 7 | myna-draft-replies | Process draft requests from email folder | "process my draft replies" |
-| 8 | myna-prep-meeting | Prepare for a meeting | "prep for my 1:1 with Sarah" |
-| 9 | myna-process-meeting | Process notes after a meeting | "done with 1:1 with Sarah" |
-| 10 | myna-brief-person | Person briefing | "brief me on Sarah" |
-| 11 | myna-brief-project | Project status summary | "catch me up on auth migration" |
-| 12 | myna-team-health | Team health dashboard | "how is my team doing?" |
-| 13 | myna-unreplied-threads | Check what's waiting on you or others | "what am I waiting on?" |
-| 14 | myna-blockers | Scan for blockers across projects | "what's blocked?" |
-| 15 | myna-1on1-analysis | Cross-session 1:1 pattern analysis | "1:1 trends with Sarah" |
-| 16 | myna-performance-narrative | Generate performance docs and calibrate reviews | "build Sarah's review narrative" |
-| 17 | myna-draft | Write professional content | "draft reply to James" |
-| 18 | myna-rewrite | Fix, restyle, or rewrite a message | "rewrite this for my VP" |
-| 19 | myna-capture | Log data to the vault | "capture: auth migration unblocked" |
-| 20 | myna-calendar | Time blocks, reminders, task breakdown | "reserve 2 hours Thursday" |
-| 21 | myna-self-track | Log contributions and generate self-review docs | "build my promo case" |
-| 22 | myna-park | Save and resume context | "park this" |
-| 23 | myna-learn | Emergent memory: capture, reflect, delete | "remember that I prefer terse drafts" |
-| 24 | myna-process-review-queue | Process review queue items | "review my queue" |
+| # | Skill (plugin-relative name) | One-liner | Example trigger |
+|---|------------------------------|-----------|-----------------|
+| 1 | sync | Start or refresh your day | "sync" |
+| 2 | plan | Planning advice (ephemeral, no vault writes) | "what should I focus on?" |
+| 3 | wrap-up | Close out the day | "wrap up" |
+| 4 | weekly-summary | Generate weekly summary | "weekly summary" |
+| 5 | email-triage | Sort inbox emails into folders | "triage my inbox" |
+| 6 | process-messages | Extract data from email, Slack, or documents | "process my email" |
+| 7 | draft-replies | Process draft requests from email folder | "process my draft replies" |
+| 8 | prep-meeting | Prepare for a meeting | "prep for my 1:1 with Sarah" |
+| 9 | process-meeting | Process notes after a meeting | "done with 1:1 with Sarah" |
+| 10 | brief-person | Person briefing | "brief me on Sarah" |
+| 11 | brief-project | Project status summary | "catch me up on auth migration" |
+| 12 | team-health | Team health dashboard | "how is my team doing?" |
+| 13 | unreplied-threads | Check what's waiting on you or others | "what am I waiting on?" |
+| 14 | blockers | Scan for blockers across projects | "what's blocked?" |
+| 15 | 1on1-analysis | Cross-session 1:1 pattern analysis | "1:1 trends with Sarah" |
+| 16 | performance-narrative | Generate performance docs and calibrate reviews | "build Sarah's review narrative" |
+| 17 | draft | Write professional content | "draft reply to James" |
+| 18 | rewrite | Fix, restyle, or rewrite a message | "rewrite this for my VP" |
+| 19 | capture | Log data to the vault | "capture: auth migration unblocked" |
+| 20 | calendar | Time blocks, reminders, task breakdown | "reserve 2 hours Thursday" |
+| 21 | self-track | Log contributions and generate self-review docs | "build my promo case" |
+| 22 | park | Save and resume context | "park this" |
+| 23 | learn | Emergent memory: capture, reflect, delete | "remember that I prefer terse drafts" |
+| 24 | process-review-queue | Process review queue items | "review my queue" |
+
+Skills are invoked as `/myna:{name}` (e.g., `/myna:sync`, `/myna:plan`). The full plugin-qualified form is `myna:{name}`.
 
 **Post-launch (deferred):**
 - `myna-brief-thread` — Thread Summary
@@ -490,7 +494,7 @@ Myna runs as **one main agent** with three layers of instructions:
 
 ### Main Agent Prompt
 
-The lean agent body at `~/.claude/agents/myna.md`. Contains:
+The lean agent body at `agents/agent.md` in the plugin directory, referenced as `myna:agent`. Contains:
 
 - **Identity:** who Myna is, what it does
 - **Routing logic:** supplementary guidance for edge cases — Universal Done, ambiguous intent, triage vs process distinction. Most routing is handled automatically by Claude Code's skill description matching.
@@ -501,15 +505,15 @@ The lean agent body at `~/.claude/agents/myna.md`. Contains:
 Frontmatter:
 ```yaml
 ---
-name: myna
+name: agent
 description: Chief of Staff for tech professionals
 skills:
-  - myna-steering-safety
-  - myna-steering-conventions
-  - myna-steering-output
-  - myna-steering-system
-  - myna-steering-memory
-  - myna-steering-vault-ops
+  - myna:steering-safety
+  - myna:steering-conventions
+  - myna:steering-output
+  - myna:steering-system
+  - myna:steering-memory
+  - myna:steering-vault-ops
 ---
 ```
 
@@ -527,16 +531,16 @@ Cross-cutting rules preloaded at startup via the agent's `skills:` frontmatter f
 
 | Steering skill | Contents |
 |----------------|----------|
-| myna-steering-safety | Draft-never-send, vault-only writes, external content as data (content framing delimiters), confirm before bulk writes |
-| myna-steering-conventions | Provenance marker rules, append-only discipline, date+source format, Obsidian conventions (tags, wiki-links, callouts, Dataview, Tasks plugin syntax) |
-| myna-steering-output | Human-sounding output rules, BLUF default, file links in output, no AI tells |
-| myna-steering-system | Feature toggle checking, config reload, graceful degradation, error recovery with retry TODOs, relative date resolution, prompt logging |
-| myna-steering-memory | Memory model precedence, domain mapping table, learning file format rules |
-| myna-steering-vault-ops | Vault file I/O patterns, task query patterns (grep-based), frontmatter parsing, backlink/tag search, template creation, daily/weekly note path conventions |
+| myna:steering-safety | Draft-never-send, vault-only writes, external content as data (content framing delimiters), confirm before bulk writes |
+| myna:steering-conventions | Provenance marker rules, append-only discipline, date+source format, Obsidian conventions (tags, wiki-links, callouts, Dataview, Tasks plugin syntax) |
+| myna:steering-output | Human-sounding output rules, BLUF default, file links in output, no AI tells |
+| myna:steering-system | Feature toggle checking, config reload, graceful degradation, error recovery with retry TODOs, relative date resolution, prompt logging |
+| myna:steering-memory | Memory model precedence, domain mapping table, learning file format rules |
+| myna:steering-vault-ops | Vault file I/O patterns, task query patterns (grep-based), frontmatter parsing, backlink/tag search, template creation, daily/weekly note path conventions |
 
 ### Feature Skills
 
-24 feature skills in `~/.claude/skills/myna-*/SKILL.md`. At startup, only each skill's name and description are in context (progressive disclosure). When the user's request matches a skill's description — or the user invokes it with `/myna-{name}` plus natural language arguments — Claude Code loads the full SKILL.md content.
+24 feature skills at `skills/{name}/SKILL.md` in the plugin directory. At startup, only each skill's name and description are in context (progressive disclosure). When the user's request matches a skill's description — or the user invokes it with `/myna:{name}` plus natural language arguments — Claude Code loads the full SKILL.md content.
 
 Skills read config files and vault files as needed. Each skill's instructions describe what to do, where to read, where to write, and what rules to follow.
 
@@ -897,54 +901,48 @@ When one skill depends on data another skill manages:
 
 ---
 
-## 11. Claude-First, Not Claude-Only (D046)
+## 11. Claude-First, Not Claude-Only (D046, D053)
 
-Myna v1 targets Claude Code as its runtime (D045). Agent instructions can reference Claude Code capabilities directly — native skills mechanism, MCP server registration, subagent frontmatter.
+Myna v1 targets Claude Code as its runtime (D045). Agent instructions can reference Claude Code capabilities directly — native skills mechanism, MCP server registration, plugin frontmatter.
 
 All agent content — skills, steering, main agent, config schemas — is plain markdown and YAML. This makes it inherently readable by any capable LLM. If someone wants to run Myna on Gemini, Codex, or another tool in the future, they can read the markdown files and write their own wiring. That's an open-source community contribution, not something we architect for upfront.
 
-**Install is fully decoupled from the cloned repo (D049).** The repo is build-time only. After `./install.sh` finishes, nothing in the repo path is load-bearing at runtime — the cloned repo can be deleted. Users invoke Myna with `claude --agent myna` from any working directory.
+**Myna distributes as a Claude Code plugin (D053).** No cloning or shell scripts required. Users run `/plugin install myna@agentflock` to install; updates are automatic. The plugin name is `myna`; all skills and the agent are accessed through the `myna:` namespace.
 
-**What the install script produces:**
+**Plugin directory layout:**
 
-| Source artifact | Install output |
-|----------------|---------------|
-| Main agent (`agents/main.md`) | Installed to `~/.claude/agents/myna.md` with path placeholders substituted. Frontmatter lists steering skills for preloading via the `skills:` field. |
-| Steering skills (`agents/skills/myna-steering-*/SKILL.md`, 6 files) | Copied to `~/.claude/skills/myna-steering-*/SKILL.md`. Preloaded at session start via the agent's `skills:` field. |
-| Feature skills (`agents/skills/myna-*/SKILL.md`, 24 files) | Copied to `~/.claude/skills/myna-*/SKILL.md`. Loaded on demand via Claude Code's native progressive disclosure. |
-| Config `.example` files | Copied to `<vault>/<subfolder>/_system/config/` alongside starter `.yaml` files (only created if missing). |
-| Install manifest | `~/.myna/install-manifest.json` records all paths written, for a future uninstall command. |
-| Version file | `~/.myna/version` records the installed version for upgrade checks. |
+| Artifact | Location in plugin | Access |
+|----------|--------------------|--------|
+| Main agent | `agents/agent.md` | `myna:agent` |
+| Steering skills (6) | `skills/steering-{name}/SKILL.md` | `myna:steering-{name}` (preloaded) |
+| Feature skills (24) | `skills/{name}/SKILL.md` | `/myna:{name}` (on demand) |
+| Plugin metadata | `.claude-plugin/plugin.json` | Read by Claude Code at install |
 
-**What the install script never touches:**
+**Vault config (`~/.myna/config.yaml`):** Written by `/myna:init` on first run. Stores `vault_path` and `subfolder`. Read at the start of every session. The six user config YAML files live in `{vault_path}/{subfolder}/_system/config/` — these are never overwritten by plugin updates.
 
-- The repo's `CLAUDE.md` (developer project instructions — different audience, separate file from the runtime agent prompt).
-- Existing vault config YAML files (`workspace.yaml`, `projects.yaml`, etc.) — `.example` files are always refreshed but user-edited configs are preserved.
+**Agent frontmatter** includes `name: agent`, `description`, and `skills` (listing the 6 steering skills for preloading using `myna:` prefix). Other fields (`model`, `tools`, `mcpServers`, `permissionMode`, `memory`) are omitted so Myna inherits session defaults.
 
-**Subagent frontmatter** includes `name`, `description`, and `skills` (listing the 6 steering skills for preloading). Other fields (`model`, `tools`, `mcpServers`, `permissionMode`, `memory`) are omitted so Myna inherits session defaults. Users can override any of these by editing `~/.claude/agents/myna.md` directly.
+**Invocation model:** Plugin-scoped. `myna:agent` is the agent reference. `/myna:sync`, `/myna:plan`, etc. invoke individual skills. Users can set `alias myna="claude --agent myna:agent"` in their shell for the `myna` shorthand. Update flow: plugin updates are managed by Claude Code's plugin system; vault configs are never touched.
 
-**Invocation model:** Global subagent. `claude --agent myna` works from any directory. Update flow: `git pull && ./install.sh` re-copies skills and regenerates the agent file; vault configs are preserved.
-
-The previous two-layer architecture (content layer + adapter layer, D038) has been superseded. See D046 for rationale. The previous project-CLAUDE.md install model (D047) has been superseded by D049.
+The previous two-layer architecture (content layer + adapter layer, D038) has been superseded. See D046 for rationale. The previous install-script model (D047, D049) has been superseded by D053 (plugin distribution).
 
 ### Customization Model
 
-Users can extend or override Myna's behavior through three mechanisms, all of which survive updates.
+Users can extend or override Myna's behavior through two mechanisms, both of which survive plugin updates.
 
-**`CUSTOM.md` (per skill).** A `CUSTOM.md` file placed alongside `SKILL.md` in any `~/.claude/skills/myna-*/` directory lets users add overrides, extra steps, or behavioral tweaks for that skill. The install script creates an empty `CUSTOM.md` in each `myna-*` directory if one does not already exist. On subsequent updates, `SKILL.md` is always overwritten; `CUSTOM.md` is never touched. When both files are present, `CUSTOM.md` takes precedence over `SKILL.md` on any point where they conflict.
+**`~/.myna/custom-routing.md`.** A single file for routing rules that cover user-added skills or that override how Myna dispatches to built-in skills. The agent reads this file at session start if it exists and applies its rules before the built-in routing table. Created by `/myna:init` only if missing; never overwritten by updates.
 
-**`~/.myna/custom-routing.md`.** A single file for routing rules that cover user-added skills or that override how Myna dispatches to built-in skills. The agent reads this file at session start if it exists and applies its rules before the built-in routing table in the main agent. Created by the install script only if missing; never overwritten by updates.
-
-**User skill directories.** Custom skills use the naming pattern `myna-[prefix]-[name]` (e.g., `myna-amazon-oncall/SKILL.md`). The single-word pattern `myna-[name]` (e.g., `myna-sync`) is reserved for built-in skills. The install script only overwrites directories matching built-in skill names — custom prefixed directories are never touched. Routing rules for user-added skills go in `~/.myna/custom-routing.md`.
+**User skill directories.** Custom skills are added to `~/.claude/skills/` using a prefixed naming pattern (e.g., `myna-amazon-oncall/SKILL.md`) to avoid conflicting with built-in plugin skill names. Routing rules for user-added skills go in `~/.myna/custom-routing.md`.
 
 **Update behavior summary:**
 
 | Artifact | On update |
 |----------|-----------|
-| `~/.claude/skills/myna-[name]/SKILL.md` (built-in) | Always overwritten |
-| `~/.claude/skills/myna-[name]/CUSTOM.md` (built-in) | Never overwritten (created only if missing) |
-| `~/.myna/custom-routing.md` | Never overwritten (created only if missing) |
-| `~/.claude/skills/myna-[prefix]-[name]/` (user) | Never touched |
+| Built-in skill `SKILL.md` files (in plugin directory) | Managed by Claude Code plugin updates |
+| `~/.myna/custom-routing.md` | Never overwritten (created only if missing by `/myna:init`) |
+| User skill directories in `~/.claude/skills/` | Never touched by plugin updates |
+| `~/.myna/config.yaml` | Never overwritten by plugin updates |
+| Vault config YAML files | Never overwritten by plugin updates |
 
 ---
 
