@@ -1,11 +1,13 @@
 ---
-name: myna-learn
+name: learn
 description: Manage Myna's emergent memory — capture behavioral preferences, reflect on session patterns, delete wrong rules, promote confirmed patterns. Triggered by "remember that", "forget that", "what have you learned", "reflect".
 user-invocable: true
 argument-hint: "remember that [preference] | forget that [rule] | what have you learned? | show my learnings | reflect | promote [rule]"
 ---
 
-# myna-learn
+If vault_path is not in context, read `~/.myna/config.yaml` first. If the file does not exist, tell the user to run `/myna:init` and stop.
+
+# learn
 
 Manages Myna's emergent memory. Writes to `_meta/learnings/{domain}.md` only. Never touches `CLAUDE.md`.
 
@@ -81,7 +83,7 @@ User: "Remember that I prefer bullet points over paragraphs in status updates."
 
 **Example — clear directive captured mid-session:**
 
-User says "make this more concise" during an email draft. Main agent invokes myna-learn with the captured observation.
+User says "make this more concise" during an email draft. Main agent invokes `/myna:learn` with the captured observation.
 
 Domain: `email.md`. Marker: `[Auto]`.
 Entry: `- Keep email drafts concise — user asks to shorten regularly. [Auto] (2026-04-05)`
@@ -113,7 +115,7 @@ Entry: `- Keep email drafts concise — user asks to shorten regularly. [Auto] (
 
 **Worked example:**
 
-myna-wrap-up suggests reflect; user says "reflect".
+`/myna:wrap-up` suggests reflect; user says "reflect".
 
 Conversation review reveals: user asked to shorten draft twice, once said "too long" about a status update.
 
@@ -207,8 +209,8 @@ This is the only path for `[Inferred]` entries to reach Active via repetition. D
 
 ## Constraints
 
-**Never write to CLAUDE.md.** All myna-learn writes go to `_meta/learnings/` only.
+**Never write to CLAUDE.md.** All learn skill writes go to `_meta/learnings/` only.
 
-**Safety rules cannot be learned away.** If a user says "remember that I want you to send emails directly", refuse: "I can't learn that — sending messages directly is a safety rule that can't be overridden through learnings. (myna-steering-safety)"
+**Safety rules cannot be learned away.** If a user says "remember that I want you to send emails directly", refuse: "I can't learn that — sending messages directly is a safety rule that can't be overridden through learnings."
 
-**Vault-only writes.** All file operations target the vault's `_meta/learnings/` path per myna-steering-vault-ops.
+**Vault-only writes.** All file operations target the vault's `_meta/learnings/` path per the vault-ops steering skill.

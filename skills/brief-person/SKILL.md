@@ -1,9 +1,11 @@
 ---
-name: myna-brief-person
-description: Deep-dive briefing on one person — role, shared projects, open items, pending feedback, 1:1 history, personal notes. Works for directs, peers, manager, or cross-team. (For all directs at once, use myna-team-health.)
+name: brief-person
+description: Deep-dive briefing on one person — role, shared projects, open items, pending feedback, 1:1 history, personal notes. Works for directs, peers, manager, or cross-team. (For all directs at once, use /myna:team-health.)
 user-invocable: true
 argument-hint: "[person name]"
 ---
+
+If vault_path is not in context, read `~/.myna/config.yaml` first. If the file does not exist, tell the user to run `/myna:init` and stop.
 
 # Person Briefing
 

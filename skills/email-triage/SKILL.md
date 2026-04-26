@@ -1,13 +1,15 @@
 ---
-name: myna-email-triage
+name: email-triage
 description: Sort inbox emails into folders. Three-step flow: reads inbox, writes recommendations to review-email-triage.md, then on "process triage" moves approved emails. Classification only — no vault extraction. Triggers: triage inbox, sort inbox, process triage.
 user-invocable: true
 argument-hint: '"triage my inbox" or "process triage"'
 ---
 
-# myna-email-triage
+If vault_path is not in context, read `~/.myna/config.yaml` first. If the file does not exist, tell the user to run `/myna:init` and stop.
 
-Sort inbox emails into folders. This skill is **purely about classification** — it recommends where each email belongs, nothing more. It never extracts tasks, decisions, observations, or any other data into the vault. That's `myna-process-messages`'s job.
+# email-triage
+
+Sort inbox emails into folders. This skill is **purely about classification** — it recommends where each email belongs, nothing more. It never extracts tasks, decisions, observations, or any other data into the vault. That's `/myna:process-messages`'s job.
 
 Check `features.email_triage` in workspace.yaml before proceeding. If disabled, stop.
 
@@ -165,7 +167,7 @@ This ensures the user can see what was skipped and override if it was actually a
 - Does not extract tasks, decisions, blockers, observations, or any other vault data
 - Does not create or update any project files, person files, or timeline entries
 - Does not send emails or create drafts
-- Does not touch the `DraftReplies` folder (that's `myna-draft-replies`)
-- Does not process emails in project-mapped folders (that's `myna-process-messages`)
+- Does not touch the `DraftReplies` folder (that's `/myna:draft-replies`)
+- Does not process emails in project-mapped folders (that's `/myna:process-messages`)
 
-After triage, the user runs `myna-process-messages` to extract vault data from the sorted emails.
+After triage, the user runs `/myna:process-messages` to extract vault data from the sorted emails.

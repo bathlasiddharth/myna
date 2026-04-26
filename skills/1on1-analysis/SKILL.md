@@ -1,9 +1,11 @@
 ---
-name: myna-1on1-analysis
+name: 1on1-analysis
 description: Analyze 1:1 patterns with a specific person — action item follow-through, recurring topics, carry-forward rate, topic source balance. Reports facts from notes only. Does NOT assess relationship quality. Invoke for "analyze my 1:1s with Sarah", "1:1 trends with Alex", "1:1 patterns".
 user-invocable: true
 argument-hint: "[person name]"
 ---
+
+If vault_path is not in context, read `~/.myna/config.yaml` first. If the file does not exist, tell the user to run `/myna:init` and stop.
 
 # 1:1 Pattern Analysis
 
