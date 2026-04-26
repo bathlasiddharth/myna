@@ -24,7 +24,7 @@ Parse for:
 ## Setup
 
 Read ALL of these before auditing:
-1. `docs/architecture.md` — extract "Features covered:" for every skill. Build complete map: skill → features.
+1. `docs/design/architecture.md` — extract "Features covered:" for every skill. Build complete map: skill → features.
 2. All feature spec files in `docs/features/*.md`
 3. `docs/design/foundations.md` — vault structure, canonical templates
 4. Every skill file in scope

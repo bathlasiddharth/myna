@@ -31,7 +31,7 @@ Parse for:
 - `agents/skills/myna-steering-vault-ops/SKILL.md` — vault path patterns
 
 ### Step 2: Identify Writing Skills Per Destination
-Use the authoritative map from `docs/architecture.md`:
+Use the authoritative map from `docs/design/architecture.md`:
 - Project timeline entries → myna-capture, myna-process-messages, myna-process-meeting
 - Person observations → myna-capture, myna-process-messages, myna-process-meeting
 - Person recognition → same

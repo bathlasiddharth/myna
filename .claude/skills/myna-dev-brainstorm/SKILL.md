@@ -57,7 +57,7 @@ Check `$ARGUMENTS`:
 - `agents/main.md` — agent prompt (routing, identity, session start, direct operations, rules)
 - `agents/skills/myna-*/SKILL.md` — all skills
 - `install.sh` — install/update script
-- `docs/architecture.md` — full architecture
+- `docs/design/architecture.md` — full architecture
 - `docs/decisions.md` — settled decisions (don't re-debate)
 - `docs/design/foundations.md` — vault structure, data layer, config schemas
 - `CLAUDE.md` — project instructions, git conventions

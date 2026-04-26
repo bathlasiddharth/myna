@@ -47,7 +47,7 @@ Read ALL of these before touching any file in scope:
 
 1. **`agents/skills/myna-steering-*/SKILL.md`** — all 6 steering skills. These are the shared behavioral rules. Every review dimension checks against them.
 
-2. **`docs/architecture.md`** — specifically:
+2. **`docs/design/architecture.md`** — specifically:
    - §2 Skill Inventory table: "Features covered:" line for each skill. This is the authoritative source for what each skill is responsible for.
    - §11 (or wherever "How Myna Runs on Claude Code" is): how the main agent, steering skills, and feature skills relate at runtime.
 

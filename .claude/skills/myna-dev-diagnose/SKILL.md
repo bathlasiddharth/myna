@@ -39,12 +39,12 @@ Always read:
 - `docs/decisions.md` — settled decisions; note any D-numbers that bear on this
 
 Selectively read based on what's described:
-- `docs/architecture.md` — if the problem touches skill routing, install, or agent structure
+- `docs/design/architecture.md` — if the problem touches skill routing, install, or agent structure
 - Relevant `docs/features/[domain].md` — if the problem is about a specific feature domain
 
 ### 1b. Read the actual skill files
 
-For skill duplication and current behavior checks: do not rely on `docs/architecture.md` — it may be outdated.
+For skill duplication and current behavior checks: do not rely on `docs/design/architecture.md` — it may be outdated.
 
 Glob the actual skills:
 - `agents/skills/myna-*/SKILL.md` — Myna feature skills

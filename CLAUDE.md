@@ -7,7 +7,7 @@ Myna is a local-first Chief of Staff for tech professionals. It's a set of AI ag
 **This project has two first-class outputs, not one:**
 
 1. **Myna itself** — the working assistant.
-2. **A methodology for having Claude autonomously build an agentic system end-to-end** — from feature ideas through architecture, foundations, and autonomous build, with concentrated human effort at design points and minimal oversight during the build. The methodology lives in `docs/design/foundations.md`, `docs/architecture.md`, and `docs/decisions.md`. Intended to be reusable for building other agentic assistants on any capable LLM.
+2. **A methodology for having Claude autonomously build an agentic system end-to-end** — from feature ideas through architecture, foundations, and autonomous build, with concentrated human effort at design points and minimal oversight during the build. The methodology lives in `docs/design/foundations.md`, `docs/design/architecture.md`, and `docs/decisions.md`. Intended to be reusable for building other agentic assistants on any capable LLM.
 
 Treat process artifacts (decisions, foundations) with the same care as product artifacts. Both ship. When updating any process artifact, ask: "would this still make sense to someone using this playbook to build a different agentic assistant?"
 
@@ -19,7 +19,7 @@ Treat process artifacts (decisions, foundations) with the same care as product a
 |---|---|
 | `docs/vision.md` | North star |
 | `docs/decisions.md` | Settled decisions — do not re-debate |
-| `docs/architecture.md` | Runtime model, skill inventory, vault structure |
+| `docs/design/architecture.md` | Runtime model, skill inventory, vault structure |
 | `docs/design/foundations.md` | Vault folder structure, canonical file formats |
 
 Approved features for every domain live in `docs/features/{domain}.md` under the `## Features` section. This is the only authoritative source for what's being built.
@@ -60,11 +60,11 @@ When the user corrects your direction or you discover a non-obvious pattern duri
 
 Build pipeline is a **4-phase structure** (D044): Design (0), Build (1), Install (2), Ship (3).
 
-**Claude-first design (D046, D050).** All agent artifacts — 24 feature skills, 6 steering skills, main agent — are plain markdown under `agents/`. The install step (Phase 2) copies skills to `~/.claude/skills/`, generates the agent file at `~/.claude/agents/myna.md`, and creates the vault structure. No MCP server — vault operations use Claude Code's built-in tools. See `docs/architecture.md` §11 for how this works.
+**Claude-first design (D046, D050).** All agent artifacts — 24 feature skills, 6 steering skills, main agent — are plain markdown under `agents/`. The install step (Phase 2) copies skills to `~/.claude/skills/`, generates the agent file at `~/.claude/agents/myna.md`, and creates the vault structure. No MCP server — vault operations use Claude Code's built-in tools. See `docs/design/architecture.md` §11 for how this works.
 
 | Artifact | Phase | Purpose |
 |---|---|---|
-| `docs/design/foundations.md` + `docs/architecture.md` | 0 Design | Architecture, data layer, patterns, feature-to-skill mapping |
+| `docs/design/foundations.md` + `docs/design/architecture.md` | 0 Design | Architecture, data layer, patterns, feature-to-skill mapping |
 | `agents/skills/myna-*/SKILL.md` (24 feature skills) | 2 Install | Native Claude Code skill files |
 | `agents/skills/myna-steering-*/SKILL.md` (6 steering skills) | 2 Install | Cross-cutting rules as preloaded skills |
 | `agents/main.md` | 2 Install | Main agent prompt |

@@ -68,7 +68,7 @@ A realistic workday for an Engineering Manager — the moments you'd actually re
 ↳ Planned-vs-actual, contributions logged, tomorrow's note created with carry-forwards
 ```
 
-Full walkthrough: [A Day With Myna](docs/a-day-with-myna.md) · Browse the [test vault](tests/fixtures/vault/myna) to see the files Myna reads and writes
+Full walkthrough: [A Day With Myna](docs/guide/a-day-with-myna.md) · Browse the [test vault](tests/fixtures/vault/myna) to see the files Myna reads and writes
 
 ## Core Principles
 
@@ -132,7 +132,7 @@ Myna is designed to be adapted to your workflow. All customizations survive upda
 | **Add a new skill** | Create a folder in `~/.claude/skills/` named `myna-[yourprefix]-[skillname]` (e.g., `myna-amazon-oncall`). The `myna-[word]` pattern (single word after `myna-`) is reserved for built-in skills. Add routing rules to `~/.myna/custom-routing.md` so the agent knows when to use it. |
 | **Disable a skill** | Delete or rename its folder (e.g., `~/.claude/skills/myna-email-triage/`). |
 
-On update, the install script overwrites built-in `SKILL.md` files but never touches `CUSTOM.md`, `custom-routing.md`, or your custom skill directories. See [Customization Guide](docs/customization.md) for details.
+On update, the install script overwrites built-in `SKILL.md` files but never touches `CUSTOM.md`, `custom-routing.md`, or your custom skill directories. See [Customization Guide](docs/guide/customization.md) for details.
 
 ## Status
 
@@ -182,9 +182,9 @@ All dev skills are prefixed `myna-dev-*` and only available when working inside 
 
 | Document | Purpose |
 |----------|---------|
-| [Guide](docs/guide.md) | Full user guide — how it works, skills reference, config, workflows |
-| [Customization](docs/customization.md) | How to tweak skills, add your own, and set up routing rules |
-| [A Day With Myna](docs/a-day-with-myna.md) | A realistic workday walkthrough showing how Myna helps Engineering Managers |
-| [Architecture](docs/architecture.md) | Runtime model — skills, steering, vault structure, MCP integration |
-| [Obsidian Setup](docs/obsidian-setup.md) | Plugin setup, dashboard overview, vault configuration |
+| [Guide](docs/guide/guide.md) | Full user guide — how it works, skills reference, config, workflows |
+| [Customization](docs/guide/customization.md) | How to tweak skills, add your own, and set up routing rules |
+| [A Day With Myna](docs/guide/a-day-with-myna.md) | A realistic workday walkthrough showing how Myna helps Engineering Managers |
+| [Architecture](docs/design/architecture.md) | Runtime model — skills, steering, vault structure, MCP integration |
+| [Obsidian Setup](docs/guide/obsidian-setup.md) | Plugin setup, dashboard overview, vault configuration |
 | [How It Was Built](docs/how-it-was-built.md) | The Claude Code methodology behind Myna |
