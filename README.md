@@ -81,25 +81,21 @@ Full walkthrough: [A Day With Myna](docs/a-day-with-myna.md) · Browse the [test
 
 ## Installation
 
-**Prerequisites:** [Claude Code](https://claude.ai/code) · [Obsidian](https://obsidian.md/) · Python 3 (for config UI)
+**Prerequisites:** [Claude Code](https://claude.ai/code) · [Obsidian](https://obsidian.md/)
 
-```bash
-git clone https://github.com/bathlasiddharth/myna.git
-cd myna
-./install.sh --vault-path ~/path/to/your/vault
+In Claude Code, run:
+
+```
+/plugin marketplace add agentflock/plugins
+/plugin install myna@agentflock
+/myna:init
 ```
 
-Then run `/myna-setup` for guided configuration — it walks you through identity, projects, people, and communication style. Prefer editing YAML directly? The config files are at `myna/_system/config/`.
+`/myna:init` creates the vault directory structure and saves your vault path. When it finishes, run `/myna:setup` for guided configuration — identity, projects, people, and communication style. Prefer editing YAML directly? The config files are at `myna/_system/config/` inside your vault.
 
 ### Updating
 
-```bash
-myna update
-```
-
-This pulls the latest from your cloned repo and re-runs the install script. Your vault data, configs, and `CUSTOM.md` overrides are never touched.
-
-> **Keep the cloned repo folder.** `myna update` pulls from it — deleting the repo means you can no longer run updates. If you lose it, re-clone and re-run `./install.sh`.
+Plugin updates are managed automatically by Claude Code. Your vault data, configs, and custom routing rules are never touched by updates.
 
 ## Usage
 
