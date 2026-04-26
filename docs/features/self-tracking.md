@@ -1,7 +1,5 @@
 # Self Tracking — Features
 
-> Draft. Being refined through discussion.
-
 **Scope:** Tracking your own contributions, decisions, impact, feedback given, reviews done. Generating brag docs, promo packets, self-reviews.
 
 ---

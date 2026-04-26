@@ -1,7 +1,5 @@
 # Cross-Domain Interactions — Features
 
-> Draft. To be refined after individual domain requirements are closer to final.
-
 **Scope:** How the 7 domains connect — data flows, shared concepts, dependencies between features.
 
 ---

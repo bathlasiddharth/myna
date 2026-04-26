@@ -1,7 +1,5 @@
 # People Management — Features
 
-> Draft. Being refined through discussion.
-
 **Scope:** Person files, observations, contributions, feedback, recognition, 1:1 analysis, engagement signals, performance narratives.
 
 ---

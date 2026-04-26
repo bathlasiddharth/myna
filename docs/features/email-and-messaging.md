@@ -1,7 +1,5 @@
 # Email & Messaging — Features
 
-> Draft. Being refined through discussion.
-
 **Scope:** Email processing pipeline, messaging processing, triage, thread summaries, unreplied tracker, deduplication.
 
 ---

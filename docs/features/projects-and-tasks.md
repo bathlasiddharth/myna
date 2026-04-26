@@ -1,7 +1,5 @@
 # Projects & Tasks — Features
 
-> Draft. Being refined through discussion.
-
 **Scope:** Project files, timelines, tasks, blocker detection, context switching, search.
 
 ---

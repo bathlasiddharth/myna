@@ -1,7 +1,5 @@
 # Writing & Drafts — Features
 
-> Draft. Being refined through discussion.
-
 **Scope:** Email drafts, message rewrites, structured drafts (status updates, escalations), recognition drafts, document review, pre-read prep, difficult conversation prep, "help me say no."
 
 ---

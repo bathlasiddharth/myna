@@ -1,7 +1,5 @@
 # Meetings & Calendar — Features
 
-> Draft. Being refined through discussion.
-
 **Scope:** Meeting notes, prep briefs, debriefs, meeting topics, calendar time blocks, reminders.
 
 ---
