@@ -11,6 +11,7 @@ allowed-tools:
   - Bash
   - Skill
   - AskUserQuestion
+  - WebFetch
 effort: max
 ---
 
@@ -23,7 +24,8 @@ This is a conversation, not a report. Be direct. If something is off, say so cle
 ## Input
 
 Check `$ARGUMENTS`:
-- **If provided:** treat it as the problem or proposed change and proceed directly to Step 1 (Self-Evaluate Validity).
+- **If a GitHub issue URL** (matches `github.com/.*/issues/\d+`): fetch the issue using WebFetch, extract the title, description, and any comments. Use this as the problem description and proceed directly to Step 1.
+- **If provided (text):** treat it as the problem or proposed change and proceed directly to Step 1 (Self-Evaluate Validity).
 - **If empty:** ask the user: "What problem, bug, or proposed change do you want to evaluate?"
 
 ---
