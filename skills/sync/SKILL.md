@@ -1,5 +1,6 @@
 ---
 name: sync
+disable-model-invocation: true
 description: 'Sync / "good morning" / "set up my day" — creates or refreshes the daily note, generates meeting prep, surfaces overdue tasks and review queue. Handles "plan tomorrow" and weekly note creation. Auto-archives old journal notes.'
 user-invocable: true
 argument-hint: "[plan tomorrow]"

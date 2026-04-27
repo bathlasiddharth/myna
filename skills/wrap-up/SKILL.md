@@ -1,5 +1,6 @@
 ---
 name: wrap-up
+disable-model-invocation: true
 description: Close out your day — compares planned vs actual, logs contributions, moves unfinished items to tomorrow's note, captures quick notes, and runs a learning reflection. Writes an End of Day section to today's daily note.
 user-invocable: true
 argument-hint: "[quick note: ...]"

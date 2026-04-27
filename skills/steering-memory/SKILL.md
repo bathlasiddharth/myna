@@ -1,5 +1,6 @@
 ---
 name: steering-memory
+disable-model-invocation: true
 description: Memory model rules — three-layer precedence, session-start loading, domain mapping table, intent recognition for /myna:learn, output boundary, factual entry refusal
 user-invocable: false
 ---

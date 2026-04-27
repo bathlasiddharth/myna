@@ -1,5 +1,6 @@
 ---
 name: prep-meeting
+disable-model-invocation: true
 description: Generate or update meeting prep for one meeting or all remaining meetings today. Infers meeting type from calendar data, writes the Prep section with checkboxes, carry-forward items, and coaching notes for sensitive topics.
 user-invocable: true
 argument-hint: '"prep for my 1:1 with Sarah", "prep for my remaining meetings", "update prep for my meetings"'

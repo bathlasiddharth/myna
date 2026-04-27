@@ -1,5 +1,6 @@
 ---
 name: setup
+disable-model-invocation: true
 description: Configure Myna interactively — guided setup for identity, integrations, projects, people, and communication style. Add a project or person later, review current config, or walk through initial setup. Resumable at any point.
 user-invocable: true
 argument-hint: "setup | add a project | add people | review config | update communication style"

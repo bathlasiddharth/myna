@@ -1,5 +1,6 @@
 ---
 name: steering-conventions
+disable-model-invocation: true
 description: Data conventions — provenance markers, date+source format, append-only discipline, Obsidian formatting (tags, wiki-links, callouts, Dataview, Tasks plugin syntax), review queue entry format
 user-invocable: false
 ---

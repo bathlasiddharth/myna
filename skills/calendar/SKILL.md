@@ -1,5 +1,6 @@
 ---
 name: calendar
+disable-model-invocation: true
 description: Create personal calendar time blocks, reminders, and task breakdowns. Finds free slots, proposes options, user confirms. Three-layer safety on every write — no attendees, ever. Does not handle meeting prep or scheduling with others.
 user-invocable: true
 argument-hint: "reserve [duration] [when] for [what] | remind me [what] at [time] | break down [task]"

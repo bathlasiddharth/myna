@@ -1,5 +1,6 @@
 ---
 name: rewrite
+disable-model-invocation: true
 description: Fix grammar, adjust tone for audience, or fully rewrite an existing message — three modes: fix (grammar only), tone (restyle for audience), rewrite (full restructure from rough notes). Input is user-provided text; output shown inline. Does NOT generate new content from scratch (use /myna:draft for that).
 user-invocable: true
 argument-hint: "fix [message] | tone [message] --audience [person/tier] | rewrite [message] --audience [person/tier]"

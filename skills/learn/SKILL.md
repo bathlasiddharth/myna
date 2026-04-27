@@ -1,5 +1,6 @@
 ---
 name: learn
+disable-model-invocation: true
 description: Manage Myna's emergent memory — capture behavioral preferences, reflect on session patterns, delete wrong rules, promote confirmed patterns. Triggered by "remember that", "forget that", "what have you learned", "reflect".
 user-invocable: true
 argument-hint: "remember that [preference] | forget that [rule] | what have you learned? | show my learnings | reflect | promote [rule]"

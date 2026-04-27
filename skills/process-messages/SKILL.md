@@ -1,5 +1,6 @@
 ---
 name: process-messages
+disable-model-invocation: true
 description: Extract structured data from email, Slack, or pasted documents and route to the vault. Processes project-mapped folders/channels. Never touches inbox or DraftReplies. Populates tasks, timelines, person files, review queues.
 user-invocable: true
 argument-hint: '"process my email", "process my messages", "process this doc: [paste]"'

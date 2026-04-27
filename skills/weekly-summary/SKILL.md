@@ -1,5 +1,6 @@
 ---
 name: weekly-summary
+disable-model-invocation: true
 description: Summarize your week — synthesizes daily notes, contributions, decisions, and task completions into a structured weekly review with self-reflection prompts. Appends a new section each run. Includes team health snapshot for managers.
 user-invocable: true
 argument-hint: "[week of YYYY-MM-DD | last week]"

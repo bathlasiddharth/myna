@@ -1,5 +1,6 @@
 ---
 name: blockers
+disable-model-invocation: true
 description: Scan all active projects for blockers — explicit blocker callouts in project timelines, overdue dependency tasks, and overdue tasks. Invoke for "what's blocked?", "show me blockers", "any blockers across projects?".
 user-invocable: true
 argument-hint: "[optional: project name to scope to one project]"

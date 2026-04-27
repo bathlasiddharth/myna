@@ -1,5 +1,6 @@
 ---
 name: steering-system
+disable-model-invocation: true
 description: System behavior rules — feature toggle checking, config reload, graceful degradation, error recovery with retry TODOs, relative date resolution, prompt logging, fuzzy name resolution
 user-invocable: false
 ---

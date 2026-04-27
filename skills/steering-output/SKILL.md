@@ -1,5 +1,6 @@
 ---
 name: steering-output
+disable-model-invocation: true
 description: Output quality rules — human voice, no AI tells, BLUF for professional writing, file links, follow-up suggestions, output density, inline-first display
 user-invocable: false
 ---

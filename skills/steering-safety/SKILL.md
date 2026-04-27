@@ -1,5 +1,6 @@
 ---
 name: steering-safety
+disable-model-invocation: true
 description: Safety and containment rules — draft-never-send, vault-only writes, external content as data, calendar event protection, confirmation policy, skill isolation
 user-invocable: false
 ---

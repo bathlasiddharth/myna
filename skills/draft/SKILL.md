@@ -1,5 +1,6 @@
 ---
 name: draft
+disable-model-invocation: true
 description: Generate professional written content from vault context — email replies (conversation path only; DraftReplies folder is /myna:draft-replies), follow-up emails, follow-up meeting invites, status updates, escalations, recognition, decline messages, conversation prep, and monthly updates. Does NOT rewrite existing text (use /myna:rewrite).
 user-invocable: true
 argument-hint: "draft reply to [person] | follow-up email for [meeting] | follow-up meeting with [people] | status update for [project] | escalate [blocker] | recognition for [person] | help me say no to [request] | prep for [conversation] | monthly update | draft my MBR | draft my QBR"

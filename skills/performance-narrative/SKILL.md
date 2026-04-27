@@ -1,5 +1,6 @@
 ---
 name: performance-narrative
+disable-model-invocation: true
 description: Generate a performance narrative for a team member's review cycle from observations, recognition, contributions, and meeting notes. Also calibrates consistency across multiple narratives. Invoke for "build Sarah's review narrative", "performance summary for Sarah", "review my narratives" (calibration mode).
 user-invocable: true
 argument-hint: "[person name] [optional: time period] | review my narratives"

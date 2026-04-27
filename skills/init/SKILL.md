@@ -1,5 +1,6 @@
 ---
 name: init
+disable-model-invocation: true
 description: 'First-time vault setup — creates vault directories, copies starter config, templates, and dashboards. Run once after installing the plugin.'
 user-invocable: true
 argument-hint: "[vault path]"

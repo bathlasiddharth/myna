@@ -1,5 +1,6 @@
 ---
 name: process-review-queue
+disable-model-invocation: true
 description: Process review queue items across review-work, review-people, and review-self queues — interactively in chat or by processing items the user has already checked in Obsidian. Does NOT process review-email-triage.md (email folder recommendations — that's handled by /myna:email-triage).
 user-invocable: true
 argument-hint: "review my queue | process review queue | what's in my queue? | process approved items | process [queue name]"

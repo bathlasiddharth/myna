@@ -1,5 +1,6 @@
 ---
 name: self-track
+disable-model-invocation: true
 description: Log contributions and generate self-review documents — brag docs, self-reviews, promo packets. Query by category, project, or date. Self-calibration: check draft claims against your log. YOUR contributions only.
 user-invocable: true
 argument-hint: "log contribution: [description] | what did I do this quarter | draft my self-review for [period] | build my promo case | am I underselling myself? | what feedback did I give this [period]"

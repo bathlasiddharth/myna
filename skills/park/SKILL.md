@@ -1,5 +1,6 @@
 ---
 name: park
+disable-model-invocation: true
 description: Save working context for zero-loss resumption in a new session. Resume by name or list all parked items. "Switch to [project]" parks current context and loads project status.
 user-invocable: true
 argument-hint: "park this | park: [topic name] | resume [topic] | resume (show list) | what's parked? | switch to [project]"

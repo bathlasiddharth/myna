@@ -1,5 +1,6 @@
 ---
 name: draft-replies
+disable-model-invocation: true
 description: Process the DraftReplies email folder — reads emails the user forwarded with drafting instructions, creates reply drafts and follow-up meeting drafts in the vault. Only reads the DraftReplies folder. Does not process other email folders.
 user-invocable: true
 argument-hint: '"process my draft replies", "any draft requests?", "check my drafts folder"'

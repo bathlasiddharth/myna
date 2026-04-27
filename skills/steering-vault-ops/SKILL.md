@@ -1,5 +1,6 @@
 ---
 name: steering-vault-ops
+disable-model-invocation: true
 description: Vault operations pattern library — file I/O tool mapping, task query patterns (grep-based), frontmatter parsing, backlink/tag queries, template creation, vault path conventions, file safety checks
 user-invocable: false
 ---

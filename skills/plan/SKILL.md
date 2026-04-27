@@ -1,5 +1,6 @@
 ---
 name: plan
+disable-model-invocation: true
 description: Planning advice — analyzes your workload, meetings, and tasks to suggest what to focus on. Three modes: Plan Day (schedule and priorities), Priority Coaching (top 3 with reasoning), Week Optimization (meetings to skip, best focus slots). Never writes to vault — all output is inline.
 user-invocable: true
 argument-hint: "[day | week | priorities | am I over-committed?]"

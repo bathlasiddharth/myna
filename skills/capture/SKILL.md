@@ -1,5 +1,6 @@
 ---
 name: capture
+disable-model-invocation: true
 description: Route user input to vault destinations — quick capture, observations, recognition, tasks (single or recurring), links (save or find), project/person file management. One input can produce multiple entries.
 user-invocable: true
 argument-hint: "capture: [anything] | observation about [person]: [text] | add task: [description] | create recurring task: [description] | save link: [url] for [entity] | update status of [project]"
