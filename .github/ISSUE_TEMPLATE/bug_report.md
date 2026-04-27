@@ -5,6 +5,7 @@ labels: bug
 ---
 
 > Replace any private content (names, emails, project details) with [REDACTED] before submitting.
+> Using Myna in Claude Code? Run `/myna-dev-bug` to auto-fill this template from your session.
 
 ## Describe the bug
 
