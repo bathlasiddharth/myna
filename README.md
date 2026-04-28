@@ -11,7 +11,7 @@ AI Chief of Staff for tech professionals — your projects, your team, your meet
 
 ## The Problem
 
-If you manage multiple projects and communication channels — whether you're an engineering manager, tech lead, PM, director, or senior IC — you spend too much of your day on information management. Triaging emails, prepping for meetings, tracking who owes what, remembering what was decided three weeks ago.
+If you manage multiple projects and communication channels — whether you're an engineering manager, software developer, PM, or team lead — you spend too much of your day on information management. Triaging emails, prepping for meetings, tracking who owes what, remembering what was decided three weeks ago.
 
 Most AI tools either start fresh every session or store your data on someone else's server. Myna does neither. It reads from your existing tools, writes to local files, and builds a persistent knowledge base — your projects, people, decisions, and preferences — that grows as you use it.
 
@@ -23,14 +23,14 @@ Myna runs inside Claude Code. Here's what role-specific skills and a local knowl
 
 | | AI Chat Tools<br>*(Claude, ChatGPT, Gemini)* | Local AI Tools<br>*(Khoj, Fabric, PrivateGPT)* | **Myna** |
 |---|---|---|---|
-| Knowledge base | Platform memory — general-purpose | Your existing notes — you organize | **Organized by projects, people, meetings — created as you work** |
-| Output | Chat + generated documents | Answers about your notes | **Persistent files — drafts, briefs, prep, daily notes** |
-| Creates & organizes | On request — you direct every action | No — reads what you wrote | **From one prompt — routes, updates, and maintains files across folders** |
-| Works with | Whatever you prompt about | Fixed set of built-in integrations | **Whatever your company already uses (bring your own MCPs)** |
-| Knows you | Platform memory + custom instructions | Limited to what's in your notes | **Learns preferences, knows your projects and people by name** |
-| Built for the role | General-purpose — you build your own workflow | General-purpose — Q&A over any content | **Your full workday covered — morning sync, meeting prep, email triage, project catch-up, each one prompt away** |
-| Judgment calls | Asks in conversation — lost if you miss it | Best guess from your notes | **Persistent review queue — nothing ambiguous auto-resolves** |
-| Customizable | Configure via settings (GPTs, Projects) | Open source — customize via config or code | **Full control — every skill is a readable, editable file** |
+| Built for | General-purpose | Q&A over your notes | **Your workday — morning sync, meeting prep, email triage, project catch-up** |
+| Your data | Platform memory, general-purpose | Your existing notes, unstructured | **Your projects, people, and meetings — organized as you work** |
+| What it creates | Chat and generated documents | Answers about your notes | **Drafts, meeting prep, project briefs, daily notes — files you review before using** |
+| How it works | You direct every step | One question, one answer | **One prompt — Myna routes, updates, and files content across your vault** |
+| Integrations | Whatever you describe | Your local files | **Email, Slack, and calendar via MCPs — whatever your team already uses** |
+| Learns your style | Custom instructions | What's in your notes | **Your preferences, communication style, and working habits — persists across sessions** |
+| When unsure | Asks in chat, gone if you miss it | Best guess from your notes | **Persistent review queue — nothing resolves without your approval** |
+| Customizable | Settings and custom GPTs | Config file or source code | **Every skill is a plain-text file you can read, edit, or replace** |
 
 ## See It In Action
 
@@ -69,7 +69,7 @@ A day in the life of an Engineering Manager using Myna:
 ↳ Planned vs actual. Contributions logged. Tomorrow's note created with carry-forwards.
 ```
 
-Not an EM? The skills work for anyone juggling projects and communication — tech leads, PMs, directors, senior ICs.
+Not an EM? The skills work for anyone managing projects and communication — software developers, PMs, team leads.
 
 Full walkthrough: [A Day With Myna](docs/a-day-with-myna.md) · Browse the [demo vault](tests/fixtures/vault/myna) to see the files Myna creates
 
