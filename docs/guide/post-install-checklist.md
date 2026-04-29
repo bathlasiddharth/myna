@@ -47,7 +47,7 @@ Option C: Edit the files directly:
 - [ ] `myna/_system/config/meetings.yaml` — meeting type overrides (optional)
 - [ ] `myna/_system/config/communication-style.yaml` — your tone preference and feedback approach
 
-**Customization files (good to know).** `~/.myna/custom-routing.md` is available for routing rules if you add your own skills. It's never overwritten by plugin updates. Most users won't need this right away.
+**Customization files (good to know).** `~/.myna/overrides/routing.md` is available for routing rules if you add your own skills. Per-skill overrides go in `~/.myna/overrides/skills/myna-{skill-name}.md`. Neither is overwritten by plugin updates. Most users won't need these right away.
 
 ## 6. Verify
 
