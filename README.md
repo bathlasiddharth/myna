@@ -222,8 +222,8 @@ All customizations survive updates.
 
 | What | How |
 |---|---|
-| **Tweak a skill** | Add `CUSTOM.md` alongside the skill's `SKILL.md` in `~/.claude/skills/myna-*/`. Your overrides take precedence. |
-| **Add a skill** | Create `~/.claude/skills/myna-[yourprefix]-[name]/` (e.g., `myna-amazon-oncall`). Single-word `myna-[word]` is reserved for built-in skills. Add routing rules to `~/.myna/custom-routing.md`. |
+| **Tweak a skill** | Create `~/.myna/overrides/skills/myna-{skill-name}.md`. Your overrides take precedence over the installed skill. |
+| **Add a skill** | Create `~/.claude/skills/myna-[yourprefix]-[name]/` (e.g., `myna-amazon-oncall`). Single-word `myna-[word]` is reserved for built-in skills. Add routing rules to `~/.myna/overrides/routing.md`. |
 | **Disable a skill** | Delete or rename its folder. |
 
 See [Customization Guide](docs/customization.md) for details.
