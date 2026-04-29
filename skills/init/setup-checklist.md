@@ -45,7 +45,7 @@ Option C: Edit the files directly:
 - [ ] `myna/_system/config/meetings.yaml` — meeting type overrides (optional)
 - [ ] `myna/_system/config/communication-style.yaml` — your tone preference and feedback approach
 
-**Custom routing (advanced).** `~/.myna/custom-routing.md` is available for routing rules if you add your own skills. It is never overwritten by updates. Most users won't need this right away — it's there when you do.
+**Custom routing (advanced).** `~/.myna/overrides/routing.md` is available for routing rules if you add your own skills. It is never overwritten by updates. Most users won't need this right away — it's there when you do.
 
 ## 6. Verify
 
