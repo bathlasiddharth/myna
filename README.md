@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/myna-logo.png" alt="Myna" width="240" />
+</p>
+
 # Myna
 
 **The system for everything you're trying to keep in your head.**
