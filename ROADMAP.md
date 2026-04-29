@@ -7,12 +7,12 @@
 - 6 steering skills (safety, conventions, output, system, memory, vault operations)
 - Install script — sets up Myna in Claude Code, creates vault structure, registers MCP servers
 - Vault templates — folder structure, dashboards, config files
-- Customization layer — per-skill CUSTOM.md overrides, custom routing, user-namespaced skills
+- Customization layer — per-skill override files at `~/.myna/overrides/skills/`, routing overrides at `~/.myna/overrides/routing.md`, user-namespaced skills
 
 **v1.x (post-launch)**
 - Config UI — visual setup interface for all config domains
 - Guided onboarding skill — interactive first-run setup via `myna-setup`
-- Skill customization layer — update-safe overrides via CUSTOM.md (D052)
+- Skill customization layer — update-safe overrides via `~/.myna/overrides/skills/myna-{skill-name}.md` and `~/.myna/overrides/routing.md` (D052)
 
 ## In Progress
 
