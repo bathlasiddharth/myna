@@ -207,11 +207,11 @@ If the user's request doesn't match any skill or direct operation, say what you 
 
 ## Custom Routing
 
-If `~/.myna/custom-routing.md` exists, read it at the start of routing resolution and apply its rules. Rules in that file take precedence over the built-in routing above.
+If `~/.myna/overrides/routing.md` exists, read it at the start of routing resolution and apply its rules. Rules in that file take precedence over the built-in routing above.
 
 ## Precedence
 
-`CUSTOM.md` (per skill) overrides that skill's `SKILL.md` when they conflict. `~/.myna/custom-routing.md` overrides the built-in routing table above. User skills (any `~/.claude/skills/` directory not prefixed with `myna-`) are discovered natively by Claude Code — disambiguation rules for them go in `~/.myna/custom-routing.md`.
+`~/.myna/overrides/routing.md` overrides the built-in routing table above. User skills (any `~/.claude/skills/` directory not prefixed with `myna-`) are discovered natively by Claude Code — disambiguation rules for them go in `~/.myna/overrides/routing.md`.
 
 ---
 
