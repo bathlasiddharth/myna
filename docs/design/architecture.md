@@ -928,18 +928,20 @@ The previous two-layer architecture (content layer + adapter layer, D038) has be
 
 ### Customization Model
 
-Users can extend or override Myna's behavior through two mechanisms, both of which survive plugin updates.
+Users can extend or override Myna's behavior through three mechanisms, all of which survive plugin updates. (D052)
 
-**`~/.myna/custom-routing.md`.** A single file for routing rules that cover user-added skills or that override how Myna dispatches to built-in skills. The agent reads this file at session start if it exists and applies its rules before the built-in routing table. Created by `/myna:init` only if missing; never overwritten by updates.
+**Per-skill override files.** Individual built-in skills can be overridden by placing a replacement skill file at `~/.myna/overrides/skills/myna-{skill-name}.md`. At session start, Myna checks this directory and uses the override file in place of the built-in skill for any skill that has a matching entry. This allows targeted behavioral changes to a single skill without touching the plugin's installed files.
 
-**User skill directories.** Custom skills are added to `~/.claude/skills/` using a prefixed naming pattern (e.g., `myna-amazon-oncall/SKILL.md`) to avoid conflicting with built-in plugin skill names. Routing rules for user-added skills go in `~/.myna/custom-routing.md`.
+**`~/.myna/overrides/routing.md`.** A single file for routing rules that cover user-added skills or that override how Myna dispatches to built-in skills. The agent reads this file at session start if it exists and applies its rules before the built-in routing table. Created by `/myna:init` only if missing; never overwritten by updates.
+
+**User skill directories.** Custom skills are added to `~/.claude/skills/` using a prefixed naming pattern (e.g., `myna-amazon-oncall/SKILL.md`) to avoid conflicting with built-in plugin skill names. Routing rules for user-added skills go in `~/.myna/overrides/routing.md`.
 
 **Update behavior summary:**
 
 | Artifact | On update |
 |----------|-----------|
 | Built-in skill `SKILL.md` files (in plugin directory) | Managed by Claude Code plugin updates |
-| `~/.myna/custom-routing.md` | Never overwritten (created only if missing by `/myna:init`) |
+| `~/.myna/overrides/` | Never overwritten by plugin updates |
 | User skill directories in `~/.claude/skills/` | Never touched by plugin updates |
 | `~/.myna/config.yaml` | Never overwritten by plugin updates |
 | Vault config YAML files | Never overwritten by plugin updates |
