@@ -1,20 +1,26 @@
 # Customization Guide
 
-Customize existing skills, add new ones, and define routing rules — all preserved across updates.
+Customize existing skills, add new ones, and define routing rules — all preserved across plugin updates.
 
 ## Three Mechanisms
 
-### 1. CUSTOM.md — Modify an Existing Skill
+### 1. Per-Skill Overrides — Modify an Existing Skill
 
-Every skill directory (`~/.claude/skills/myna-*/`) contains a `CUSTOM.md` file created during install. Add your overrides there.
+To change the behavior of a built-in skill, create an override file at:
 
 ```
-~/.claude/skills/myna-sync/
-├── SKILL.md       ← upstream, overwritten on update
-└── CUSTOM.md      ← yours, never touched by updates
+~/.myna/overrides/skills/myna-{skill-name}.md
 ```
 
-Claude Code loads both files for the skill. When they conflict, `CUSTOM.md` wins.
+For example, to customize the sync skill:
+
+```
+~/.myna/overrides/skills/myna-sync.md
+```
+
+The agent reads this file before the built-in skill content. When the override conflicts with the built-in, the override wins. You don't need to copy the full skill — just write the parts you want to change or add.
+
+This file is not created by `/myna:init`. Create it yourself when you want to customize a skill.
 
 **Examples:**
 
@@ -62,13 +68,13 @@ argument-hint: "[escalate | handoff | status]"
 
 The `description` field matters — make it specific and include the phrases you'd naturally use.
 
-After creating a skill, add routing rules to `~/.myna/custom-routing.md` so the agent knows exactly when to use it (see below).
+After creating a skill, add routing rules to `~/.myna/overrides/routing.md` so the agent knows exactly when to use it (see below).
 
-### 3. Custom Routing Rules
+### 3. Routing Overrides
 
-When you add a new skill, tell the agent when to use it by adding rules to `~/.myna/custom-routing.md`. This is more reliable than relying on auto-discovery alone — with 30+ skills, explicit routing prevents misroutes.
+When you add a new skill, tell the agent when to use it by adding rules to `~/.myna/overrides/routing.md`. This is more reliable than relying on auto-discovery alone — with 30+ skills, explicit routing prevents misroutes. You can also use this file to adjust how Myna dispatches to built-in skills.
 
-The file is created during install. Add your rules below the comments:
+This file is seeded by `/myna:init` if it doesn't exist yet. Add your rules below the comments:
 
 ```markdown
 ### Oncall Routing
@@ -86,21 +92,20 @@ Rules in this file take precedence over Myna's built-in routing.
 | File | On update |
 |---|---|
 | Built-in `SKILL.md` (e.g., `myna-sync/SKILL.md`) | **Overwritten** — always gets the latest version |
-| `CUSTOM.md` in built-in skill directories | **Preserved** — never touched |
-| `custom-routing.md` at `~/.myna/` | **Preserved** — never touched |
-| Your custom skill directories (e.g., `myna-amazon-oncall/`) | **Never touched** |
+| `~/.myna/overrides/` and all files under it | **Preserved** — never touched by plugin updates |
+| Your user skill directories (e.g., `myna-amazon-oncall/`) | **Never touched** |
 | Vault data and configs | **Never touched** |
 
 ## Precedence
 
 When custom content conflicts with upstream:
 
-1. `CUSTOM.md` overrides its skill's `SKILL.md`
-2. `custom-routing.md` overrides Myna's built-in routing rules
+1. `~/.myna/overrides/skills/myna-{skill-name}.md` overrides the matching built-in skill
+2. `~/.myna/overrides/routing.md` overrides Myna's built-in routing rules
 
 ## Tips
 
-- **Start with CUSTOM.md** for small tweaks. Only create a new skill if you need a fundamentally new capability.
+- **Start with a skill override** for small tweaks. Only create a new user skill if you need a fundamentally new capability.
 - **Write good descriptions** for user skills. Claude Code's auto-discovery depends entirely on the `description` field matching user intent.
 - **Always add routing rules** for new skills. With 30+ skills competing, explicit routing is more reliable than relying on description matching alone.
-- **Test after updating.** Updates overwrite `SKILL.md` files. If your `CUSTOM.md` referenced specific line numbers or section names from the upstream skill, verify they still match.
+- **Test after updating.** Updates overwrite built-in `SKILL.md` files. If your override referenced specific behavior from the upstream skill, verify it still works after an update.
