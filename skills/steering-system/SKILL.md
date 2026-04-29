@@ -71,3 +71,17 @@ Resolve person, project, and meeting names against config using this cascade:
 Use Claude Code built-in tools (Read, Write, Edit, Grep, Glob) for all plain file I/O against the vault. These are faster and work even when Obsidian isn't running.
 
 Use external MCP tools only for services outside the vault: email, Slack, calendar. Skills call MCP tools directly by the names available in the Claude Code session — the skill instructions describe the intent; Claude Code resolves the tool call.
+
+## Per-Skill Override Files
+
+Before executing any Myna skill, check whether a user override file exists at:
+
+```
+~/.myna/overrides/skills/myna-{skill-name}.md
+```
+
+where `{skill-name}` is the full plugin skill directory name (e.g., `myna-sync`, `myna-email-triage`).
+
+If the file exists, read it before the skill body takes effect. Override content takes precedence over built-in skill defaults when they conflict. If the file does not exist, proceed with the built-in skill as normal.
+
+This directory is outside the plugin directory and survives plugin updates, allowing users to customize skill behavior persistently.
