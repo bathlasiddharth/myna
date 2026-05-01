@@ -6,7 +6,7 @@ Myna YAML config files. All data stays local.
 
 Usage:
     python3 ui/server.py
-    python3 ui/server.py --manifest-path /path/to/install-manifest.json
+    python3 ui/server.py --config-path /path/to/config.yaml
 """
 
 import sys
@@ -25,7 +25,7 @@ import yaml_parser
 # Constants
 # ---------------------------------------------------------------------------
 
-MANIFEST_PATH = Path.home() / ".myna" / "install-manifest.json"
+CONFIG_PATH = Path.home() / ".myna" / "config.yaml"
 IMPORTS_DIR = Path.home() / ".myna" / "imports"
 IMPORTS_ARCHIVED_DIR = IMPORTS_DIR / "archived"
 PENDING_IMPORTS_FILE = Path.home() / ".myna" / "pending-imports.json"
@@ -80,13 +80,12 @@ last_request_time: float = time.time()
 # Startup helpers
 # ---------------------------------------------------------------------------
 
-def load_manifest(manifest_path: Path) -> dict:
-    if not manifest_path.exists():
-        print(f"ERROR: Manifest not found at {manifest_path}", file=sys.stderr)
-        print("Run the Myna install script first, or pass --manifest-path.", file=sys.stderr)
+def load_config(config_path: Path) -> dict:
+    if not config_path.exists():
+        print(f"ERROR: Config not found at {config_path}", file=sys.stderr)
+        print("Run the Myna install script first, or pass --config-path.", file=sys.stderr)
         sys.exit(1)
-    with open(manifest_path, "r", encoding="utf-8") as f:
-        return json.load(f)
+    return yaml_parser.load(str(config_path))
 
 
 def find_available_port() -> int:
@@ -310,15 +309,14 @@ class MynaHandler(BaseHTTPRequestHandler):
             self._send_error(500, f"Failed to read imports: {e}")
 
     def _handle_get_manifest(self):
-        if not MANIFEST_PATH.exists():
-            self._send_error(404, "Manifest not found")
+        if not CONFIG_PATH.exists():
+            self._send_error(404, "config.yaml not found")
             return
         try:
-            with open(MANIFEST_PATH, "r", encoding="utf-8") as f:
-                data = json.load(f)
+            data = yaml_parser.load(str(CONFIG_PATH))
             self._send_json(200, data)
         except Exception as e:
-            self._send_error(500, f"Failed to read manifest: {e}")
+            self._send_error(500, f"Failed to read config.yaml: {e}")
 
     # ------------------------------------------------------------------
     # PUT
@@ -454,16 +452,16 @@ def _inactivity_watchdog():
 def main():
     global config_dir
 
-    # Parse --manifest-path argument if provided
-    manifest_path = MANIFEST_PATH
+    # Parse --config-path argument if provided
+    config_path = CONFIG_PATH
     args = sys.argv[1:]
     for i, arg in enumerate(args):
-        if arg == "--manifest-path" and i + 1 < len(args):
-            manifest_path = Path(args[i + 1])
+        if arg == "--config-path" and i + 1 < len(args):
+            config_path = Path(args[i + 1])
 
-    manifest = load_manifest(manifest_path)
-    vault_path = manifest.get("vault_path", "")
-    subfolder = manifest.get("subfolder", "myna")
+    config = load_config(config_path)
+    vault_path = config.get("vault_path", "")
+    subfolder = config.get("subfolder", "myna")
     config_dir = Path(vault_path) / subfolder / "_system" / "config"
 
     ensure_dirs()
