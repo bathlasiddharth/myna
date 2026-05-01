@@ -185,6 +185,35 @@ After all pending tasks have been processed, write `tmp/[date]/summary.md`:
 
 ---
 
+## Step 5b — Archive Completed Tasks
+
+After writing the summary, move all `done` tasks out of `tmp/tasks.md`. Failed and pending tasks stay — they represent work still to do.
+
+**Determine archive filename:**
+```bash
+mkdir -p tmp/archive
+```
+Start with `tmp/archive/tasks-[date].md`. If it exists, try `tasks-[date]-2.md`, `tasks-[date]-3.md`, etc. until one is free.
+
+**Write the archive file** using the same format as `tasks.md` — table header, then one row per done task, then the full `## Task N — [Title]` body sections for each done task. Include a header line at the top:
+```markdown
+# Archived tasks — [date] run
+
+[table with done task rows only]
+
+[full body sections for done tasks only]
+```
+
+**Strip done tasks from `tmp/tasks.md`:**
+- Remove each done task's row from the table
+- Remove each done task's full `## Task N — [Title]` body section
+- Leave the table header, pending rows, failed rows, and their body sections intact
+- If no tasks remain after stripping, leave just the table header with no rows
+
+Do not renumber remaining tasks — preserve original task numbers.
+
+---
+
 ## Step 6 — Create PR or Report Failures
 
 **If all tasks are done (no failures):**
@@ -229,7 +258,7 @@ Failed tasks:
 - Task [#]: [Title] — [unresolved issues] — [report paths]
 
 The branch fix/[date] has been pushed with the completed tasks.
-Resolve the failed tasks manually and push, or add them back to tmp/tasks.md and run the queue again.
+Failed tasks remain in tmp/tasks.md — fix them and run the queue again, or remove them if no longer needed.
 
 Summary: tmp/[date]/summary.md
 ```
