@@ -178,12 +178,6 @@ function populateIdentity() {
   setValue('feedback-cycle', cycleOption);
   setValue('journal-archive',  journal.archive_after_days != null ? journal.archive_after_days : '');
 
-  // Date format — fall back to default if not set
-  const fmt = ws.timestamp_format || 'YYYY-MM-DD';
-  const fmtSelect = document.getElementById('date-format');
-  const knownFmts = Array.from(fmtSelect.options).map(o => o.value);
-  fmtSelect.value = knownFmts.includes(fmt) ? fmt : 'YYYY-MM-DD';
-
   // Timezone — check if it's in the known list, else use "other".
   // If no timezone is saved, auto-detect from the browser and pre-populate.
   const tz = ws.timezone || '';
@@ -479,7 +473,6 @@ function getIdentityData() {
       ...(existing.journal || {}),
       archive_after_days: parseInt(document.getElementById('journal-archive').value, 10) || (existing.journal || {}).archive_after_days,
     },
-    timestamp_format: document.getElementById('date-format').value || 'YYYY-MM-DD',
     email: existing.email || {},
   };
 }
@@ -1798,7 +1791,6 @@ const HELP_CONTENT = {
       { id: 'work-end-hour',    label: 'Work hours end',     desc: 'The end of your working day. Calendar events and reminders are kept within start-to-end unless you override them.' },
       { id: 'feedback-cycle',   label: 'Feedback cycle',     desc: 'How often you aim to give written feedback to each direct report. Myna flags anyone overdue when this interval passes without a logged feedback entry. Options: every 2 weeks, monthly, or quarterly.' },
       { id: 'journal-archive',  label: 'Journal archive after', desc: 'Daily notes older than this many days are moved to an archive folder. Keeps your active vault uncluttered without deleting anything.' },
-      { id: 'date-format',      label: 'Date format',         desc: 'The date format used in vault file names and note headers. YYYY-MM-DD sorts chronologically in Obsidian; choose another if you prefer a different display.' },
     ],
   },
   communication: {

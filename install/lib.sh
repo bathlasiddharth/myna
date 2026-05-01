@@ -103,7 +103,6 @@ timezone: ""
 work_hours:
   start: "09:00"
   end: "17:00"
-timestamp_format: "YYYY-MM-DD"
 
 journal:
   archive_after_days: 30
