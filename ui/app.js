@@ -1820,12 +1820,9 @@ const HELP_CONTENT = {
     ],
   },
   calendar: {
-    intro: 'Controls how Myna labels the calendar events it creates — focus blocks, task reminders, and other entries. The prefix and type labels combine to form each event title.',
+    intro: 'Controls how Myna labels the calendar events it creates. The prefix is prepended to every event title so you can distinguish Myna-created events at a glance.',
     fields: [
       { id: 'calendar-prefix',       label: 'Event prefix',      desc: 'A tag prepended to every calendar event Myna creates, e.g. "[Myna]". Lets you visually distinguish Myna-created events from manual entries at a glance.' },
-      { id: 'calendar-type-focus',   label: 'Focus label',       desc: 'The label appended for focus-block events. The full title will be like "[Myna]:Focus" — edit this if another term fits your workflow better.' },
-      { id: 'calendar-type-task',    label: 'Task label',        desc: 'The label for task-deadline events. Combined with the prefix to form the calendar event title.' },
-      { id: 'calendar-type-reminder', label: 'Reminder label',   desc: 'The label for reminder events such as follow-up prompts. Combined with the prefix to form the calendar event title.' },
     ],
   },
   integrations: {
