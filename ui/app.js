@@ -242,7 +242,6 @@ function populateCommunication() {
   const ws    = window.config.workspace || {};
   const tier  = cs.presets_per_tier || {};
   const ep    = cs.email_preferences || {};
-  const mp    = cs.messaging_preferences || {};
   const email = ws.email || {};
 
   setCommStyleValue('comm-default-preset', cs.default_preset    || 'assertive');
@@ -253,7 +252,6 @@ function populateCommunication() {
 
   setValue('comm-sign-off',           cs.sign_off       || '');
   setValue('comm-email-greeting',     ep.greeting_style || '');
-  setValue('comm-msg-formality',      mp.formality      || '');
 }
 
 /**
@@ -519,9 +517,6 @@ function getCommunicationData() {
     sign_off:                   document.getElementById('comm-sign-off').value.trim(),
     email_preferences: {
       greeting_style: document.getElementById('comm-email-greeting').value,
-    },
-    messaging_preferences: {
-      formality:   document.getElementById('comm-msg-formality').value,
     },
   };
 }
@@ -1803,7 +1798,6 @@ const HELP_CONTENT = {
       { id: 'comm-cross-team',       label: 'Cross-team',            desc: 'Override tone for colleagues outside your immediate team — stakeholders, partner teams, or cross-functional peers.' },
       { id: 'comm-sign-off',         label: 'Sign-off',              desc: 'The closing phrase appended to email drafts, e.g. "Thanks" or "Best regards". Leave blank to skip a sign-off.' },
       { id: 'comm-email-greeting',   label: 'Greeting style',        desc: 'How email drafts open — first name only ("Hi Sarah"), formal ("Dear Ms. Chen"), or no greeting at all.' },
-      { id: 'comm-msg-formality',    label: 'Messaging formality',   desc: 'Casual drafts read like Slack; Professional drafts suit more formal team channels or external partners.' },
     ],
   },
   people: {
@@ -2134,7 +2128,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // ── Communication: unwired dropdowns → save on change ─────────────────────
-  ['comm-email-greeting', 'comm-msg-formality'].forEach(id => {
+  ['comm-email-greeting'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.addEventListener('change', () => saveTab('communication'));
   });

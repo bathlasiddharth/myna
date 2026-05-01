@@ -186,7 +186,6 @@ Controls how Myna drafts emails, messages, and other written content.
 | `sign_off` | Email sign-off (e.g. `Best`, `Thanks`) |
 | `difficult_message_approach` | Style for tough conversations (e.g. `direct-but-kind`) |
 | `email_preferences.max_length` | `short`, `medium`, or `long` |
-| `messaging_preferences.formality` | `casual` or `professional` |
 
 ---
 

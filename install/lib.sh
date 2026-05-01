@@ -191,9 +191,7 @@ sign_off: ""
 
 email_preferences:
   max_length: ""
-  greeting_style: ""
-messaging_preferences:
-  formality: ""'
+  greeting_style: ""'
 
   _myna_create_if_missing "$MYNA_ROOT/_system/config/tags.yaml" \
 '# Run /myna:setup for guided configuration.

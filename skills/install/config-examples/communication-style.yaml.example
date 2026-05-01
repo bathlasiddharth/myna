@@ -26,5 +26,3 @@ sign_off: "Best"                        # Email sign-off (e.g., Best, Thanks, Ch
 # Advanced preferences
 email_preferences:
   greeting_style: first-name            # first-name | formal | none
-messaging_preferences:
-  formality: casual                     # casual | professional

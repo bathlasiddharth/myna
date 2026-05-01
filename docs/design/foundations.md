@@ -804,8 +804,6 @@ difficult_message_approach: direct-but-kind
 email_preferences:
   max_length: medium                  # short | medium | long
   greeting_style: first-name          # first-name | formal | none
-messaging_preferences:
-  formality: casual                   # casual | professional
 ```
 
 ### 3.6 tags.yaml
