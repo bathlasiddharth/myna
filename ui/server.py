@@ -63,7 +63,7 @@ CONFIG_DEFAULTS = {
         "presets_per_tier": {"upward": "", "peer": "", "direct": "", "cross-team": ""},
         "sign_off": "",
         "email_preferences": {"max_length": "", "greeting_style": ""},
-        "messaging_preferences": {"formality": "", "emoji_usage": ""},
+        "messaging_preferences": {"formality": ""},
     },
     "meetings": {"meetings": []},
     "tags": {"tags": []},

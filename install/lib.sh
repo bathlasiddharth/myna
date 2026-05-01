@@ -195,8 +195,7 @@ email_preferences:
   max_length: ""
   greeting_style: ""
 messaging_preferences:
-  formality: ""
-  emoji_usage: ""'
+  formality: ""'
 
   _myna_create_if_missing "$MYNA_ROOT/_system/config/tags.yaml" \
 '# Run /myna:setup for guided configuration.

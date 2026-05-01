@@ -807,7 +807,6 @@ email_preferences:
   greeting_style: first-name          # first-name | formal | none
 messaging_preferences:
   formality: casual                   # casual | professional
-  emoji_usage: minimal                # none | minimal | moderate
 ```
 
 ### 3.6 tags.yaml
