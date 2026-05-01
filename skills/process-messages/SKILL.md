@@ -49,9 +49,7 @@ When the user pastes content directly (email body, Slack export, doc text, meeti
 Apply all three layers before writing any entry:
 
 **Layer 1 — Email: Move to Processed folder**
-After processing all emails in a folder, move each email to its processed folder. Location depends on workspace.yaml `email.processed_folder`:
-- `per-project` (default): move to `{project-email-folder}/Processed/`
-- `common`: move to the path configured in `email.common_folder`
+After processing all emails in a folder, move each email to `{project-email-folder}/Processed/`.
 
 Attempt the move silently — no mid-flow prompt. If the email MCP does not support move operations, skip deduplication for this run — do not touch email state in any way. Process the emails and write extracted items to the vault normally. Note in the run output that emails could not be moved and deduplication was skipped.
 

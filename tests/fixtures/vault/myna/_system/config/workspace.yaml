@@ -23,7 +23,6 @@ journal:
 # Email processing settings
 email:
   processed_folder: per-project
-  common_folder: "Processed/"
   notes_email: "notes@example.com"  # Forward threads here with your notes to trigger draft-replies
 
 # People management settings

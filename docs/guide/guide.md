@@ -120,7 +120,7 @@ The primary config file. Required — Myna reads it at every session start.
 | `timezone` | IANA timezone, e.g. `America/Los_Angeles` |
 | `work_hours.start` / `.end` | Your workday bounds, e.g. `09:00` / `17:00` |
 | `journal.archive_after_days` | Auto-archive daily notes older than this many days (default: 30) |
-| `email.processed_folder` | `per-project` (email moves to project's Processed/) or `common` (single shared folder) |
+| `email.processed_folder` | `per-project` (email moves to each project's Processed/ subfolder) |
 | `feedback_cycle_days` | Days between feedback gap alerts (default: 30) |
 | `calendar_event_prefix` | Prefix on all Myna-created calendar events (default: `[Myna]`) |
 | `mcp_servers.email` | Name of your registered email MCP server (e.g. `gmail-mcp`) |

@@ -109,7 +109,6 @@ journal:
 
 email:
   processed_folder: per-project
-  common_folder: "Processed/"
 
 # ---
 # Email Triage Configuration

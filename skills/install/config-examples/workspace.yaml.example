@@ -34,8 +34,7 @@ journal:
 # Email Processing
 # ---
 email:
-  processed_folder: per-project       # How processed emails are filed: per-project | common
-  common_folder: "Processed/"         # Shared folder (only used when processed_folder is "common")
+  processed_folder: per-project       # How processed emails are filed (per-project moves to each project's Processed/)
   notes_email: "notes@example.com"    # Address you forward emails to for the DraftReplies workflow
 
 # ---

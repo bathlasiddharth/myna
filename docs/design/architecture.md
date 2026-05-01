@@ -647,8 +647,7 @@ User identity, preferences, and global settings.
 | feedback_cycle_days | No | 30 | Gap threshold for feedback gap detection |
 | calendar_event_prefix | No | [Myna] | Prefix for time blocks/reminders |
 | journal.archive_after_days | No | 30 | Sync auto-archives daily/weekly notes older than this to Journal/Archive/ |
-| email.processed_folder | No | per-project | per-project (subfolder in each project folder) or common (one shared folder) |
-| email.common_folder | No | Processed/ | Shared folder path, used when processed_folder is "common" |
+| email.processed_folder | No | per-project | per-project (subfolder in each project folder) |
 | prompt_logging | No | true | Log prompts to _system/logs/prompts.md |
 | features | No | role-based defaults | Map of feature_name → true/false |
 

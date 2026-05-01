@@ -675,8 +675,7 @@ journal:
 
 # Email processing settings
 email:
-  processed_folder: per-project       # per-project | common
-  common_folder: "Processed/"         # shared folder path, used when processed_folder is "common"
+  processed_folder: per-project       # per-project (subfolder in each project folder)
 
 # People management settings
 feedback_cycle_days: 30               # default: 30 — gap threshold for feedback alerts
@@ -1142,7 +1141,7 @@ Nothing is silently dropped because the agent tried to pick "the best" destinati
 **When it applies:** Email processing, messaging processing, email triage.
 
 **Three dedup layers:**
-1. **Structural:** move email to processed folder (email) or update last-processed timestamp (Slack). Email processed folder is configurable in workspace.yaml: `per-project` moves to `{project-folder}/Processed/`, `common` moves all to one shared folder.
+1. **Structural:** move email to processed folder (email) or update last-processed timestamp (Slack). Processed emails move to `{project-folder}/Processed/`.
 2. **Content:** strip quoted/forwarded text before extraction
 3. **Semantic:** before writing an entry, read the target vault file and the relevant review queue file. If a similar entry already exists, skip the new one and inform the user.
 
