@@ -19,6 +19,14 @@ Each entry:
 
 ---
 
+### D055 — Vault subfolder fixed to `myna`; no longer user-configurable during setup
+**Date:** 2026-05-01
+**Context:** D011 said the subfolder name is configurable during setup. In practice, asking for it adds friction for no real benefit — almost no user will want a name other than `myna`, and the option confused new users who don't yet have a mental model of the vault structure. Removing it simplifies Step 1 of `/myna:setup` to a single question.
+**Decision:** The Myna subfolder is always `myna`. `/myna:setup` does not ask for it; the install script is called with `"myna"` hardcoded. Users who want a custom subfolder name can edit `~/.myna/config.yaml` directly after install and re-run the install script. Overrides D011's "configurable during setup" clause.
+**Alternatives rejected:** Keep the question with `myna` as a default users can accept (still adds a prompt new users don't understand; the default is always taken in practice).
+
+---
+
 ### D054 — Onboarding redesign: single `/myna:setup` entry point, shell-script scaffolding, Config UI primary path
 **Date:** 2026-04-30
 **Context:** The two-step first-time flow from D053 (`/myna:install` → `/myna:setup`) created unnecessary friction: users had to run two commands, and the split implied both steps were equally important milestones. The guided chat interview in `/myna:setup` added a third variation on top of Config UI and direct YAML editing, making the options paragraph harder to follow. Separately, the Config UI was being invoked from `~/.myna/ui/` — a path outside the plugin directory — which conflicted with where `server.py` actually lives after plugin install. And `~/.myna/install-manifest.json` (introduced in D049) was no longer needed once the plugin model (D053) took over version tracking and `server.py` began reading directly from `~/.myna/config.yaml`.

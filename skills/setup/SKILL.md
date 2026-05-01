@@ -19,23 +19,22 @@ Single entry point for all Myna configuration — new installs and returning use
 Read `~/.myna/config.yaml`.
 
 - If it **exists**: parse `vault_path` and `subfolder` from it. Skip to Step 3 (Config UI).
-- If it **does not exist**: continue to Step 1.
+- If it **does not exist**: say "Welcome! Let's get Myna set up." and continue to Step 1.
 
 ---
 
 ## Step 1: Gather Vault Details (first-time only)
 
-Ask the user two questions:
+Ask the user one question:
 
-1. Full absolute path to the Obsidian vault (e.g. `/Users/you/Documents/MyVault`)
-2. Subfolder name Myna should use inside the vault (default: `myna`)
+1. Full path to your Myna vault — a folder on your machine where Myna stores everything. Using Obsidian? Point it to your Obsidian vault. (e.g. `/Users/you/Documents/MyVault`)
 
 Then show a confirmation summary:
 
 ```
 Vault:     {vault_path}
-Subfolder: {subfolder}
-Myna root: {vault_path}/{subfolder}/
+Subfolder: myna
+Myna root: {vault_path}/myna/
 ```
 
 Ask: "Ready? (yes/no)"
@@ -49,7 +48,7 @@ If no, stop. If yes, continue to Step 2.
 Run the install script in the foreground:
 
 ```
-bash "${CLAUDE_SKILL_DIR}/../../install/claude.sh" "<vault_path>" "<subfolder>"
+bash "${CLAUDE_SKILL_DIR}/../../install/claude.sh" "<vault_path>" "myna"
 ```
 
 Show all progress output as it runs. If the script exits non-zero, show the error output and stop — do not proceed to Step 3.
