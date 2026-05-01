@@ -4,9 +4,8 @@ Complete these steps to finish setting up Myna after running `/plugin install my
 
 ## 1. Run First-Time Setup
 
-- [ ] In Claude Code, run `/myna:install` — creates the vault directory structure and writes `~/.myna/config.yaml`
-- [ ] When `/myna:install` finishes, run `/myna:setup` — guided configuration for identity, projects, people, and communication style
-- [ ] (Optional) Add a shell alias: `alias myna="claude --agent myna:agent"` to your `~/.zshrc` or `~/.bashrc`, then `source` it
+- [ ] In Claude Code, run `/myna:setup` — detects install state, creates the vault directory structure, writes `~/.myna/config.yaml`, and opens the Config UI for guided configuration
+- [ ] (Optional) At the end of setup, accept the alias offer to add `myna` and `myna-ro` to your `~/.zshrc` or `~/.bashrc` automatically, then `source` it — or add them manually later
 
 ## 2. Install Obsidian Plugins
 
@@ -35,11 +34,10 @@ Skip this if you don't have MCP servers installed yet. Myna works without them �
 
 ## 5. Configure Myna
 
-If you didn't complete configuration during step 1, run `/myna:setup` now. Three input modes are available:
+If you didn't complete configuration during step 1, run `/myna:setup` now. Two input modes are available:
 
-Option A: Run `/myna:setup` and choose "Open config UI" for a visual editor.
-Option B: Run `/myna:setup` for a guided chat interview.
-Option C: Edit the files directly:
+Option A: Run `/myna:setup` and choose "Open config UI" for a visual editor (recommended).
+Option B: Edit the files directly:
 
 - [ ] `myna/_system/config/workspace.yaml` — your name, email, timezone, enable/disable features
 - [ ] `myna/_system/config/projects.yaml` — active projects you want Myna to track
