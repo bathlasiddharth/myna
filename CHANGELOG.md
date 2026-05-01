@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Added
+
+- Install script for Kiro (`install/kiro.sh` + `install/lib.sh`). Ports Myna's skills to
+  Kiro by transforming frontmatter and scaffolding the vault. Refactors `install/claude.sh`
+  to share vault setup logic via `install/lib.sh`.
+
 ### Changed
 
 - Customization override model: per-skill overrides now live at `~/.myna/overrides/skills/myna-{skill-name}.md` and routing overrides at `~/.myna/overrides/routing.md`, replacing the `CUSTOM.md` and `custom-routing.md` files from v1.0.0. Users who set up customizations under the old model will need to migrate their files to the new paths.
