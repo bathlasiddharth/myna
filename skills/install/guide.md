@@ -116,7 +116,6 @@ The primary config file. Required — Myna reads it at every session start.
 | `user.email` | Your work email (used to identify your messages) |
 | `user.role` | `engineering-manager`, `tech-lead`, `senior-engineer`, or `pm` |
 | `vault.path` | Absolute path to your Obsidian vault |
-| `vault.subfolder` | Myna subfolder name (default: `myna`) |
 | `timezone` | IANA timezone, e.g. `America/Los_Angeles` |
 | `work_hours.start` / `.end` | Your workday bounds, e.g. `09:00` / `17:00` |
 | `journal.archive_after_days` | Auto-archive daily notes older than this many days (default: 30) |

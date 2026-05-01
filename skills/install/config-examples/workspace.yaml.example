@@ -15,7 +15,6 @@ user:
 # ---
 vault:
   path: "/Users/alex/Documents/MyVault"  # Absolute path to your Obsidian vault
-  subfolder: myna                         # Myna subfolder within the vault (default: myna)
 
 # ---
 # Time Settings
