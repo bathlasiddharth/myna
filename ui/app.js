@@ -260,7 +260,6 @@ function populateCommunication() {
   setValue('comm-sign-off',           cs.sign_off       || '');
   setValue('comm-email-greeting',     ep.greeting_style || '');
   setValue('comm-msg-formality',      mp.formality      || '');
-  setValue('comm-msg-emoji',          mp.emoji_usage    || '');
 }
 
 /**
@@ -530,7 +529,6 @@ function getCommunicationData() {
     },
     messaging_preferences: {
       formality:   document.getElementById('comm-msg-formality').value,
-      emoji_usage: document.getElementById('comm-msg-emoji').value,
     },
   };
 }
@@ -1814,7 +1812,6 @@ const HELP_CONTENT = {
       { id: 'comm-sign-off',         label: 'Sign-off',              desc: 'The closing phrase appended to email drafts, e.g. "Thanks" or "Best regards". Leave blank to skip a sign-off.' },
       { id: 'comm-email-greeting',   label: 'Greeting style',        desc: 'How email drafts open — first name only ("Hi Sarah"), formal ("Dear Ms. Chen"), or no greeting at all.' },
       { id: 'comm-msg-formality',    label: 'Messaging formality',   desc: 'Casual drafts read like Slack; Professional drafts suit more formal team channels or external partners.' },
-      { id: 'comm-msg-emoji',        label: 'Emoji usage',           desc: 'How often Myna includes emoji in message drafts. None keeps it text-only; Minimal adds one or two where natural; Moderate uses them freely.' },
     ],
   },
   people: {
@@ -2145,7 +2142,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // ── Communication: unwired dropdowns → save on change ─────────────────────
-  ['comm-email-greeting', 'comm-msg-formality', 'comm-msg-emoji'].forEach(id => {
+  ['comm-email-greeting', 'comm-msg-formality'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.addEventListener('change', () => saveTab('communication'));
   });

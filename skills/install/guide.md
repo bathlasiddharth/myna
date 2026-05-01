@@ -188,7 +188,6 @@ Controls how Myna drafts emails, messages, and other written content.
 | `difficult_message_approach` | Style for tough conversations (e.g. `direct-but-kind`) |
 | `email_preferences.max_length` | `short`, `medium`, or `long` |
 | `messaging_preferences.formality` | `casual` or `professional` |
-| `messaging_preferences.emoji_usage` | `none`, `minimal`, or `moderate` |
 
 ---
 
