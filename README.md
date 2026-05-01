@@ -199,6 +199,8 @@ Myna is not an application. There is no server, no API, no frontend. It's 30 ski
 
 The runtime is Claude Code; Myna's skills provide the expertise. Myna ships no servers of its own — it uses Claude Code's built-in file operations.
 
+Myna stores everything in your **Myna vault** — a folder on your machine, readable in any editor. [Obsidian](https://obsidian.md/) is recommended for the dashboards, which use live Dataview queries.
+
 **Folder structure:**
 
 ```
