@@ -1,7 +1,7 @@
 ---
 name: myna-dev-task-protocol
 description: |
-  Shared commit→review→fix→push protocol for Myna dev task subagents. Not user-invocable. Called by T-N subagents after implementing their task — handles the full quality loop: commit, run myna-dev-review up to 3 rounds, fix Critical/Important issues between rounds, push, report back.
+  Shared commit→review→fix protocol for Myna dev task subagents. Not user-invocable. Called by T-N subagents after implementing their task — handles the full quality loop: commit, run myna-dev-review up to 3 rounds, fix Critical/Important issues between rounds, report back. Does NOT push — the orchestrator owns all remote pushes.
 user-invocable: false
 allowed-tools:
   - Read
@@ -17,7 +17,7 @@ allowed-tools:
 
 This skill is the shared protocol for T-N subagents in Myna development sessions. It is never invoked directly by a user — only by task subagents spawned by `myna-dev-build-prompt` or `myna-dev-execute-tasks`.
 
-You are a T-N subagent that has finished implementing. Your job now: commit your work, run the review loop, fix what's found, push, and report back clearly.
+You are a T-N subagent that has finished implementing. Your job now: commit your work, run the review loop, fix what's found, and report back clearly. Do NOT push — the orchestrator owns all remote pushes.
 
 ---
 
@@ -92,7 +92,7 @@ Invoke the review:
 The report is always saved at `tmp/[feature]/reviews/[short-name]-r1.md` — even if CLEAN.
 
 Read the stdout summary line. Branch on result:
-- **CLEAN** → jump to Step 5 (push)
+- **CLEAN** → jump to Step 5 (report back)
 - **ISSUES FOUND** → proceed to Step 4a
 
 ---
