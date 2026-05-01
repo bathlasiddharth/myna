@@ -71,7 +71,7 @@ A day in the life of an Engineering Manager using Myna:
 
 Not an EM? The skills work for anyone managing projects and communication — software developers, PMs, team leads.
 
-Full walkthrough: [A Day With Myna](docs/a-day-with-myna.md) · Browse the [demo vault](tests/fixtures/vault/myna) to see the files Myna creates
+Full walkthrough: [A Day With Myna](docs/guide/a-day-with-myna.md) · Browse the [demo vault](tests/fixtures/vault/myna) to see the files Myna creates
 
 ## Privacy & Security
 
@@ -226,7 +226,7 @@ All customizations survive updates.
 | **Add a skill** | Create `~/.claude/skills/myna-[yourprefix]-[name]/` (e.g., `myna-amazon-oncall`). Single-word `myna-[word]` is reserved for built-in skills. Add routing rules to `~/.myna/overrides/routing.md`. |
 | **Disable a skill** | Delete or rename its folder. |
 
-See [Customization Guide](docs/customization.md) for details.
+See [Customization Guide](docs/guide/customization.md) for details.
 
 ## Built Entirely by Claude Code
 
@@ -240,11 +240,11 @@ Two things came out of this, not one: the assistant itself, and a methodology fo
 
 | Document | Purpose |
 |----------|---------|
-| [User Guide](docs/guide.md) | Full reference — skills, config, workflows |
-| [Customization](docs/customization.md) | Tweaking skills, adding your own, routing rules |
-| [A Day With Myna](docs/a-day-with-myna.md) | Realistic workday walkthrough |
-| [Architecture](docs/architecture.md) | Runtime model, skill inventory, folder structure |
-| [Obsidian Setup](docs/obsidian-setup.md) | Plugin configuration and dashboards |
+| [User Guide](docs/guide/guide.md) | Full reference — skills, config, workflows |
+| [Customization](docs/guide/customization.md) | Tweaking skills, adding your own, routing rules |
+| [A Day With Myna](docs/guide/a-day-with-myna.md) | Realistic workday walkthrough |
+| [Architecture](docs/design/architecture.md) | Runtime model, skill inventory, folder structure |
+| [Obsidian Setup](docs/guide/obsidian-setup.md) | Plugin configuration and dashboards |
 | [How It Was Built](docs/how-it-was-built.md) | The Claude Code methodology behind Myna |
 
 ## Contributing

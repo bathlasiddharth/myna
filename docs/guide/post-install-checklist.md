@@ -70,4 +70,4 @@ Go to Settings in Obsidian and configure:
 
 ---
 
-See [guide.md](docs/guide/guide.md) for the full user guide.
+See [guide.md](guide.md) for the full user guide.
