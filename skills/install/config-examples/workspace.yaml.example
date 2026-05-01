@@ -24,7 +24,6 @@ timezone: America/Los_Angeles         # IANA timezone (default: system timezone)
 work_hours:
   start: "09:00"                      # Workday start (default: 09:00)
   end: "17:00"                        # Workday end (default: 17:00)
-timestamp_format: "YYYY-MM-DD"        # Date format for entries (default: YYYY-MM-DD)
 
 # ---
 # Journal
