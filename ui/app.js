@@ -750,8 +750,10 @@ function formatRole(role) {
     'product-manager':           'Product Manager',
     'security-engineer':         'Security Engineer',
     'software-developer':        'Software Developer',
+    'tech-lead':                 'Tech Lead',
     'technical-program-manager': 'Technical Program Manager',
     'vp-of-engineering':         'VP of Engineering',
+    'vp-of-product':             'VP of Product',
   };
   return map[role] || role;
 }
@@ -1792,7 +1794,7 @@ const HELP_CONTENT = {
     fields: [
       { id: 'user-name',        label: 'Name',               desc: 'Your full name, used in draft greetings and the header of your daily note.' },
       { id: 'user-email',       label: 'Email',              desc: 'Your primary email address. Used to identify emails you sent or received when processing your inbox.' },
-      { id: 'user-role',        label: 'Role',               desc: 'Your job title. Myna surfaces role-relevant features — for example, team-health summaries are shown to managers but hidden for individual contributors.' },
+      { id: 'user-role',        label: 'Role',               desc: 'Your job title. Used to shape how Myna frames your contributions in self-tracking and summaries, and to determine whether team-management sections (like team health) apply to you.' },
       { id: 'user-timezone',    label: 'Timezone',           desc: 'Your local timezone. Used when converting meeting times, scheduling focus blocks, and anchoring daily note dates.' },
       { id: 'work-start-hour',  label: 'Work hours start',   desc: 'The start of your working day. Myna avoids scheduling focus blocks or reminders outside this window.' },
       { id: 'work-end-hour',    label: 'Work hours end',     desc: 'The end of your working day. Calendar events and reminders are kept within start-to-end unless you override them.' },
