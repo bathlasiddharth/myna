@@ -94,26 +94,26 @@ If the template doesn't exist, create a minimal file with:
 
 | File type | Path pattern |
 |-----------|-------------|
-| Daily note | `{vault}/{subfolder}/Journal/DailyNote-{YYYY-MM-DD}.md` |
-| Weekly note | `{vault}/{subfolder}/Journal/WeeklyNote-{YYYY-MM-DD}.md` (Monday date) |
-| Contributions | `{vault}/{subfolder}/Journal/contributions-{YYYY-MM-DD}.md` (Monday date) |
-| Archive | `{vault}/{subfolder}/Journal/Archive/` |
-| Project | `{vault}/{subfolder}/Projects/{slug}.md` |
-| Person | `{vault}/{subfolder}/People/{slug}.md` |
-| Meeting (1:1) | `{vault}/{subfolder}/Meetings/1-1s/{person-slug}.md` |
-| Meeting (recurring) | `{vault}/{subfolder}/Meetings/Recurring/{slug}.md` |
-| Meeting (adhoc) | `{vault}/{subfolder}/Meetings/Adhoc/{YYYY-MM-DD}-{slug}.md` |
-| Draft | `{vault}/{subfolder}/Drafts/[{Type}] {topic}.md` |
-| Review queue | `{vault}/{subfolder}/ReviewQueue/review-{queue}.md` |
-| Processed audit | `{vault}/{subfolder}/ReviewQueue/processed/processed-{YYYY-MM-DD}.md` |
-| Parked context | `{vault}/{subfolder}/_system/parked/{slug}.md` |
-| Config | `{vault}/{subfolder}/_system/config/{name}.yaml` |
-| Source | `{vault}/{subfolder}/_system/sources/{entity}.md` |
-| Learnings | `{vault}/{subfolder}/_meta/learnings/{domain}.md` |
-| Dashboard | `{vault}/{subfolder}/_system/dashboards/dashboard.md` |
-| Link index | `{vault}/{subfolder}/_system/links.md` |
-| Prompt log | `{vault}/{subfolder}/_system/logs/prompts.md` |
-| Team | `{vault}/{subfolder}/Team/{slug}.md` |
+| Daily note | `{vault}/myna/Journal/DailyNote-{YYYY-MM-DD}.md` |
+| Weekly note | `{vault}/myna/Journal/WeeklyNote-{YYYY-MM-DD}.md` (Monday date) |
+| Contributions | `{vault}/myna/Journal/contributions-{YYYY-MM-DD}.md` (Monday date) |
+| Archive | `{vault}/myna/Journal/Archive/` |
+| Project | `{vault}/myna/Projects/{slug}.md` |
+| Person | `{vault}/myna/People/{slug}.md` |
+| Meeting (1:1) | `{vault}/myna/Meetings/1-1s/{person-slug}.md` |
+| Meeting (recurring) | `{vault}/myna/Meetings/Recurring/{slug}.md` |
+| Meeting (adhoc) | `{vault}/myna/Meetings/Adhoc/{YYYY-MM-DD}-{slug}.md` |
+| Draft | `{vault}/myna/Drafts/[{Type}] {topic}.md` |
+| Review queue | `{vault}/myna/ReviewQueue/review-{queue}.md` |
+| Processed audit | `{vault}/myna/ReviewQueue/processed/processed-{YYYY-MM-DD}.md` |
+| Parked context | `{vault}/myna/_system/parked/{slug}.md` |
+| Config | `{vault}/myna/_system/config/{name}.yaml` |
+| Source | `{vault}/myna/_system/sources/{entity}.md` |
+| Learnings | `{vault}/myna/_meta/learnings/{domain}.md` |
+| Dashboard | `{vault}/myna/_system/dashboards/dashboard.md` |
+| Link index | `{vault}/myna/_system/links.md` |
+| Prompt log | `{vault}/myna/_system/logs/prompts.md` |
+| Team | `{vault}/myna/Team/{slug}.md` |
 
 **Naming conventions:**
 - Slugs: lowercase, hyphens for spaces (`auth-migration`, `sarah-chen`)

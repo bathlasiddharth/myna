@@ -18,7 +18,7 @@ Single entry point for all Myna configuration — new installs and returning use
 
 Read `~/.myna/config.yaml`.
 
-- If it **exists**: parse `vault_path` and `subfolder` from it. Skip to Step 3 (Config UI).
+- If it **exists**: parse `vault_path` from it. Subfolder is always `myna`. Skip to Step 3 (Config UI).
 - If it **does not exist**: say "Welcome! Let's get Myna set up." and continue to Step 1.
 
 ---
@@ -161,7 +161,7 @@ Tell the user: "Run `myna` (or `claude --agent myna:agent`) and type `sync` to s
 - For `projects.yaml` and `people.yaml`: append new entries — never overwrite existing ones.
 - For `people.yaml`: omit `relationship_tier` unless the source explicitly states it. Never default to "direct".
 - Write valid YAML matching the schemas in `_system/config/*.yaml.example`.
-- `vault.path` and `vault.subfolder` in `workspace.yaml` are set by the install script — don't ask about them, don't overwrite them.
+- `vault.path` in `workspace.yaml` is set by the install script — don't ask about it, don't overwrite it. The subfolder is always `myna` (hardcoded; not stored in workspace.yaml).
 - Internal plumbing fields — keep at defaults, never ask: `prompt_logging`, `calendar_event_prefix`, `calendar_event_types`.
 - `meetings.yaml` and `tags.yaml` are not part of the guided flow — don't write them unless the user explicitly asks.
 - **Import write-back: write only what was in the review file.** When writing config after an import review (option 3 in the doc import section), write only the entries and fields present in the review file. Do not add blocks, sections, or fields — such as triage, defaults, or schema examples — that were not explicitly included by the user.

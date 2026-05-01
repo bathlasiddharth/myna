@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 # lib.sh — Shared Myna vault scaffolding
 # Source this file and call: run_vault_setup <vault_path> <subfolder> <skill_dir>
+# Note: <subfolder> is always "myna" (hardcoded per D055); the parameter is kept for
+# compatibility with the call signature in claude.sh and kiro.sh.
 
 _myna_create_if_missing() {
   local path="$1"
@@ -27,7 +29,6 @@ run_vault_setup() {
 
   cat > "$HOME/.myna/config.yaml" <<EOF
 vault_path: $VAULT_PATH
-subfolder: $SUBFOLDER
 EOF
 
   echo "[1/12] Wrote ~/.myna/config.yaml"
@@ -97,7 +98,6 @@ user:
 
 vault:
   path: ""
-  subfolder: myna
 
 timezone: ""
 work_hours:

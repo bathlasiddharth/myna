@@ -25,7 +25,7 @@ Sets up or refreshes your day. Rerunnable at any time — each run prepends a fr
 ## Step 1: Read Config
 
 Read from `_system/config/workspace.yaml`:
-- `vault.path` + `vault.subfolder` → vault root for all file paths
+- `vault.path` → vault root; Myna subfolder is always `myna` (hardcoded)
 - `work_hours.start` and `work_hours.end` → for capacity calculations
 - `timezone` → for date resolution
 - `journal.archive_after_days` → for auto-archiving
@@ -114,17 +114,17 @@ Collect in parallel:
 
 **Calendar:** Read today's (or tomorrow's) calendar events via the calendar MCP. For each event, note: title, start time, end time, attendees (count only — not names), and any existing meeting file path. If calendar MCP is unavailable, skip the meetings section and note it in the output.
 
-**Due today:** Grep `{vault}/{subfolder}/Projects/` for `- \[ \]` with `📅 {target-date}`. Group by project file. Also grep outside `Projects/` for tasks with `📅 {target-date}` — these are "General" tasks with no project. Retain the full task text and source file for each result.
+**Due today:** Grep `{vault}/myna/Projects/` for `- \[ \]` with `📅 {target-date}`. Group by project file. Also grep outside `Projects/` for tasks with `📅 {target-date}` — these are "General" tasks with no project. Retain the full task text and source file for each result.
 
-**Overdue (for briefing signal only):** Grep `{vault}/{subfolder}/Projects/` for `- \[ \]` with `📅 {date}` before target date. Count total; surface the top 3 by priority for the briefing. Full list belongs in [[Dashboards/overdue]] dashboard.
+**Overdue (for briefing signal only):** Grep `{vault}/myna/Projects/` for `- \[ \]` with `📅 {date}` before target date. Count total; surface the top 3 by priority for the briefing. Full list belongs in [[Dashboards/overdue]] dashboard.
 
-**Overdue delegations (for briefing signal only):** Grep `{vault}/{subfolder}/` for `- \[ \]` lines containing `[type:: delegation]` with `📅 {date}` before today. Count total; surface any as red-flag bullets in the briefing. Full list belongs in [[Dashboards/delegations]] dashboard.
+**Overdue delegations (for briefing signal only):** Grep `{vault}/myna/` for `- \[ \]` lines containing `[type:: delegation]` with `📅 {date}` before today. Count total; surface any as red-flag bullets in the briefing. Full list belongs in [[Dashboards/delegations]] dashboard.
 
-**Blockers:** Grep `{vault}/{subfolder}/Projects/` for `> \[!blocker\]` callout blocks. For each match, read a window of ~5 surrounding lines. Skip if `resolved:: true` or `status:: resolved` appears within the same callout block. Surface unresolved ones as briefing bullets.
+**Blockers:** Grep `{vault}/myna/Projects/` for `> \[!blocker\]` callout blocks. For each match, read a window of ~5 surrounding lines. Skip if `resolved:: true` or `status:: resolved` appears within the same callout block. Surface unresolved ones as briefing bullets.
 
 **Milestones** (if `features.milestones` is enabled): Read `people.yaml` and all People files. Find birthdays (`birthday: MM-DD`) or work anniversaries (`work_anniversary: YYYY-MM-DD`) within the next 7 days. Surface as briefing bullets.
 
-**Review queue counts:** Read `{vault}/{subfolder}/ReviewQueue/review-work.md`, `review-people.md`, `review-self.md`, and `review-email-triage.md`. Count unchecked items (`- \[ \]`) in each. If a file doesn't exist, treat its count as 0. Include total in briefing only if non-zero.
+**Review queue counts:** Read `{vault}/myna/ReviewQueue/review-work.md`, `review-people.md`, `review-self.md`, and `review-email-triage.md`. Count unchecked items (`- \[ \]`) in each. If a file doesn't exist, treat its count as 0. Include total in briefing only if non-zero.
 
 ---
 

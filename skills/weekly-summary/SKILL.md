@@ -29,7 +29,7 @@ Weekly note path: `Journal/WeeklyNote-{YYYY-MM-DD}.md` (Monday's date)
 ## Step 2: Read Config
 
 Read `workspace.yaml`:
-- `vault.path` + `vault.subfolder`
+- `vault.path` → vault root; Myna subfolder is always `myna` (hardcoded)
 - `user.role` → determines framing of contribution categories
 - `features.weekly_summary` → if disabled, skip
 - `features.team_health` → if enabled and role is `engineering-manager`, include team health snapshot
