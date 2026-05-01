@@ -16,8 +16,8 @@ Myna distributes as a Claude Code plugin (D053). Installation is a single comman
 2. **Main agent** — `agents/agent.md` contains identity, routing logic, and direct operations. Referenced as `myna:agent`. Frontmatter lists steering skills via the `skills:` field for preloading.
 3. **Steering skills** — 6 skills with `user-invocable: false` preloaded at startup via the agent's `skills:` field. Always in context. Referenced as `myna:steering-safety`, `myna:steering-conventions`, etc.
 4. **Feature skills** — 24 skills at `skills/{name}/SKILL.md` in the plugin directory. Only names and descriptions in context at startup. Full content loaded on demand when invoked as `/myna:{name}`.
-5. **Config** — vault path stored in `~/.myna/config.yaml` (written by `/myna:install`). Six YAML config files read at session start from `{vault_path}/{subfolder}/_system/config/`.
-6. **First-time setup** — `/myna:install` creates the vault directory structure and writes `~/.myna/config.yaml`. `/myna:setup` guides identity, projects, people, and communication style.
+5. **Config** — vault path stored in `~/.myna/config.yaml` (written by `scripts/install.sh` on first run via `/myna:setup`). Six YAML config files read at session start from `{vault_path}/{subfolder}/_system/config/`.
+6. **First-time setup** — `/myna:setup` is the single entry point. It runs `scripts/install.sh` (vault directory creation and `~/.myna/config.yaml`), then opens the Config UI or doc import for configuration.
 
 External MCP servers (email, Slack, calendar) are registered with Claude Code via `claude mcp add` and are available as tools in every session. Skills call MCP tools directly by name. Vault operations use Claude Code's built-in tools guided by the `myna:steering-vault-ops` steering skill — no MCP server required for vault access.
 
@@ -918,7 +918,7 @@ All agent content — skills, steering, main agent, config schemas — is plain 
 | Feature skills (24) | `skills/{name}/SKILL.md` | `/myna:{name}` (on demand) |
 | Plugin metadata | `.claude-plugin/plugin.json` | Read by Claude Code at install |
 
-**Vault config (`~/.myna/config.yaml`):** Written by `/myna:install` on first run. Stores `vault_path` and `subfolder`. Read at the start of every session. The six user config YAML files live in `{vault_path}/{subfolder}/_system/config/` — these are never overwritten by plugin updates.
+**Vault config (`~/.myna/config.yaml`):** Written by `scripts/install.sh` on first run (invoked by `/myna:setup`). Stores `vault_path` and `subfolder`. Read at the start of every session. The six user config YAML files live in `{vault_path}/{subfolder}/_system/config/` — these are never overwritten by plugin updates.
 
 **Agent frontmatter** includes `name: agent`, `description`, and `skills` (listing the 6 steering skills for preloading using `myna:` prefix). Other fields (`model`, `tools`, `mcpServers`, `permissionMode`, `memory`) are omitted so Myna inherits session defaults.
 
