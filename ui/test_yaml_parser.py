@@ -225,13 +225,12 @@ class TestEdgeCases(unittest.TestCase):
 
     def test_nested_three_levels(self):
         yaml_text = (
-            "calendar_event_types:\n"
-            "  focus: Focus\n"
-            "  task: Task\n"
-            "  reminder: Reminder\n"
+            "work_hours:\n"
+            "  start: \"09:00\"\n"
+            "  end: \"17:00\"\n"
         )
         data = self._parse_string(yaml_text)
-        self.assertEqual(data["calendar_event_types"]["focus"], "Focus")
+        self.assertEqual(data["work_hours"]["start"], "09:00")
 
     def test_list_of_objects_with_all_fields(self):
         yaml_text = (
@@ -320,10 +319,6 @@ class TestExampleFileValues(unittest.TestCase):
     def test_workspace_calendar_event_prefix(self):
         data = load(example("workspace.yaml.example"))
         self.assertEqual(data["calendar_event_prefix"], "[Myna]")
-
-    def test_workspace_calendar_event_types_focus(self):
-        data = load(example("workspace.yaml.example"))
-        self.assertEqual(data["calendar_event_types"]["focus"], "Focus")
 
     def test_workspace_prompt_logging_is_bool(self):
         data = load(example("workspace.yaml.example"))

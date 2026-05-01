@@ -130,10 +130,6 @@ triage:
 feedback_cycle_days: 30
 
 calendar_event_prefix: "[Myna]"
-calendar_event_types:
-  focus: Focus
-  task: Task
-  reminder: Reminder
 
 mcp_servers:
   email: ""

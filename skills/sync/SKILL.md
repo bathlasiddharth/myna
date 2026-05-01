@@ -29,7 +29,7 @@ Read from `_system/config/workspace.yaml`:
 - `work_hours.start` and `work_hours.end` → for capacity calculations
 - `timezone` → for date resolution
 - `journal.archive_after_days` → for auto-archiving
-- `calendar_event_prefix` and `calendar_event_types` → for naming calendar events
+- `calendar_event_prefix` → prefix for naming calendar events (event type labels are hardcoded: Focus, Task, Reminder)
 - `features` map → check: `meeting_prep`, `milestones`
 
 Read from `_system/config/projects.yaml`, `_system/config/people.yaml`, `_system/config/meetings.yaml`.

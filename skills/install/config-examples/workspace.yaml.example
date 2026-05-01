@@ -67,10 +67,7 @@ feedback_cycle_days: 30               # Days between feedback gap alerts (defaul
 # Calendar
 # ---
 calendar_event_prefix: "[Myna]"       # Prefix on all Myna-created calendar events (default: [Myna])
-calendar_event_types:                 # Labels appended to the prefix
-  focus: Focus                        # e.g. [Myna:Focus]
-  task: Task                          # e.g. [Myna:Task]
-  reminder: Reminder                  # e.g. [Myna:Reminder]
+                                      # Event type labels are hardcoded: Focus, Task, Reminder
 
 # ---
 # MCP Server Names

@@ -213,11 +213,7 @@ function populateIdentity() {
 
 function populateCalendar() {
   const ws = window.config.workspace || {};
-  const types = ws.calendar_event_types || {};
-  setValue('calendar-prefix',       ws.calendar_event_prefix || '[Myna]');
-  setValue('calendar-type-focus',    types.focus    || 'Focus');
-  setValue('calendar-type-task',     types.task     || 'Task');
-  setValue('calendar-type-reminder', types.reminder || 'Reminder');
+  setValue('calendar-prefix', ws.calendar_event_prefix || '[Myna]');
 }
 
 function populateIntegrations() {
@@ -332,14 +328,12 @@ function renderCalendarCard() {
   const body  = document.getElementById('overview-calendar-body');
   const badge = document.getElementById('badge-calendar');
   const prefix = ws.calendar_event_prefix;
-  const types  = ws.calendar_event_types || {};
 
-  const isConfigured = !!(prefix || types.focus || types.task || types.reminder);
   setBadge(badge, 'configured', 'Configured');
 
   body.innerHTML = [
     kv('Prefix', prefix || '[Myna]'),
-    kv('Labels', [types.focus || 'Focus', types.task || 'Task', types.reminder || 'Reminder'].join(' · ')),
+    kv('Labels', 'Focus · Task · Reminder'),
   ].join('');
 }
 
@@ -477,15 +471,12 @@ function getIdentityData() {
 
 function getCalendarData() {
   const existing = deepClone(window.config && window.config.workspace || {});
-  return {
+  const updated = {
     ...existing,
     calendar_event_prefix: document.getElementById('calendar-prefix').value.trim() || '[Myna]',
-    calendar_event_types: {
-      focus:    document.getElementById('calendar-type-focus').value.trim()    || 'Focus',
-      task:     document.getElementById('calendar-type-task').value.trim()     || 'Task',
-      reminder: document.getElementById('calendar-type-reminder').value.trim() || 'Reminder',
-    },
   };
+  delete updated.calendar_event_types;
+  return updated;
 }
 
 function getIntegrationsData() {
