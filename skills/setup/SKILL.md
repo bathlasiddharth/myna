@@ -29,17 +29,7 @@ Ask the user one question:
 
 1. Full path to your Myna vault — a folder on your machine where Myna stores everything. Using Obsidian? Point it to your Obsidian vault. (e.g. `/Users/you/Documents/MyVault`)
 
-Then show a confirmation summary:
-
-```
-Vault:     {vault_path}
-Subfolder: myna
-Myna root: {vault_path}/myna/
-```
-
-Ask: "Ready? (yes/no)"
-
-If no, stop. If yes, continue to Step 2.
+Then continue to Step 2.
 
 ---
 
@@ -55,7 +45,7 @@ Show all progress output as it runs. If the script exits non-zero, show the erro
 
 ---
 
-## Step 3: Config UI or Doc Import
+## Step 3: Config UI
 
 Check if `python3` is available:
 
@@ -63,30 +53,44 @@ Check if `python3` is available:
 python3 --version
 ```
 
-If python3 is **not available**: tell the user Python 3 is required for the Config UI. Show the config file paths at `<vault_path>/<subfolder>/_system/config/` and point them to the `.yaml.example` files alongside each config file for reference. Stop.
+**If python3 is not available:**
 
-If python3 **is available**, present two options:
+Check if `brew` is available:
 
-1. **Open Config UI** (recommended) — visual settings page in the browser
-2. **Import from a document** — paste text, give a file path, or share a link; Myna extracts projects and people
+```
+brew --version
+```
 
-Wait for the user to choose.
+- **If brew is available:** Ask: "The Config UI needs Python 3. Want me to install it? (`brew install python3`)"
+  - If yes: run `brew install python3`, then continue to the python3 available path below.
+  - If no: show config file paths (see below) and stop.
 
----
+- **If brew is not available:** Say: "The Config UI needs Python 3. Install it from https://python.org and re-run `/myna:setup`." Then ask: "Or would you rather skip that for now and edit the config files directly?" If yes: show config file paths (see below). Stop either way.
 
-### If option 1 (Config UI)
+**Config file paths (shown only when user skips Python 3 install):**
+
+- `{vault_path}/myna/_system/config/workspace.yaml` — your identity (name, job title, timezone) and feature toggles. Start here.
+- `{vault_path}/myna/_system/config/projects.yaml` — the projects you're working on, with names, aliases, and which email folders or Slack channels map to each.
+- `{vault_path}/myna/_system/config/people.yaml` — the people you work with: direct reports, manager, key collaborators, and their roles.
+- `{vault_path}/myna/_system/config/communication-style.yaml` — how you like to write: tone and style presets for different audiences.
+- `{vault_path}/myna/_system/config/meetings.yaml` — optional overrides for how Myna handles specific meeting types. Safe to leave blank for now.
+- `{vault_path}/myna/_system/config/tags.yaml` — rules for auto-tagging vault entries. Safe to leave blank for now.
+
+Each file has a `.yaml.example` alongside it — refer to those for the expected format.
+
+**If python3 is available:**
 
 1. Run in background: `python3 "${CLAUDE_SKILL_DIR}/../../ui/server.py"`
 2. Capture PID and URL from stdout — lines starting with `PID:` and `URL:`. If PID capture fails, note it and proceed — the user can kill the server manually with `pkill -f server.py`.
-3. Tell the user: "Config UI is open at {url}. Make your changes in the browser and come back here when done."
+3. Tell the user: "Config UI is open at {url}. Fill in what you can and come back here when done."
 4. Wait for the user to return.
 5. Kill the server: send SIGTERM to the captured PID. If PID capture failed, run `pkill -f server.py` as fallback.
-6. Read all six config files from `<vault_path>/<subfolder>/_system/config/`. Show a human-readable summary of what is configured and what is still blank.
-7. Ask if they want to import from a document to fill anything still missing. If yes, proceed with the doc import flow below.
+6. Read all six config files from `{vault_path}/myna/_system/config/`. Show a human-readable summary of what is configured and what is still blank.
+7. Ask: "Do you have any existing docs — project notes, a team roster, meeting notes — you'd like me to read to fill in what's missing?" If yes, proceed with the doc import flow below.
 
 ---
 
-### If option 2 (Doc Import)
+### Doc Import (optional follow-up)
 
 Always present three explicit input options upfront before asking anything:
 
@@ -114,11 +118,9 @@ Write YAML only when the user selects option 1 (or after corrections are applied
 
 Schema references: `_system/config/projects.yaml.example`, `_system/config/people.yaml.example`.
 
-**Person .md files:** After relationship tiers are resolved, create a `.md` file for each imported person using the person template at `agents/templates/person.md`. Write files to `{vault_path}/{subfolder}/People/{slug}.md` where `{slug}` is the person's name lowercased with spaces replaced by hyphens. Fill in fields from the imported data; leave any unknown field blank (no placeholder text, no "TBD"). For `relationship_tier`, use the value set during the tier step, or leave the frontmatter `relationship` field and the `#tier/` tag blank if still unset. Use full relative wikilinks: `[[1-1s/{slug}]]` not `[[{slug}]]`. Do not overwrite an existing person file — if a file already exists for a person, skip it and notify the user which files were skipped and why.
+**Person .md files:** After relationship tiers are resolved, create a `.md` file for each imported person using the person template at `agents/templates/person.md`. Write files to `{vault_path}/myna/People/{slug}.md` where `{slug}` is the person's name lowercased with spaces replaced by hyphens. Fill in fields from the imported data; leave any unknown field blank (no placeholder text, no "TBD"). For `relationship_tier`, use the value set during the tier step, or leave the frontmatter `relationship` field and the `#tier/` tag blank if still unset. Use full relative wikilinks: `[[1-1s/{slug}]]` not `[[{slug}]]`. Do not overwrite an existing person file — if a file already exists for a person, skip it and notify the user which files were skipped and why.
 
 **Post-import timeline offer:** After config is written and relationship tiers are resolved, if any of the imported documents were project update documents (status updates, progress reports, sprint summaries, or similar), ask: "Want me to create project timeline files from the update documents you imported? I'll add dated entries to each project's timeline." Wait for the user to say yes before doing anything — skip this step if they decline or don't respond to it.
-
-After the import completes, offer to open the Config UI to review or fill remaining fields.
 
 ---
 
@@ -147,7 +149,7 @@ If no, print both alias lines and tell the user to add them manually if they wan
 
 ## Step 5: Wrap-Up
 
-**Onboarding checklist:** Create `{vault_path}/{subfolder}/_system/Onboarding.md` with a checklist of any setup items not yet completed in this session (e.g., integrations not configured, projects/people not imported, communication style not set). Do not include items the user already completed. Then append exactly one task to today's daily note: `- [ ] Complete Myna onboarding checklist [[_system/Onboarding]]`. Use the full relative wikilink — `[[_system/Onboarding]]` not `[[Onboarding]]`.
+**Onboarding checklist:** Create `{vault_path}/myna/_system/Onboarding.md` with a checklist of any setup items not yet completed in this session (e.g., integrations not configured, projects/people not imported, communication style not set). Do not include items the user already completed. Then append exactly one task to today's daily note: `- [ ] Complete Myna onboarding checklist [[_system/Onboarding]]`. Use the full relative wikilink — `[[_system/Onboarding]]` not `[[Onboarding]]`.
 
 Tell the user: "Run `myna` (or `claude --agent myna:agent`) and type `sync` to start your day."
 
