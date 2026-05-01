@@ -38,16 +38,12 @@
   <!-- Top bar -->
   <header class="top-nav">
     <div class="top-nav-left">
-      <span class="brand">Myna</span>
+      <button class="brand" onclick="switchTab('overview')" title="Overview">Myna</button>
       <span class="brand-divider" aria-hidden="true">|</span>
       <span class="brand-subtitle">Settings</span>
     </div>
     <div class="top-nav-right">
-      <div id="connection-status" class="status-indicator">
-        <span id="status-dot" class="w-2 h-2 rounded-full bg-slate-300" style="flex-shrink:0"></span>
-        <span id="status-text">Connecting...</span>
-        <button id="retry-btn" class="hidden text-teal-600 hover:text-teal-700 underline text-xs ml-1" onclick="loadConfig()">Retry</button>
-      </div>
+      <span id="save-status" class="text-sm text-slate-400" style="transition: opacity 0.6s ease;"></span>
       <button
         id="theme-toggle"
         class="theme-toggle"
@@ -467,10 +463,11 @@
                 <label class="field-label" for="comm-default-preset">Default preset</label>
                 <select id="comm-default-preset" class="field-input" onchange="handleCommStyleChange('default')">
                   <option value="">Select a style</option>
-                  <option value="direct-and-concise">Direct and concise</option>
-                  <option value="warm-and-collaborative">Warm and collaborative</option>
-                  <option value="formal-and-polished">Formal and polished</option>
-                  <option value="casual-and-friendly">Casual and friendly</option>
+                  <option value="assertive">Assertive — direct, clear ask, no hedging</option>
+                  <option value="analytical">Analytical — evidence-first, structured reasoning</option>
+                  <option value="empathetic">Empathetic — relationship-first, acknowledges context</option>
+                  <option value="formal">Formal — polished, structured, safe for any audience</option>
+                  <option value="executive">Executive — BLUF, outcome-focused, so-what first</option>
                   <option value="_custom">Custom</option>
                 </select>
                 <input type="text" id="comm-default-preset-custom" class="field-input mt-2 hidden" placeholder="Describe your communication style" />
@@ -485,10 +482,11 @@
                 <label class="field-label" for="comm-upward">Upward (manager, leadership)</label>
                 <select id="comm-upward" class="field-input" onchange="handleCommStyleChange('upward')">
                   <option value="">Use default</option>
-                  <option value="direct-and-concise">Direct and concise</option>
-                  <option value="warm-and-collaborative">Warm and collaborative</option>
-                  <option value="formal-and-polished">Formal and polished</option>
-                  <option value="casual-and-friendly">Casual and friendly</option>
+                  <option value="assertive">Assertive — direct, clear ask, no hedging</option>
+                  <option value="analytical">Analytical — evidence-first, structured reasoning</option>
+                  <option value="empathetic">Empathetic — relationship-first, acknowledges context</option>
+                  <option value="formal">Formal — polished, structured, safe for any audience</option>
+                  <option value="executive">Executive — BLUF, outcome-focused, so-what first</option>
                   <option value="_custom">Custom</option>
                 </select>
                 <input type="text" id="comm-upward-custom" class="field-input mt-2 hidden" placeholder="Describe your communication style" />
@@ -498,10 +496,11 @@
                 <label class="field-label" for="comm-peer">Peer</label>
                 <select id="comm-peer" class="field-input" onchange="handleCommStyleChange('peer')">
                   <option value="">Use default</option>
-                  <option value="direct-and-concise">Direct and concise</option>
-                  <option value="warm-and-collaborative">Warm and collaborative</option>
-                  <option value="formal-and-polished">Formal and polished</option>
-                  <option value="casual-and-friendly">Casual and friendly</option>
+                  <option value="assertive">Assertive — direct, clear ask, no hedging</option>
+                  <option value="analytical">Analytical — evidence-first, structured reasoning</option>
+                  <option value="empathetic">Empathetic — relationship-first, acknowledges context</option>
+                  <option value="formal">Formal — polished, structured, safe for any audience</option>
+                  <option value="executive">Executive — BLUF, outcome-focused, so-what first</option>
                   <option value="_custom">Custom</option>
                 </select>
                 <input type="text" id="comm-peer-custom" class="field-input mt-2 hidden" placeholder="Describe your communication style" />
@@ -511,10 +510,11 @@
                 <label class="field-label" for="comm-direct">Direct reports</label>
                 <select id="comm-direct" class="field-input" onchange="handleCommStyleChange('direct')">
                   <option value="">Use default</option>
-                  <option value="direct-and-concise">Direct and concise</option>
-                  <option value="warm-and-collaborative">Warm and collaborative</option>
-                  <option value="formal-and-polished">Formal and polished</option>
-                  <option value="casual-and-friendly">Casual and friendly</option>
+                  <option value="assertive">Assertive — direct, clear ask, no hedging</option>
+                  <option value="analytical">Analytical — evidence-first, structured reasoning</option>
+                  <option value="empathetic">Empathetic — relationship-first, acknowledges context</option>
+                  <option value="formal">Formal — polished, structured, safe for any audience</option>
+                  <option value="executive">Executive — BLUF, outcome-focused, so-what first</option>
                   <option value="_custom">Custom</option>
                 </select>
                 <input type="text" id="comm-direct-custom" class="field-input mt-2 hidden" placeholder="Describe your communication style" />
@@ -524,10 +524,11 @@
                 <label class="field-label" for="comm-cross-team">Cross-team</label>
                 <select id="comm-cross-team" class="field-input" onchange="handleCommStyleChange('cross-team')">
                   <option value="">Use default</option>
-                  <option value="direct-and-concise">Direct and concise</option>
-                  <option value="warm-and-collaborative">Warm and collaborative</option>
-                  <option value="formal-and-polished">Formal and polished</option>
-                  <option value="casual-and-friendly">Casual and friendly</option>
+                  <option value="assertive">Assertive — direct, clear ask, no hedging</option>
+                  <option value="analytical">Analytical — evidence-first, structured reasoning</option>
+                  <option value="empathetic">Empathetic — relationship-first, acknowledges context</option>
+                  <option value="formal">Formal — polished, structured, safe for any audience</option>
+                  <option value="executive">Executive — BLUF, outcome-focused, so-what first</option>
                   <option value="_custom">Custom</option>
                 </select>
                 <input type="text" id="comm-cross-team-custom" class="field-input mt-2 hidden" placeholder="Describe your communication style" />
@@ -543,16 +544,6 @@
               </div>
 
               <div class="field-group">
-                <label class="field-label" for="comm-email-length">Max length</label>
-                <select id="comm-email-length" class="field-input">
-                  <option value="">Select length</option>
-                  <option value="short">Short</option>
-                  <option value="medium">Medium</option>
-                  <option value="long">Long</option>
-                </select>
-              </div>
-
-              <div class="field-group">
                 <label class="field-label" for="comm-email-greeting">Greeting style</label>
                 <select id="comm-email-greeting" class="field-input">
                   <option value="">Select greeting</option>
@@ -562,14 +553,6 @@
                 </select>
               </div>
 
-              <div class="field-group">
-                <label class="field-label">Processed email filing</label>
-                <p class="text-slate-400 text-xs mb-3">Where processed emails are filed after Myna handles them.</p>
-                <select id="comm-email-filing" class="field-input" onchange="saveTab('communication')">
-                  <option value="per-project">Per-project folders — filed into each project's folder</option>
-                  <option value="common">One shared folder — all processed emails in one place</option>
-                </select>
-              </div>
             </div>
 
             <div class="form-section">
@@ -987,6 +970,8 @@
 
           <div id="projects-list" class="flex flex-col gap-2 mb-4"></div>
 
+          <div class="info-box mb-4">Got a goals doc, project brief, or business review? Upload it in <a href="#" onclick="event.preventDefault(); switchTab('files')" class="underline">Files</a> and run <code>/myna-setup import</code> — Myna will extract projects automatically.</div>
+
           <button type="button" class="add-item-btn" onclick="addProject()">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
             Add Project
@@ -1003,6 +988,8 @@
 
           <div id="people-list" class="flex flex-col gap-2 mb-4"></div>
 
+          <div class="info-box mb-4">Got a team directory, org chart, or any doc that lists your colleagues? Upload it in <a href="#" onclick="event.preventDefault(); switchTab('files')" class="underline">Files</a> and run <code>/myna-setup import</code> — Myna will extract people automatically.</div>
+
           <button type="button" class="add-item-btn" onclick="addPerson()">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
             Add Person
@@ -1015,7 +1002,7 @@
       <div id="tab-files" class="tab-panel hidden p-8">
         <div class="max-w-xl">
           <h1 class="text-xl font-semibold text-slate-900 mb-1">Files</h1>
-          <p class="text-slate-500 text-sm mb-8">Import data files and manage vault sources.</p>
+          <p class="text-slate-500 text-sm mb-8">Upload docs and let Myna extract people and projects from them.</p>
 
           <!-- Upload zone -->
           <div id="upload-zone" class="upload-zone" onclick="document.getElementById('file-input').click()">
@@ -1028,7 +1015,7 @@
 
           <!-- Helper info box -->
           <div class="info-box mt-4 mb-6">
-            Upload project docs, team pages, Confluence exports, or any documents that describe your work context. Run <code>/myna-setup import</code> in a Claude chat to process them.
+            Upload any docs that describe your work — team directories, org charts, goals docs, project briefs, business reviews, meeting notes. Run <code>/myna-setup import</code> in a Claude chat to extract people and projects automatically.
           </div>
 
           <!-- Uploaded files (populated after upload) -->

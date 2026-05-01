@@ -132,7 +132,7 @@ def deep_merge(base: dict, incoming: dict) -> dict:
 
 CORS_HEADERS = {
     "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods": "GET, PUT, POST, OPTIONS",
+    "Access-Control-Allow-Methods": "GET, PUT, POST, DELETE, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type",
 }
 
@@ -403,7 +403,7 @@ class MynaHandler(BaseHTTPRequestHandler):
 
         saved = []
         for filename, file_bytes in parts:
-            dest = IMPORTS_DIR / filename
+            dest = (IMPORTS_DIR / filename).resolve()
             try:
                 dest.write_bytes(file_bytes)
                 saved.append({"name": filename, "path": str(dest)})
@@ -419,8 +419,14 @@ class MynaHandler(BaseHTTPRequestHandler):
             else:
                 pending = {"files": []}
 
+            existing = set(pending["files"])
+            replaced = []
             for item in saved:
-                pending["files"].append(item["path"])
+                if item["path"] in existing:
+                    replaced.append(item["path"])
+                else:
+                    pending["files"].append(item["path"])
+                item["replaced"] = item["path"] in existing
 
             with open(PENDING_IMPORTS_FILE, "w", encoding="utf-8") as f:
                 json.dump(pending, f, indent=2)
@@ -428,7 +434,56 @@ class MynaHandler(BaseHTTPRequestHandler):
             self._send_error(500, f"Failed to update pending imports: {e}")
             return
 
-        self._send_json(200, {"saved": saved})
+        self._send_json(200, {"saved": saved, "replaced": replaced})
+
+    # ------------------------------------------------------------------
+    # DELETE
+    # ------------------------------------------------------------------
+
+    def do_DELETE(self):
+        self._update_activity()
+        path = self.path.split("?")[0]
+
+        if path == "/api/imports":
+            self._handle_delete_import()
+        else:
+            self._send_error(404, f"Not found: {path}")
+
+    def _handle_delete_import(self):
+        length = int(self.headers.get("Content-Length", 0))
+        body = json.loads(self.rfile.read(length)) if length else {}
+        file_path = body.get("path", "")
+
+        if not file_path:
+            self._send_error(400, "Missing path")
+            return
+
+        # Only allow deleting files inside IMPORTS_DIR
+        target = Path(file_path).resolve()
+        if not str(target).startswith(str(IMPORTS_DIR.resolve())):
+            self._send_error(403, "Path outside imports directory")
+            return
+
+        try:
+            if target.exists():
+                target.unlink()
+        except Exception as e:
+            self._send_error(500, f"Failed to delete file: {e}")
+            return
+
+        # Remove from pending-imports.json
+        try:
+            if PENDING_IMPORTS_FILE.exists():
+                with open(PENDING_IMPORTS_FILE, "r", encoding="utf-8") as f:
+                    pending = json.load(f)
+                pending["files"] = [p for p in pending["files"] if Path(p).resolve() != target]
+                with open(PENDING_IMPORTS_FILE, "w", encoding="utf-8") as f:
+                    json.dump(pending, f, indent=2)
+        except Exception as e:
+            self._send_error(500, f"Failed to update pending imports: {e}")
+            return
+
+        self._send_json(200, {"deleted": file_path})
 
 
 # ---------------------------------------------------------------------------
@@ -473,11 +528,11 @@ def main():
     watchdog = threading.Thread(target=_inactivity_watchdog, daemon=True)
     watchdog.start()
 
-    server = HTTPServer(("localhost", port), MynaHandler)
+    server = HTTPServer(("127.0.0.1", port), MynaHandler)
 
     # Required startup lines — skill captures these
     print(f"PID:{pid}")
-    print(f"URL:http://localhost:{port}")
+    print(f"URL:http://myna.localhost:{port}")
     sys.stdout.flush()
 
     try:

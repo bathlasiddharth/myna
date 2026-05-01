@@ -19,6 +19,26 @@ let activeTab = 'overview';
 // Track which tabs have already had help listeners attached to avoid duplicates
 const helpListenersAttached = new Set();
 
+let saveStatusTimer = null;
+
+function setSaveStatus(state) {
+  const el = document.getElementById('save-status');
+  if (!el) return;
+  clearTimeout(saveStatusTimer);
+  el.style.opacity = '1';
+  if (state === 'saving') {
+    el.textContent = 'Saving…';
+    el.style.color = '';
+  } else if (state === 'saved') {
+    el.textContent = 'All changes saved';
+    el.style.color = '';
+    saveStatusTimer = setTimeout(() => { el.style.opacity = '0'; }, 2000);
+  } else if (state === 'error') {
+    el.textContent = 'Save failed';
+    el.style.color = 'var(--danger-text)';
+  }
+}
+
 // ── Theme ───────────────────────────────────────────────────────────────────
 // Theme is applied before render via inline script in <head>. This section
 // owns the toggle function and the OS-level media query listener.
@@ -96,41 +116,15 @@ function switchTab(tabName) {
 // ── Config loading ─────────────────────────────────────────────────────────
 
 async function loadConfig() {
-  setStatus('connecting');
-
   try {
     const res = await fetch('/api/config');
     if (!res.ok) throw new Error('HTTP ' + res.status);
     window.config = await res.json();
-    setStatus('connected');
     populateForms();
     renderOverview();
   } catch (err) {
-    setStatus('disconnected');
+    setSaveStatus('error');
     console.error('Failed to load config:', err);
-  }
-}
-
-function setStatus(state) {
-  const dot  = document.getElementById('status-dot');
-  const text = document.getElementById('status-text');
-  const btn  = document.getElementById('retry-btn');
-
-  if (state === 'connecting') {
-    dot.className  = 'w-2 h-2 rounded-full bg-slate-300';
-    text.className = 'text-slate-400';
-    text.textContent = 'Connecting...';
-    btn.classList.add('hidden');
-  } else if (state === 'connected') {
-    dot.className  = 'w-2 h-2 rounded-full bg-emerald-400';
-    text.className = 'text-slate-500';
-    text.textContent = 'Connected';
-    btn.classList.add('hidden');
-  } else {
-    dot.className  = 'w-2 h-2 rounded-full bg-red-400';
-    text.className = 'text-red-500';
-    text.textContent = 'Not connected';
-    btn.classList.remove('hidden');
   }
 }
 
@@ -257,18 +251,16 @@ function populateCommunication() {
   const mp    = cs.messaging_preferences || {};
   const email = ws.email || {};
 
-  setCommStyleValue('comm-default-preset', cs.default_preset || '');
-  setCommStyleValue('comm-upward',         tier.upward       || '');
-  setCommStyleValue('comm-peer',           tier.peer         || '');
-  setCommStyleValue('comm-direct',         tier.direct       || '');
-  setCommStyleValue('comm-cross-team',     tier['cross-team'] || '');
+  setCommStyleValue('comm-default-preset', cs.default_preset    || 'assertive');
+  setCommStyleValue('comm-upward',         tier.upward           || 'executive');
+  setCommStyleValue('comm-peer',           tier.peer             || 'assertive');
+  setCommStyleValue('comm-direct',         tier.direct           || 'empathetic');
+  setCommStyleValue('comm-cross-team',     tier['cross-team']    || 'formal');
 
   setValue('comm-sign-off',           cs.sign_off       || '');
-  setValue('comm-email-length',       ep.max_length     || '');
   setValue('comm-email-greeting',     ep.greeting_style || '');
   setValue('comm-msg-formality',      mp.formality      || '');
   setValue('comm-msg-emoji',          mp.emoji_usage    || '');
-  setValue('comm-email-filing',       email.processed_folder || 'per-project');
 }
 
 /**
@@ -282,8 +274,7 @@ function setCommStyleValue(selectId, value) {
   const custom = document.getElementById(selectId + '-custom');
   if (!sel) return;
 
-  const knownValues = ['', 'direct-and-concise', 'warm-and-collaborative',
-    'formal-and-polished', 'casual-and-friendly', '_custom'];
+  const knownValues = ['', 'assertive', 'analytical', 'empathetic', 'formal', 'executive', '_custom'];
 
   if (!value) {
     sel.value = '';
@@ -535,29 +526,11 @@ function getCommunicationData() {
     },
     sign_off:                   document.getElementById('comm-sign-off').value.trim(),
     email_preferences: {
-      max_length:     document.getElementById('comm-email-length').value,
       greeting_style: document.getElementById('comm-email-greeting').value,
     },
     messaging_preferences: {
       formality:   document.getElementById('comm-msg-formality').value,
       emoji_usage: document.getElementById('comm-msg-emoji').value,
-    },
-  };
-}
-
-/**
- * Return the workspace patch needed when saving the Communication tab.
- * Email filing (processed_folder) lives in workspace.yaml under email:,
- * not in communication-style.yaml.
- */
-function getCommunicationWorkspacePatch() {
-  const existing = deepClone(window.config && window.config.workspace || {});
-  const filingEl = document.getElementById('comm-email-filing');
-  return {
-    ...existing,
-    email: {
-      ...(existing.email || {}),
-      processed_folder: filingEl ? filingEl.value : (existing.email || {}).processed_folder,
     },
   };
 }
@@ -605,6 +578,7 @@ async function saveTab(tabName) {
   const data = getTabData(tabName);
   if (!data) return;
 
+  setSaveStatus('saving');
   try {
     const res = await fetch('/api/config/' + configName, {
       method:  'PUT',
@@ -636,25 +610,13 @@ async function saveTab(tabName) {
       window.config[configName] = data;
     }
 
-    // Communication tab also saves email filing (processed_folder) to workspace config
-    if (tabName === 'communication') {
-      const wsPatch = getCommunicationWorkspacePatch();
-      const wsRes = await fetch('/api/config/workspace', {
-        method:  'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify(wsPatch),
-      });
-      if (wsRes.ok) {
-        window.config.workspace = wsPatch;
-      }
-      // Workspace save failure is non-fatal — the style data already saved
-    }
+
 
     renderOverview();
-    showToast('Saved', 'success');
+    setSaveStatus('saved');
   } catch (err) {
     console.error('Save failed:', err);
-    showToast('Save failed: ' + err.message, 'error');
+    setSaveStatus('error');
   }
 }
 
@@ -1724,9 +1686,19 @@ async function handleFiles(fileList) {
       list.appendChild(row);
     });
 
-    const label = files.length === 1 ? '1 file uploaded' : `${files.length} files uploaded`;
+    const data = await res.json().catch(() => ({}));
+    const replaced = (data.replaced || []).length;
+    const added = files.length - replaced;
+    let label;
+    if (replaced > 0 && added === 0) {
+      label = replaced === 1 ? 'Already in imports — replaced' : `${replaced} files already in imports — replaced`;
+    } else if (replaced > 0) {
+      label = `${added} added, ${replaced} replaced`;
+    } else {
+      label = files.length === 1 ? '1 file uploaded' : `${files.length} files uploaded`;
+    }
     showToast(label, 'success');
-    loadImports(); // refresh pending imports list after upload
+    loadImports();
   } catch (err) {
     showToast('Upload failed: ' + err.message, 'error');
   }
@@ -1756,10 +1728,13 @@ async function loadImports() {
       return `
         <div class="file-row">
           <svg class="w-4 h-4 text-slate-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-          <div>
+          <div class="flex-1 min-w-0">
             <div class="file-row-name">${escHtml(name)}</div>
             <div class="file-row-meta">${escHtml(f)}</div>
           </div>
+          <button type="button" class="delete-file-btn" onclick="deleteImport(${JSON.stringify(f)})" title="Remove">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
         </div>
       `;
     }).join('');
@@ -1773,6 +1748,20 @@ async function loadImports() {
       loadingEl.textContent = 'Could not load imports.';
       loadingEl.classList.remove('hidden');
     }
+  }
+}
+
+async function deleteImport(filePath) {
+  try {
+    const res = await fetch('/api/imports', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ path: filePath }),
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    loadImports();
+  } catch (err) {
+    showToast('Could not remove file: ' + err.message, 'error');
   }
 }
 
@@ -1821,9 +1810,7 @@ const HELP_CONTENT = {
       { id: 'comm-direct',           label: 'Direct reports',        desc: 'Override tone for messages to your direct reports. Many managers prefer a warmer or more direct style here.' },
       { id: 'comm-cross-team',       label: 'Cross-team',            desc: 'Override tone for colleagues outside your immediate team — stakeholders, partner teams, or cross-functional peers.' },
       { id: 'comm-sign-off',         label: 'Sign-off',              desc: 'The closing phrase appended to email drafts, e.g. "Thanks" or "Best regards". Leave blank to skip a sign-off.' },
-      { id: 'comm-email-length',     label: 'Max email length',      desc: 'Soft target for draft length. Short keeps replies to 1-3 sentences; Medium allows a few short paragraphs; Long gives Myna room to be thorough.' },
       { id: 'comm-email-greeting',   label: 'Greeting style',        desc: 'How email drafts open — first name only ("Hi Sarah"), formal ("Dear Ms. Chen"), or no greeting at all.' },
-      { id: 'comm-email-filing',     label: 'Processed email filing', desc: 'Where processed emails land after Myna handles them. Per-project keeps each project tidy; one shared folder is simpler if you prefer a flat layout.' },
       { id: 'comm-msg-formality',    label: 'Messaging formality',   desc: 'Casual drafts read like Slack; Professional drafts suit more formal team channels or external partners.' },
       { id: 'comm-msg-emoji',        label: 'Emoji usage',           desc: 'How often Myna includes emoji in message drafts. None keeps it text-only; Minimal adds one or two where natural; Moderate uses them freely.' },
     ],
@@ -2156,7 +2143,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // ── Communication: unwired dropdowns → save on change ─────────────────────
-  ['comm-email-length', 'comm-email-greeting', 'comm-msg-formality', 'comm-msg-emoji'].forEach(id => {
+  ['comm-email-greeting', 'comm-msg-formality', 'comm-msg-emoji'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.addEventListener('change', () => saveTab('communication'));
   });

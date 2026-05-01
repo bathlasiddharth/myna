@@ -176,11 +176,15 @@ html.theme-transitioning *:not(svg):not(path):not(script) {
 
 .brand {
   font-family: var(--font-sans);
-  font-size: 1rem;
-  font-weight: 700;
-  letter-spacing: -0.02em;
+  font-size: 1.25rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
   color: var(--accent);
   line-height: 1;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
 }
 
 .brand-divider {
@@ -480,8 +484,9 @@ select.field-input {
 }
 
 .save-btn:disabled {
-  opacity: 0.55;
-  cursor: not-allowed;
+  background-color: var(--neutral-bg);
+  color: var(--text-muted);
+  cursor: default;
 }
 
 /* ── Inline feedback message ────────────────────────────── */
@@ -1297,6 +1302,29 @@ select.field-input {
   font-size: 0.75rem;
   color: var(--text-muted);
   margin-top: 0.125rem;
+}
+
+.delete-file-btn {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem;
+  border: none;
+  background: none;
+  color: var(--text-muted);
+  border-radius: 0.25rem;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.15s, color 0.15s;
+}
+
+.file-row:hover .delete-file-btn {
+  opacity: 1;
+}
+
+.delete-file-btn:hover {
+  color: var(--danger-text);
 }
 
 /* ── Defaults footer ────────────────────────────────────── */
