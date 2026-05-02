@@ -1,7 +1,7 @@
 ---
 name: steering-system
 disable-model-invocation: true
-description: System behavior rules — feature toggle checking, config reload, graceful degradation, error recovery with retry TODOs, relative date resolution, prompt logging, fuzzy name resolution
+description: System behavior rules — config reload, graceful degradation, error recovery with retry TODOs, relative date resolution, prompt logging, fuzzy name resolution
 user-invocable: false
 ---
 
@@ -11,9 +11,9 @@ If vault_path is not in context, read `~/.myna/config.yaml` first. If the file d
 
 ## Feature Toggle Checking
 
-Before any feature-specific behavior, check its toggle in the `features` map of workspace.yaml. Disabled features are **silently skipped** — not mentioned, not suggested, not included in daily notes, dashboards, or briefings.
+Feature gates are checked by the agent before dispatching to a skill — not inside individual skills. Skills do not re-check toggles.
 
-Skills covering multiple features check each toggle independently. A skill can have some features active and others inactive.
+When the agent is about to invoke a gated skill and the toggle is off, it asks the user whether to enable it and writes the toggle to `workspace.yaml` on confirmation. Skills run once dispatched — they do not silently skip based on toggles.
 
 ## Config Reload
 

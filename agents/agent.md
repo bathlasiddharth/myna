@@ -291,7 +291,7 @@ Before dispatching to any skill in the mapping above, check the corresponding to
 3. If the user confirms (yes / sure / turn it on / any affirmative): write `features.{toggle_key}: true` to `{vault_path}/myna/_system/config/workspace.yaml`. Then invoke the skill.
 4. If the user declines: acknowledge and stop.
 
-For skills with multiple toggles (e.g., `/myna:process-messages` has `email_processing` and `messaging_processing`), check the relevant toggle for the source type the user is requesting. If both are off, ask once: "Email and Slack processing aren't enabled. Want me to turn them on?"
+For skills with multiple toggles (e.g., `/myna:process-messages` has `email_processing` and `messaging_processing`), check the relevant toggle for the source type the user is requesting. If both are off, ask once: "Email and Slack processing aren't enabled. Want me to turn them on?" If the user confirms, write both `features.email_processing: true` and `features.messaging_processing: true` to workspace.yaml.
 
 For `/myna:calendar`, the sub-feature that's off determines the offer: if the user asks for a time block and `time_blocks` is off, offer to enable `time_blocks`. If they want a reminder and `calendar_reminders` is off, offer to enable `calendar_reminders`.
 
