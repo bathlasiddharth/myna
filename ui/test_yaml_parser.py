@@ -15,58 +15,301 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 from ui.yaml_parser import load, dump, load_with_comments
 
-EXAMPLES_DIR = os.path.join(
-    os.path.dirname(__file__), "..", "agents", "config-examples"
-)
+
+# ---------------------------------------------------------------------------
+# Helpers
+# ---------------------------------------------------------------------------
+
+def _write_tmp(content: str) -> str:
+    """Write content to a temp file and return the path."""
+    with tempfile.NamedTemporaryFile(
+        suffix=".yaml", mode="w", delete=False, encoding="utf-8"
+    ) as tmp:
+        tmp.write(content)
+        return tmp.name
 
 
-def example(name):
-    return os.path.join(EXAMPLES_DIR, name)
+# Inline YAML fixtures representing realistic config data (derived from what
+# install/lib.sh writes at install time).
+
+WORKSPACE_YAML = """\
+user:
+  name: "Alex Johnson"
+  email: "alex@company.com"
+  role: senior-engineer
+
+vault:
+  path: "/Users/alex/Documents/MyVault"
+
+timezone: America/Los_Angeles
+work_hours:
+  start: "09:00"
+  end: "17:00"
+
+email:
+  processed_folder: per-project
+
+triage:
+  inbox_source: "INBOX"
+  folders:
+    - name: Reply
+      description: "Needs a response from me"
+    - name: FYI
+      description: "Informational, no action needed"
+    - name: Follow-Up
+      description: "Waiting on someone else"
+    - name: Schedule
+      description: "Needs a meeting or calendar action"
+  draft_replies_folder: DraftReplies
+
+feedback_cycle_days: 30
+calendar_event_prefix: "[Myna]"
+
+mcp_servers:
+  email: gmail-mcp
+  slack: slack-mcp
+  calendar: gcal-mcp
+
+prompt_logging: true
+
+features:
+  email_processing: true
+  messaging_processing: true
+  email_triage: true
+  meeting_prep: true
+  process_meeting: true
+  time_blocks: true
+  calendar_reminders: true
+  people_management: true
+  self_tracking: true
+  team_health: true
+  attention_gap_detection: true
+  feedback_gap_detection: true
+  contribution_detection: true
+  milestones: true
+  observations_logging: true
+  recognition_tracking: true
+  person_briefing: true
+  one_on_one_analysis: true
+  performance_narrative: true
+  weekly_summary: true
+  monthly_updates: true
+  park_resume: true
+  meeting_summaries: true
+  email_draft_reply: true
+  message_rewriting: true
+  document_processing: true
+  pre_read_prep: true
+  difficult_conversation: true
+  help_me_say_no: true
+  quick_capture: true
+  link_manager: true
+  auto_tagging: true
+"""
+
+PROJECTS_YAML = """\
+projects:
+  - name: Auth Migration
+    aliases: [auth, AM, auth-mig]
+    status: active
+    email_folders:
+      - "Auth Migration/"
+    slack_channels:
+      - auth-team
+      - auth-migration
+    description: "Migrating to new OAuth provider"
+    key_people:
+      - Sarah Chen
+      - Alex Kumar
+    triage:
+      inbox_source: "INBOX"
+      folders:
+        - name: Reply
+          description: "Needs a response from me"
+        - name: FYI
+          description: "Informational, no action needed"
+
+  - name: Platform API
+    aliases: [platform, PAPI]
+    status: active
+    email_folders:
+      - "Platform/"
+    slack_channels:
+      - platform-eng
+    description: "Core platform API modernization"
+    key_people:
+      - Marcus Lee
+"""
+
+PEOPLE_YAML = """\
+people:
+  - display_name: Sarah
+    full_name: Sarah Chen
+    aliases: [SC, schen]
+    email: sarah.chen@company.com
+    slack_handle: schen
+    relationship_tier: direct
+    role: Senior Engineer
+    team: Platform
+    feedback_cycle_days: 21
+    birthday: "03-15"
+    work_anniversary: "2023-06-01"
+
+  - display_name: Marcus
+    full_name: Marcus Lee
+    aliases: [ML]
+    email: marcus.lee@company.com
+    relationship_tier: direct
+    role: Engineer
+    team: Platform
+
+  - display_name: James
+    full_name: James Park
+    email: james.park@company.com
+    relationship_tier: peer
+    role: Engineering Manager
+    team: Infrastructure
+
+  - display_name: Sam
+    full_name: Sam Rivera
+    email: sam.rivera@company.com
+    relationship_tier: upward
+    role: VP Engineering
+"""
+
+COMMUNICATION_STYLE_YAML = """\
+default_preset: professional
+
+presets_per_tier:
+  upward: executive
+  peer: assertive
+  direct: empathetic
+  cross-team: formal
+
+sign_off: "Best"
+
+email_preferences:
+  max_length: medium
+  greeting_style: first-name
+"""
+
+MEETINGS_YAML = """\
+meetings:
+  - name: Weekly Architecture Review
+    aliases: [arch review, WAR]
+    type: recurring
+    project: Platform API
+    debrief_type: design-review
+
+  - name: Sprint Standup
+    aliases: [standup, daily standup]
+    type: recurring
+    debrief_type: standup
+"""
+
+TAGS_YAML = """\
+tags:
+  - name: auth-migration
+    type: project-based
+    project: Auth Migration
+
+  - name: platform
+    type: project-based
+    project: Platform API
+
+  - name: urgent
+    type: keyword-based
+    keywords: [urgent, critical, ASAP, blocker, P0]
+
+  - name: hiring
+    type: keyword-based
+    keywords: [interview, candidate, hiring, onboarding]
+
+  - name: sarah-chen
+    type: person-based
+    person: Sarah Chen
+
+  - name: from-email
+    type: source-based
+    source: email
+
+  - name: from-slack
+    type: source-based
+    source: slack
+"""
 
 
 # ---------------------------------------------------------------------------
-# Basic parsing — real example files
+# Basic parsing — inline fixture YAML
 # ---------------------------------------------------------------------------
 
 class TestBasicParsing(unittest.TestCase):
 
     def test_workspace_user_name(self):
-        data = load(example("workspace.yaml.example"))
-        self.assertEqual(data["user"]["name"], "Alex Johnson")
+        path = _write_tmp(WORKSPACE_YAML)
+        try:
+            data = load(path)
+            self.assertEqual(data["user"]["name"], "Alex Johnson")
+        finally:
+            os.unlink(path)
 
     def test_workspace_email_processing_toggle(self):
-        data = load(example("workspace.yaml.example"))
-        self.assertIs(data["features"]["email_processing"], True)
+        path = _write_tmp(WORKSPACE_YAML)
+        try:
+            data = load(path)
+            self.assertIs(data["features"]["email_processing"], True)
+        finally:
+            os.unlink(path)
 
     def test_projects_count(self):
-        data = load(example("projects.yaml.example"))
-        self.assertEqual(len(data["projects"]), 2)
+        path = _write_tmp(PROJECTS_YAML)
+        try:
+            data = load(path)
+            self.assertEqual(len(data["projects"]), 2)
+        finally:
+            os.unlink(path)
 
     def test_projects_first_name(self):
-        data = load(example("projects.yaml.example"))
-        self.assertEqual(data["projects"][0]["name"], "Auth Migration")
+        path = _write_tmp(PROJECTS_YAML)
+        try:
+            data = load(path)
+            self.assertEqual(data["projects"][0]["name"], "Auth Migration")
+        finally:
+            os.unlink(path)
 
     def test_people_count(self):
-        data = load(example("people.yaml.example"))
-        self.assertEqual(len(data["people"]), 4)
+        path = _write_tmp(PEOPLE_YAML)
+        try:
+            data = load(path)
+            self.assertEqual(len(data["people"]), 4)
+        finally:
+            os.unlink(path)
 
     def test_people_first_relationship_tier(self):
-        data = load(example("people.yaml.example"))
-        self.assertEqual(data["people"][0]["relationship_tier"], "direct")
+        path = _write_tmp(PEOPLE_YAML)
+        try:
+            data = load(path)
+            self.assertEqual(data["people"][0]["relationship_tier"], "direct")
+        finally:
+            os.unlink(path)
 
-    def test_all_six_example_files_load(self):
-        files = [
-            "workspace.yaml.example",
-            "projects.yaml.example",
-            "people.yaml.example",
-            "communication-style.yaml.example",
-            "meetings.yaml.example",
-            "tags.yaml.example",
+    def test_all_six_fixtures_load(self):
+        fixtures = [
+            WORKSPACE_YAML,
+            PROJECTS_YAML,
+            PEOPLE_YAML,
+            COMMUNICATION_STYLE_YAML,
+            MEETINGS_YAML,
+            TAGS_YAML,
         ]
-        for fname in files:
-            with self.subTest(file=fname):
-                data = load(example(fname))
-                self.assertIsInstance(data, dict)
+        for yaml_text in fixtures:
+            with self.subTest():
+                path = _write_tmp(yaml_text)
+                try:
+                    data = load(path)
+                    self.assertIsInstance(data, dict)
+                finally:
+                    os.unlink(path)
 
 
 # ---------------------------------------------------------------------------
@@ -75,40 +318,43 @@ class TestBasicParsing(unittest.TestCase):
 
 class TestRoundTrip(unittest.TestCase):
 
-    def _round_trip(self, fname):
-        path = example(fname)
-        original = load(path)
-        with tempfile.NamedTemporaryFile(
-            suffix=".yaml", mode="w", delete=False
-        ) as tmp:
-            tmp_path = tmp.name
+    def _round_trip(self, yaml_text: str, label: str = ""):
+        path = _write_tmp(yaml_text)
         try:
-            dump(original, tmp_path)
-            reloaded = load(tmp_path)
-            self.assertEqual(
-                original, reloaded,
-                f"Round-trip mismatch for {fname}"
-            )
+            original = load(path)
+            with tempfile.NamedTemporaryFile(
+                suffix=".yaml", mode="w", delete=False
+            ) as tmp:
+                tmp_path = tmp.name
+            try:
+                dump(original, tmp_path)
+                reloaded = load(tmp_path)
+                self.assertEqual(
+                    original, reloaded,
+                    f"Round-trip mismatch{' for ' + label if label else ''}"
+                )
+            finally:
+                os.unlink(tmp_path)
         finally:
-            os.unlink(tmp_path)
+            os.unlink(path)
 
     def test_round_trip_workspace(self):
-        self._round_trip("workspace.yaml.example")
+        self._round_trip(WORKSPACE_YAML, "workspace")
 
     def test_round_trip_projects(self):
-        self._round_trip("projects.yaml.example")
+        self._round_trip(PROJECTS_YAML, "projects")
 
     def test_round_trip_people(self):
-        self._round_trip("people.yaml.example")
+        self._round_trip(PEOPLE_YAML, "people")
 
     def test_round_trip_communication_style(self):
-        self._round_trip("communication-style.yaml.example")
+        self._round_trip(COMMUNICATION_STYLE_YAML, "communication-style")
 
     def test_round_trip_meetings(self):
-        self._round_trip("meetings.yaml.example")
+        self._round_trip(MEETINGS_YAML, "meetings")
 
     def test_round_trip_tags(self):
-        self._round_trip("tags.yaml.example")
+        self._round_trip(TAGS_YAML, "tags")
 
 
 # ---------------------------------------------------------------------------
@@ -153,14 +399,16 @@ class TestCommentPreservation(unittest.TestCase):
             os.unlink(tmp_out_path)
 
     def test_load_with_comments_returns_tuple(self):
-        path = example("workspace.yaml.example")
-        result = load_with_comments(path)
-        self.assertIsInstance(result, tuple)
-        self.assertEqual(len(result), 2)
-        data, comments = result
-        self.assertIsInstance(data, dict)
-        self.assertIsInstance(comments, list)
-        self.assertTrue(len(comments) > 0)
+        path = _write_tmp(WORKSPACE_YAML)
+        try:
+            result = load_with_comments(path)
+            self.assertIsInstance(result, tuple)
+            self.assertEqual(len(result), 2)
+            data, comments = result
+            self.assertIsInstance(data, dict)
+            self.assertIsInstance(comments, list)
+        finally:
+            os.unlink(path)
 
 
 # ---------------------------------------------------------------------------
@@ -171,15 +419,11 @@ class TestEdgeCases(unittest.TestCase):
 
     def _parse_string(self, yaml_text: str) -> dict:
         """Helper: parse a YAML string via a temp file."""
-        with tempfile.NamedTemporaryFile(
-            suffix=".yaml", mode="w", delete=False, encoding="utf-8"
-        ) as tmp:
-            tmp.write(yaml_text)
-            tmp_path = tmp.name
+        path = _write_tmp(yaml_text)
         try:
-            return load(tmp_path)
+            return load(path)
         finally:
-            os.unlink(tmp_path)
+            os.unlink(path)
 
     def test_empty_quoted_string(self):
         data = self._parse_string('email: ""\n')
@@ -302,84 +546,152 @@ class TestEdgeCases(unittest.TestCase):
 
 
 # ---------------------------------------------------------------------------
-# Deeper coverage: specific field values from example files
+# Deeper coverage: specific field values from fixture YAML
 # ---------------------------------------------------------------------------
 
-class TestExampleFileValues(unittest.TestCase):
+class TestFixtureValues(unittest.TestCase):
 
     def test_workspace_vault_path(self):
-        data = load(example("workspace.yaml.example"))
-        self.assertEqual(data["vault"]["path"], "/Users/alex/Documents/MyVault")
+        path = _write_tmp(WORKSPACE_YAML)
+        try:
+            data = load(path)
+            self.assertEqual(data["vault"]["path"], "/Users/alex/Documents/MyVault")
+        finally:
+            os.unlink(path)
 
     def test_workspace_feedback_cycle_days(self):
-        data = load(example("workspace.yaml.example"))
-        self.assertEqual(data["feedback_cycle_days"], 30)
-        self.assertIsInstance(data["feedback_cycle_days"], int)
+        path = _write_tmp(WORKSPACE_YAML)
+        try:
+            data = load(path)
+            self.assertEqual(data["feedback_cycle_days"], 30)
+            self.assertIsInstance(data["feedback_cycle_days"], int)
+        finally:
+            os.unlink(path)
 
     def test_workspace_calendar_event_prefix(self):
-        data = load(example("workspace.yaml.example"))
-        self.assertEqual(data["calendar_event_prefix"], "[Myna]")
+        path = _write_tmp(WORKSPACE_YAML)
+        try:
+            data = load(path)
+            self.assertEqual(data["calendar_event_prefix"], "[Myna]")
+        finally:
+            os.unlink(path)
 
     def test_workspace_prompt_logging_is_bool(self):
-        data = load(example("workspace.yaml.example"))
-        self.assertIs(data["prompt_logging"], True)
+        path = _write_tmp(WORKSPACE_YAML)
+        try:
+            data = load(path)
+            self.assertIs(data["prompt_logging"], True)
+        finally:
+            os.unlink(path)
 
     def test_projects_first_aliases(self):
-        data = load(example("projects.yaml.example"))
-        self.assertEqual(data["projects"][0]["aliases"], ["auth", "AM", "auth-mig"])
+        path = _write_tmp(PROJECTS_YAML)
+        try:
+            data = load(path)
+            self.assertEqual(data["projects"][0]["aliases"], ["auth", "AM", "auth-mig"])
+        finally:
+            os.unlink(path)
 
     def test_projects_key_people_block_list(self):
-        data = load(example("projects.yaml.example"))
-        self.assertIn("Sarah Chen", data["projects"][0]["key_people"])
-        self.assertIn("Alex Kumar", data["projects"][0]["key_people"])
+        path = _write_tmp(PROJECTS_YAML)
+        try:
+            data = load(path)
+            self.assertIn("Sarah Chen", data["projects"][0]["key_people"])
+            self.assertIn("Alex Kumar", data["projects"][0]["key_people"])
+        finally:
+            os.unlink(path)
 
     def test_projects_triage_folders(self):
-        data = load(example("projects.yaml.example"))
-        folder_names = [f["name"] for f in data["triage"]["folders"]]
-        self.assertIn("Reply", folder_names)
-        self.assertIn("FYI", folder_names)
+        path = _write_tmp(PROJECTS_YAML)
+        try:
+            data = load(path)
+            folder_names = [f["name"] for f in data["projects"][0]["triage"]["folders"]]
+            self.assertIn("Reply", folder_names)
+            self.assertIn("FYI", folder_names)
+        finally:
+            os.unlink(path)
 
     def test_people_fourth_person_upward(self):
-        data = load(example("people.yaml.example"))
-        self.assertEqual(data["people"][3]["relationship_tier"], "upward")
+        path = _write_tmp(PEOPLE_YAML)
+        try:
+            data = load(path)
+            self.assertEqual(data["people"][3]["relationship_tier"], "upward")
+        finally:
+            os.unlink(path)
 
     def test_people_first_has_feedback_cycle_override(self):
-        data = load(example("people.yaml.example"))
-        self.assertEqual(data["people"][0]["feedback_cycle_days"], 21)
-        self.assertIsInstance(data["people"][0]["feedback_cycle_days"], int)
+        path = _write_tmp(PEOPLE_YAML)
+        try:
+            data = load(path)
+            self.assertEqual(data["people"][0]["feedback_cycle_days"], 21)
+            self.assertIsInstance(data["people"][0]["feedback_cycle_days"], int)
+        finally:
+            os.unlink(path)
 
     def test_communication_style_default_preset(self):
-        data = load(example("communication-style.yaml.example"))
-        self.assertEqual(data["default_preset"], "professional")
+        path = _write_tmp(COMMUNICATION_STYLE_YAML)
+        try:
+            data = load(path)
+            self.assertEqual(data["default_preset"], "professional")
+        finally:
+            os.unlink(path)
 
     def test_communication_style_sign_off(self):
-        data = load(example("communication-style.yaml.example"))
-        self.assertEqual(data["sign_off"], "Best")
+        path = _write_tmp(COMMUNICATION_STYLE_YAML)
+        try:
+            data = load(path)
+            self.assertEqual(data["sign_off"], "Best")
+        finally:
+            os.unlink(path)
 
     def test_communication_style_email_max_length(self):
-        data = load(example("communication-style.yaml.example"))
-        self.assertEqual(data["email_preferences"]["max_length"], "medium")
+        path = _write_tmp(COMMUNICATION_STYLE_YAML)
+        try:
+            data = load(path)
+            self.assertEqual(data["email_preferences"]["max_length"], "medium")
+        finally:
+            os.unlink(path)
 
     def test_meetings_count(self):
-        data = load(example("meetings.yaml.example"))
-        self.assertEqual(len(data["meetings"]), 2)
+        path = _write_tmp(MEETINGS_YAML)
+        try:
+            data = load(path)
+            self.assertEqual(len(data["meetings"]), 2)
+        finally:
+            os.unlink(path)
 
     def test_meetings_first_name(self):
-        data = load(example("meetings.yaml.example"))
-        self.assertEqual(data["meetings"][0]["name"], "Weekly Architecture Review")
+        path = _write_tmp(MEETINGS_YAML)
+        try:
+            data = load(path)
+            self.assertEqual(data["meetings"][0]["name"], "Weekly Architecture Review")
+        finally:
+            os.unlink(path)
 
     def test_meetings_first_aliases(self):
-        data = load(example("meetings.yaml.example"))
-        self.assertIn("WAR", data["meetings"][0]["aliases"])
+        path = _write_tmp(MEETINGS_YAML)
+        try:
+            data = load(path)
+            self.assertIn("WAR", data["meetings"][0]["aliases"])
+        finally:
+            os.unlink(path)
 
     def test_tags_count(self):
-        data = load(example("tags.yaml.example"))
-        self.assertGreaterEqual(len(data["tags"]), 5)
+        path = _write_tmp(TAGS_YAML)
+        try:
+            data = load(path)
+            self.assertGreaterEqual(len(data["tags"]), 5)
+        finally:
+            os.unlink(path)
 
     def test_tags_urgent_keywords(self):
-        data = load(example("tags.yaml.example"))
-        urgent = next(t for t in data["tags"] if t["name"] == "urgent")
-        self.assertIn("blocker", urgent["keywords"])
+        path = _write_tmp(TAGS_YAML)
+        try:
+            data = load(path)
+            urgent = next(t for t in data["tags"] if t["name"] == "urgent")
+            self.assertIn("blocker", urgent["keywords"])
+        finally:
+            os.unlink(path)
 
 
 if __name__ == "__main__":

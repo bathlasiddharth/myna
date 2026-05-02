@@ -104,7 +104,7 @@ Steering skills are always active. You don't invoke them directly.
 
 ## 5. Configuration Reference
 
-Config files live at `{vault}/myna/_system/config/`. Each has a `.example` file alongside it with full documentation and realistic examples.
+Config files live at `{vault}/myna/_system/config/`. See [Sample configuration](#sample-configuration) below for annotated examples of each file.
 
 ### workspace.yaml
 
@@ -303,3 +303,208 @@ The project's `email_folders` or `slack_channels` in `projects.yaml` may not mat
 **Review queue is growing but I'm not processing it**
 
 Say "process my review queue" to work through items interactively. For `review-email-triage.md` specifically, check items in Obsidian and then say "process triage" — that file is handled by /myna:email-triage, not /myna:process-review-queue.
+
+---
+
+## Sample configuration
+
+These samples show the full structure of each config file, derived from what the install script writes. Use them as a reference when editing your config. Run `/myna:setup` to fill them in interactively.
+
+### workspace.yaml
+
+```yaml
+# Run /myna:setup for guided configuration.
+
+user:
+  name: ""                  # Your full name
+  email: ""                 # Your work email — used to identify your messages
+  role: ""                  # engineering-manager | tech-lead | senior-engineer | pm
+
+vault:
+  path: ""                  # Absolute path to your Obsidian vault (set by install script)
+
+timezone: ""                # IANA timezone, e.g. America/Los_Angeles (default: system timezone)
+work_hours:
+  start: "09:00"            # Workday start
+  end: "17:00"              # Workday end
+
+email:
+  processed_folder: per-project  # How processed emails are filed (per-project moves to each project's Processed/)
+
+# ---
+# Email Triage Configuration
+# Controls how "triage my inbox" classifies emails.
+# ---
+triage:
+  inbox_source: ""          # Email folder/label to read for triage (e.g. INBOX)
+  folders:
+    - name: Reply
+      description: "Needs a response from me"
+    - name: FYI
+      description: "Informational, no action needed"
+    - name: Follow-Up
+      description: "Waiting on someone else — check back later"
+    - name: Schedule
+      description: "Needs a meeting or calendar action"
+  draft_replies_folder: ""  # Email folder for draft reply requests
+
+feedback_cycle_days: 30     # Days between feedback gap alerts (default: 30)
+
+calendar_event_prefix: "[Myna]"  # Prefix on all Myna-created calendar events
+
+mcp_servers:
+  email: ""                 # Name of your registered email MCP server (e.g. gmail-mcp)
+  slack: ""                 # Name of your registered Slack MCP server (e.g. slack-mcp)
+  calendar: ""              # Name of your registered calendar MCP server (e.g. gcal-mcp)
+
+prompt_logging: true        # Log user prompts to _system/logs/prompts.md
+
+# ---
+# Feature Toggles
+# true = enabled, false = disabled. All default to true.
+# Disabled features are silently skipped — never mentioned or suggested.
+# ---
+features:
+  email_processing: true
+  messaging_processing: true
+  email_triage: true
+  meeting_prep: true
+  process_meeting: true
+  time_blocks: true
+  calendar_reminders: true
+  people_management: true
+  self_tracking: true
+  team_health: true                   # Managers: team health overview in daily note
+  attention_gap_detection: true
+  feedback_gap_detection: true
+  contribution_detection: true
+  milestones: true                    # Birthdays/anniversaries in daily note
+  observations_logging: true
+  recognition_tracking: true
+  person_briefing: true
+  one_on_one_analysis: true
+  performance_narrative: true
+  weekly_summary: true
+  monthly_updates: true
+  park_resume: true
+  meeting_summaries: true
+  email_draft_reply: true
+  message_rewriting: true
+  document_processing: true
+  pre_read_prep: true
+  difficult_conversation: true
+  help_me_say_no: true
+  quick_capture: true
+  link_manager: true
+  auto_tagging: true
+```
+
+### communication-style.yaml
+
+```yaml
+# Run /myna:setup for guided configuration.
+
+default_preset: professional  # assertive | analytical | empathetic | formal | executive | professional | conversational | casual | coaching | diplomatic | concise
+
+presets_per_tier:
+  upward: ""               # Messages to your manager, VP, execs
+  peer: ""                 # Messages to peers and other managers
+  direct: ""               # Messages to direct reports
+  cross-team: ""           # Messages to other teams
+
+sign_off: ""               # Email sign-off (e.g. Best, Thanks, Cheers)
+
+email_preferences:
+  max_length: ""           # short | medium | long
+  greeting_style: ""       # first-name | formal | none
+```
+
+### projects.yaml
+
+```yaml
+# Run /myna:setup for guided configuration.
+projects: []
+
+# Example entry:
+#
+# projects:
+#   - name: Auth Migration               # Display name — used in vault files and routing
+#     aliases: [auth, AM, auth-mig]      # Short names for quick reference in conversation
+#     status: active                     # active | paused | complete
+#     email_folders:                     # Email folders mapped to this project
+#       - "Auth Migration/"
+#     slack_channels:                    # Slack channels mapped to this project
+#       - auth-team
+#     description: "Migrating to new OAuth provider"
+#     key_people:                        # Referenced in project file overview
+#       - Sarah Chen
+```
+
+### people.yaml
+
+```yaml
+# Run /myna:setup for guided configuration.
+people: []
+
+# Example entry:
+#
+# people:
+#   - display_name: Sarah                # How you refer to them in conversation
+#     full_name: Sarah Chen              # Full name — for matching against emails
+#     aliases: [SC, schen]               # Short names for quick reference
+#     email: sarah.chen@company.com      # Email address — for message matching
+#     slack_handle: schen                # Slack username
+#     relationship_tier: direct          # direct | peer | upward | cross-team
+#     role: Senior Engineer              # Their role/title
+#     team: Platform                     # Their team
+#     feedback_cycle_days: 21            # Override workspace default for this person
+#     birthday: "03-15"                  # MM-DD (for milestone alerts in daily note)
+#     work_anniversary: "2023-06-01"     # YYYY-MM-DD (for milestone alerts)
+```
+
+### meetings.yaml
+
+```yaml
+# Run /myna:setup for guided configuration.
+# Optional overrides. Most meetings need no entry — type inferred from calendar.
+meetings: []
+
+# Example entry:
+#
+# meetings:
+#   - name: Weekly Architecture Review   # Meeting name as it appears in your calendar
+#     aliases: [arch review, WAR]        # Short names for quick reference
+#     type: recurring                    # 1-1 | recurring | adhoc | project
+#     project: Platform API              # Associate with a project (for prep and processing)
+#     debrief_type: design-review        # design-review | standup | project | general
+```
+
+### tags.yaml
+
+```yaml
+# Run /myna:setup for guided configuration.
+tags: []
+
+# Example entries:
+#
+# tags:
+#   # Project-based — auto-applied to files related to a project
+#   - name: auth-migration
+#     type: project-based
+#     project: Auth Migration
+#
+#   # Keyword-based — applied when keywords appear in content
+#   - name: urgent
+#     type: keyword-based
+#     keywords: [urgent, critical, ASAP, blocker, P0]
+#
+#   # Person-based — applied to files mentioning a person
+#   - name: sarah-chen
+#     type: person-based
+#     person: Sarah Chen
+#
+#   # Source-based — applied based on data source
+#   - name: from-email
+#     type: source-based
+#     source: email
+```
