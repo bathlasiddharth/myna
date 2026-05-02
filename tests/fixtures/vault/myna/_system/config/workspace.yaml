@@ -16,10 +16,6 @@ work_hours:
   end: "17:00"
 timestamp_format: "YYYY-MM-DD"
 
-# Journal settings
-journal:
-  archive_after_days: 30
-
 # Email processing settings
 email:
   processed_folder: per-project

@@ -25,12 +25,6 @@ work_hours:
   end: "17:00"                        # Workday end (default: 17:00)
 
 # ---
-# Journal
-# ---
-journal:
-  archive_after_days: 30              # Auto-archive daily/weekly notes older than this (default: 30)
-
-# ---
 # Email Processing
 # ---
 email:

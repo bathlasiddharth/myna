@@ -19,6 +19,14 @@ Each entry:
 
 ---
 
+### D056 — Journal/ rolling archive replaces archive_after_days config
+**Date:** 2026-05-01
+**Context:** The vault had a flat `Journal/` folder with a `journal.archive_after_days` config field (default: 30). This created two problems: (1) daily and weekly notes accumulated in `Journal/` root making it progressively cluttered, and (2) the archive threshold was an unnecessary config decision that users had to make upfront without context. In practice no user needs more than one active daily, weekly, or monthly note — the previous note becomes irrelevant the moment a new one is created.
+**Decision:** `Journal/` root holds at most three files at any time — the current daily note (`{YYYY-MM-DD}.md`), current weekly note (`{YYYY-W\d\d}.md`), and current monthly note (`{YYYY-MM}.md`). When the sync skill creates a new note of any type, it first globs `Journal/*.md` for files matching the appropriate pattern that are not the new note being created, then moves any found file to `Journal/archive/daily/`, `Journal/archive/weekly/`, or `Journal/archive/monthly/` respectively using Bash `mv`. The `journal.archive_after_days` config field is removed entirely — no threshold, no user decision, no accumulation. Install creates `Journal/archive/daily/`, `Journal/archive/weekly/`, and `Journal/archive/monthly/` at setup time.
+**Alternatives rejected:** Keep archive_after_days with a lower default (still accumulates N files before archiving, still requires a config decision, still clutters the folder). Single `Journal/Archive/` folder without type subfolders (harder to navigate archived notes; type subfolders make it trivial to find "all my past daily notes"). Manual archiving only (defeats the purpose of automation; users reliably forget and the folder fills up).
+
+---
+
 ### D055 — Vault subfolder fixed to `myna`; no longer user-configurable during setup
 **Date:** 2026-05-01
 **Context:** D011 said the subfolder name is configurable during setup. In practice, asking for it adds friction for no real benefit — almost no user will want a name other than `myna`, and the option confused new users who don't yet have a mental model of the vault structure. Removing it simplifies Step 1 of `/myna:setup` to a single question.

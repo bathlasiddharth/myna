@@ -44,7 +44,9 @@ EOF
     "Meetings/Recurring"
     "Meetings/Adhoc"
     "Drafts"
-    "Journal/Archive"
+    "Journal/archive/daily"
+    "Journal/archive/weekly"
+    "Journal/archive/monthly"
     "Team"
     "ReviewQueue"
     "ReviewQueue/processed"
@@ -61,7 +63,7 @@ EOF
     mkdir -p "$MYNA_ROOT/$dir"
   done
 
-  echo "[2/12] Created 17 vault directories"
+  echo "[2/12] Created 19 vault directories"
 
   # ---------------------------------------------------------------------------
   # Step 3: Copy .yaml.example files (always overwrite)
@@ -103,9 +105,6 @@ timezone: ""
 work_hours:
   start: "09:00"
   end: "17:00"
-
-journal:
-  archive_after_days: 30
 
 email:
   processed_folder: per-project

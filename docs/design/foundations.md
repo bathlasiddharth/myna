@@ -22,10 +22,13 @@ myna/
 │   ├── [Self] Q1 brag doc.md
 │   └── ...
 ├── Journal/
-│   ├── DailyNote-{YYYY-MM-DD}.md        # Daily notes
-│   ├── WeeklyNote-{YYYY-MM-DD}.md       # Weekly notes (Monday date)
-│   ├── contributions-{YYYY-MM-DD}.md # Weekly contributions (Monday date)
-│   └── Archive/                      # Old daily/weekly notes (auto-archived by sync)
+│   ├── {YYYY-MM-DD}.md               # Current daily note (at most one)
+│   ├── {YYYY-W\d\d}.md               # Current weekly note (at most one, e.g. 2026-W18)
+│   ├── {YYYY-MM}.md                  # Current monthly note (at most one)
+│   └── archive/
+│       ├── daily/                    # Previous daily notes (moved when new one is created)
+│       ├── weekly/                   # Previous weekly notes
+│       └── monthly/                  # Previous monthly notes
 ├── Team/                             # Team health tracking files (managers)
 ├── ReviewQueue/
 │   ├── review-work.md                # Ambiguous tasks, decisions, blockers
@@ -65,8 +68,9 @@ myna/
 - Project files: `{project-name}.md` — lowercase, hyphens for spaces (e.g., `auth-migration.md`)
 - Person files: `{full-name}.md` — lowercase, hyphens (e.g., `sarah-chen.md`)
 - Meeting files: same slug convention. 1:1s use person name, recurring uses meeting name, adhoc uses `{YYYY-MM-DD}-{meeting-name}` (date first, for chronological sort).
-- Daily notes: `DailyNote-{YYYY-MM-DD}.md`
-- Weekly notes: `WeeklyNote-{YYYY-MM-DD}.md` where the date is Monday of that week
+- Daily notes: `{YYYY-MM-DD}.md` (e.g., `2026-05-01.md`) — lives at `Journal/` root; moved to `Journal/archive/daily/` when a new daily note is created
+- Weekly notes: `{YYYY-W\d\d}.md` (e.g., `2026-W18.md`) — lives at `Journal/` root; moved to `Journal/archive/weekly/` when a new weekly note is created
+- Monthly notes: `{YYYY-MM}.md` (e.g., `2026-05.md`) — lives at `Journal/` root; moved to `Journal/archive/monthly/` when a new monthly note is created
 - Draft files: `[{Type}] {topic}.md` (e.g., `[Email] Reply to James.md`, `[Status] Auth Migration April.md`, `[Self] Q1 brag doc.md`). Types: Email, Meeting, Status, Escalation, Recognition, Self, Say-No, Conversation-Prep
 - Source files: match the entity file name (e.g., `_system/sources/auth-migration.md` for `Projects/auth-migration.md`)
 - Parked files: `{topic-slug}.md`
@@ -257,7 +261,7 @@ Same structure as recurring but with `type: adhoc` and no session appending — 
 
 ### 2.6 Daily Note
 
-`Journal/DailyNote-{YYYY-MM-DD}.md`
+`Journal/{YYYY-MM-DD}.md`
 
 ```markdown
 ---
@@ -341,7 +345,7 @@ SORT due ASC
 
 ### 2.7 Weekly Note
 
-`Journal/WeeklyNote-{YYYY-MM-DD}.md`
+`Journal/{YYYY-W\d\d}.md` (e.g. `Journal/2026-W18.md`)
 
 ```markdown
 ---
@@ -386,7 +390,7 @@ week_start: {YYYY-MM-DD}
 
 ### 2.8 Contributions Log (Weekly)
 
-`Journal/contributions-{YYYY-MM-DD}.md` (Monday date, new file each week)
+`Journal/contributions-{YYYY-MM-DD}.md` (Monday date, lives in `Journal/archive/daily/` alongside archived daily notes; one file per week)
 
 ```markdown
 ---
@@ -668,10 +672,6 @@ work_hours:
   start: "09:00"                      # default: 09:00
   end: "17:00"                        # default: 17:00
 timestamp_format: "YYYY-MM-DD"        # default: YYYY-MM-DD
-
-# Journal settings
-journal:
-  archive_after_days: 30              # sync auto-archives daily/weekly notes older than this
 
 # Email processing settings
 email:
@@ -1024,13 +1024,14 @@ Myna does NOT ship an MCP server for vault operations. Skills interact with the 
 
 **Template creation:** Read template from `_system/templates/{type}.md`, substitute `{{name}}`, `{{date}}`, `{{project}}` variables, write the new file. If template doesn't exist, create a minimal file with frontmatter and appropriate tag.
 
-**Daily/weekly note paths:**
-- Daily note: `Journal/DailyNote-{YYYY-MM-DD}.md`
-- Weekly note: `Journal/WeeklyNote-{YYYY-MM-DD}.md` (Monday date)
-- Contributions: `Journal/contributions-{YYYY-MM-DD}.md` (Monday date)
-- Archive: `Journal/Archive/`
+**Daily/weekly/monthly note paths:**
+- Daily note: `Journal/{YYYY-MM-DD}.md` — at most one in `Journal/` root
+- Weekly note: `Journal/{YYYY-W\d\d}.md` (e.g. `2026-W18.md`) — at most one in `Journal/` root
+- Monthly note: `Journal/{YYYY-MM}.md` (e.g. `2026-05.md`) — at most one in `Journal/` root
+- Contributions: `Journal/contributions-{YYYY-MM-DD}.md` (Monday date, stored in archive alongside daily notes)
+- Archive: `Journal/archive/daily/`, `Journal/archive/weekly/`, `Journal/archive/monthly/`
 
-**File move (for journal archiving):** Use Bash with `mv` command to move files within the vault.
+**Rolling archive (before writing a new journal note):** Glob `Journal/*.md` for files matching the relevant pattern (daily: `\d{4}-\d{2}-\d{2}.md`; weekly: `\d{4}-W\d{2}.md`; monthly: `\d{4}-\d{2}.md` that is not a daily note). Any match that is not the file being created is the previous note — move it to the appropriate archive subfolder using Bash `mv` before writing the new file.
 
 **Vault-only writes:** All write operations must target paths under the configured `myna/` subfolder. This enforces D011 (vault-only writes). The myna-steering-safety skill enforces this at the instruction level.
 

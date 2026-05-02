@@ -14,6 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- Journal folder now shows only the current daily, weekly, and monthly note — older notes move to archive automatically when new ones are created
 - Customization override model: per-skill overrides now live at `~/.myna/overrides/skills/myna-{skill-name}.md` and routing overrides at `~/.myna/overrides/routing.md`, replacing the `CUSTOM.md` and `custom-routing.md` files from v1.0.0. Users who set up customizations under the old model will need to migrate their files to the new paths.
 
 ## [1.0.0] — 2026-04-25
