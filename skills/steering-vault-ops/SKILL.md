@@ -94,10 +94,13 @@ If the template doesn't exist, create a minimal file with:
 
 | File type | Path pattern |
 |-----------|-------------|
-| Daily note | `{vault}/myna/Journal/DailyNote-{YYYY-MM-DD}.md` |
-| Weekly note | `{vault}/myna/Journal/WeeklyNote-{YYYY-MM-DD}.md` (Monday date) |
+| Daily note | `{vault}/myna/Journal/{YYYY-MM-DD}.md` |
+| Weekly note | `{vault}/myna/Journal/{YYYY-WNN}.md` (e.g. `2026-W18`) |
+| Monthly note | `{vault}/myna/Journal/{YYYY-MM}.md` (e.g. `2026-05`) |
 | Contributions | `{vault}/myna/Journal/contributions-{YYYY-MM-DD}.md` (Monday date) |
-| Archive | `{vault}/myna/Journal/Archive/` |
+| Daily archive | `{vault}/myna/Journal/archive/daily/` |
+| Weekly archive | `{vault}/myna/Journal/archive/weekly/` |
+| Monthly archive | `{vault}/myna/Journal/archive/monthly/` |
 | Project | `{vault}/myna/Projects/{slug}.md` |
 | Person | `{vault}/myna/People/{slug}.md` |
 | Meeting (1:1) | `{vault}/myna/Meetings/1-1s/{person-slug}.md` |
@@ -117,8 +120,9 @@ If the template doesn't exist, create a minimal file with:
 
 **Naming conventions:**
 - Slugs: lowercase, hyphens for spaces (`auth-migration`, `sarah-chen`)
-- Daily notes: `DailyNote-{YYYY-MM-DD}`
-- Weekly notes and contributions: use Monday's date
+- Daily notes: `{YYYY-MM-DD}.md` (e.g. `2026-05-01.md`)
+- Weekly notes: `{YYYY-WNN}.md` (e.g. `2026-W18.md`)
+- Contributions: use Monday's date
 - Drafts: `[{Type}] {topic}` — types: Email, Meeting, Status, Escalation, Recognition, Self, Say-No, Conversation-Prep
 
 ## File Safety

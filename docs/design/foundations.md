@@ -390,7 +390,7 @@ week_start: {YYYY-MM-DD}
 
 ### 2.8 Contributions Log (Weekly)
 
-`Journal/contributions-{YYYY-MM-DD}.md` (Monday date, lives in `Journal/archive/daily/` alongside archived daily notes; one file per week)
+`Journal/contributions-{YYYY-MM-DD}.md` (Monday date, lives in `Journal/` root; not managed by the rolling archive — accumulates normally, one file per week)
 
 ```markdown
 ---

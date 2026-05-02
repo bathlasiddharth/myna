@@ -22,7 +22,7 @@ Read `workspace.yaml`:
 - `user.role` → determines contribution categories
 - `features.contribution_detection` → whether to run contribution detection
 
-Read today's daily note: `Journal/DailyNote-{YYYY-MM-DD}.md`
+Read today's daily note: `Journal/{YYYY-MM-DD}.md`
 
 If no daily note exists, create a minimal one (no sync snapshot) and proceed. The wrap-up section will note there was no morning sync.
 
@@ -51,7 +51,7 @@ If there was no morning sync snapshot, note it and skip the comparison. Still pr
 For each "not started" and "partially done" item:
 
 1. Determine tomorrow's date (next weekday).
-2. If tomorrow's daily note (`Journal/DailyNote-{tomorrow}.md`) doesn't exist, create it with frontmatter and Morning Focus section only.
+2. If tomorrow's daily note (`Journal/{tomorrow}.md`) doesn't exist, create it with frontmatter and Morning Focus section only.
 3. Append the carried items to tomorrow's note under the `## Immediate Attention` section (add the section if it doesn't exist). Each item gets a carry-forward annotation:
 
 ```markdown

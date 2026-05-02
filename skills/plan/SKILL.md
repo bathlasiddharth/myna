@@ -33,7 +33,7 @@ If intent is ambiguous, ask: "Planning your day, or would you like priority coac
 Read these before showing output:
 
 1. **`{vault}/myna/_system/config/workspace.yaml`** — `work_hours.start` + `work_hours.end` (capacity baseline), `timezone`, `features` map (no toggle gates this skill — read timezone and work hours only)
-2. **Today's daily note** (`{vault}/myna/Journal/DailyNote-{YYYY-MM-DD}.md`) — check Immediate Attention section and any sync snapshots for current state
+2. **Today's daily note** (`{vault}/myna/Journal/{YYYY-MM-DD}.md`) — check Immediate Attention section and any sync snapshots for current state
 3. **Calendar** (via calendar MCP) — events for today (Plan Day / Priority Coaching) or the full week (Week Optimization). If unavailable, note it and work from the daily note.
 4. **Open tasks** — Grep `{vault}/myna/Projects/` for `- \[ \]` with due dates, priority flags, and `[type:: delegation]`
 5. **Project files** — scan `{vault}/myna/Projects/` for blocked items (`[!warning] Blocker`) and stalled projects (no timeline entry in last 14 days)

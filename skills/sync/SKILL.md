@@ -273,7 +273,7 @@ Print the sync summary. Keep it short — one line per category. Include the Obs
 ```
 Sync complete ({HH:MM}). {N} meetings today ({M} hrs), {O} tasks due today, {P} overdue.
 Daily note: obsidian://open?vault={vault}&file={path} | {disk-path}
-{If first sync of week: "Weekly note created for {YYYY-W\d\d}. Previous week note archived."}
+{If first sync of week: "Weekly note created for 2026-W18. Previous week note archived."}
 {If daily note was archived: "Previous daily note archived."}
 {If calendar unavailable: "Calendar unavailable — meetings section skipped."}
 ```
