@@ -12,12 +12,6 @@ If vault_path is not in context, read `~/.myna/config.yaml` first. If the file d
 
 Extract structured data from email, Slack, and pasted documents, then route each item to the right vault destination. A single input can produce entries for multiple destinations — this is correct behavior, not duplication.
 
-Check relevant feature toggles before proceeding:
-- `features.email_processing` — for email sources
-- `features.messaging_processing` — for Slack sources
-
-If both are disabled, stop. If one is disabled, skip that source type but continue with others.
-
 ---
 
 ## Sources

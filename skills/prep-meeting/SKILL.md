@@ -12,8 +12,6 @@ If vault_path is not in context, read `~/.myna/config.yaml` first. If the file d
 
 Generate meeting prep — a set of checkboxes covering what to discuss, what to review, and what needs decisions — written to the meeting file before the meeting.
 
-Check `features.meeting_prep` in workspace.yaml before proceeding. If disabled, stop.
-
 ---
 
 ## Invocation Modes

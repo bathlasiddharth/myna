@@ -256,6 +256,49 @@ Two variants — both keep the task open (unchecked):
 
 ---
 
+## Feature Gates
+
+Feature toggles control what the agent surfaces. This section is authoritative — skills do not re-check these toggles.
+
+### Skill → Toggle Mapping
+
+| Skill | Toggle in workspace.yaml |
+|---|---|
+| /myna:email-triage | `features.email_triage` |
+| /myna:process-messages (email sources) | `features.email_processing` |
+| /myna:process-messages (Slack sources) | `features.messaging_processing` |
+| /myna:prep-meeting | `features.meeting_prep` |
+| /myna:process-meeting | `features.process_meeting` |
+| /myna:brief-person | `features.people_management` |
+| /myna:team-health | `features.team_health` |
+| /myna:1on1-analysis | `features.people_management` |
+| /myna:performance-narrative | `features.people_management` |
+| /myna:self-track | `features.self_tracking` |
+| /myna:weekly-summary | `features.weekly_summary` |
+| /myna:calendar (time blocks) | `features.time_blocks` |
+| /myna:calendar (reminders) | `features.calendar_reminders` |
+| /myna:capture (quick capture) | `features.quick_capture` |
+| /myna:capture (link save/find) | `features.link_manager` |
+| /myna:capture (auto-tagging) | `features.auto_tagging` |
+
+### Pre-Dispatch Check
+
+Before dispatching to any skill in the mapping above, check the corresponding toggle in `workspace.yaml`. The toggle must be `true` (or absent, defaulting to enabled) for the agent to proceed.
+
+**If the toggle is `false`:**
+1. Do not invoke the skill.
+2. Ask the user: "[Skill name] isn't enabled. Want me to turn it on?"
+3. If the user confirms (yes / sure / turn it on / any affirmative): write `features.{toggle_key}: true` to `{vault_path}/myna/_system/config/workspace.yaml`. Then invoke the skill.
+4. If the user declines: acknowledge and stop.
+
+For skills with multiple toggles (e.g., `/myna:process-messages` has `email_processing` and `messaging_processing`), check the relevant toggle for the source type the user is requesting. If both are off, ask once: "Email and Slack processing aren't enabled. Want me to turn them on?"
+
+For `/myna:calendar`, the sub-feature that's off determines the offer: if the user asks for a time block and `time_blocks` is off, offer to enable `time_blocks`. If they want a reminder and `calendar_reminders` is off, offer to enable `calendar_reminders`.
+
+**Scope:** This gate applies only when the agent is dispatching on behalf of the user's natural-language request. Direct skill invocations typed by the user (e.g. `/myna:team-health`) bypass this check and run regardless — the toggle controls what the agent surfaces, not what the user can explicitly request.
+
+---
+
 ## Rules
 
 Steering skills contain the full rules. Key reminders:
@@ -266,7 +309,7 @@ Steering skills contain the full rules. Key reminders:
 4. **Confirm before bulk writes.** If a single operation would write to 5+ files, show what will be written and ask for confirmation.
 5. **Provenance markers on every entry.** Every agent-written line carries [User], [Auto], [Inferred], or [Verified] with a compact source.
 6. **Prefer append.** New information is appended, not inserted. Only use Edit on existing files for structured field updates (e.g., checking off a task, updating a status field). Never rewrite or delete narrative history.
-7. **Check feature toggles.** Before acting on any feature, check `workspace.yaml` features map. Disabled features are silently skipped.
+7. **Feature gates live in the agent.** Feature toggle checks happen before dispatch (see "Feature Gates" above). Individual skills do not re-check toggles.
 8. **When uncertain, ask.** Ambiguous project name? Unclear person reference? Ask. A wrong guess creates bad data silently.
 9. **Human-sounding output.** No AI tells ("Certainly!", "Great question!"). Write like a competent human colleague.
 10. **Follow-up suggestions.** After completing a skill, suggest logical next steps the user might want.

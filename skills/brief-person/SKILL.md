@@ -12,8 +12,6 @@ If vault_path is not in context, read `~/.myna/config.yaml` first. If the file d
 
 Synthesize everything Myna knows about a person and display it inline. Read-only — no vault writes.
 
-Check `features.people_management` in workspace.yaml. If disabled, inform the user and stop.
-
 ---
 
 ## What to Gather

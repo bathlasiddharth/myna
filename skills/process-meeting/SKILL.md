@@ -12,8 +12,6 @@ If vault_path is not in context, read `~/.myna/config.yaml` first. If the file d
 
 Process a completed meeting: read the meeting file, close what was discussed, note what wasn't, extract everything useful from Notes, and route each item to the right vault destination.
 
-Check `features.process_meeting` in workspace.yaml before proceeding. If disabled, stop.
-
 ---
 
 ## Invocation

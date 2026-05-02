@@ -18,8 +18,6 @@ Creates personal calendar events (time blocks and reminders) and breaks down tas
 
 **Triggers:** "plan my day", "reserve 2 hours Thursday for the design doc", "block 3 hours this week for deep work", "plan my day with time blocks", "find me a good slot for [task]"
 
-**Toggle:** `features.time_blocks` in workspace.yaml. If disabled, decline: "Time block planning is disabled in your config."
-
 ### How It Works
 
 **Step 1: Determine scope and duration**
@@ -74,8 +72,6 @@ If creation succeeds, confirm: "âœ… Time block created: {title}, {day} {start}â€
 ## Calendar Reminders
 
 **Triggers:** "remind me about the design review at 2pm", "remind me to call Alice at 3pm", "set a reminder for the deployment window at 11 AM"
-
-**Toggle:** `features.calendar_reminders` in workspace.yaml. If disabled, decline: "Calendar reminders are disabled in your config."
 
 ### Two Reminder Types
 

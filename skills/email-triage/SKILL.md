@@ -12,8 +12,6 @@ If vault_path is not in context, read `~/.myna/config.yaml` first. If the file d
 
 Sort inbox emails into folders. This skill is **purely about classification** — it recommends where each email belongs, nothing more. It never extracts tasks, decisions, observations, or any other data into the vault. That's `/myna:process-messages`'s job.
 
-Check `features.email_triage` in workspace.yaml before proceeding. If disabled, stop.
-
 ---
 
 ## Three-Step Flow

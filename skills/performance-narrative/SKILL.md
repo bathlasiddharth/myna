@@ -14,8 +14,6 @@ Two modes:
 1. **Generate** — compile a performance narrative for one person from vault data
 2. **Calibrate** — after generating narratives for multiple directs, check consistency across the set
 
-Both modes require `features.people_management: true` in workspace.yaml. Check at start.
-
 ---
 
 ## Mode 1: Generate a Performance Narrative

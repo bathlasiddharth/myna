@@ -31,7 +31,6 @@ Weekly note path: `Journal/{YYYY-WNN}.md` (e.g. `2026-W18`)
 Read `workspace.yaml`:
 - `vault.path` → vault root; Myna subfolder is always `myna` (hardcoded)
 - `user.role` → determines framing of contribution categories
-- `features.weekly_summary` → if disabled, skip
 - `features.team_health` → if enabled, include team health snapshot
 
 ---
@@ -240,8 +239,6 @@ Write team health table to both weekly note and `Team/platform-team.md`. Mention
 **No daily notes for the week (notes not written or lost):** Work from what's available in project files and contributions log. Note in summary: "Note: daily notes not found for this week — summary based on project timelines and contributions log only."
 
 **Contributions log missing:** Skip contributions section. Note it.
-
-**Feature toggle `weekly_summary` off:** Decline with "Weekly summary is disabled. Enable it in workspace.yaml under features.weekly_summary."
 
 **No direct reports with team_health toggle on:** If `features.team_health` is enabled but people.yaml has no entries with `relationship_tier: direct`, skip the team health section silently.
 

@@ -14,8 +14,6 @@ Reviews 1:1 session notes for a specific person and surfaces factual patterns ac
 
 **Strict data boundary:** Report only what's in the notes. No inferences about relationship quality, engagement, or morale. "Fewer topics" is a count, not a signal about anything.
 
-Check `features.people_management` in workspace.yaml. If disabled, inform the user and stop.
-
 ---
 
 ## Resolve the Person

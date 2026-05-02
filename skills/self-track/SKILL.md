@@ -15,10 +15,8 @@ Logs your contributions and generates self-review documents from them. Input pat
 ## 📋 Before You Start
 
 Read at session start:
-- `_system/config/workspace.yaml` — `user.role` determines contribution categories, check `self_tracking` toggle
+- `_system/config/workspace.yaml` — `user.role` determines contribution categories
 - `_system/config/projects.yaml` — for cross-referencing project-level impact
-
-**If `self_tracking` is disabled:** Tell the user the feature is disabled and stop. "Self-tracking is currently disabled. Enable it in workspace.yaml under `features.self_tracking`."
 
 **Contributions log path:** `Journal/contributions-{YYYY-MM-DD}.md` where the date is Monday of that week.
 

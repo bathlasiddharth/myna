@@ -14,10 +14,6 @@ Point-in-time dashboard for all direct reports. Read-only — inline output. No 
 
 ---
 
-## Prerequisites
-
-Check `features.team_health` in workspace.yaml. If disabled, tell the user: "Team health tracking is disabled. Enable it in workspace.yaml under `features.team_health: true`." Stop.
-
 ---
 
 ## Data to Gather
