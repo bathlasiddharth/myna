@@ -22,7 +22,7 @@ Generates or updates the weekly summary. Each run appends a fresh `## Weekly Sum
 
 **Specific date:** "week of April 7" → find the Monday for that week.
 
-Weekly note path: `Journal/WeeklyNote-{YYYY-MM-DD}.md` (Monday's date)
+Weekly note path: `Journal/{YYYY-WNN}.md` (e.g. `2026-W18`)
 
 ---
 
@@ -46,7 +46,7 @@ Read the weekly note if it exists. Note any prior "Weekly Summary" sections for 
 
 Read in parallel:
 
-**Daily notes for the week:** Glob `Journal/DailyNote-{YYYY-MM-DD}.md` for each weekday. From each, extract:
+**Daily notes for the week:** Glob `Journal/{YYYY-MM-DD}.md` for each weekday. From each, extract:
 - End of Day "Completed" items (from wrap-up sections, if they exist)
 - End of Day "Not started" / "Partially done" items that ended up carrying forward
 - Any quick notes from wrap-up sections

@@ -43,7 +43,7 @@ After install, Myna creates the following folder structure inside your vault's `
 | `Meetings/Adhoc/` | Files for one-off meetings |
 | `Drafts/` | Email drafts, message drafts, status updates created by Myna |
 | `Journal/` | Daily notes and weekly notes |
-| `Journal/Archive/` | Auto-archived notes older than 30 days |
+| `Journal/archive/` | Previous daily, weekly, and monthly notes (moved automatically when new ones are created) |
 | `Team/` | Team health snapshots (managers only) |
 | `ReviewQueue/` | Items requiring your judgment before Myna acts |
 | `Dashboards/` | 10 Dataview-powered dashboards |
