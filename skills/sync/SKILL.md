@@ -63,7 +63,7 @@ If "plan tomorrow" is run again after the user has already edited the note: trea
 
 If no weekly note exists for the ISO week containing the target date:
 
-1. **Archive previous weekly note:** Glob `Journal/*.md` for files matching `\d{4}-W\d{2}.md`. If any file is found and it is not the weekly note being created, move it to `Journal/archive/weekly/` using Bash `mv`.
+1. **Archive previous weekly note:** Glob `Journal/*.md` for files matching `\d{4}-W\d{2}.md`. If any file is found and it is not the weekly note being created, move it to `Journal/Archive/Weekly/` using Bash `mv`.
 
 2. **Create the new weekly note** at `Journal/{YYYY-W\d\d}.md` (e.g. `2026-W18.md`) using this template:
 
@@ -107,7 +107,7 @@ Populate Week Capacity by reading this week's calendar events (duration + count 
 
 ## Step 4: Archive Previous Daily Note
 
-Before creating or refreshing today's daily note, glob `Journal/*.md` for files matching `\d{4}-\d{2}-\d{2}.md` (daily pattern). Any file found whose name does not match today's date is the previous daily note — move it to `Journal/archive/daily/` using Bash `mv`. There should be at most one such file (the previous day's note). Report if moved; if none found, continue silently.
+Before creating or refreshing today's daily note, glob `Journal/*.md` for files matching `\d{4}-\d{2}-\d{2}.md` (daily pattern). Any file found whose name does not match today's date is the previous daily note — move it to `Journal/Archive/Daily/` using Bash `mv`. There should be at most one such file (the previous day's note). Report if moved; if none found, continue silently.
 
 ---
 
@@ -301,7 +301,7 @@ If there are no meetings today, skip the list and the question.
 User says: "good morning"
 
 1. No weekly note exists for this ISO week → archive previous weekly note if present, then create `Journal/2026-W15.md` with week capacity populated.
-2. Archive check: glob `Journal/*.md` for `\d{4}-\d{2}-\d{2}.md` files that are not today's date → move any found to `Journal/archive/daily/`.
+2. Archive check: glob `Journal/*.md` for `\d{4}-\d{2}-\d{2}.md` files that are not today's date → move any found to `Journal/Archive/Daily/`.
 3. No daily note for today → create `Journal/2026-04-07.md`.
 4. Calendar: 3 meetings today (weekly sync 10:00 AM, 1:1 with Sarah 2:00 PM, design review 4:00 PM). Total: 2.5 hrs.
 5. Tasks: 2 overdue, 4 due today (estimated 5 hrs effort).
