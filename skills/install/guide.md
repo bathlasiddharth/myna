@@ -43,7 +43,7 @@ After install, Myna creates the following folder structure inside your vault's `
 | `Meetings/Adhoc/` | Files for one-off meetings |
 | `Drafts/` | Email drafts, message drafts, status updates created by Myna |
 | `Journal/` | Daily notes and weekly notes |
-| `Journal/archive/` | Previous daily, weekly, and monthly notes (moved automatically when new ones are created) |
+| `Journal/Archive/` | Previous daily, weekly, and monthly notes (moved automatically when new ones are created) |
 | `Team/` | Team health snapshots (managers only) |
 | `ReviewQueue/` | Items requiring your judgment before Myna acts |
 | `Dashboards/` | 10 Dataview-powered dashboards |
@@ -118,7 +118,7 @@ The primary config file. Required — Myna reads it at every session start.
 | `vault.path` | Absolute path to your Obsidian vault |
 | `timezone` | IANA timezone, e.g. `America/Los_Angeles` |
 | `work_hours.start` / `.end` | Your workday bounds, e.g. `09:00` / `17:00` |
-| (journal archiving) | Automatic — Myna moves old notes to `Journal/archive/` when new ones are created; no config needed |
+| (journal archiving) | Automatic — Myna moves old notes to `Journal/Archive/` when new ones are created; no config needed |
 | `email.processed_folder` | `per-project` (email moves to each project's Processed/ subfolder) |
 | `feedback_cycle_days` | Days between feedback gap alerts (default: 30) |
 | `calendar_event_prefix` | Prefix on all Myna-created calendar events (default: `[Myna]`) |

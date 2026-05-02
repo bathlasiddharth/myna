@@ -98,9 +98,9 @@ If the template doesn't exist, create a minimal file with:
 | Weekly note | `{vault}/myna/Journal/{YYYY-WNN}.md` (e.g. `2026-W18`) |
 | Monthly note | `{vault}/myna/Journal/{YYYY-MM}.md` (e.g. `2026-05`) |
 | Contributions | `{vault}/myna/Journal/contributions-{YYYY-MM-DD}.md` (Monday date) |
-| Daily archive | `{vault}/myna/Journal/archive/daily/` |
-| Weekly archive | `{vault}/myna/Journal/archive/weekly/` |
-| Monthly archive | `{vault}/myna/Journal/archive/monthly/` |
+| Daily archive | `{vault}/myna/Journal/Archive/Daily/` |
+| Weekly archive | `{vault}/myna/Journal/Archive/Weekly/` |
+| Monthly archive | `{vault}/myna/Journal/Archive/Monthly/` |
 | Project | `{vault}/myna/Projects/{slug}.md` |
 | Person | `{vault}/myna/People/{slug}.md` |
 | Meeting (1:1) | `{vault}/myna/Meetings/1-1s/{person-slug}.md` |
