@@ -1,7 +1,7 @@
 ---
 name: team-health
 disable-model-invocation: true
-description: Portfolio view of all direct reports — tasks, overdue, delegations, feedback gap, attention gap, last 1:1. Managers only. Team-wide glance, not a deep dive (use /myna:brief-person for that). Invoke for "how is my team doing?" or "team health".
+description: Portfolio view of all direct reports — tasks, overdue, delegations, feedback gap, attention gap, last 1:1. Team-wide glance, not a deep dive (use /myna:brief-person for that). Invoke for "how is my team doing?" or "team health".
 user-invocable: true
 argument-hint: "[optional: person name to focus on one person]"
 ---
@@ -17,8 +17,6 @@ Point-in-time dashboard for all direct reports. Read-only — inline output. No 
 ## Prerequisites
 
 Check `features.team_health` in workspace.yaml. If disabled, tell the user: "Team health tracking is disabled. Enable it in workspace.yaml under `features.team_health: true`." Stop.
-
-Check `managers_only` (or equivalent role field) in workspace.yaml. If the user's role is not `engineering-manager` or `pm`, tell the user: "Team Health is designed for managers. Your role is set to [role] — if this is incorrect, update workspace.yaml." Stop.
 
 ---
 

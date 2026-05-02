@@ -1,7 +1,7 @@
 ---
 name: weekly-summary
 disable-model-invocation: true
-description: Summarize your week — synthesizes daily notes, contributions, decisions, and task completions into a structured weekly review with self-reflection prompts. Appends a new section each run. Includes team health snapshot for managers.
+description: Summarize your week — synthesizes daily notes, contributions, decisions, and task completions into a structured weekly review with self-reflection prompts. Appends a new section each run. Includes team health snapshot when enabled.
 user-invocable: true
 argument-hint: "[week of YYYY-MM-DD | last week]"
 ---
@@ -32,7 +32,7 @@ Read `workspace.yaml`:
 - `vault.path` → vault root; Myna subfolder is always `myna` (hardcoded)
 - `user.role` → determines framing of contribution categories
 - `features.weekly_summary` → if disabled, skip
-- `features.team_health` → if enabled and role is `engineering-manager`, include team health snapshot
+- `features.team_health` → if enabled, include team health snapshot
 
 ---
 
@@ -61,7 +61,7 @@ Read in parallel:
 - `- \[x\]` with completion dates in the target week → completed count
 - Items present in Monday's daily note Immediate Attention and still `- \[ \]` at end of week → carried count
 
-**For managers — Team Health** (if `features.team_health` enabled and role is `engineering-manager`): Read all `People/{slug}.md` files for direct reports (those with `relationship_tier: direct` in people.yaml). For each, gather: open task count, overdue task count, last 1:1 date, feedback gap (days since last entry in Pending Feedback or Observations), attention gap (days since any interaction was logged — 1:1, observation, or quick note). Check `Team/{team}.md` for any existing health snapshots this week.
+**Team Health** (if `features.team_health` enabled): Read all `People/{slug}.md` files for direct reports (those with `relationship_tier: direct` in people.yaml). For each, gather: open task count, overdue task count, last 1:1 date, feedback gap (days since last entry in Pending Feedback or Observations), attention gap (days since any interaction was logged — 1:1, observation, or quick note). Check `Team/{team}.md` for any existing health snapshots this week.
 
 ---
 
@@ -111,7 +111,7 @@ Pattern triggers (all users):
 - Low task completion vs. meeting time: "You completed {M} tasks against {N} hrs of meetings. Is that the balance you wanted?"
 - General: "What would have made this week better?"
 
-Pattern triggers (engineering-manager role only — skip entirely for IC):
+Pattern triggers (only when `features.team_health` is enabled and there are direct reports in people.yaml):
 - Feedback gap > threshold: "You haven't logged any observations for {person} in {N} days. Anything worth capturing?"
 - Delegation overdue: "{Person}'s {task} is {N} days overdue. Is it blocked? Did the priority change?"
 - Persistent overdue delegations: "{N} overdue delegations at week start, {M} still open. What's blocking resolution?"
@@ -119,9 +119,9 @@ Pattern triggers (engineering-manager role only — skip entirely for IC):
 
 ---
 
-## Step 6: Team Health Snapshot (Managers Only)
+## Step 6: Team Health Snapshot
 
-If `features.team_health` is enabled and `user.role` is `engineering-manager`, append a team health snapshot to `Team/{team-slug}.md`. The team slug comes from the team name in people.yaml (e.g., "Platform" → `platform.md`). If no team file exists, create it with:
+If `features.team_health` is enabled, append a team health snapshot to `Team/{team-slug}.md`. The team slug comes from the team name in people.yaml (e.g., "Platform" → `platform.md`). If no team file exists, create it with:
 ```markdown
 ---
 created: {YYYY-MM-DD}
@@ -221,9 +221,9 @@ Existing summary covers through Thursday wrap-up. New data since then: Friday's 
 
 Append a new `## Weekly Summary — 2026-04-11` section with the full week's data. The prior section from Thursday remains in place above it.
 
-### Example 3: Manager with team health
+### Example 3: Weekly summary with team health enabled
 
-User says: "how was my week?" (manager role)
+User says: "how was my week?" (team_health enabled, has direct reports)
 
 Generate normal weekly summary. Additionally:
 - Check Sarah: 5 open, 0 overdue, 12-day feedback gap, last 1:1 Apr 2
@@ -243,6 +243,6 @@ Write team health table to both weekly note and `Team/platform-team.md`. Mention
 
 **Feature toggle `weekly_summary` off:** Decline with "Weekly summary is disabled. Enable it in workspace.yaml under features.weekly_summary."
 
-**IC role with team_health toggle on:** Skip team health section — it requires the engineering-manager role. Skip silently (don't mention it in output).
+**No direct reports with team_health toggle on:** If `features.team_health` is enabled but people.yaml has no entries with `relationship_tier: direct`, skip the team health section silently.
 
 **Partial week (running mid-week, e.g., Wednesday):** Summarize the days available so far. Note in the summary header: "Note: summary covers {Mon}–{today} — run again at week's end for a complete picture." Self-reflection prompts should reflect partial data (e.g., don't flag "light meeting week" if the week isn't over).

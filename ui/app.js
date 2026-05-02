@@ -1850,7 +1850,7 @@ const HELP_CONTENT = {
       { id: 'feat-calendar_reminders',      label: 'Calendar reminders',            desc: 'Sets calendar reminders for tasks and follow-ups that have deadlines. Requires a Calendar MCP server.' },
       // People & Team
       { id: 'feat-people_management',       label: 'People management',             desc: 'Maintains a person file for each team member — logs interactions, open items, and context over time.' },
-      { id: 'feat-team_health',             label: 'Team health',                   desc: 'Adds a team health snapshot to your daily note: who has open blockers, who you haven\'t connected with recently. Best for managers.' },
+      { id: 'feat-team_health',             label: 'Team health',                   desc: 'Adds a team health snapshot to your weekly summary: who has open blockers, who you haven\'t connected with recently. Enable if you have direct reports.' },
       { id: 'feat-attention_gap_detection', label: 'Attention gap detection',       desc: 'Flags direct reports or key people you haven\'t interacted with in longer than your configured attention interval.' },
       { id: 'feat-feedback_gap_detection',  label: 'Feedback gap detection',        desc: 'Alerts you when a feedback cycle is overdue for a direct report based on your configured feedback cadence.' },
       { id: 'feat-milestones',              label: 'Milestones',                    desc: 'Surfaces birthdays and work anniversaries in the daily note so you can acknowledge them in the moment.' },
