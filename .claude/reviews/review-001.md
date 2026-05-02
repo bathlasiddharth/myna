@@ -1,8 +1,8 @@
 # Myna Review — Cycle 001
 
 **Date:** 2026-04-08
-**Scope:** All agent artifacts — `agents/main.md`, `agents/steering/*.md`, `agents/skills/*.md`, `agents/config-examples/*.yaml.example`, `agents/claude-md-template.md`
-**Files reviewed:** 24 files (1 main, 4 steering, 14 skills, 6 config examples, 1 template)
+**Scope:** All agent artifacts — `agents/main.md`, `agents/steering/*.md`, `agents/skills/*.md`, `agents/claude-md-template.md`
+**Files reviewed:** 18 files (1 main, 4 steering, 14 skills, 1 template)
 **Previous cycles:** None
 
 ## Summary

@@ -229,20 +229,6 @@ for f in "${feature_files[@]}" "${steering_files[@]}"; do
 done
 
 # ══════════════════════════════════════════════════════════════
-# 8. CONFIG EXAMPLES
-#    All 6 config .example files must exist.
-# ══════════════════════════════════════════════════════════════
-header "8. Config examples"
-
-for name in workspace projects people meetings communication-style tags; do
-  if [ -f "agents/config-examples/${name}.yaml.example" ]; then
-    pass "${name}.yaml.example"
-  else
-    fail "${name}.yaml.example missing"
-  fi
-done
-
-# ══════════════════════════════════════════════════════════════
 # SUMMARY
 # ══════════════════════════════════════════════════════════════
 echo ""

@@ -24,7 +24,7 @@ Parse for:
 - `agents/skills/myna-*/SKILL.md` — all 24 feature skills
 - `agents/skills/myna-steering-*/SKILL.md` — all 6 steering skills
 - `agents/main.md`
-- `agents/config-examples/*.yaml.example`
+- `skills/install/guide.md`
 
 **`--uncommitted`:** resolve to only files with uncommitted git changes under `agents/`. Use `git status --short agents/` to identify them.
 

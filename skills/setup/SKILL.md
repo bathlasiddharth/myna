@@ -76,7 +76,7 @@ brew --version
 - `{vault_path}/myna/_system/config/meetings.yaml` — optional overrides for how Myna handles specific meeting types. Safe to leave blank for now.
 - `{vault_path}/myna/_system/config/tags.yaml` — rules for auto-tagging vault entries. Safe to leave blank for now.
 
-Each file has a `.yaml.example` alongside it — refer to those for the expected format.
+For annotated examples of each file's format, see the "Sample configuration" section in `myna/guide.md`.
 
 **If python3 is available:**
 
@@ -116,7 +116,7 @@ Write YAML only when the user selects option 1 (or after corrections are applied
 1. Set tiers now — present the people with blank tiers as a numbered list and let the user assign each.
 2. Defer to later — create a reminder task in `_system/ReviewQueue/` as a markdown file named `set-relationship-tiers-{date}.md` with a checklist of the people who need tiers set.
 
-Schema references: `_system/config/projects.yaml.example`, `_system/config/people.yaml.example`.
+Schema references: `_system/config/projects.yaml`, `_system/config/people.yaml`. For annotated field documentation, see the "Sample configuration" section in `myna/guide.md`.
 
 **Person .md files:** After relationship tiers are resolved, create a `.md` file for each imported person using the person template at `agents/templates/person.md`. Write files to `{vault_path}/myna/People/{slug}.md` where `{slug}` is the person's name lowercased with spaces replaced by hyphens. Fill in fields from the imported data; leave any unknown field blank (no placeholder text, no "TBD"). For `relationship_tier`, use the value set during the tier step, or leave the frontmatter `relationship` field and the `#tier/` tag blank if still unset. Use full relative wikilinks: `[[1-1s/{slug}]]` not `[[{slug}]]`. Do not overwrite an existing person file — if a file already exists for a person, skip it and notify the user which files were skipped and why.
 
@@ -160,7 +160,7 @@ Tell the user: "Run `myna` (or `claude --agent myna:agent`) and type `sync` to s
 - Read the existing config file before writing. Preserve any fields the user didn't change.
 - For `projects.yaml` and `people.yaml`: append new entries — never overwrite existing ones.
 - For `people.yaml`: omit `relationship_tier` unless the source explicitly states it. Never default to "direct".
-- Write valid YAML matching the schemas in `_system/config/*.yaml.example`.
+- Write valid YAML matching the schemas shown in the "Sample configuration" section of `myna/guide.md`.
 - `vault.path` in `workspace.yaml` is set by the install script — don't ask about it, don't overwrite it. The subfolder is always `myna` (hardcoded; not stored in workspace.yaml).
 - Internal plumbing fields — keep at defaults, never ask: `prompt_logging`, `calendar_event_prefix`.
 - `meetings.yaml` and `tags.yaml` are not part of the guided flow — don't write them unless the user explicitly asks.

@@ -31,7 +31,7 @@ run_vault_setup() {
 vault_path: $VAULT_PATH
 EOF
 
-  echo "[1/12] Wrote ~/.myna/config.yaml"
+  echo "[1/10] Wrote ~/.myna/config.yaml"
 
   # ---------------------------------------------------------------------------
   # Step 2: Create 17 vault directories
@@ -63,18 +63,10 @@ EOF
     mkdir -p "$MYNA_ROOT/$dir"
   done
 
-  echo "[2/12] Created 19 vault directories"
+  echo "[2/10] Created 19 vault directories"
 
   # ---------------------------------------------------------------------------
-  # Step 3: Copy .yaml.example files (always overwrite)
-  # ---------------------------------------------------------------------------
-
-  cp "$SKILL_DIR/config-examples/"*.yaml.example "$MYNA_ROOT/_system/config/"
-
-  echo "[3/12] Copied config example files"
-
-  # ---------------------------------------------------------------------------
-  # Step 4: Create starter YAML config files (only if they do not exist)
+  # Step 3: Create starter YAML config files (only if they do not exist)
   # ---------------------------------------------------------------------------
 
   _myna_create_if_missing "$MYNA_ROOT/_system/config/projects.yaml" \
@@ -192,10 +184,10 @@ email_preferences:
 '# Run /myna:setup for guided configuration.
 tags: []'
 
-  echo "[4/12] Starter config files done"
+  echo "[3/10] Starter config files done"
 
   # ---------------------------------------------------------------------------
-  # Step 5: Copy templates (always overwrite)
+  # Step 4: Copy templates (always overwrite)
   # ---------------------------------------------------------------------------
 
   if [[ -d "$SKILL_DIR/templates" ]]; then
@@ -205,13 +197,13 @@ tags: []'
       cp "$f" "$MYNA_ROOT/_system/templates/"
       template_count=$((template_count + 1))
     done
-    echo "[5/12] Installed $template_count templates"
+    echo "[4/10] Installed $template_count templates"
   else
-    echo "[5/12] No templates directory found — skipped"
+    echo "[4/10] No templates directory found — skipped"
   fi
 
   # ---------------------------------------------------------------------------
-  # Step 6: Copy dashboards (always overwrite)
+  # Step 5: Copy dashboards (always overwrite)
   # ---------------------------------------------------------------------------
 
   if [[ -d "$SKILL_DIR/dashboards" ]]; then
@@ -221,27 +213,27 @@ tags: []'
       cp "$f" "$MYNA_ROOT/Dashboards/"
       dashboard_count=$((dashboard_count + 1))
     done
-    echo "[6/12] Installed $dashboard_count dashboards"
+    echo "[5/10] Installed $dashboard_count dashboards"
   else
-    echo "[6/12] No dashboards directory found — skipped"
+    echo "[5/10] No dashboards directory found — skipped"
   fi
 
   # ---------------------------------------------------------------------------
-  # Step 7: Copy guide.md (always overwrite)
+  # Step 6: Copy guide.md (always overwrite)
   # ---------------------------------------------------------------------------
 
   cp "$SKILL_DIR/guide.md" "$MYNA_ROOT/guide.md"
-  echo "[7/12] Copied guide.md"
+  echo "[6/10] Copied guide.md"
 
   # ---------------------------------------------------------------------------
-  # Step 8: Copy setup-checklist.md (always overwrite)
+  # Step 7: Copy setup-checklist.md (always overwrite)
   # ---------------------------------------------------------------------------
 
   cp "$SKILL_DIR/setup-checklist.md" "$MYNA_ROOT/_system/setup-checklist.md"
-  echo "[8/12] Copied setup-checklist.md"
+  echo "[7/10] Copied setup-checklist.md"
 
   # ---------------------------------------------------------------------------
-  # Step 9: Create ~/.myna/overrides/ structure; write routing.md if missing
+  # Step 8: Create ~/.myna/overrides/ structure; write routing.md if missing
   # ---------------------------------------------------------------------------
 
   mkdir -p "$HOME/.myna/overrides/skills"
@@ -259,20 +251,20 @@ tags: []'
      - "standup update", "what did my team ship?" → my-amazon-standup
 -->
 ROUTING_EOF
-    echo "[9/12] Created ~/.myna/overrides/routing.md"
+    echo "[8/10] Created ~/.myna/overrides/routing.md"
   else
-    echo "[9/12] Preserved existing ~/.myna/overrides/routing.md"
+    echo "[8/10] Preserved existing ~/.myna/overrides/routing.md"
   fi
 
   # ---------------------------------------------------------------------------
-  # Step 10: Create ~/.myna/imports/archived/
+  # Step 9: Create ~/.myna/imports/archived/
   # ---------------------------------------------------------------------------
 
   mkdir -p "$HOME/.myna/imports/archived"
-  echo "[10/12] Created ~/.myna/imports/archived/"
+  echo "[9/10] Created ~/.myna/imports/archived/"
 
   # ---------------------------------------------------------------------------
-  # Step 11: Write Obsidian config JSON files (always overwrite)
+  # Step 10: Write Obsidian config JSON files (always overwrite)
   # ---------------------------------------------------------------------------
 
   mkdir -p "$VAULT_PATH/.obsidian"
@@ -312,5 +304,5 @@ EOF
 }
 EOF
 
-  echo "[11/12] Wrote Obsidian config files"
+  echo "[10/10] Wrote Obsidian config files"
 }
