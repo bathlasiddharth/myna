@@ -172,14 +172,21 @@ for body_file in "$tmpdir"/prompt-*.body; do
   # Vault snapshot before
   before="$(vault_status)"
 
-  # Run claude
+  # Run claude via unbuffer (pseudo-TTY) so Claude Code doesn't suppress output.
+  # Falls back to direct execution if unbuffer is not installed.
+  out_file="$tmpdir/prompt-$(printf '%04d' $i).out"
   start_ts=$(date +%s)
   set +e
-  raw_output="$(claude --agent "$agent" $perms_flag -p "$body" 2>&1)"
+  if command -v unbuffer >/dev/null 2>&1; then
+    unbuffer claude --agent "$agent" $perms_flag -p "$body" > "$out_file" 2>&1
+  else
+    claude --agent "$agent" $perms_flag -p "$body" > "$out_file" 2>&1
+  fi
   exit_code=$?
   set -e
   end_ts=$(date +%s)
   duration=$((end_ts - start_ts))
+  raw_output="$(cat "$out_file")"
 
   if [[ $exit_code -ne 0 ]]; then
     failures=$((failures + 1))
