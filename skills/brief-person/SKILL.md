@@ -26,16 +26,14 @@ Once resolved, read these files in parallel:
 | 1:1 meeting file | `Meetings/1-1s/{person-slug}.md` | Last session date, carry-forward items from last session, action items from last session |
 | Project files | `Projects/*.md` | Projects where this person appears in key-people or timeline entries |
 | Task files | All project files + personal TODOs | Open items involving this person — see "Open Items detection" below |
-| Contributions log | `Journal/contributions-{week}.md` for current and prior week | Recent contributions this person is mentioned in |
-| Recent interactions | Grep `{person-name}` across `Projects/`, `Meetings/`, and `Journal/` | Timeline entries and meeting notes that mention this person in the last 30 days — these represent recent email/Slack exchanges and interactions that were logged to the vault |
+| Recent interactions | Grep `{person-name}` and all aliases from people.yaml across `Projects/`, `Meetings/`, and `Journal/` | Timeline entries and meeting notes that mention this person in the last 30 days — these represent recent email/Slack exchanges and interactions that were logged to the vault |
+| Pending drafts | Grep `{person-name}` and all aliases from people.yaml across `Drafts/` | Any pending draft emails or messages addressed to or mentioning this person |
 
 **Person slug:** The file path slug is the kebab-case of the person's full_name from people.yaml (e.g., "Sarah Chen" → `sarah-chen`). If people.yaml has no full_name, use display_name.
 
 **Open Items detection:** Grep open tasks (`- [ ]`) across `Projects/` that mention this person:
-- **You delegated to them:** `[type:: delegation] [person:: {name}]` — tasks where you assigned them work
+- **Assigned to them:** `[person:: {name}]` — any open task assigned to this person
 - **They're waiting on you:** `[type:: dependency] [person:: {name}]` or `[type:: reply-needed] [person:: {name}]` — tasks blocking them that require your action
-
-For **cross-team contacts, PMs, and VPs** (relationship_tier: cross-team or upward): also collect stakeholder mentions — every place this person appears in your vault data (meeting notes, timeline entries, email references). Present as a dated list of raw mentions, not interpreted stance or position.
 
 Missing files are not errors — skip and note what was unavailable.
 
@@ -43,7 +41,9 @@ Missing files are not errors — skip and note what was unavailable.
 
 ## Output Structure
 
-Show all sections inline. Skip empty sections silently (don't print "No observations logged").
+Show all sections inline. Always include every section — if a section has no data, show a brief note (e.g., "None logged.", "No open items.", "No recent interactions found."). Never silently skip a section.
+
+Strip provenance tags (`[Auto]`, `[Inferred]`) from all output — these are vault internals, not user-facing.
 
 ```
 ## 👤 [Person Name] — [Role], [Team]
@@ -52,15 +52,15 @@ Show all sections inline. Skip empty sections silently (don't print "No observat
 
 ---
 
-### 📋 Overview
+### Overview
 [Role description and context from person file. 1-2 sentences.]
 
-### 🗂️ Shared Projects
+### Shared Projects
 - **[Project Name]** — [status] — [one-line on current state, any open blockers]
 - ...
 
-### ✅ Open Items
-**You delegated to them:**
+### Open Items
+**Assigned to them:**
 - [task description] — due [date] (from [project])
 - ...
 
@@ -68,12 +68,12 @@ Show all sections inline. Skip empty sections silently (don't print "No observat
 - [task or item description] — [source]
 - ...
 
-### 💬 Pending Feedback
+### Pending Feedback
 [Undelivered observations with coaching-tone talking points, from the Pending Feedback section of their person file.]
 - **[type]:** [observation] — Talking point: [coaching suggestion]
 - ...
 
-### 📅 1:1 History
+### 1:1 History
 Last 1:1: [date] ([X days ago])
 
 Carry-forward from last session:
@@ -84,27 +84,26 @@ Action items from last session:
 - [ ] [item] — [assigned to]
 - ...
 
-### 🏆 Recent Recognition
+### Recent Recognition
 [Last 2-3 recognition entries from recognition log]
 - [[date]] [what they did] — [context]
 
-### 📝 Recent Observations
+### Recent Observations
 [Last 3-5 observations from observations timeline]
-- [[date]] **[type]:** [observation] [[provenance]]
+- [[date]] **[type]:** [observation]
 
-### 💼 Recent Interactions (last 30 days)
+### Recent Interactions (last 30 days)
 [Timeline entries, meeting notes, email/Slack references that mention this person. Dated, sourced.]
 - [[date] | [source]] [entry text]
 - ...
 
-### 🌱 Personal Notes
-[Hobbies, family, milestones, things they've mentioned]
-- [note]
+### Pending Drafts
+- [[type]] [draft title] — [Drafts/{filename}]
 - ...
 
-### 🔗 Stakeholder Mentions  [Only for cross-team/upward relationships]
-[Factual list of where this person appears in your project data. Raw mentions with dates — you connect the dots.]
-- [[date]] [meeting/email/timeline entry text] — [source]
+### Personal Notes
+[Hobbies, family, milestones, things they've mentioned]
+- [note]
 - ...
 ```
 
@@ -177,7 +176,6 @@ Action items from last session:
 ## Edge Cases
 
 - **No person file exists:** Create a minimal briefing from what's findable (project mentions, meeting references). Note "No person file found — briefing is partial."
-- **No 1:1 history:** Skip the 1:1 History section entirely.
-- **Manager or skip-level (upward relationship):** Focus on shared context — projects they're stakeholders on, recent email/meeting mentions, open items. Skip the pending feedback section (you don't manage them). Show Stakeholder Mentions section (same as cross-team).
-- **Cross-team contact with no person file:** Show stakeholder mentions only — pull every vault mention with date and source.
+- **No 1:1 history:** Show the section with "No 1:1 sessions found."
+- **Cross-team contact with no person file:** Show recent interactions only — pull vault mentions from the last 30 days with date and source.
 - **Ambiguous person name:** "brief me on Alex" when there's both an Alex Kumar and an Alex Thompson — list both and ask which one.
