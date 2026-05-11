@@ -29,7 +29,6 @@ Read from `_system/config/workspace.yaml`:
 - `work_hours.start` and `work_hours.end` → for capacity calculations
 - `timezone` → for date resolution
 - `calendar_event_prefix` → prefix for naming calendar events (event type labels are hardcoded: Focus, Task, Reminder)
-- `features` map → check: `meeting_prep`, `milestones`
 
 Read from `_system/config/projects.yaml`, `_system/config/people.yaml`, `_system/config/meetings.yaml`.
 
@@ -127,7 +126,7 @@ Collect in parallel:
 
 **Blockers:** Grep `{vault}/myna/Projects/` for `> \[!warning\] Blocker` callout blocks. For each match, read a window of ~5 surrounding lines. Skip if `resolved:: true` or `status:: resolved` appears within the same callout block. Surface unresolved ones as briefing bullets.
 
-**Milestones** (if `features.milestones` is enabled): Read `people.yaml` and all People files. Find birthdays (`birthday: MM-DD`) or work anniversaries (`work_anniversary: YYYY-MM-DD`) within the next 7 days. Surface as briefing bullets.
+**Milestones:** Read `people.yaml` and all People files. Find birthdays (`birthday: MM-DD`) or work anniversaries (`work_anniversary: YYYY-MM-DD`) within the next 7 days. Surface as briefing bullets. If none found in the next 7 days, omit this section silently.
 
 **Review queue counts:** Read `{vault}/myna/ReviewQueue/review-work.md`, `review-people.md`, `review-self.md`, and `review-inbox.md`. Count unchecked items (`- \[ \]`) in each. If a file doesn't exist, treat its count as 0. Include total in briefing only if non-zero.
 
@@ -164,7 +163,7 @@ date: {YYYY-MM-DD}
 - Unresolved blockers
 - Prep warnings for today's meetings (e.g., "Design review at 2 PM — no prep file yet")
 - Capacity flag if task effort exceeds focus time ("Over capacity by {N} hrs")
-- Milestones within 7 days (if features.milestones enabled)
+- Milestones within 7 days (birthdays or work anniversaries — omit if none)
 - Review queue if non-zero ("{N} items in review queue")
 
 ### Today's Meetings
@@ -213,7 +212,7 @@ Note: re-run snapshots are compact — they omit Dataview sections (those live i
 
 ## Step 7: Generate Meeting Prep Files
 
-For each calendar event today, if `features.meeting_prep` is enabled:
+For each calendar event today:
 
 1. Determine the meeting file path from the event title and attendees:
    - 2 attendees (you + 1 person) → `Meetings/1-1s/{person-slug}.md`
@@ -344,4 +343,4 @@ User says: "plan tomorrow"
 
 **Re-run "plan tomorrow" after user edits:** Read existing tomorrow note. If user has written in Morning Focus, do not overwrite it. Prepend a new snapshot (same as normal re-run).
 
-**Feature toggles:** If `features.meeting_prep` is false, skip meeting file creation entirely and omit prep-status from meeting bullets. If `features.milestones` is false, omit milestones from the Briefing.
+**No milestones found:** If no birthdays or work anniversaries fall within the next 7 days, omit the milestones bullet from the Briefing silently.

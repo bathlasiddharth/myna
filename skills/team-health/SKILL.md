@@ -26,7 +26,7 @@ For each person in people.yaml with `relationship_tier: direct`:
 | Delegations | Grep `[type:: delegation] [person:: {name}]` across `Projects/` — same multi-form search | Count open delegations, count overdue |
 | Last 1:1 date | `Meetings/1-1s/{person-slug}.md` | Most recent session header (`## {YYYY-MM-DD} Session`) |
 | Last feedback date | `People/{person-slug}.md` Observations section | Date of most recent `strength`, `growth-area`, or `contribution` observation entry — this is the feedback gap signal. Do not count Recognition or Personal Notes entries — those don't reset the feedback clock. |
-| Feedback gap | Compare last observation entry date to today vs `feedback_cycle_days` from workspace.yaml (default: 30; per-person override from people.yaml takes precedence) | Flag if gap > threshold. If `features.feedback_gap_detection` is disabled, skip computing this entirely — do not gather data or show the column. |
+| Feedback gap | Compare last observation entry date to today vs `feedback_cycle_days` from workspace.yaml (default: 30; per-person override from people.yaml takes precedence) | Flag if gap > threshold. |
 | Attention gap | `People/{person-slug}.md` observations + `Meetings/1-1s/{person-slug}.md` session headers and prep sections | Signals below |
 | Recent contributions | `People/{person-slug}.md` Recognition section | Entries dated in the last 14 days. Do not use `Journal/contributions-{week}.md` — that log records the user's own contributions, not the direct report's. |
 
@@ -35,8 +35,6 @@ For each person in people.yaml with `relationship_tier: direct`:
 - Last 3+ 1:1 sessions had no new topics added by you → check prep sections for items you added vs. carried from previous session
 - No career development topics logged in 4+ months → Grep `career` or `growth` in `Meetings/1-1s/{person-slug}.md`
 - No feedback logged since {date} (beyond feedback_cycle_days threshold) → already reflected in the Feedback column; repeat in Attention if gap is 2× the threshold
-
-Check `features.attention_gap_detection` and `features.feedback_gap_detection` in workspace.yaml. If either is disabled, skip computing those signals entirely — do not gather the data, and remove the column from the output table. Do not show "—" in a disabled column; remove the column header itself.
 
 **D018 anchor:** All flags in this output are about the user's own records and follow-through — not about the employee's morale, engagement, or relationship quality. Do not infer or label people's internal states. "45-day feedback gap" means the user hasn't logged an observation in 45 days. It says nothing about the employee.
 
@@ -158,6 +156,5 @@ If no contributions in the last 14 days for a person, that person simply doesn't
 - **Person file missing for a direct:** Show their row with only what's available from tasks/meeting files. Note in their detail block: "No person file — observations and recognition data unavailable."
 - **1:1 meeting file missing:** Show "—" for Last 1:1 date. Show "—" for attention gap signals that require 1:1 notes.
 - **Calendar MCP unavailable:** Omit the "Next: [date]" part of Last 1:1. Don't mention the omission in the table — note it once below the table if calendar was expected.
-- **features.attention_gap_detection or features.feedback_gap_detection disabled:** Skip those columns from the table. Don't show "—", just remove the column entirely.
 - **Single person focus:** "how is Sarah doing?" → show the full detail view for Sarah only — skip the summary table, show all 6 data points for that person inline.
 - **Person has no observations ever logged:** Feedback = "never logged ⚠️", Attention = "⚠️ No observations on record".

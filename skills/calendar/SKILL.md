@@ -12,11 +12,6 @@ If vault_path is not in context, read `~/.myna/config.yaml` first. If the file d
 
 Creates personal calendar events (time blocks and reminders) and breaks down tasks into subtasks. Every calendar write is personal-only — no attendees, ever.
 
-**Feature toggles:** Read `workspace.yaml` before acting:
-- Time block requests: check `features.time_blocks`. If disabled, skip silently.
-- Reminder requests: check `features.calendar_reminders`. If disabled, skip silently.
-- Task breakdown: no toggle gate — always available.
-
 ---
 
 ## Time Block Planning

@@ -31,8 +31,6 @@ Weekly note path: `Journal/{YYYY-W\d\d}.md` (e.g. `2026-W18.md`)
 Read `workspace.yaml`:
 - `vault.path` → vault root; Myna subfolder is always `myna` (hardcoded)
 - `user.role` → determines framing of contribution categories
-- `features.team_health` → if enabled, include team health snapshot
-- `features.monthly_updates` → if enabled, suggest monthly update at end of output
 
 ---
 
@@ -61,7 +59,7 @@ Read in parallel:
 - `- \[x\]` with completion dates in the target week → completed count
 - Items present in Monday's daily note Immediate Attention and still `- \[ \]` at end of week → carried count
 
-**Team Health** (if `features.team_health` enabled): Read all `People/{slug}.md` files for direct reports (those with `relationship_tier: direct` in people.yaml). For each, gather: open task count, overdue task count, last 1:1 date, feedback gap (days since the last delivered feedback — count only observations with type `strength` or `growth-area` that have been explicitly noted; general observations that aren't feedback do not reset this clock), attention gap (days since any interaction was logged — 1:1, observation, or quick note). Check `Team/{team}.md` for any existing health snapshots this week.
+**Team Health:** Read all `People/{slug}.md` files for direct reports (those with `relationship_tier: direct` in people.yaml). For each, gather: open task count, overdue task count, last 1:1 date, feedback gap (days since the last delivered feedback — count only observations with type `strength` or `growth-area` that have been explicitly noted; general observations that aren't feedback do not reset this clock), attention gap (days since any interaction was logged — 1:1, observation, or quick note). Check `Team/{team}.md` for any existing health snapshots this week. If people.yaml has no entries with `relationship_tier: direct`, skip this section silently.
 
 ---
 
@@ -111,7 +109,7 @@ Pattern triggers (all users):
 - Low task completion vs. meeting time: "You completed {M} tasks against {N} hrs of meetings. Is that the balance you wanted?"
 - General: "What would have made this week better?"
 
-Pattern triggers (only when `features.team_health` is enabled and there are direct reports in people.yaml):
+Pattern triggers (only when there are direct reports in people.yaml):
 - Feedback gap > threshold: "You haven't logged any observations for {person} in {N} days. Anything worth capturing?"
 - Delegation overdue: "{Person}'s {task} is {N} days overdue. Is it blocked? Did the priority change?"
 - Persistent overdue delegations: "{N} overdue delegations at week start, {M} still open. What's blocking resolution?"
@@ -121,7 +119,7 @@ Pattern triggers (only when `features.team_health` is enabled and there are dire
 
 ## Step 6: Team Health Snapshot
 
-If `features.team_health` is enabled, append a team health snapshot to `Team/{team-slug}.md`. The team slug comes from the team name in people.yaml (e.g., "Platform" → `platform.md`). If no team file exists, create it with:
+If people.yaml has direct reports (`relationship_tier: direct`), append a team health snapshot to `Team/{team-slug}.md`. The team slug comes from the team name in people.yaml (e.g., "Platform" → `platform.md`). If no team file exists, create it with:
 ```markdown
 ---
 created: {YYYY-MM-DD}
@@ -182,7 +180,7 @@ Weekly note: {obsidian-uri}
 ```
 
 Then suggest:
-- "Say 'monthly update' to draft an MBR or status report from this week's data." (only if `features.monthly_updates` is enabled — read from workspace.yaml)
+- "Say 'monthly update' to draft an MBR or status report from this week's data."
 - "Say 'wrap up' to close out today's daily note." (if it's end of week and today's wrap-up hasn't run)
 
 ---
@@ -243,6 +241,6 @@ Write team health table to both weekly note and `Team/platform-team.md`. Mention
 
 **Contributions log missing:** Skip contributions section. Note it.
 
-**No direct reports with team_health toggle on:** If `features.team_health` is enabled but people.yaml has no entries with `relationship_tier: direct`, skip the team health section silently.
+**No direct reports:** If people.yaml has no entries with `relationship_tier: direct`, skip the team health section silently.
 
 **Partial week (running mid-week, e.g., Wednesday):** Summarize the days available so far. Note in the summary header: "Note: summary covers {Mon}–{today} — run again at week's end for a complete picture." Self-reflection prompts should reflect partial data (e.g., don't flag "light meeting week" if the week isn't over).

@@ -10,8 +10,6 @@ If vault_path is not in context, read `~/.myna/config.yaml` first. If the file d
 
 # Performance Narrative
 
-Check `features.people_management` in workspace.yaml before acting. If disabled, stop silently (unless the user invoked this skill directly, in which case explain that people management is disabled).
-
 Two modes:
 1. **Generate** — compile a performance narrative for one person from vault data
 2. **Calibrate** — after generating narratives for multiple directs, check consistency across the set

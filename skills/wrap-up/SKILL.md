@@ -20,7 +20,6 @@ Read `workspace.yaml`:
 - `vault.path` → vault root; Myna subfolder is always `myna` (hardcoded)
 - `timezone` → today's date
 - `user.role` → determines contribution categories
-- `features.contribution_detection` → whether to run contribution detection
 
 Read today's daily note: `Journal/{YYYY-MM-DD}.md`
 
@@ -68,8 +67,6 @@ Do NOT remove or modify the items in today's note. The original remains as-is.
 ---
 
 ## Step 4: Contribution Detection
-
-Only run if `features.contribution_detection` is enabled.
 
 Scan for items from today that look like contributions worth tracking:
 
@@ -131,7 +128,7 @@ Append to today's daily note at the very bottom:
 
 - {contribution} [{provenance}]
 {If any went to review-self: "1 uncertain contribution added to review-self queue."}
-{If contribution_detection disabled: omit this section entirely.}
+{Omit this section entirely if no contributions were detected.}
 
 ### Carried to Tomorrow
 
@@ -226,12 +223,10 @@ Daily note exists but has no sync snapshot. Skip the planned vs actual compariso
 
 ## Edge Cases
 
-**No tasks completed today:** Planned vs Actual shows all items as "not started" or "partially done". No contributions detected. Carry everything forward.
+**No tasks completed today:** Planned vs Actual shows all items as "not started" or "partially done". No contributions detected. Carry everything forward. Omit Contributions Detected section from End of Day if no contributions are detected.
 
 **contributions-{week}.md doesn't exist yet:** Create it with frontmatter (`week_start: {YYYY-MM-DD}`) and `#contributions` tag, plus a `## Contributions — Week of {YYYY-MM-DD}` section header. Append new entries.
 
 **User runs wrap-up twice:** The End of Day section already exists. Read it for context. Append a new "End of Day — {HH:MM} (re-run)" section below the existing one, noting what changed. Do not overwrite the original.
-
-**Feature toggle `contribution_detection` off:** Skip Steps 4 entirely. Omit Contributions Detected section from End of Day.
 
 **Tasks with no project:** These are personal tasks in the daily note itself. Include them in completed/not-started tracking. For contribution detection, skip project-specific categorization — log as `decisions-and-influence` or `unblocking-others` based on task description.

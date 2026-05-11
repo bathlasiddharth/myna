@@ -34,8 +34,6 @@ Generate meeting prep — a set of checkboxes covering what to discuss, what to 
 
 Determine meeting type before generating prep — the type determines what content to include.
 
-Check `features.meeting_prep` in workspace.yaml before proceeding. If disabled, stop silently.
-
 **Inference priority:**
 1. meetings.yaml override — if the meeting has an entry, use its configured `type`
 2. Event title contains "Review", "Design Review", "Doc Review" → design/doc review (title overrides attendee count)
@@ -159,13 +157,13 @@ Keep factual — dates, specific deliverables. Not "I've been very busy."
 Tasks where `[person:: {name}]` or delegations from/to this person across all project files.
 
 **5. Pending feedback with coaching suggestion**
-Skip this section if `features.people_management` is disabled in workspace.yaml. Read `People/{person}.md` `## Pending Feedback` section. For each item, include it as a checkbox and add a coaching note if the topic is sensitive.
+Read `People/{person}.md` `## Pending Feedback` section. For each item, include it as a checkbox and add a coaching note if the topic is sensitive. If the section is empty or does not exist, skip silently.
 
 **6. Career development context**
-From `People/{person}.md`: growth areas, time since last career conversation. Read the per-person `feedback_cycle_days` from people.yaml first; fall back to `feedback_cycle_days` from workspace.yaml (default: 30). Flag if the gap exceeds the threshold. Skip this section if `features.feedback_gap_detection` is disabled in workspace.yaml.
+From `People/{person}.md`: growth areas, time since last career conversation. Read the per-person `feedback_cycle_days` from people.yaml first; fall back to `feedback_cycle_days` from workspace.yaml (default: 30). Flag if the gap exceeds the threshold. If no career development data is found, skip silently.
 
 **7. Personal notes**
-Skip this section if `features.people_management` is disabled in workspace.yaml. From `People/{person}.md` `## Personal Notes`. Include any notes about things they mentioned (marathon, vacation, family).
+From `People/{person}.md` `## Personal Notes`. Include any notes about things they mentioned (marathon, vacation, family). If the section is empty or does not exist, skip silently.
 
 **8. Recent decisions on shared projects**
 Timeline decisions from shared project files since the last 1:1.

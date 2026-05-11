@@ -16,13 +16,7 @@ Extract structured data from email, Slack, and pasted documents, then route each
 
 ## Before You Start
 
-Read `_system/config/workspace.yaml`. Check feature toggles before processing each source type:
-- `features.email_processing` — if disabled, skip all email sources silently
-- `features.messaging_processing` — if disabled, skip all Slack sources silently
-- `features.self_tracking` — if disabled, skip contribution detection and do not write to `Journal/contributions-*.md`
-- `features.people_management` — if disabled, skip observations and recognition extraction to person files
-
-Skills that cover multiple features check each toggle independently. Disabled features are silently skipped — not mentioned in output, not suggested.
+Read `_system/config/workspace.yaml`.
 
 ---
 
