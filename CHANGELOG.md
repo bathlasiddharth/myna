@@ -14,6 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- Removed prompt_logging config — redundant with Claude Code conversation history and unreliable as a steering-skill instruction
 - Feature toggles are now checked once by the agent before dispatching to a skill, rather than individually inside each skill. When a feature is off and the user invokes it, the agent asks "X isn't enabled — want me to turn it on?" and writes the toggle directly to workspace.yaml on confirmation.
 - Journal folder now shows only the current daily, weekly, and monthly note — older notes move to archive automatically when new ones are created
 - [Fixed] Team health is now available to any role with direct reports — no longer restricted to Engineering Manager

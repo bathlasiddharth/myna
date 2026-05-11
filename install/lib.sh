@@ -139,8 +139,6 @@ mcp_servers:
   slack: ""
   calendar: ""
 
-prompt_logging: true
-
 features:
   email_processing: true
   messaging_processing: true
@@ -225,13 +223,6 @@ Then say "process triage" to move approved emails.
 '# Agent Audit Log
 
 Auto-written by Myna. Do not edit manually.
-
-'
-
-  _myna_create_if_missing "$MYNA_ROOT/_system/logs/prompts.md" \
-'# Prompt Log
-
-Auto-written by Myna when prompt_logging is enabled. Do not edit manually.
 
 '
 
