@@ -56,7 +56,6 @@ myna/
     │   └── dashboard.md              # Unified dashboard (Dataview queries)
     ├── logs/
     │   ├── audit.md                  # Agent action log
-    │   ├── prompts.md                # User prompt log (if enabled)
     │   └── processed-channels.md     # Slack dedup: last timestamp per channel
     ├── state/                        # Mutable runtime state (not logs)
     │   └── email-sync.yaml           # last_processed_at timestamp for email dedup fallback
@@ -698,7 +697,6 @@ mcp_servers:
   calendar: gcal-mcp                  # optional — name of user's calendar MCP server
 
 # System settings
-prompt_logging: true                  # default: true — log prompts to _system/logs/
 ai_model: claude-code                  # reference only — not enforced by Myna
 
 # Feature toggles — true = enabled, false = disabled

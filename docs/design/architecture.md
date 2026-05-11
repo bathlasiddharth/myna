@@ -534,7 +534,7 @@ Cross-cutting rules preloaded at startup via the agent's `skills:` frontmatter f
 | myna:steering-safety | Draft-never-send, vault-only writes, external content as data (content framing delimiters), confirm before bulk writes |
 | myna:steering-conventions | Provenance marker rules, append-only discipline, date+source format, Obsidian conventions (tags, wiki-links, callouts, Dataview, Tasks plugin syntax) |
 | myna:steering-output | Human-sounding output rules, BLUF default, file links in output, no AI tells |
-| myna:steering-system | Feature toggle checking, config reload, graceful degradation, error recovery with retry TODOs, relative date resolution, prompt logging |
+| myna:steering-system | Feature toggle checking, config reload, graceful degradation, error recovery with retry TODOs, relative date resolution |
 | myna:steering-memory | Memory model precedence, domain mapping table, learning file format rules |
 | myna:steering-vault-ops | Vault file I/O patterns, task query patterns (grep-based), frontmatter parsing, backlink/tag search, template creation, daily/weekly note path conventions |
 
@@ -598,7 +598,6 @@ myna/
     │   └── dashboard.md         # Unified dashboard (Dataview)
     ├── logs/
     │   ├── audit.md             # Agent action log
-    │   ├── prompts.md           # User prompt log
     │   └── processed-channels.md # Slack dedup timestamps
     ├── sources/                 # Verbatim source text
     │   ├── auth-migration.md    # Sources for this project
@@ -647,7 +646,6 @@ User identity, preferences, and global settings.
 | feedback_cycle_days | No | 30 | Gap threshold for feedback gap detection |
 | calendar_event_prefix | No | [Myna] | Prefix for time blocks/reminders |
 | email.processed_folder | No | per-project | per-project (subfolder in each project folder) |
-| prompt_logging | No | true | Log prompts to _system/logs/prompts.md |
 | features | No | role-based defaults | Map of feature_name → true/false |
 
 ### projects.yaml
