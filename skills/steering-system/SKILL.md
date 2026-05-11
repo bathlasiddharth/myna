@@ -1,7 +1,7 @@
 ---
 name: steering-system
 disable-model-invocation: true
-description: System behavior rules — config reload, graceful degradation, error recovery with retry TODOs, relative date resolution, prompt logging, fuzzy name resolution
+description: System behavior rules — config reload, graceful degradation, error recovery with retry TODOs, relative date resolution, fuzzy name resolution
 user-invocable: false
 ---
 
@@ -46,10 +46,6 @@ When a multi-step operation partially fails:
 ## Relative Date Resolution
 
 Convert "by Friday", "next week", "in 3 days", "tomorrow" to absolute dates using the `timezone` from workspace.yaml and today's date. Always store the resolved date, never the relative reference.
-
-## Prompt Logging
-
-If `prompt_logging` is enabled in workspace.yaml, log user prompts with timestamps to `_system/logs/prompts.md`. Log prompt metadata and a short user-authored summary by default. Do not log pasted email bodies, documents, credentials, or other sensitive external content verbatim — Myna processes sensitive workplace data and indiscriminate logging accumulates confidential material in logs.
 
 ## Fuzzy Name Resolution
 

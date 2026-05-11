@@ -118,7 +118,6 @@ If the template doesn't exist, create a minimal file with the required YAML fron
 | Learnings | `{vault}/myna/_meta/learnings/{domain}.md` |
 | Dashboard | `{vault}/myna/Dashboards/dashboard.md` |
 | Link index | `{vault}/myna/_system/links.md` |
-| Prompt log | `{vault}/myna/_system/logs/prompts.md` |
 | Team | `{vault}/myna/Team/{slug}.md` |
 
 **Naming conventions:**

@@ -164,7 +164,7 @@ Tell the user: "Run `myna` (or `claude --agent myna:agent`) and type `sync` to s
 - For `people.yaml`: omit `relationship_tier` unless the source explicitly states it. Never default to "direct".
 - Write valid YAML matching the schemas shown in the "Sample configuration" section of `myna/guide.md`.
 - `vault.path` in `workspace.yaml` is set by the install script — don't ask about it, don't overwrite it. The subfolder is always `myna` (D055: fixed, not configurable, not stored in workspace.yaml).
-- Internal plumbing fields — keep at defaults, never ask: `prompt_logging`, `calendar_event_prefix`.
+- Internal plumbing fields — keep at defaults, never ask: `calendar_event_prefix`.
 - `meetings.yaml` and `tags.yaml` are not part of the guided flow — don't write them unless the user explicitly asks.
 - **Import write-back: write only what was in the review file.** When writing config after an import review (option 3 in the doc import section), write only the entries and fields present in the review file. Do not add blocks, sections, or fields — such as triage, defaults, or schema examples — that were not explicitly included by the user.
 - **Filter blank values from all list fields before writing.** Before writing any YAML config file, drop every item in every list field that is an empty string, null, or whitespace-only string. This applies to all list fields across all config files — do not enumerate fields by name. Only non-empty, non-null values with at least one non-whitespace character are written.
