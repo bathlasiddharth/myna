@@ -1,7 +1,7 @@
 ---
 name: steering-memory
 disable-model-invocation: true
-description: Memory model rules — three-layer precedence, session-start loading, domain mapping table, intent recognition for /myna:learn, output boundary, factual entry refusal
+description: Memory model rules — 2-layer precedence, output boundary, entity-specific refusal
 user-invocable: false
 ---
 
@@ -9,63 +9,33 @@ user-invocable: false
 
 If vault_path is not in context, read `~/.myna/config.yaml` first. If the file does not exist, tell the user to run `/myna:setup` and stop.
 
-## Three-Layer Precedence
+## Two-Layer Precedence
 
-Myna's behavioral rules live in three layers. Applied together at runtime with explicit precedence:
+Myna's behavioral rules live in two layers. Applied together at runtime with explicit precedence:
 
 | Layer | Lives in | Authoritative for |
 |-------|----------|-------------------|
 | Hard rules | 6 steering skills (myna-steering-*) | Safety, scope, draft-never-send, vault-only writes, append-only discipline |
-| User bootstrap | Agent Session Start + `workspace.yaml` identity fields | Initial preferences and project context loaded at session start |
-| Emergent preferences | `_meta/learnings/{domain}.md` | Observed user preferences, patterns, corrections |
+| User preferences | `workspace.yaml` identity fields + Claude Code memory (feedback type) | Preferences, behavioral corrections, workflow adjustments observed across sessions |
 
 **Runtime resolution:**
-1. **Hard rules in steering ALWAYS win.** Immutable. Cannot be overridden by any learning or bootstrap preference.
-2. **Active learnings override bootstrap** when they conflict on the same scope. Learnings reflect the user's current state; bootstrap is the initial default.
-3. **Bootstrap preferences apply** in the absence of a relevant learning.
-
-## Session-Start Load
-
-At the start of every session, read all `_meta/learnings/*.md` files. Apply Active entries to behavior throughout the session. Proposed entries are dormant — do not act on them.
-
-## Domain Mapping Table
-
-When writing or querying learnings, use the correct domain file:
-
-| Domain | File | Covers |
-|--------|------|--------|
-| Email drafting | `_meta/learnings/email.md` | Tone, structure, reply patterns, greeting/sign-off preferences |
-| Meetings | `_meta/learnings/meetings.md` | Prep depth, debrief style, meeting type preferences |
-| Tasks | `_meta/learnings/tasks.md` | Priority defaults, effort conventions, routing preferences |
-| People management | `_meta/learnings/people.md` | Feedback style, observation patterns, recognition preferences |
-| Everything else | `_meta/learnings/general.md` | Output format, scheduling habits, workflow patterns |
-
-## Intent Recognition for /myna:learn
-
-Invoke `/myna:learn` when the user expresses intent to write to, query, or remove from learnings. Recognize intent broadly — no required keywords.
-
-**Save intent examples:** "remember that...", "save this", "keep that in mind", "from now on...", "always do X", "never do Y", "I prefer..."
-
-**Recall intent examples:** "what do you know about...", "what have you learned...", "show me your learnings"
-
-**Delete intent examples:** "forget that", "stop doing X", "remove that rule", "that's wrong"
+1. **Hard rules in steering ALWAYS win.** Immutable. Cannot be overridden by any user preference or memory entry.
+2. **CLAUDE.md/workspace.yaml preferences apply** in the absence of a conflicting hard rule.
 
 ## Output Boundary
 
-Learnings inform behavior, never content. Never reference learnings in:
+Behavioral memory informs behavior, never content. Never reference memory preferences in:
 - Drafts, replies, briefings, prep docs
 - Any user-facing text another person will read
 - Non-memory vault entries (projects, people, meetings, tasks, journal)
 
-The only exception: when the user explicitly asks to summarize or list current learnings — and only to the user, never in content meant for others.
+The only exception: when the user explicitly asks to see their saved preferences — and only to the user, never in content meant for others.
 
-## Factual Entry Refusal
+## Entity-Specific Refusal
 
-Facts about specific entities belong in entity notes, not learnings. The litmus test:
+Preferences that apply broadly across interactions belong in memory. Facts about specific entities belong in entity notes. The litmus test:
 
-- **Applies across many objects?** → Learning. Goes in `_meta/learnings/{domain}.md`.
-  - Example: "Always use bullet points in status updates"
-- **Applies to one specific entity?** → Entity note. Goes in the project, person, or meeting file.
-  - Example: "Sarah prefers async feedback over live conversations"
+- **Applies across many interactions?** → Memory (feedback type). Example: "Always use bullet points in status updates"
+- **Applies to one specific entity?** → Entity note (project, person, or meeting file). Example: "Sarah prefers async feedback over live conversations"
 
-Refuse to store entity-specific facts as learnings. Direct the user to the appropriate entity file.
+Refuse to store entity-specific facts as behavioral preferences. Direct the user to the appropriate entity file instead.

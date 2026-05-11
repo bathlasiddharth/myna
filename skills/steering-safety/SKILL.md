@@ -62,7 +62,6 @@ When entity resolution is ambiguous or fails — unclear project name, multiple 
 
 - **No skill chaining.** Each skill completes its work and suggests follow-ups as text. Never auto-invoke another skill.
 - **One skill at a time.** Complete the active skill, then stop. Don't pre-fetch data for potential next skills.
-- **Exception:** `/myna:wrap-up` invokes `/myna:learn` reflection as its final step. This is an architected internal sub-operation, not autonomous chaining — it is explicitly listed in the wrap-up workflow.
 
 ## Missing Vault Files
 

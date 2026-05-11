@@ -1,7 +1,7 @@
 ---
 name: wrap-up
 disable-model-invocation: true
-description: Close out your day — compares planned vs actual, logs contributions, moves unfinished items to tomorrow's note, captures quick notes, and runs a learning reflection. Writes an End of Day section to today's daily note.
+description: Close out your day — compares planned vs actual, logs contributions, moves unfinished items to tomorrow's note, captures quick notes, and saves behavioral corrections to memory. Writes an End of Day section to today's daily note.
 user-invocable: true
 argument-hint: "[quick note: ...]"
 ---
@@ -10,7 +10,7 @@ argument-hint: "[quick note: ...]"
 
 If vault_path is not in context, read `~/.myna/config.yaml` first. If the file does not exist, tell the user to run `/myna:setup` and stop.
 
-Closes out the day. Reads today's daily note and vault state, writes an End of Day section, moves unfinished items forward, detects contributions, and runs a brief learning reflection. The daily note becomes the complete record of the day: sync snapshots at top, user edits in the middle, wrap-up at the bottom.
+Closes out the day. Reads today's daily note and vault state, writes an End of Day section, moves unfinished items forward, detects contributions, and saves behavioral corrections to Claude Code memory. The daily note becomes the complete record of the day: sync snapshots at top, user edits in the middle, wrap-up at the bottom.
 
 ---
 
@@ -143,9 +143,11 @@ Append to today's daily note at the very bottom:
 
 ---
 
-## Step 7: Run Learning Reflection
+## Step 7: Save Behavioral Corrections to Memory
 
-Invoke `/myna:learn` with the `reflect` operation as the final step before output. This scans the session context for behavioral patterns. The user does not need to type anything — wrap-up triggers it automatically (End of Day path only).
+Before outputting the End of Day summary, scan the session for behavioral corrections or preferences the user expressed (e.g., format preferences, tone corrections, workflow adjustments). Save any found to Claude Code memory using the feedback memory type.
+
+Apply the entity-specific refusal: preferences that apply broadly across interactions belong in memory; facts about specific people, projects, or meetings belong in their entity files, not memory.
 
 ---
 
@@ -159,7 +161,7 @@ Wrap-up complete ({HH:MM}).
 Completed: {N} items | Not started: {N} (carried to tomorrow) | Partially done: {N}
 Contributions: {N} logged [{N} Auto, {N} Inferred], {N} in review-self
 {If quick note captured: "Quick note captured."}
-{Reflection result from Step 7}
+{If behavioral corrections saved: "Behavioral preferences saved to memory: {N} item(s)." | If none found: omit this line.}
 
 Today's note: {obsidian-uri}
 Tomorrow's note: {obsidian-uri}

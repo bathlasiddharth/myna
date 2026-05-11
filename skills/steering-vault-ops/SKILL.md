@@ -115,7 +115,6 @@ If the template doesn't exist, create a minimal file with the required YAML fron
 | Parked context | `{vault}/myna/_system/parked/{slug}.md` |
 | Config | `{vault}/myna/_system/config/{name}.yaml` |
 | Source | `{vault}/myna/_system/sources/{entity}.md` |
-| Learnings | `{vault}/myna/_meta/learnings/{domain}.md` |
 | Dashboard | `{vault}/myna/Dashboards/dashboard.md` |
 | Link index | `{vault}/myna/_system/links.md` |
 | Team | `{vault}/myna/Team/{slug}.md` |
