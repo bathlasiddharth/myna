@@ -1040,7 +1040,6 @@ These tests surface known soft spots worth watching:
 - **Disambiguation** (XC-01, CAPT-02, PREP-01) — two Sarahs force the agent to ask. Silent picks are regressions.
 - **Missing MCP graceful degradation** (TRIAGE-03, CAL-01 without calendar) — skills should inform, not crash.
 - **Append-only enforcement** — every write test should leave previous snapshots/sessions untouched. Spot-check by diffing the fixture before and after each write test.
-- **Feature toggles** — all features are enabled in `workspace.yaml`. Toggle some off and re-run a couple of tests as a follow-up session.
 
 ---
 
