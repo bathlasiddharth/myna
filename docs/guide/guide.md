@@ -284,10 +284,6 @@ After triage, Myna reads your project-mapped email folders and extracts structur
 
 The alias was added to your shell rc file but hasn't been loaded yet. Run `source ~/.zshrc` (or `source ~/.bashrc`), or open a new terminal window.
 
-**"Feature X is disabled"**
-
-Check `myna/_system/config/workspace.yaml` and confirm the relevant feature toggle is set to `true`. Changes take effect on the next session start.
-
 **Myna can't read my email / Slack / calendar**
 
 Confirm the MCP server is registered: `claude mcp list`. The server name must match what's in `workspace.yaml` under `mcp_servers`. Re-register if needed with `claude mcp add`.

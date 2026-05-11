@@ -62,7 +62,7 @@ When the user corrects your direction or you discover a non-obvious pattern duri
 
 Build pipeline is a **4-phase structure** (D044): Design (0), Build (1), Install (2), Ship (3).
 
-**Claude-first design (D046, D050).** All agent artifacts — 24 feature skills, 6 steering skills, main agent — are plain markdown under `agents/`. The install step (Phase 2) copies skills to `~/.claude/skills/`, generates the agent file at `~/.claude/agents/myna.md`, and creates the vault structure. No MCP server — vault operations use Claude Code's built-in tools. See `docs/design/architecture.md` §11 for how this works.
+**Claude-first design (D046, D050).** All agent artifacts — 24 feature skills, 6 steering skills, main agent — are plain markdown under `agents/`. The install step (Phase 2) copies skills to `~/.claude/skills/`, generates the agent file at `~/.claude/agents/myna.md`, and creates the vault structure. No MCP server — vault operations use Claude Code's built-in tools. See `docs/design/architecture.md` §10 for how this works.
 
 | Artifact | Phase | Purpose |
 |---|---|---|

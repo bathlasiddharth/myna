@@ -32,7 +32,7 @@ One-line summary: Creates the complete folder structure, templates, dashboards, 
 
 One-line summary: Six YAML config files that define the user's workspace, projects, people, meetings, communication style, and tags.
 
-- **workspace.yaml** — user identity (name, email, role), vault path, timezone, work hours, MCP server names, feature toggles, calendar event prefix, email settings
+- **workspace.yaml** — user identity (name, email, role), vault path, timezone, work hours, MCP server names, calendar event prefix, email settings
 - **projects.yaml** — projects with aliases, mapped email folders, Slack channels. Top-level `triage:` section holds inbox triage settings (`inbox_source`, `folders`, `draft_replies_folder`)
 - **people.yaml** — people registry with display name, full name, aliases, email, Slack handle, relationship tier, feedback cycle override
 - **meetings.yaml** — optional meeting overrides for type inference (D022). Most meetings don't need entries here
