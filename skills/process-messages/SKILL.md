@@ -8,9 +8,21 @@ argument-hint: '"process my email", "process my messages", "process this doc: [p
 
 # myna-process-messages
 
-If vault_path is not in context, read `~/.myna/config.yaml` first. If the file does not exist, tell the user to run `/myna:install` and stop.
+If vault_path is not in context, read `~/.myna/config.yaml` first. If the file does not exist, tell the user to run `/myna:setup` and stop.
 
 Extract structured data from email, Slack, and pasted documents, then route each item to the right vault destination. A single input can produce entries for multiple destinations — this is correct behavior, not duplication.
+
+---
+
+## Before You Start
+
+Read `_system/config/workspace.yaml`. Check feature toggles before processing each source type:
+- `features.email_processing` — if disabled, skip all email sources silently
+- `features.messaging_processing` — if disabled, skip all Slack sources silently
+- `features.self_tracking` — if disabled, skip contribution detection and do not write to `Journal/contributions-*.md`
+- `features.people_management` — if disabled, skip observations and recognition extraction to person files
+
+Skills that cover multiple features check each toggle independently. Disabled features are silently skipped — not mentioned in output, not suggested.
 
 ---
 
@@ -28,7 +40,7 @@ For each project, process emails in the configured `email_folders`. Each folder 
 
 Read messages from channels mapped to projects in projects.yaml (`slack_channels` per project). Process only messages after the last-processed timestamp stored in `_system/logs/processed-channels.md` for each channel.
 
-DMs and unmapped channels: supported via a designated Slack inbox channel (add `slack_inbox_channel: {channel-name}` to the `triage:` section of projects.yaml). Messages in the inbox channel support keyword routing tags: `TODO`, `LOG`, `BLOCKER`, `DECISION`, `RECOGNITION`. Messages without a keyword tag go through normal extraction.
+DMs and unmapped channels: if the user pastes a message from a DM or unmapped channel, route using context clues and any project mention. Keyword routing tags are supported: `TODO`, `LOG`, `BLOCKER`, `DECISION`, `RECOGNITION`. Messages without a keyword tag go through normal extraction.
 
 User can also paste a Slack message or thread directly into the conversation — route using context clues and any project mention.
 
@@ -45,9 +57,9 @@ Apply all three layers before writing any entry:
 **Layer 1 — Email: Move to Processed folder**
 After processing all emails in a folder, move each email to `{project-email-folder}/Processed/`.
 
-Attempt the move silently — no mid-flow prompt. If the email MCP does not support move operations, skip deduplication for this run — do not touch email state in any way. Process the emails and write extracted items to the vault normally. Note in the run output that emails could not be moved and deduplication was skipped.
+Attempt the move silently — no mid-flow prompt. If the email MCP does not support move operations, fall back to timestamp-based deduplication: at the start of the run, record the current time as `run_start`. Read `_system/state/email-sync.yaml` for `last_processed_at` — if set, only fetch emails received after that timestamp. After all emails are successfully processed, write `run_start` to `last_processed_at` in `_system/state/email-sync.yaml`. Note in the run output that move was unavailable and timestamp tracking is active.
 
-On next run, only unprocessed emails (not in Processed/) are read.
+On next run, only emails received after `last_processed_at` are fetched.
 
 **Layer 1 — Slack: Timestamp tracking**
 After successfully processing a channel, update its entry in `_system/logs/processed-channels.md` with the timestamp of the last message processed. On next run, only messages after this timestamp are fetched. If the file doesn't exist (first run), create it with the format below before writing the first timestamp.
@@ -114,55 +126,55 @@ For each email/message/document, extract every relevant item across all destinat
 
 ### Entry formats
 
+**Task insertion:** The project file's `## Open Tasks` section contains a Dataview query block — do not append tasks inside it. Instead, write new tasks after the closing ` ``` ` of the Dataview block under a `### Agent-Added Tasks` heading (create the heading if it does not exist). This prevents corrupting the Dataview query.
+
 **Timeline entry** (append to `## Timeline` section, sorted by event date):
 ```
-- [2026-04-05 | email from Sarah] Auth migration: API spec deadline confirmed for April 12 [Auto] (email, Sarah, 2026-04-05)
+- [2026-04-05] Auth migration: API spec deadline confirmed for April 12 [Auto] (email, Sarah)
 ```
 
 **Decision callout** (append to `## Timeline` in the project file):
 ```
 > [!info] Decision
-> [2026-04-05 | email from Alex] Go with OAuth 2.0 PKCE flow — simpler and auditable [Auto] (email, Alex, 2026-04-05)
+> [2026-04-05] Go with OAuth 2.0 PKCE flow — simpler and auditable [Auto] (email, Alex)
 ```
 
 **Blocker callout** (append to `## Timeline` in the project file):
 ```
 > [!warning] Blocker
-> [2026-04-05 | slack #auth-team] Dependency on infra team's cert rotation — blocks launch [Auto] (slack, #auth-team, 2026-04-05)
+> [2026-04-05] Dependency on infra team's cert rotation — blocks launch [Auto] (slack, #auth-team)
 ```
 
-**Task — self-assigned** (append to `## Open Tasks` section):
+**Task — self-assigned** (append after the `## Open Tasks` Dataview block under a `### Agent-Added Tasks` heading):
 ```
-- [ ] Review Sarah's API spec draft 📅 2026-04-09 ⏫ [project:: Auth Migration] [type:: task] [person:: [[{user.name}]]] [Auto] (email, Sarah, 2026-04-05)
+- [ ] Review Sarah's API spec draft 📅 2026-04-09 ⏫ [project:: [[Auth Migration]]] [type:: task] [person:: [[{user.name}]]] [Auto] (email, Sarah)
 ```
 
 Use `user.name` from workspace.yaml for self-assigned tasks.
 
-**Task — with explicit owner** (project task assigned to someone else, no delegation language):
+**Task — with explicit owner** (append in the same `### Agent-Added Tasks` section):
 ```
-- [ ] Sarah to send updated API spec to the team 📅 2026-04-09 ⏫ [project:: Auth Migration] [type:: task] [person:: [[Sarah Carter]]] [Auto] (email, Sarah, 2026-04-05)
+- [ ] Sarah to send updated API spec to the team 📅 2026-04-09 ⏫ [project:: [[Auth Migration]]] [type:: task] [person:: [[Sarah Carter]]] [Auto] (email, Sarah)
 ```
 
 **Delegation task** (only when explicit delegation language — "delegate to X", "hand off to X"):
 ```
-- [ ] Sarah to send updated API spec to the team 📅 2026-04-09 ⏫ [project:: Auth Migration] [type:: delegation] [person:: [[Sarah Carter]]] [Auto] (email, Sarah, 2026-04-05)
+- [ ] Sarah to send updated API spec to the team 📅 2026-04-09 ⏫ [project:: [[Auth Migration]]] [type:: delegation] [person:: [[Sarah Carter]]] [Auto] (email, Sarah)
 ```
-
-Always wiki-link the person name using `[[ ]]`.
 
 **Observation** (append to `## Observations` section in person file):
 ```
-- [2026-04-05 | email from James] **strength:** Proactively flagged a blocking dependency before it caused a slip [Inferred] (email, James, 2026-04-05)
+- [2026-04-05] **strength:** Proactively flagged a blocking dependency before it caused a slip [Inferred] (email, James)
 ```
 
 **Recognition** (append to `## Recognition` section in person file):
 ```
-- [2026-04-05 | email from manager] Strong debugging work on the auth service outage [Auto] (email, manager-name, 2026-04-05)
+- [2026-04-05] Strong debugging work on the auth service outage [Auto] (email, manager-name)
 ```
 
 **Contribution** (append to `Journal/contributions-{YYYY-MM-DD}.md`, where the date is the Monday of the current week):
 ```
-- [2026-04-05 | email from Sarah] **unblocking-others:** Resolved auth service dependency question for Sarah's team [Inferred] (email, Sarah, 2026-04-05)
+- [2026-04-05] **unblocking-others:** Resolved auth service dependency question for Sarah's team [Inferred] (email, Sarah)
 ```
 
 **Reply-needed task** (write to `ReviewQueue/review-work.md`):
@@ -172,7 +184,7 @@ Always wiki-link the person name using `[[ ]]`.
   Interpretation: Sarah asked for your input on API deadline — no reply detected in thread
   Ambiguity: Unclear if already addressed offline
   Proposed destination: [[Projects/auth-migration]] — Open Tasks
-  Content: - [ ] Reply to Sarah about API spec timeline 📅 2026-04-05 ⏫ [project:: Auth Migration] [type:: reply-needed] [person:: [[Sarah Carter]]] [Inferred] (email, Sarah, 2026-04-05)
+  Content: - [ ] Reply to Sarah about API spec timeline 📅 2026-04-05 ⏫ [project:: [[Auth Migration]]] [type:: reply-needed] [person:: [[Sarah Carter]]] [Inferred] (email, Sarah)
   ---
 ```
 
@@ -209,9 +221,13 @@ Match the meeting by name + date against existing meeting files in `Meetings/`. 
 
 ## Unreplied Tracker (byproduct)
 
-During extraction, when an email or Slack message clearly needs a reply from you (someone asked you a direct question, requested a decision, or is waiting on your input), stage a reply-needed task in `ReviewQueue/review-work.md`. The user approves which ones are worth tracking. Approved items become tasks with `[type:: reply-needed]` in the project file.
+During extraction, stage reply-needed tasks in `ReviewQueue/review-work.md` for two directions:
 
-These surface in the daily note's delegation/open-task view. When a subsequent processing run detects a message from you in the same thread (sender email matches `user.email` from workspace.yaml, or sender name matches `user.name`), mark the reply-needed task complete.
+**Waiting on you (inbound):** When an email or Slack message clearly needs a reply from you (someone asked you a direct question, requested a decision, or is waiting on your input), stage a reply-needed task. The user approves which ones are worth tracking. Approved items become tasks with `[type:: reply-needed] [person:: {sender name}]` in the project file.
+
+**Waiting on them (outbound):** When processing emails, also scan for messages where the sender matches `user.email` or `user.name` (from workspace.yaml) and the thread shows no subsequent reply from the other party in the same folder. These represent threads the user initiated that may still be awaiting a response. Stage as `[type:: reply-needed] [person:: {recipient name}]` with a description starting "Waiting on {person} for {topic}".
+
+These surface in the daily note's delegation/open-task view. When a subsequent processing run detects a message from you in the same thread (sender email matches `user.email` from workspace.yaml, or sender name matches `user.name`), mark the reply-needed task complete. When a reply arrives from the other party, mark waiting-on-them tasks complete.
 
 ---
 

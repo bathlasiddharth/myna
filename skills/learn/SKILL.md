@@ -6,7 +6,7 @@ user-invocable: true
 argument-hint: "remember that [preference] | forget that [rule] | what have you learned? | show my learnings | reflect | promote [rule]"
 ---
 
-If vault_path is not in context, read `~/.myna/config.yaml` first. If the file does not exist, tell the user to run `/myna:install` and stop.
+If vault_path is not in context, read `~/.myna/config.yaml` first. If the file does not exist, tell the user to run `/myna:setup` and stop.
 
 # learn
 
@@ -93,7 +93,7 @@ Entry: `- Keep email drafts concise — user asks to shorten regularly. [Auto] (
 
 ## Reflect
 
-**Trigger:** "reflect" — suggested at end of wrap-up (End of Day path only) as a user-initiated step. Can also be triggered manually at any time.
+**Trigger:** Invoked automatically by `/myna:wrap-up` as the final step of the End of Day path. Can also be triggered manually at any time ("reflect", "what did you learn today?").
 
 **How:**
 1. Review the session's conversation history for behavioral patterns — things the user corrected, preferences expressed, recurring friction points.
@@ -104,7 +104,7 @@ Entry: `- Keep email drafts concise — user asks to shorten regularly. [Auto] (
    d. Check if this pattern matches an existing Proposed entry:
       - New pattern → create a Proposed entry with `[Inferred]` and `[obs: 1]`.
       - Matches existing Proposed → increment `[obs: N]` by 1 (at most +1 per reflection pass, regardless of how many times it appeared in this session).
-      - Proposed entry now has `[obs: 3]` → trigger negotiate (see below). Do not auto-promote.
+      - Proposed entry now has `[obs: 3]` → auto-promote to Active (change marker to `[Verified]`, remove `[obs: N]` suffix, move to `## Active`). Then trigger negotiate to inform the user and allow pushback.
 3. Report what was found. If no patterns were identified, say: "Reflection complete. No new patterns found this session."
 
 **One increment per reflection pass:** Even if a pattern appeared 5 times in a session, it counts as +1 for this pass. This prevents one bad session from promoting a wrong rule.
@@ -190,21 +190,19 @@ User: "Forget that rule about bullet points in status updates."
 
 ## Negotiate
 
-**Trigger:** A Proposed entry reaches `[obs: 3]` during a reflect pass, or user says "promote [rule]" or challenges a Proposed entry.
+**Trigger:** A Proposed entry reaches `[obs: 3]` during a reflect pass (auto-promotes then notifies), or user says "promote [rule]" or challenges a Proposed entry.
 
-**Sub-procedure — do not auto-promote. Always confirm with the user first.**
+**Sub-procedure — notify after auto-promotion, allow pushback.**
 
 **How:**
-1. Show the entry and its evidence.
-2. Ask: "I've observed this pattern 3 times. Ready to make it Active? '{rule}' — confirm or discard."
-3. If confirmed:
-   - Move entry from `## Proposed` to `## Active`.
-   - Change marker from `[Inferred]` to `[Verified]`.
-   - Remove `[obs: N]` suffix.
-   - Notify: "Promoted to Active: '{rule}' — observed in 3 sessions."
-4. If user says "no", "that's wrong", or similar → delete the entry and confirm: "Discarded. I won't track that pattern anymore."
+1. Auto-promote the entry: move from `## Proposed` to `## Active`, change marker to `[Verified]`, remove `[obs: N]` suffix.
+2. Notify the user: "Promoted to Active: '{rule}' — I've observed this pattern 3 times. Say 'forget that' if it's wrong or you want to narrow its scope."
+3. If user pushes back ("no", "that's wrong", "only for X"):
+   - If user says "delete it": remove the entry and confirm: "Discarded. I won't track that pattern anymore."
+   - If user provides a narrower scope ("only for CEO emails"): rewrite the entry with the scoped rule, keep `[Verified]` marker, and confirm.
+4. If user does not respond or accepts: entry stays Active.
 
-This is the only path for `[Inferred]` entries to reach Active via repetition. Direct user statements (`[User]`) go straight to Active without negotiation.
+Direct user statements (`[User]`) go straight to Active without negotiation.
 
 ---
 

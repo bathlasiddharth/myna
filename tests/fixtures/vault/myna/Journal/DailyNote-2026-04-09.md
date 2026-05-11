@@ -58,9 +58,9 @@ TASK FROM "myna" WHERE !completed AND type = "delegation" SORT due ASC
 
 ### Contributions Detected
 
-- [2026-04-09 | wrap-up] **people-development:** Supported Sarah running her first cross-team design review — stayed out of her way, she owned the room [Inferred]
-- [2026-04-09 | wrap-up] **decisions-and-influence:** Contributed to the "accept LRU cascade as v1 limitation" decision in the caching review [Auto]
-- [2026-04-09 | wrap-up] **stakeholder-management:** Finally replied to Sarah Mitchell's Q2 dependencies question with detail [Auto]
+- [2026-04-09] **people-development:** Supported Sarah running her first cross-team design review — stayed out of her way, she owned the room [Inferred] (capture)
+- [2026-04-09] **decisions-and-influence:** Contributed to the "accept LRU cascade as v1 limitation" decision in the caching review [Auto] (capture)
+- [2026-04-09] **stakeholder-management:** Finally replied to Sarah Mitchell's Q2 dependencies question with detail [Auto] (capture)
 
 ### Carried to Tomorrow
 

@@ -5,9 +5,12 @@ dashboard: 1on1s
 
 ## 1:1s
 
-### All Direct Reports
+### All 1:1 Files
+
+> One file per person. `person` field is a wiki-link to the person file.
+
 ```dataview
-TABLE file.mtime AS "Last 1:1", person AS "Person"
+TABLE file.link AS "1:1 File", person AS "Person", file.mtime AS "Last Modified"
 FROM "myna/Meetings/1-1s"
 SORT file.mtime DESC
 ```
@@ -18,11 +21,11 @@ SORT file.mtime DESC
 ```dataview
 TASK
 FROM "myna/Meetings/1-1s"
-WHERE !completed AND (type != "delegation")
+WHERE !completed AND type != "delegation"
 SORT due ASC
 ```
 
-#### Assigned to others
+#### Assigned to others (delegations)
 ```dataview
 TASK
 FROM "myna/Meetings/1-1s"
@@ -36,7 +39,7 @@ SORT due ASC
 ```dataview
 TASK
 FROM "myna/Meetings/1-1s"
-WHERE !completed AND due < date(today) AND (type != "delegation")
+WHERE !completed AND due < date(today) AND type != "delegation"
 SORT due ASC
 ```
 

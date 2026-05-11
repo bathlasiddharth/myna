@@ -82,8 +82,8 @@ For annotated examples of each file's format, see the "Sample configuration" sec
 
 1. Run in background: `python3 "${CLAUDE_SKILL_DIR}/../../ui/server.py"`
 2. Capture PID and URL from stdout — lines starting with `PID:` and `URL:`. If PID capture fails, note it and proceed — the user can kill the server manually with `pkill -f server.py`.
-3. Tell the user: "Config UI is open at {url}. Fill in what you can and come back here when done."
-4. Wait for the user to return.
+3. Tell the user: "Config UI is open at {url}. Fill in what you can, then type 'done' here when you're finished."
+4. Wait for the user to type 'done' (or similar confirmation) before continuing.
 5. Kill the server: send SIGTERM to the captured PID. If PID capture failed, run `pkill -f server.py` as fallback.
 6. Read all six config files from `{vault_path}/myna/_system/config/`. Show a human-readable summary of what is configured and what is still blank.
 7. Ask: "Do you have any existing docs — project notes, a team roster, meeting notes — you'd like me to read to fill in what's missing?" If yes, proceed with the doc import flow below.
@@ -114,11 +114,11 @@ Write YAML only when the user selects option 1 (or after corrections are applied
 
 **relationship_tier on import:** Do not default `relationship_tier` to "direct" or any other value. Leave it blank (omit the field) unless the source doc explicitly states the relationship. After writing to `people.yaml`, show: "N people saved without a relationship tier." Then offer:
 1. Set tiers now — present the people with blank tiers as a numbered list and let the user assign each.
-2. Defer to later — create a reminder task in `_system/ReviewQueue/` as a markdown file named `set-relationship-tiers-{date}.md` with a checklist of the people who need tiers set.
+2. Defer to later — append a checklist entry to `_system/setup-pending.md` for each person who needs a relationship tier set: `- [ ] Set relationship tier for {name} — imported without tier`.
 
 Schema references: `_system/config/projects.yaml`, `_system/config/people.yaml`. For annotated field documentation, see the "Sample configuration" section in `myna/guide.md`.
 
-**Person .md files:** After relationship tiers are resolved, create a `.md` file for each imported person using the person template at `agents/templates/person.md`. Write files to `{vault_path}/myna/People/{slug}.md` where `{slug}` is the person's name lowercased with spaces replaced by hyphens. Fill in fields from the imported data; leave any unknown field blank (no placeholder text, no "TBD"). For `relationship_tier`, use the value set during the tier step, or leave the frontmatter `relationship` field and the `#tier/` tag blank if still unset. Use full relative wikilinks: `[[1-1s/{slug}]]` not `[[{slug}]]`. Do not overwrite an existing person file — if a file already exists for a person, skip it and notify the user which files were skipped and why.
+**Person .md files:** After relationship tiers are resolved, create a `.md` file for each imported person. Read the person template from `{vault_path}/myna/_system/templates/person.md` if it exists; otherwise use the canonical minimal person template from foundations §2.2. Write files to `{vault_path}/myna/People/{slug}.md` where `{slug}` is the person's name lowercased with spaces replaced by hyphens. Fill in fields from the imported data; leave any unknown field blank (no placeholder text, no "TBD"). Use `#{relationship-tier}` as the relationship tag (not `#tier/{relationship-tier}`). Use slug-only wikilinks: `[[{slug}]]` not `[[1-1s/{slug}]]`. Do not overwrite an existing person file — if a file already exists for a person, skip it and notify the user which files were skipped and why.
 
 **Post-import timeline offer:** After config is written and relationship tiers are resolved, if any of the imported documents were project update documents (status updates, progress reports, sprint summaries, or similar), ask: "Want me to create project timeline files from the update documents you imported? I'll add dated entries to each project's timeline." Wait for the user to say yes before doing anything — skip this step if they decline or don't respond to it.
 
@@ -133,15 +133,17 @@ Ask once:
 If yes, show the user exactly what will be added:
 
 ```
-alias myna='claude --agent myna:agent --allowedTools "Read,Write,Edit,Glob,Grep,Bash(cd *),Bash(ls *),Bash(cat *)"'
+alias myna='claude --agent myna:agent --allowedTools "Read,Write,Edit,Glob,Grep,Bash(cd *),Bash(ls *),Bash(cat *),Bash(mv *),Bash(date *),Bash(TZ=* date *)"'
 alias myna-ro='claude --agent myna:agent --allowedTools "Read,Glob,Grep"'
 ```
+
+Note: `Bash(mv *)` is required by sync for archiving journal notes. `Bash(date *)` and `Bash(TZ=* date *)` are required for timezone-aware date resolution. MCP tools (email, calendar, Slack) are available automatically via the user's registered MCP servers — they do not need to be listed in `--allowedTools`.
 
 Detect the shell rc file: if `$SHELL` is zsh, use `~/.zshrc`; otherwise use `~/.bashrc`.
 
 Check whether `alias myna=` already appears in the rc file. If it does, skip appending and tell the user: "Alias already present in {rc_file} — skipping."
 
-If not already present, append both aliases to the rc file. Tell the user: "Added aliases to {rc_file}. Run `source {rc_file}` or open a new terminal to activate them."
+If not already present, show the exact lines that will be appended and confirm once more: "This will write to {rc_file} (outside the vault). Proceed?" Then append both aliases after confirmation. Tell the user: "Added aliases to {rc_file}. Run `source {rc_file}` or open a new terminal to activate them."
 
 If no, print both alias lines and tell the user to add them manually if they want them later.
 
@@ -149,7 +151,7 @@ If no, print both alias lines and tell the user to add them manually if they wan
 
 ## Step 5: Wrap-Up
 
-**Onboarding checklist:** Create `{vault_path}/myna/_system/Onboarding.md` with a checklist of any setup items not yet completed in this session (e.g., integrations not configured, projects/people not imported, communication style not set). Do not include items the user already completed. Then append exactly one task to today's daily note: `- [ ] Complete Myna onboarding checklist [[_system/Onboarding]]`. Use the full relative wikilink — `[[_system/Onboarding]]` not `[[Onboarding]]`.
+**Onboarding checklist:** Append any setup items not yet completed in this session (e.g., integrations not configured, projects/people not imported, communication style not set) to `{vault_path}/myna/_system/setup-pending.md` as a checklist. Create the file if it doesn't exist. Do not include items the user already completed. Then append exactly one task to today's daily note: `- [ ] Complete Myna setup checklist [[setup-pending]]`. Use the slug-only wikilink — `[[setup-pending]]` not `[[_system/setup-pending]]`.
 
 Tell the user: "Run `myna` (or `claude --agent myna:agent`) and type `sync` to start your day."
 
@@ -161,7 +163,7 @@ Tell the user: "Run `myna` (or `claude --agent myna:agent`) and type `sync` to s
 - For `projects.yaml` and `people.yaml`: append new entries — never overwrite existing ones.
 - For `people.yaml`: omit `relationship_tier` unless the source explicitly states it. Never default to "direct".
 - Write valid YAML matching the schemas shown in the "Sample configuration" section of `myna/guide.md`.
-- `vault.path` in `workspace.yaml` is set by the install script — don't ask about it, don't overwrite it. The subfolder is always `myna` (hardcoded; not stored in workspace.yaml).
+- `vault.path` in `workspace.yaml` is set by the install script — don't ask about it, don't overwrite it. The subfolder is always `myna` (D055: fixed, not configurable, not stored in workspace.yaml).
 - Internal plumbing fields — keep at defaults, never ask: `prompt_logging`, `calendar_event_prefix`.
 - `meetings.yaml` and `tags.yaml` are not part of the guided flow — don't write them unless the user explicitly asks.
 - **Import write-back: write only what was in the review file.** When writing config after an import review (option 3 in the doc import section), write only the entries and fields present in the review file. Do not add blocks, sections, or fields — such as triage, defaults, or schema examples — that were not explicitly included by the user.

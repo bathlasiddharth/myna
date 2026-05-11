@@ -1,18 +1,18 @@
 ---
 name: process-review-queue
 disable-model-invocation: true
-description: Process review queue items across review-work, review-people, and review-self queues — interactively in chat or by processing items the user has already checked in Obsidian. Does NOT process review-email-triage.md (email folder recommendations — that's handled by /myna:email-triage).
+description: Process review queue items across review-work, review-people, and review-self queues — interactively in chat or by processing items the user has already checked in Obsidian. Does NOT process review-inbox.md (email folder recommendations — that's handled by /myna:email-triage).
 user-invocable: true
 argument-hint: "review my queue | process review queue | what's in my queue? | process approved items | process [queue name]"
 ---
 
 # myna-process-review-queue
 
-If vault_path is not in context, read `~/.myna/config.yaml` first. If the file does not exist, tell the user to run `/myna:install` and stop.
+If vault_path is not in context, read `~/.myna/config.yaml` first. If the file does not exist, tell the user to run `/myna:setup` and stop.
 
-Processes pending review queue items. Writes approved items to their destinations with `[Verified]` tag. Logs all processed items to `ReviewQueue/processed/processed-{YYYY-MM-DD}.md` for audit trail.
+Processes pending review queue items. Writes approved items to their destinations with `[Verified]` tag. Logs all processed items to `ReviewQueue/processed-{YYYY-MM-DD}.md` for audit trail.
 
-**Does NOT handle `review-email-triage.md`** — email triage is handled by /myna:email-triage.
+**Does NOT handle `review-inbox.md`** — email triage is handled by /myna:email-triage. If the glob for queue files picks up `review-inbox.md`, skip it without parsing.
 
 ## Before You Start
 
@@ -26,23 +26,26 @@ Queue files:
 - `ReviewQueue/review-people.md` — ambiguous observations, recognition
 - `ReviewQueue/review-self.md` — uncertain contribution candidates
 
-Audit trail: `ReviewQueue/processed/processed-{YYYY-MM-DD}.md`
+Audit trail: `ReviewQueue/processed-{YYYY-MM-DD}.md`
 
 ---
 
 ## Review Queue Entry Format
 
-Each entry in a queue file follows this format:
+The canonical entry format from foundations §2.10 is:
 
 ```
 - [ ] **{proposed action}**
   Source: {where this came from}
   Interpretation: {what the agent thinks it means}
   Ambiguity: {why this needs review — what's unclear}
-  Proposed destination: [[{destination file (no extension)}]] — {section}
-  Content: {the entry to write verbatim if approved}
+  Proposed destination: {where it would be written if approved}
   ---
 ```
+
+Some producers also include a `Content:` field with the verbatim entry to write. This skill handles both forms:
+- **With `Content:`** — write the `Content:` value verbatim (replacing provenance marker with `[Verified]`).
+- **Without `Content:`** — derive the entry text from `Proposed destination` and `Interpretation`, using the appropriate entry format for the destination section type (timeline, observation, task, contribution).
 
 `- [x]` = user approved in Obsidian (file mode). `- [ ]` = still pending.
 
@@ -76,7 +79,7 @@ Approve / Edit / Skip / Discard?
 
 5. Wait for user response per item:
    - **approve** (or "yes", "looks good") → write to destination with `[Verified]` tag
-   - **approve and assign to me** → same, but add `[person:: {user.name}]` to the entry
+   - **approve and assign to me** → same, but add `[person:: [[{user.name}]]]` to the entry
    - **edit** → user provides corrected content → write the corrected version with `[Verified]`
    - **skip** → leave in queue file untouched, move to next item
    - **discard** (or "no", "ignore this") → remove from queue file, log to audit trail only
@@ -99,9 +102,9 @@ Queue state: 5 items (3 in review-work, 1 in review-people, 1 in review-self)
 Source: email from James, April 3 — "someone should verify this"
 Interpretation: A task needs to be added to the auth-migration project
 Ambiguity: "someone" — can't determine owner. Could be you or James.
-Proposed destination: [[Projects/auth-migration]] — Open Tasks
+Proposed destination: [[Projects/auth-migration]] — Agent-Added Tasks
 Content if approved:
-  - [ ] Verify Platform team confirmed Mar 15 deadline 📅 2026-04-10 [project:: Auth Migration] [type:: task] [Inferred]
+  - [ ] Verify Platform team confirmed Mar 15 deadline 📅 2026-04-10 [project:: [[Auth Migration]]] [type:: task] [Inferred]
 
 Approve / Edit / Skip / Discard?
 ```
@@ -110,7 +113,7 @@ User: "approve and assign to me"
 
 Write to `Projects/auth-migration.md` (Open Tasks section):
 ```
-- [ ] Verify Platform team confirmed Mar 15 deadline 📅 2026-04-10 [project:: Auth Migration] [type:: task] [person:: {user.name}] [Verified] (was Inferred, verified 2026-04-05)
+- [ ] Verify Platform team confirmed Mar 15 deadline 📅 2026-04-10 [project:: [[Auth Migration]]] [type:: task] [person:: [[{user.name}]]] [Verified] (was Inferred, verified 2026-04-05)
 ```
 
 Continue to item 2.
@@ -142,15 +145,19 @@ For each approved item (chat or file mode):
 2. Resolve the destination path using vault path conventions from workspace.yaml.
 3. Read the destination file — check for near-duplicates (same action + entity from same source).
    - If near-duplicate found: skip that item, inform user.
-4. Append the `Content` entry to the destination section, replacing `[Auto]` or `[Inferred]` with `[Verified]`, and appending `(was {original marker}, verified {YYYY-MM-DD})`.
+4. Append the entry to the destination section. Apply this exact `[Verified]` transformation:
+   - Replace the provenance marker (`[Auto]` or `[Inferred]`) with `[Verified]`
+   - Insert `(was {original marker}, verified {YYYY-MM-DD})` immediately after `[Verified]`, before any existing source reference in parentheses
+   - Example: `[Inferred] (email, Sarah)` → `[Verified] (was Inferred, verified 2026-05-06) (email, Sarah)`
+   - If no existing provenance marker is present, append `[Verified] (verified {YYYY-MM-DD})` at the end of the entry.
 5. Remove the item from the queue file.
 
 **Destination write formats (per section type):**
 
-- Project timeline: `- [{YYYY-MM-DD} | {source}] {content} [Verified] ({source-detail})`
-- Person file Observations: `- [{YYYY-MM-DD} | {source}] **{type}:** {observation} [Verified] ({source-detail})`
+- Project timeline: `- [{YYYY-MM-DD}] {content} [Verified] ({source-detail})`
+- Person file Observations: `- [{YYYY-MM-DD}] **{type}:** {observation} [Verified] ({source-detail})`
 - Task entry: `- [ ] {task} [Verified]` (or `- [x] {task} [Verified]` if marking complete)
-- Contributions log: `- [{YYYY-MM-DD} | {source}] **{category}:** {description} [Verified] ({source-detail})`
+- Contributions log: `- [{YYYY-MM-DD}] **{category}:** {description} [Verified] ({source-detail})`
 
 The `[Verified]` marker and provenance conventions are defined in /myna:steering-conventions.
 
@@ -158,7 +165,7 @@ The `[Verified]` marker and provenance conventions are defined in /myna:steering
 
 ## Audit Trail
 
-After each processing run, append to `ReviewQueue/processed/processed-{YYYY-MM-DD}.md`:
+After each processing run, append to `ReviewQueue/processed-{YYYY-MM-DD}.md`:
 
 ```markdown
 ## Processed — {YYYY-MM-DD HH:MM}
@@ -216,7 +223,7 @@ Total: 6 items. Say 'review my queue' to go through them interactively, or open 
 
 **Queue files don't exist:** If a queue file doesn't exist, skip it silently. Do not create empty queue files.
 
-**review-email-triage.md:** If the user asks to process triage items, redirect: "Email triage is handled separately. Say 'process triage' to move approved emails to their folders."
+**review-inbox.md:** If the user asks to process triage items, redirect: "Email triage is handled separately. Say 'process triage' to move approved emails to their folders." Do not parse `review-inbox.md` entries as work queue items.
 
 **Bulk write (file mode):** 5 or more checked items — present the full list and confirm before writing: "About to write {n} items to {n} files. Proceed?"
 
@@ -226,11 +233,13 @@ Total: 6 items. Say 'review my queue' to go through them interactively, or open 
 
 ### review-work
 Contains: ambiguous tasks, delegations, decisions, blockers, timeline entries.
-Destination examples: `Projects/{slug}.md` → Timeline or Open Tasks section.
+Destination examples: `[[Projects/auth-migration]]` → Timeline or Agent-Added Tasks section.
+
+**Destination path resolution:** Strip any folder prefix from the wiki-link (e.g., `[[Projects/auth-migration]]` → `auth-migration`). Look up the file under the configured `myna/` subfolder using Glob. Require the file to exist before writing — do not create files automatically.
 
 ### review-people
 Contains: ambiguous observations, recognition entries.
-Destination examples: `People/{slug}.md` → Observations or Recognition section.
+Destination examples: `[[People/sarah-chen]]` → Observations or Recognition section.
 
 ### review-self
 Contains: uncertain contribution candidates.
@@ -246,8 +255,8 @@ Queue entry:
   Source: meeting 1:1 with Sarah, April 2
   Interpretation: Agent thinks you influenced the resolution, but it's not confirmed
   Ambiguity: Unclear whether you resolved it or Sarah did — discussion was about the blocker but action wasn't assigned
-  Proposed destination: [[Journal/contributions-2026-03-30]]
-  Content: - [2026-04-02 | meeting 1:1 with Sarah] **unblocking-others:** Helped resolve API blocker for auth migration [Inferred] (meeting, 1:1 with Sarah, 2026-04-02)
+  Proposed destination: [[contributions-2026-03-30]]
+  Content: - [2026-04-02] **unblocking-others:** Helped resolve API blocker for auth migration [Inferred] (meeting, 1:1 with Sarah)
   ---
 ```
 
@@ -259,9 +268,9 @@ Chat mode presentation:
 Source: 1:1 with Sarah, April 2 — discussed the API blocker
 Interpretation: You may have influenced the resolution, but it's not clear from the notes.
 Ambiguity: It's unclear whether you resolved this or Sarah did.
-Proposed destination: [[Journal/contributions-2026-03-30]]
+Proposed destination: [[contributions-2026-03-30]]
 Content if approved:
-  [2026-04-02 | meeting] **unblocking-others:** Helped resolve API blocker for auth migration [Inferred]
+  [2026-04-02] **unblocking-others:** Helped resolve API blocker for auth migration [Inferred]
 
 Approve, Edit, Skip, or Discard?
 ```

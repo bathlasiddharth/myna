@@ -6,7 +6,7 @@ user-invocable: true
 argument-hint: "park this | park: [topic name] | resume [topic] | resume (show list) | what's parked? | switch to [project]"
 ---
 
-If vault_path is not in context, read `~/.myna/config.yaml` first. If the file does not exist, tell the user to run `/myna:install` and stop.
+If vault_path is not in context, read `~/.myna/config.yaml` first. If the file does not exist, tell the user to run `/myna:setup` and stop.
 
 # park
 
@@ -227,8 +227,8 @@ Ready to work on Platform API.
 
 **How:**
 1. Resolve the parked file.
-2. For "archive": read the file, write it to `_system/parked/archived/{slug}.md`, then delete the original.
-3. For "delete": delete the file using the file deletion tool.
+2. For "archive": append a dated `## Archived — {YYYY-MM-DD}` section to the file with a note that the work is complete. Do not delete the original — parked files are append-only.
+3. For "delete": this requires explicit user confirmation. Confirm: "Delete `_system/parked/{slug}.md`? This cannot be undone." Wait for confirmation before deleting.
 4. Confirm.
 
 ---
@@ -237,7 +237,7 @@ Ready to work on Platform API.
 
 **No current context to park:** If the session just started and there's nothing to park, say: "Nothing substantive to park yet. Start working on something first."
 
-**Parked file already exists:** "A parked file named '{slug}' already exists (parked {date}). Overwrite, or save as '{slug}-2'?"
+**Parked file already exists:** "A parked file named '{slug}' already exists (parked {date}). Save as '{slug}-2', or append a new dated section to the existing file?"  Never overwrite — parked files are append-only.
 
 **Resume fails to find file:** "I don't see a parked context matching '{name}'. Closest match: '{closest}' — is that the one? Or say 'what's parked?' to see all."
 

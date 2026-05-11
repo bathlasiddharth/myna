@@ -217,12 +217,15 @@ function populateCalendar() {
 }
 
 function populateIntegrations() {
-  const ws  = window.config.workspace || {};
-  const mcp = ws.mcp_servers || {};
-  setValue('mcp-email',    mcp.email    || '');
-  setValue('mcp-calendar', mcp.calendar || '');
-  setValue('mcp-slack',    mcp.slack    || '');
-  setValue('notes-email',  (ws.email || {}).notes_email || '');
+  const ws      = window.config.workspace || {};
+  const mcp     = ws.mcp_servers || {};
+  const triage  = (window.config.projects || {}).triage || {};
+  setValue('mcp-email',                  mcp.email    || '');
+  setValue('mcp-calendar',               mcp.calendar || '');
+  setValue('mcp-slack',                  mcp.slack    || '');
+  setValue('triage-inbox-source',        triage.inbox_source         || 'INBOX');
+  setValue('triage-draft-replies-folder',triage.draft_replies_folder || 'DraftReplies');
+  setValue('email-processed-folder',     (ws.email || {}).processed_folder || '');
   updateDraftRepliesVisibility();
 }
 
@@ -240,11 +243,11 @@ function populateCommunication() {
   const ep    = cs.email_preferences || {};
   const email = ws.email || {};
 
-  setCommStyleValue('comm-default-preset', cs.default_preset    || 'assertive');
+  setCommStyleValue('comm-default-preset', cs.default_preset    || 'professional');
   setCommStyleValue('comm-upward',         tier.upward           || 'executive');
-  setCommStyleValue('comm-peer',           tier.peer             || 'assertive');
-  setCommStyleValue('comm-direct',         tier.direct           || 'empathetic');
-  setCommStyleValue('comm-cross-team',     tier['cross-team']    || 'formal');
+  setCommStyleValue('comm-peer',           tier.peer             || 'professional');
+  setCommStyleValue('comm-direct',         tier.direct           || 'conversational');
+  setCommStyleValue('comm-cross-team',     tier['cross-team']    || 'professional');
 
   setValue('comm-sign-off',           cs.sign_off       || '');
   setValue('comm-email-greeting',     ep.greeting_style || '');
@@ -261,7 +264,7 @@ function setCommStyleValue(selectId, value) {
   const custom = document.getElementById(selectId + '-custom');
   if (!sel) return;
 
-  const knownValues = ['', 'assertive', 'analytical', 'empathetic', 'formal', 'executive', '_custom'];
+  const knownValues = ['', 'professional', 'conversational', 'executive', 'casual', 'coaching', 'diplomatic', 'concise', '_custom'];
 
   if (!value) {
     sel.value = '';
@@ -461,10 +464,8 @@ function getIdentityData() {
       end:   getTimePicker('work-end'),
     },
     feedback_cycle_days: parseInt(document.getElementById('feedback-cycle').value, 10) || 30,
-    journal: {
-      ...(existing.journal || {}),
-      archive_after_days: parseInt(document.getElementById('journal-archive').value, 10) || (existing.journal || {}).archive_after_days,
-    },
+    // journal.archive_after_days removed per D056; preserve any existing journal config
+    journal: existing.journal || {},
     email: existing.email || {},
   };
 }
@@ -480,8 +481,10 @@ function getCalendarData() {
 }
 
 function getIntegrationsData() {
+  // Returns workspace data (MCP servers + email.processed_folder).
+  // projects.triage fields are saved separately via saveIntegrationsTriageData().
   const existing = deepClone(window.config && window.config.workspace || {});
-  const notesEmail = document.getElementById('notes-email').value.trim();
+  const processedFolder = document.getElementById('email-processed-folder').value.trim();
   return {
     ...existing,
     mcp_servers: {
@@ -491,13 +494,35 @@ function getIntegrationsData() {
     },
     email: {
       ...(existing.email || {}),
-      notes_email: notesEmail || (existing.email || {}).notes_email || '',
+      processed_folder: processedFolder,
+    },
+  };
+}
+
+function getTriageData() {
+  // Returns the projects.triage section for the integrations tab.
+  const existingProjects = deepClone(window.config && window.config.projects || {});
+  const existingTriage   = existingProjects.triage || {};
+  return {
+    ...existingProjects,
+    triage: {
+      ...existingTriage,
+      inbox_source:         document.getElementById('triage-inbox-source').value.trim()         || 'INBOX',
+      draft_replies_folder: document.getElementById('triage-draft-replies-folder').value.trim() || 'DraftReplies',
+      folders:              existingTriage.folders || [],
     },
   };
 }
 
 function getCommunicationData() {
+  // Start from the loaded config so that fields not shown in the UI
+  // (difficult_message_approach, email_preferences.max_length, etc.)
+  // are preserved on save.
+  const existing = window.config['communication-style'] || {};
+  const existingEp = existing.email_preferences || {};
+
   return {
+    ...existing,
     default_preset: getCommStyleValue('comm-default-preset'),
     presets_per_tier: {
       upward:       getCommStyleValue('comm-upward')      || null,
@@ -505,8 +530,9 @@ function getCommunicationData() {
       direct:       getCommStyleValue('comm-direct')      || null,
       'cross-team': getCommStyleValue('comm-cross-team')  || null,
     },
-    sign_off:                   document.getElementById('comm-sign-off').value.trim(),
+    sign_off: document.getElementById('comm-sign-off').value.trim(),
     email_preferences: {
+      ...existingEp,
       greeting_style: document.getElementById('comm-email-greeting').value,
     },
   };
@@ -587,7 +613,20 @@ async function saveTab(tabName) {
       window.config[configName] = data;
     }
 
-
+    // Integrations tab also saves triage fields to projects.yaml
+    if (tabName === 'integrations') {
+      const triageData = getTriageData();
+      const triageRes = await fetch('/api/config/projects', {
+        method:  'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify(triageData),
+      });
+      if (!triageRes.ok) {
+        const msg = await triageRes.text().catch(() => 'Server error');
+        throw new Error(msg || 'HTTP ' + triageRes.status);
+      }
+      window.config.projects = { ...(window.config.projects || {}), triage: triageData.triage };
+    }
 
     renderOverview();
     setSaveStatus('saved');
@@ -1338,6 +1377,7 @@ function hideProjectDeleteConfirm(idx) {
 function deleteProject(idx) {
   projectsData.splice(idx, 1);
   renderProjectsList();
+  saveTab('projects');
 }
 
 function addProject() {
@@ -1350,6 +1390,7 @@ function addProject() {
     newCard.querySelector('.proj-name').focus();
     newCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
+  saveTab('projects');
 }
 
 function collectProjectsData() {
@@ -1557,6 +1598,7 @@ function hidePersonDeleteConfirm(idx) {
 function deletePerson(idx) {
   peopleData.splice(idx, 1);
   renderPeopleList();
+  saveTab('people');
 }
 
 function addPerson() {
@@ -1569,6 +1611,7 @@ function addPerson() {
     newCard.querySelector('.person-display-name').focus();
     newCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
+  saveTab('people');
 }
 
 function collectPeopleData() {
@@ -1776,7 +1819,6 @@ const HELP_CONTENT = {
       { id: 'work-start-hour',  label: 'Work hours start',   desc: 'The start of your working day. Myna avoids scheduling focus blocks or reminders outside this window.' },
       { id: 'work-end-hour',    label: 'Work hours end',     desc: 'The end of your working day. Calendar events and reminders are kept within start-to-end unless you override them.' },
       { id: 'feedback-cycle',   label: 'Feedback cycle',     desc: 'How often you aim to give written feedback to each direct report. Myna flags anyone overdue when this interval passes without a logged feedback entry. Options: every 2 weeks, monthly, or quarterly.' },
-      { id: 'journal-archive',  label: 'Journal archive after', desc: 'Daily notes older than this many days are moved to an archive folder. Keeps your active vault uncluttered without deleting anything.' },
     ],
   },
   communication: {
@@ -1831,7 +1873,9 @@ const HELP_CONTENT = {
       { id: 'mcp-email',    label: 'Email MCP server',          desc: 'The name of the MCP server registered with Claude Code that provides access to your email account. Run "claude mcp list" in a terminal to see available servers.' },
       { id: 'mcp-calendar', label: 'Calendar MCP server',       desc: 'The MCP server that connects to your calendar. Used for meeting prep, focus-block creation, and reading upcoming events.' },
       { id: 'mcp-slack',    label: 'Messaging MCP server',      desc: 'The MCP server for Slack or another messaging platform. Used to process messages and draft replies. Leave blank if you paste messages manually.' },
-      { id: 'notes-email',  label: 'Notes forwarding email',    desc: 'Forward an email thread to this address with your notes in the body to trigger a draft reply. Myna reads your notes, pulls project context, and drafts a response using your communication style.' },
+      { id: 'triage-inbox-source',         label: 'Inbox source folder',       desc: 'The email folder Myna scans for new mail to triage. Defaults to INBOX.' },
+      { id: 'triage-draft-replies-folder', label: 'Draft replies folder',      desc: 'Email folder where you forward threads with reply notes. Myna reads this folder to create draft replies.' },
+      { id: 'email-processed-folder',      label: 'Processed email folder',    desc: 'Folder where Myna moves emails after triage to prevent reprocessing.' },
     ],
   },
   features: {
@@ -1884,7 +1928,7 @@ const HELP_CONTENT = {
     fields: [],
   },
   files: {
-    intro: 'Upload documents that describe your work context — project docs, team pages, Confluence exports, org charts. Run /myna-setup import in a Claude chat to process them into vault files.',
+    intro: 'Upload documents that describe your work context — project docs, team pages, Confluence exports, org charts. Run /myna:setup import in a Claude chat to process them into vault files.',
     fields: [],
   },
 };
@@ -2103,14 +2147,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Journal archive (number input) → save on blur
-  const journalArchiveInput = document.getElementById('journal-archive');
-  if (journalArchiveInput) {
-    journalArchiveInput.addEventListener('blur', () => saveTab('identity'));
-  }
-
   // ── Integrations: text inputs → save on blur ──────────────────────────────
-  ['mcp-email', 'mcp-calendar', 'mcp-slack'].forEach(id => {
+  ['mcp-email', 'mcp-calendar', 'mcp-slack',
+   'triage-inbox-source', 'triage-draft-replies-folder', 'email-processed-folder'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.addEventListener('blur', () => saveTab('integrations'));
   });
@@ -2139,19 +2178,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // ── Features: toggles → save on change ───────────────────────────────────
-  const featureKeys = [
-    'email_processing', 'messaging_processing', 'email_triage',
-    'meeting_prep', 'process_meeting',
-    'time_blocks', 'calendar_reminders',
-    'people_management', 'team_health', 'attention_gap_detection',
-    'feedback_gap_detection', 'milestones',
-    'self_tracking', 'contribution_detection',
-    'weekly_summary', 'monthly_updates',
-    'park_resume'
-  ];
-  featureKeys.forEach(key => {
-    const el = document.getElementById('feat-' + key);
-    if (el) el.addEventListener('change', () => saveTab('features'));
+  // ── Features: attach save-on-change to every feat-* checkbox dynamically
+  // so that any future toggles added to the HTML are automatically wired up.
+  document.querySelectorAll('#tab-features input[type="checkbox"][id^="feat-"]').forEach(el => {
+    el.addEventListener('change', () => saveTab('features'));
   });
 });

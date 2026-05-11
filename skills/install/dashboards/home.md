@@ -6,12 +6,8 @@ dashboard: home
 ## Today
 
 ### Meetings Today
-```dataview
-TABLE time AS "Time", file.link AS "Meeting"
-FROM "myna/Meetings"
-WHERE date = date(today)
-SORT time ASC
-```
+
+Today's meetings are shown in your daily note.
 
 ### Today's Tasks
 ```dataview
@@ -30,9 +26,39 @@ SORT due ASC
 ```
 
 ### Active Blockers
+
+> Blocker callouts written as `> [!warning] Blocker` in project timelines. Review Projects/ files for active blockers.
+
 ```dataview
 TASK
 FROM "myna/Projects"
-WHERE !completed AND type = "blocker"
-GROUP BY file.link
+WHERE !completed AND type = "dependency" AND due < date(today)
+SORT due ASC
+```
+
+## Review Queue
+
+```dataview
+TABLE file.link AS "Queue", length(filter(file.tasks, (t) => !t.completed)) AS "Pending"
+FROM "myna/ReviewQueue"
+WHERE !contains(file.name, "processed-")
+SORT file.name ASC
+```
+
+## Current Drafts
+
+```dataview
+TABLE file.link AS "Draft", created AS "Created"
+FROM "myna/Drafts"
+SORT created DESC
+```
+
+## Recent Activity
+
+```dataview
+TABLE file.link AS "File", file.mtime AS "Modified"
+FROM "myna"
+WHERE !contains(file.path, "_system") AND !contains(file.path, "_meta")
+SORT file.mtime DESC
+LIMIT 10
 ```

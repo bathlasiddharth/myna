@@ -61,9 +61,9 @@ TASK FROM "myna" WHERE !completed AND type = "delegation" SORT due ASC
 
 ### Contributions Detected
 
-- [2026-04-08 | wrap-up] **people-development:** Nate 1:1 — meaningful conversation about his first lead project going well, introduced him to Laura for data career chat [Inferred]
-- [2026-04-08 | wrap-up] **stakeholder-management:** Skip-level with James — covered Atlas status, answered portfolio review question [Auto]
-- [2026-04-08 | wrap-up] **hiring-and-team-building:** Participated in backend hiring debrief — first candidate in the senior engineer pipeline [Auto]
+- [2026-04-08] **people-development:** Nate 1:1 — meaningful conversation about his first lead project going well, introduced him to Laura for data career chat [Inferred] (capture)
+- [2026-04-08] **stakeholder-management:** Skip-level with James — covered Atlas status, answered portfolio review question [Auto] (capture)
+- [2026-04-08] **hiring-and-team-building:** Participated in backend hiring debrief — first candidate in the senior engineer pipeline [Auto] (capture)
 
 ### Carried to Tomorrow
 

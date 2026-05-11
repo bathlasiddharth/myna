@@ -6,17 +6,24 @@ user-invocable: true
 argument-hint: "reserve [duration] [when] for [what] | remind me [what] at [time] | break down [task]"
 ---
 
-If vault_path is not in context, read `~/.myna/config.yaml` first. If the file does not exist, tell the user to run `/myna:install` and stop.
+If vault_path is not in context, read `~/.myna/config.yaml` first. If the file does not exist, tell the user to run `/myna:setup` and stop.
 
 # calendar
 
 Creates personal calendar events (time blocks and reminders) and breaks down tasks into subtasks. Every calendar write is personal-only — no attendees, ever.
 
+**Feature toggles:** Read `workspace.yaml` before acting:
+- Time block requests: check `features.time_blocks`. If disabled, skip silently.
+- Reminder requests: check `features.calendar_reminders`. If disabled, skip silently.
+- Task breakdown: no toggle gate — always available.
+
 ---
 
 ## Time Block Planning
 
-**Triggers:** "plan my day", "reserve 2 hours Thursday for the design doc", "block 3 hours this week for deep work", "plan my day with time blocks", "find me a good slot for [task]"
+**Triggers:** "reserve 2 hours Thursday for the design doc", "block 3 hours this week for deep work", "plan my day with time blocks", "find me a good slot for [task]"
+
+Note: "plan my day" (without "time blocks" or a specific task) routes to `/myna:plan` for general prioritization advice, not here. This skill handles calendar-specific blocking and scheduling only.
 
 ### How It Works
 
@@ -142,10 +149,10 @@ Write these as tasks in the project file? (yes / edit first / cancel)
 Append subtasks directly after the `## Open Tasks` section header in the relevant project file (before the Dataview block, not inside it). Use Obsidian Tasks plugin TODO format:
 
 ```
-- [ ] {subtask description} 📅 {YYYY-MM-DD if suggested} [project:: {project}] [type:: task] [Auto] (capture, {YYYY-MM-DD})
+- [ ] {subtask description} 📅 {YYYY-MM-DD if suggested} [project:: [[{project}]]] [type:: task] [Auto] (capture, {YYYY-MM-DD})
 ```
 
-If no project file is found, append them to the current daily note's `## Morning Focus` section (or at the end of the file if Morning Focus doesn't exist).
+If no project file is found, append them to the current daily note at `Journal/{YYYY-MM-DD}.md`. If the daily note does not exist, ask whether to create it or show the subtasks inline only.
 
 Tasks go in the project file, not the Dataview query block — the Dataview query will automatically pick them up.
 

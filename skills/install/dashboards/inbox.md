@@ -22,9 +22,12 @@ SORT due ASC
 ```
 
 ### Review Queue
+
+> Unchecked items in the review queue files requiring your judgment.
+
 ```dataview
 TASK
-FROM "myna"
-WHERE !completed AND type = "review"
-SORT due ASC
+FROM "myna/ReviewQueue"
+WHERE !completed AND !contains(file.name, "processed-")
+SORT file.name ASC
 ```

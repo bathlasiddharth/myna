@@ -74,6 +74,7 @@ CONFIG_DEFAULTS = {
 # ---------------------------------------------------------------------------
 
 config_dir: Path = None
+active_config_path: Path = None  # set in main(); used by _handle_get_manifest
 last_request_time: float = time.time()
 
 # ---------------------------------------------------------------------------
@@ -130,11 +131,10 @@ def deep_merge(base: dict, incoming: dict) -> dict:
 # CORS helpers
 # ---------------------------------------------------------------------------
 
-CORS_HEADERS = {
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods": "GET, PUT, POST, DELETE, OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type",
-}
+# No CORS headers — the UI is same-origin (served by this server).
+# We do not set Access-Control-Allow-Origin so that cross-origin pages
+# (any other tab) cannot issue requests to the local config API.
+CORS_HEADERS: dict = {}
 
 
 # ---------------------------------------------------------------------------
@@ -309,11 +309,12 @@ class MynaHandler(BaseHTTPRequestHandler):
             self._send_error(500, f"Failed to read imports: {e}")
 
     def _handle_get_manifest(self):
-        if not CONFIG_PATH.exists():
+        manifest_path = active_config_path or CONFIG_PATH
+        if not manifest_path.exists():
             self._send_error(404, "config.yaml not found")
             return
         try:
-            data = yaml_parser.load(str(CONFIG_PATH))
+            data = yaml_parser.load(str(manifest_path))
             self._send_json(200, data)
         except Exception as e:
             self._send_error(500, f"Failed to read config.yaml: {e}")
@@ -350,11 +351,22 @@ class MynaHandler(BaseHTTPRequestHandler):
             return
 
         file_path = config_dir / f"{name}.yaml"
-        existing = self._read_config(name)
+
+        # Load existing data with comments so they are preserved on save.
+        existing_comments = []
+        if file_path.exists():
+            try:
+                existing, existing_comments = yaml_parser.load_with_comments(str(file_path))
+            except Exception:
+                existing = CONFIG_DEFAULTS.get(name, {})
+                existing_comments = []
+        else:
+            existing = CONFIG_DEFAULTS.get(name, {})
+
         merged = deep_merge(existing, incoming)
 
         try:
-            yaml_parser.dump(merged, str(file_path))
+            yaml_parser.dump(merged, str(file_path), comments=existing_comments)
         except Exception as e:
             self._send_error(500, f"Failed to write config: {e}")
             return
@@ -402,8 +414,13 @@ class MynaHandler(BaseHTTPRequestHandler):
             return
 
         saved = []
+        imports_root = IMPORTS_DIR.resolve()
         for filename, file_bytes in parts:
             dest = (IMPORTS_DIR / filename).resolve()
+            # Containment check: reject filenames that escape IMPORTS_DIR
+            if not str(dest).startswith(str(imports_root) + os.sep) and dest != imports_root:
+                self._send_error(400, f"Invalid filename: {filename}")
+                return
             try:
                 dest.write_bytes(file_bytes)
                 saved.append({"name": filename, "path": str(dest)})
@@ -505,7 +522,7 @@ def _inactivity_watchdog():
 # ---------------------------------------------------------------------------
 
 def main():
-    global config_dir
+    global config_dir, active_config_path
 
     # Parse --config-path argument if provided
     config_path = CONFIG_PATH
@@ -514,10 +531,24 @@ def main():
         if arg == "--config-path" and i + 1 < len(args):
             config_path = Path(args[i + 1])
 
+    active_config_path = config_path
+
     config = load_config(config_path)
     vault_path = config.get("vault_path", "")
     subfolder = config.get("subfolder", "myna")
-    config_dir = Path(vault_path) / subfolder / "_system" / "config"
+
+    if not vault_path:
+        print("ERROR: vault_path is empty in config.yaml", file=sys.stderr)
+        print("Run /myna:setup to configure your vault path.", file=sys.stderr)
+        sys.exit(1)
+
+    vault_root = Path(vault_path)
+    if not vault_root.exists():
+        print(f"ERROR: vault_path does not exist: {vault_path}", file=sys.stderr)
+        print("Check the vault_path in ~/.myna/config.yaml.", file=sys.stderr)
+        sys.exit(1)
+
+    config_dir = vault_root / subfolder / "_system" / "config"
 
     ensure_dirs()
 

@@ -1,13 +1,20 @@
 ---
 type: recurring
-project: "[[{{project-slug}}]]"
+project: null
 ---
 
 #meeting #recurring
 
-**Project:** [[{{project-slug}}]]
+## {{date}} Session
 
-## Context
+### Prep
 
-**Cadence:**
-**Purpose:**
+- [ ] {{prep items relevant to meeting type}}
+
+### Notes
+
+**Discussion:**
+
+**Action Items:**
+
+**Decisions:**

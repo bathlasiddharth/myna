@@ -8,7 +8,7 @@ argument-hint: "[quick note: ...]"
 
 # myna-wrap-up
 
-If vault_path is not in context, read `~/.myna/config.yaml` first. If the file does not exist, tell the user to run `/myna:install` and stop.
+If vault_path is not in context, read `~/.myna/config.yaml` first. If the file does not exist, tell the user to run `/myna:setup` and stop.
 
 Closes out the day. Reads today's daily note and vault state, writes an End of Day section, moves unfinished items forward, detects contributions, and runs a brief learning reflection. The daily note becomes the complete record of the day: sync snapshots at top, user edits in the middle, wrap-up at the bottom.
 
@@ -51,13 +51,17 @@ If there was no morning sync snapshot, note it and skip the comparison. Still pr
 For each "not started" and "partially done" item:
 
 1. Determine tomorrow's date (next weekday).
-2. If tomorrow's daily note (`Journal/{tomorrow}.md`) doesn't exist, create it with frontmatter and Morning Focus section only.
-3. Append the carried items to tomorrow's note under the `## Immediate Attention` section (add the section if it doesn't exist). Each item gets a carry-forward annotation:
+2. If tomorrow's daily note (`Journal/{tomorrow}.md`) doesn't exist, create it with frontmatter (`date: {YYYY-MM-DD}`), `#daily` tag, and a `## Morning Focus` section only.
+3. Append the carried items to tomorrow's note under the `## Morning Focus` section (inside a `### Carry-Forwards` subsection — add it if it doesn't exist). Each item gets a carry-forward annotation:
 
 ```markdown
-- {item} (carried from {today}) [Inferred]
-- {item} (carried from {today}) [Inferred]
+### Carry-Forwards
+
+- {item} (carried from {today}) [Auto]
+- {item} (carried from {today}) [Auto]
 ```
+
+These are mechanical copies of unchecked items — not new inferences — so `[Auto]` is the correct marker.
 
 Do NOT remove or modify the items in today's note. The original remains as-is.
 
@@ -76,7 +80,7 @@ Scan for items from today that look like contributions worth tracking:
 - Delegations you resolved (your delegation tasks marked done)
 
 **Lower-confidence sources (`[Inferred]`):**
-- Meetings you attended today (checked off in Today's Meetings) — you contributed to whatever was discussed
+- Meetings you attended today where the meeting notes contain an explicit action, decision, feedback, or outcome attributable to you — do NOT log a contribution solely because you attended; mere attendance is not a contribution
 - Blockers marked resolved in project timelines today where you were a likely resolver (based on `[person:: ...]` fields nearby)
 - Emails processed today where you were the sender and an outcome was noted
 
@@ -131,8 +135,8 @@ Append to today's daily note at the very bottom:
 
 ### Carried to Tomorrow
 
-- {item} (carried from {today}) [Inferred]
-- {item} (carried from {today}) [Inferred]
+- {item} (carried from {today}) [Auto]
+- {item} (carried from {today}) [Auto]
 {If nothing to carry: "(nothing to carry — clean day)"}
 
 ### Quick Notes
@@ -142,16 +146,23 @@ Append to today's daily note at the very bottom:
 
 ---
 
-## Step 7: Output Summary
+## Step 7: Run Learning Reflection
+
+Invoke `/myna:learn` with the `reflect` operation as the final step before output. This scans the session context for behavioral patterns. The user does not need to type anything — wrap-up triggers it automatically (End of Day path only).
+
+---
+
+## Step 8: Output Summary
 
 Print a concise summary:
 
 ```
-✅ Wrap-up complete ({HH:MM}).
+Wrap-up complete ({HH:MM}).
 
 Completed: {N} items | Not started: {N} (carried to tomorrow) | Partially done: {N}
 Contributions: {N} logged [{N} Auto, {N} Inferred], {N} in review-self
 {If quick note captured: "Quick note captured."}
+{Reflection result from Step 7}
 
 Today's note: {obsidian-uri}
 Tomorrow's note: {obsidian-uri}
@@ -161,7 +172,6 @@ Then suggest:
 - "Run 'sync' tomorrow morning to start fresh."
 - "Say 'weekly summary' to summarize the week." (if it's Friday or end of sprint)
 - "Say 'review my queue' to process contributions in review-self."
-- "Say 'reflect' or 'what did you learn today?' to run a learning reflection."
 
 ---
 

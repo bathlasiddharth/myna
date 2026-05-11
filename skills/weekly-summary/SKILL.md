@@ -8,7 +8,7 @@ argument-hint: "[week of YYYY-MM-DD | last week]"
 
 # myna-weekly-summary
 
-If vault_path is not in context, read `~/.myna/config.yaml` first. If the file does not exist, tell the user to run `/myna:install` and stop.
+If vault_path is not in context, read `~/.myna/config.yaml` first. If the file does not exist, tell the user to run `/myna:setup` and stop.
 
 Generates or updates the weekly summary. Each run appends a fresh `## Weekly Summary — {date}` section to the weekly note. Re-runs are additive — previous sections stay untouched.
 
@@ -22,7 +22,7 @@ Generates or updates the weekly summary. Each run appends a fresh `## Weekly Sum
 
 **Specific date:** "week of April 7" → find the Monday for that week.
 
-Weekly note path: `Journal/{YYYY-WNN}.md` (e.g. `2026-W18`)
+Weekly note path: `Journal/{YYYY-W\d\d}.md` (e.g. `2026-W18.md`)
 
 ---
 
@@ -32,6 +32,7 @@ Read `workspace.yaml`:
 - `vault.path` → vault root; Myna subfolder is always `myna` (hardcoded)
 - `user.role` → determines framing of contribution categories
 - `features.team_health` → if enabled, include team health snapshot
+- `features.monthly_updates` → if enabled, suggest monthly update at end of output
 
 ---
 
@@ -45,7 +46,7 @@ Read the weekly note if it exists. Note any prior "Weekly Summary" sections for 
 
 Read in parallel:
 
-**Daily notes for the week:** Glob `Journal/{YYYY-MM-DD}.md` for each weekday. From each, extract:
+**Daily notes for the week:** Glob both `Journal/{YYYY-MM-DD}.md` and `Journal/Archive/Daily/{YYYY-MM-DD}.md` for each weekday — prior notes are archived to `Journal/Archive/Daily/` after each sync run. From each found daily note, extract:
 - End of Day "Completed" items (from wrap-up sections, if they exist)
 - End of Day "Not started" / "Partially done" items that ended up carrying forward
 - Any quick notes from wrap-up sections
@@ -60,7 +61,7 @@ Read in parallel:
 - `- \[x\]` with completion dates in the target week → completed count
 - Items present in Monday's daily note Immediate Attention and still `- \[ \]` at end of week → carried count
 
-**Team Health** (if `features.team_health` enabled): Read all `People/{slug}.md` files for direct reports (those with `relationship_tier: direct` in people.yaml). For each, gather: open task count, overdue task count, last 1:1 date, feedback gap (days since last entry in Pending Feedback or Observations), attention gap (days since any interaction was logged — 1:1, observation, or quick note). Check `Team/{team}.md` for any existing health snapshots this week.
+**Team Health** (if `features.team_health` enabled): Read all `People/{slug}.md` files for direct reports (those with `relationship_tier: direct` in people.yaml). For each, gather: open task count, overdue task count, last 1:1 date, feedback gap (days since the last delivered feedback — count only observations with type `strength` or `growth-area` that have been explicitly noted; general observations that aren't feedback do not reset this clock), attention gap (days since any interaction was logged — 1:1, observation, or quick note). Check `Team/{team}.md` for any existing health snapshots this week.
 
 ---
 
@@ -155,7 +156,9 @@ Flag entries:
 Also include in the weekly summary section:
 
 ```markdown
-### Team Health
+### Team Snapshot
+
+> All flags reflect your records and follow-through, not an assessment of each person's state.
 
 | Person | Open Tasks | Overdue | Feedback Gap | Attention Gap | Last 1:1 |
 |--------|-----------|---------|--------------|---------------|----------|
@@ -179,7 +182,7 @@ Weekly note: {obsidian-uri}
 ```
 
 Then suggest:
-- "Say 'monthly update' to draft an MBR or status report from this week's data." (if `features.monthly_updates` is enabled)
+- "Say 'monthly update' to draft an MBR or status report from this week's data." (only if `features.monthly_updates` is enabled — read from workspace.yaml)
 - "Say 'wrap up' to close out today's daily note." (if it's end of week and today's wrap-up hasn't run)
 
 ---

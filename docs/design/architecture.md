@@ -73,7 +73,7 @@ Sets up or refreshes your day. Creates the daily note (or prepends a new snapsho
 
 **Reads:** calendar MCP, workspace.yaml, projects.yaml, people.yaml, meetings.yaml, existing daily note, task items across project files, review queue files, person files, previous meeting files (for carry-forward)
 
-**Writes:** `Journal/DailyNote-{date}.md`, `Journal/WeeklyNote-{date}.md`, `Meetings/` prep files
+**Writes:** `Journal/{YYYY-MM-DD}.md`, `Journal/{YYYY-WNN}.md`, `Meetings/` prep files
 
 **Example:** User says "sync" → reads calendar (4 meetings, 2 hrs total), open tasks (2 overdue, 5 hrs estimated), delegation alerts (1 overdue from Marcus) → creates daily note with Capacity Check, Immediate Attention, Today's Meetings → generates prep for each meeting → "Sync complete (8:30 AM). 4 meetings, 2 overdue tasks, 1 overdue delegation, 5 items in review queue."
 
@@ -123,7 +123,7 @@ Generates a weekly summary and team health snapshot (for managers). Synthesizes 
 
 **Reads:** daily notes for the week, contributions log, project timelines, meeting files, task items, team files (managers)
 
-**Writes:** `Journal/WeeklyNote-{date}.md` (Weekly Summary section), `Team/` health snapshots (managers)
+**Writes:** `Journal/{YYYY-WNN}.md` (Weekly Summary section), `Team/` health snapshots (managers)
 
 **Example:** User says "weekly summary" → scans 5 daily notes → "Week summary: 3 projects progressed, 12 tasks completed, 2 carried. Key decisions: cache architecture (Auth Migration), Q3 staffing plan. 2 blocked items. Team health: Sarah on track, Alex overloaded (8 open, 3 overdue)."
 
@@ -157,7 +157,7 @@ Extracts structured data from email, Slack, or pasted documents and routes each 
 
 **Reads:** email MCP (mapped project folders), Slack MCP (mapped channels), workspace.yaml, projects.yaml, people.yaml, existing vault files (near-duplicate check), `_system/logs/processed-channels.md` (Slack timestamps)
 
-**Writes:** project timelines, task items in project files, person files, `Journal/contributions-{week}.md`, review queues, `_system/sources/`, `_system/logs/audit.md`
+**Writes:** project timelines, task items in project files, person files, `Journal/contributions-{week}.md`, review queues, `_system/sources/`, `_system/state/email-sync.yaml`
 
 **Deduplication layers:** (1) Move to Processed/ — email-specific, configurable per-project or common mode. (2) Quote stripping — only process new content. (3) Near-duplicate detection — skip entries already in the target file.
 
@@ -574,8 +574,8 @@ myna/
 │   ├── [Status] Auth Migration April.md
 │   └── ...
 ├── Journal/                     # Daily/weekly notes, contributions
-│   ├── DailyNote-2026-04-05.md       # Daily note
-│   ├── WeeklyNote-2026-04-01.md     # Weekly note (Monday start)
+│   ├── 2026-04-05.md                # Daily note ({YYYY-MM-DD}.md)
+│   ├── 2026-W14.md                  # Weekly note ({YYYY-WNN}.md, Monday start)
 │   ├── contributions-2026-04-01.md  # Weekly contributions (Monday date)
 │   └── Archive/                 # Old daily/weekly notes (auto-archived by sync)
 ├── Team/                        # Team health tracking (managers)

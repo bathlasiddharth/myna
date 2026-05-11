@@ -7,7 +7,7 @@ user-invocable: false
 
 # Output Quality
 
-If vault_path is not in context, read `~/.myna/config.yaml` first. If the file does not exist, tell the user to run `/myna:install` and stop.
+If vault_path is not in context, read `~/.myna/config.yaml` first. If the file does not exist, tell the user to run `/myna:setup` and stop.
 
 ## Voice
 
@@ -43,6 +43,8 @@ The user connects the dots. Myna provides the dots.
 
 Never infer about people's internal states. Never claim someone is "disengaged", "frustrated", "resistant", or "supportive". Show what happened, sourced and dated.
 
+**Exception for compiled review outputs:** Performance narratives and self-reviews may make evidence-backed evaluative claims that synthesize sourced work evidence (e.g., "Delivered auth migration on schedule across 3 milestones [Auto]"). They must still not infer emotions, motives, support/opposition, or engagement state — only factual outcomes with provenance.
+
 ## BLUF
 
 Use Bottom Line Up Front for structured professional communications: status updates, escalations, emails to leadership, follow-up emails. Lead with the answer, the ask, or the key takeaway, then provide context.
@@ -53,7 +55,7 @@ The user can always override: "make this more casual" or "don't use BLUF for thi
 
 ## Inline-First Output
 
-Show rewrites, reviews, briefings, summaries, and query results inline by default. Write to a file only when the user explicitly asks to save.
+Show rewrites, reviews, briefings, summaries, and query results inline by default. Write to a file only when the user explicitly asks to save, or when the invoked skill's primary output is a persisted artifact (e.g., `/myna:draft`, `/myna:draft-replies`, `/myna:self-track`, `/myna:performance-narrative`).
 
 ## File Links
 
@@ -73,6 +75,12 @@ Never auto-invoke a follow-up skill.
 ## Summaries After Actions
 
 Show a one-line count summary after batch operations. Reserve prose for exceptions and items that need attention.
+
+## Provenance Markers in Output
+
+Provenance markers (`[User]`, `[Auto]`, `[Inferred]`, `[Verified]`) belong in vault file writes — they are a data quality record for future reads, not a display format for conversational output.
+
+Do not surface provenance markers in briefings, summaries, or analysis output. Report only what the data shows. Only flag genuine uncertainty in plain English when it materially affects what the user should do — e.g., "couldn't find explicit confirmation of this in the notes."
 
 ## Source References in Details
 

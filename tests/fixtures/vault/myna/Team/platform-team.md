@@ -13,13 +13,13 @@ created: 2025-08-11
 
 > Team-level observations: retro themes, cross-1:1 patterns, process changes.
 
-- [2025-11-15 | meeting Platform offsite] Offsite themes: shipping cadence feels good, team health strong; concern about cross-team dependency churn [User]
-- [2026-02-15 | meeting Compass retro] Compass v1 retro surfaced two themes: better launch playbooks (action: Rachel owns), more cross-team early reviews (action: ongoing) [User]
-- [2026-03-12 | meeting Incident postmortem] March 12 cache poisoning incident — root cause was a race in token refresh; postmortem ran clean [User]
-- [2026-03-20 | user] Three commitments slipping pattern across the team this month — Marcus (3), Sarah (1, recovered), Rachel (0), Nate (0). Marcus is the one to watch. [User]
-- [2026-04-01 | meeting Platform Weekly] Team agreed to rotate Platform Weekly facilitator — Rachel volunteered for April [User]
-- [2026-04-08 | meeting Platform Weekly] Nate Brooks presented at Platform Weekly for the first time (Aurora skeleton demo) [User]
-- [2026-04-10 | user] Marcus parental leave confirmed: May 18 – August 10. Coverage planning starting. [User]
+- [2025-11-15] Offsite themes: shipping cadence feels good, team health strong; concern about cross-team dependency churn [User]
+- [2026-02-15] Compass v1 retro surfaced two themes: better launch playbooks (action: Rachel owns), more cross-team early reviews (action: ongoing) [User]
+- [2026-03-12] March 12 cache poisoning incident — root cause was a race in token refresh; postmortem ran clean [User]
+- [2026-03-20] Three commitments slipping pattern across the team this month — Marcus (3), Sarah (1, recovered), Rachel (0), Nate (0). Marcus is the one to watch. [User]
+- [2026-04-01] Team agreed to rotate Platform Weekly facilitator — Rachel volunteered for April [User]
+- [2026-04-08] Nate Brooks presented at Platform Weekly for the first time (Aurora skeleton demo) [User]
+- [2026-04-10] Marcus parental leave confirmed: May 18 – August 10. Coverage planning starting. [User]
 
 ## Health Snapshots
 

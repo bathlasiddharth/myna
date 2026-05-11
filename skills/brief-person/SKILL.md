@@ -6,7 +6,7 @@ user-invocable: true
 argument-hint: "[person name]"
 ---
 
-If vault_path is not in context, read `~/.myna/config.yaml` first. If the file does not exist, tell the user to run `/myna:install` and stop.
+If vault_path is not in context, read `~/.myna/config.yaml` first. If the file does not exist, tell the user to run `/myna:setup` and stop.
 
 # Person Briefing
 
@@ -31,9 +31,10 @@ Once resolved, read these files in parallel:
 
 **Person slug:** The file path slug is the kebab-case of the person's full_name from people.yaml (e.g., "Sarah Chen" → `sarah-chen`). If people.yaml has no full_name, use display_name.
 
-**Open Items detection:** Grep open tasks (`- [ ]`) across `Projects/` that mention this person:
-- **Assigned to them:** `[person:: {name}]` — any open task assigned to this person
-- **They're waiting on you:** `[type:: dependency] [person:: {name}]` or `[type:: reply-needed] [person:: {name}]` — tasks blocking them that require your action
+**Open Items detection:** Grep open tasks (`- [ ]`) across `Projects/` that mention this person. Search all identity forms from people.yaml: display name, full name, slug, and all aliases. Also search wiki-link forms `[[full-name]]` and `[[slug]]` since different skills may write either form.
+
+- **Assigned to them:** tasks with `[person:: {name}]` (any name form) and no `[type:: delegation]` indicating self-ownership, or explicit `[type:: delegation]` where this person is the owner
+- **Dependencies involving {name}:** `[type:: dependency]` or `[type:: reply-needed]` tasks mentioning this person. Do not assert direction unless the task text or owner field makes it explicit that the user is the one who owes action.
 
 Missing files are not errors — skip and note what was unavailable.
 
@@ -43,7 +44,6 @@ Missing files are not errors — skip and note what was unavailable.
 
 Show all sections inline. Always include every section — if a section has no data, show a brief note (e.g., "None logged.", "No open items.", "No recent interactions found."). Never silently skip a section.
 
-Strip provenance tags (`[Auto]`, `[Inferred]`) from all output — these are vault internals, not user-facing.
 
 ```
 ## 👤 [Person Name] — [Role], [Team]
@@ -64,7 +64,7 @@ Strip provenance tags (`[Auto]`, `[Inferred]`) from all output — these are vau
 - [task description] — due [date] (from [project])
 - ...
 
-**They're waiting on you:**
+**Dependencies involving {name}:**
 - [task or item description] — [source]
 - ...
 
@@ -160,11 +160,11 @@ Action items from last session:
 - [ ] Send caching decision context doc — you
 
 ### 🏆 Recent Recognition
-- [2026-03-22] Led incident response for the auth service outage — resolved P0 in under 2 hours [Auto]
+- [2026-03-22] Led incident response for the auth service outage — resolved P0 in under 2 hours [Auto] (meeting, 1:1 with Sarah)
 
 ### 📝 Recent Observations
-- [2026-03-22 | meeting 1:1 with Sarah] **strength:** Calm, methodical incident response [Auto]
-- [2026-03-10 | email from Sarah] **contribution:** Shipped auth migration Phase 1 on time [Auto]
+- [2026-03-22] **strength:** Calm, methodical incident response [Auto] (meeting, 1:1 with Sarah)
+- [2026-03-10] **contribution:** Shipped auth migration Phase 1 on time [Auto] (email, Sarah)
 
 ### 🌱 Personal Notes
 - Training for the SF Marathon in June

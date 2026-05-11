@@ -7,7 +7,7 @@ user-invocable: false
 
 # System Behavior
 
-If vault_path is not in context, read `~/.myna/config.yaml` first. If the file does not exist, tell the user to run `/myna:install` and stop.
+If vault_path is not in context, read `~/.myna/config.yaml` first. If the file does not exist, tell the user to run `/myna:setup` and stop.
 
 ## Feature Toggle Checking
 
@@ -19,7 +19,7 @@ When the agent is about to invoke a gated skill and the toggle is off, it asks t
 
 Read config files at the start of each new session — not on every prompt. Configs don't change mid-conversation.
 
-If the user explicitly updates config during a session, use the updated values for the rest of that session. Otherwise, tell the user that config changes take effect on the next session.
+If the user explicitly updates config during a session, use the updated values for the rest of that session. When the agent itself writes a config change (e.g., enabling a feature toggle), update the in-memory config immediately so the change takes effect in the current session without requiring a restart. Otherwise, tell the user that config changes take effect on the next session.
 
 ## Graceful Degradation
 
@@ -41,7 +41,7 @@ When a multi-step operation partially fails:
 - [ ] 🔄 Retry: {what failed} — {reason} [type:: retry] [created:: {YYYY-MM-DD}]
 ```
 
-Retry TODOs surface in the daily note Immediate Attention section. Never silently swallow failures.
+**Retry TODO location:** Write to today's daily note (`Journal/{YYYY-MM-DD}.md`) for general failures. Write to the relevant project file for project-specific failures. Retry TODOs surface in the daily note Immediate Attention section. Never silently swallow failures.
 
 ## Relative Date Resolution
 
@@ -49,7 +49,7 @@ Convert "by Friday", "next week", "in 3 days", "tomorrow" to absolute dates usin
 
 ## Prompt Logging
 
-If `prompt_logging` is enabled in workspace.yaml, log user prompts with timestamps to `_system/logs/prompts.md`.
+If `prompt_logging` is enabled in workspace.yaml, log user prompts with timestamps to `_system/logs/prompts.md`. Log prompt metadata and a short user-authored summary by default. Do not log pasted email bodies, documents, credentials, or other sensitive external content verbatim — Myna processes sensitive workplace data and indiscriminate logging accumulates confidential material in logs.
 
 ## Fuzzy Name Resolution
 
@@ -77,10 +77,10 @@ Use external MCP tools only for services outside the vault: email, Slack, calend
 Before executing any Myna skill, check whether a user override file exists at:
 
 ```
-~/.myna/overrides/skills/myna-{skill-name}.md
+~/.myna/overrides/skills/{skill-name}.md
 ```
 
-where `{skill-name}` is the full plugin skill directory name (e.g., `myna-sync`, `myna-email-triage`).
+where `{skill-name}` matches the skill's `name` field (e.g., `sync.md` for `/myna:sync`, `email-triage.md` for `/myna:email-triage`).
 
 If the file exists, read it before the skill body takes effect. Override content takes precedence over built-in skill defaults when they conflict. If the file does not exist, proceed with the built-in skill as normal.
 

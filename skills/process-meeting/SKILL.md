@@ -8,7 +8,7 @@ argument-hint: '"done with 1:1 with Sarah", "process this meeting", "process my 
 
 # myna-process-meeting
 
-If vault_path is not in context, read `~/.myna/config.yaml` first. If the file does not exist, tell the user to run `/myna:install` and stop.
+If vault_path is not in context, read `~/.myna/config.yaml` first. If the file does not exist, tell the user to run `/myna:setup` and stop.
 
 Process a completed meeting: read the meeting file, close what was discussed, note what wasn't, extract everything useful from Notes, and route each item to the right vault destination.
 
@@ -90,47 +90,56 @@ Ambiguous items go to the review queue:
 | Observation could be recognition or growth area | `ReviewQueue/review-people.md` |
 | Uncertain if it's your contribution | `ReviewQueue/review-self.md` |
 
+Use this exact format for every review queue entry:
+
+```
+- [ ] **{proposed action}**
+  Source: {meeting name}, {date}
+  Interpretation: {what the agent thinks this is}
+  Ambiguity: {why it's in the queue — what's unclear}
+  Proposed destination: {e.g., Projects/auth-migration.md → ## Timeline}
+  ---
+```
+
 ### Entry formats
 
 **Task** (append to `## Open Tasks`):
 ```
-- [ ] Review updated API spec 📅 2026-04-17 🔼 [project:: Auth Migration] [type:: task] [person:: [[{user.name}]]] [Auto] (meeting, 1:1 with Sarah, 2026-04-10)
+- [ ] Review updated API spec 📅 2026-04-17 🔼 [project:: [[Auth Migration]]] [type:: task] [person:: [[{user.name}]]] [Auto] (meeting, 1:1 with Sarah, 2026-04-10)
 ```
 
 Use `user.name` from workspace.yaml for the person field on self-assigned tasks.
 
 **Delegation** (append to `## Open Tasks`):
 ```
-- [ ] Sarah to draft OAuth integration guide 📅 2026-04-17 [project:: Auth Migration] [type:: delegation] [person:: [[Sarah Carter]]] [Auto] (meeting, 1:1 with Sarah, 2026-04-10)
+- [ ] Sarah to draft OAuth integration guide 📅 2026-04-17 [project:: [[Auth Migration]]] [type:: delegation] [person:: [[Sarah Carter]]] [Auto] (meeting, 1:1 with Sarah, 2026-04-10)
 ```
-
-Always wiki-link the person name using `[[ ]]`.
 
 **Decision callout** (append to `## Timeline`):
 ```
 > [!info] Decision
-> [2026-04-10 | meeting 1:1 with Sarah] Go with OAuth 2.0 PKCE flow for the auth migration [Auto] (meeting, 1:1 with Sarah, 2026-04-10)
+> [2026-04-10] Go with OAuth 2.0 PKCE flow for the auth migration [Auto] (meeting, 1:1 with Sarah)
 ```
 
 **Blocker callout** (append to `## Timeline`):
 ```
 > [!warning] Blocker
-> [2026-04-10 | meeting 1:1 with Sarah] Cert rotation from infra team required before launch — waiting on ops [Auto] (meeting, 1:1 with Sarah, 2026-04-10)
+> [2026-04-10] Cert rotation from infra team required before launch — waiting on ops [Auto] (meeting, 1:1 with Sarah)
 ```
 
 **General timeline entry** (append to `## Timeline`):
 ```
-- [2026-04-10 | meeting 1:1 with Sarah] Auth migration spec v2 reviewed and approved [Auto] (meeting, 1:1 with Sarah, 2026-04-10)
+- [2026-04-10] Auth migration spec v2 reviewed and approved [Auto] (meeting, 1:1 with Sarah)
 ```
 
 **Observation** (append to `## Observations`):
 ```
-- [2026-04-10 | meeting 1:1 with Sarah] **strength:** Proactively raised the cert rotation dependency before it became a blocker [Auto] (meeting, 1:1 with Sarah, 2026-04-10)
+- [2026-04-10] **strength:** Proactively raised the cert rotation dependency before it became a blocker [Auto] (meeting, 1:1 with Sarah)
 ```
 
 **Recognition** (append to `## Recognition`):
 ```
-- [2026-04-10 | meeting 1:1 with Sarah] Delivered the auth spec v2 ahead of schedule despite scope creep [Auto] (meeting, 1:1 with Sarah, 2026-04-10)
+- [2026-04-10] Delivered the auth spec v2 ahead of schedule despite scope creep [Auto] (meeting, 1:1 with Sarah)
 ```
 
 **Personal note** (append to `## Personal Notes`):
@@ -140,7 +149,7 @@ Always wiki-link the person name using `[[ ]]`.
 
 **Contribution** (append to `Journal/contributions-{YYYY-MM-DD}.md`, Monday date):
 ```
-- [2026-04-10 | meeting 1:1 with Sarah] **people-development:** Delivered feedback on documentation gaps with specific examples [Inferred] (meeting, 1:1 with Sarah, 2026-04-10)
+- [2026-04-10] **people-development:** Delivered feedback on documentation gaps with specific examples [Inferred] (meeting, 1:1 with Sarah)
 ```
 
 ---
@@ -159,7 +168,7 @@ Adjust extraction depth by meeting type:
 **Standup / sync** — lighter extraction:
 - Blockers and status updates (primary)
 - Action items (secondary)
-- Skip observations and recognition — too lightweight a meeting for that
+- Avoid weak inference for observations and recognition — but still extract explicit recognition, explicit feedback, and any observation that is stated clearly. "Good job team" without a named person → skip. "Sarah resolved the auth blocker" → extract as observation.
 
 **Design review / decision meeting** — focused on decisions:
 - Decisions with context (why this option, what was rejected)
@@ -175,6 +184,13 @@ Adjust extraction depth by meeting type:
 ---
 
 ## After Extraction: Source Preservation and Session Marker
+
+### Missing destination files
+
+Before writing, check that destination files exist:
+- `Journal/contributions-{YYYY-MM-DD}.md` (Monday date) — if missing, create with frontmatter `week_start: {YYYY-MM-DD}` and tag `#contributions` before appending.
+- `_system/sources/{entity}.md` — if missing, create an empty file before appending.
+- Project and person files should already exist; if missing, note it in the output and route to review-work.
 
 ### Source file
 
@@ -262,8 +278,8 @@ Processed {N} meetings.
    - Action Items: "I will review the spec by Friday. Sarah will follow up with ops about cert timeline."
    - Decisions: "OAuth PKCE selected over client credentials — simpler, auditable"
 6. Extract:
-   - Task: "Review Sarah's API spec v2" 📅 Friday → `Projects/auth-migration.md` `[Auto]`
-   - Delegation: "Sarah to follow up with ops on cert rotation" → `Projects/auth-migration.md` `[Auto]`
+   - Task: "Review Sarah's API spec v2" 📅 Friday → `Projects/auth-migration.md`, `[person:: [[{user.name}]]]` `[Auto]`
+   - Delegation: "Sarah to follow up with ops on cert rotation" → `Projects/auth-migration.md`, `[person:: [[Sarah Chen]]]` `[Auto]`
    - Decision: "OAuth PKCE selected" → `Projects/auth-migration.md` timeline Decision callout `[Auto]`
    - Blocker: "cert rotation pending from infra" → `Projects/auth-migration.md` timeline Blocker callout `[Auto]`
    - Observation: "Sarah delivered spec v2 ahead of schedule" → `People/sarah-chen.md` `[Auto]`

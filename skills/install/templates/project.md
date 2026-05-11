@@ -1,8 +1,8 @@
 ---
-status: active
+created: {{date}}
 ---
 
-#project #{{project-tag}} #status/active
+#project #{{project-tag}}
 
 ## Overview
 
@@ -12,9 +12,9 @@ status: active
 
 ## Timeline
 
-> Append-only chronological log.
+> Append-only chronological log. Sorted by event date, not processing date.
 
-## Active Blockers
+- [{YYYY-MM-DD}] {content} [{provenance}] ({source-detail})
 
 ## Open Tasks
 
@@ -27,4 +27,10 @@ SORT priority DESC, due ASC
 
 ## Links
 
+- [{title}]({url}) — {description} [{YYYY-MM-DD}]
+
 ## Notes
+
+> Free-form scratchpad. Every entry auto-dated with source.
+
+- [{YYYY-MM-DD}] {thought or note}

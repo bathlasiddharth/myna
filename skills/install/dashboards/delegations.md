@@ -22,6 +22,9 @@ SORT due ASC
 ```
 
 ### By Person
+
+> Groups by `person` inline field. Tasks using `[person:: [[Name]]]` appear grouped here.
+
 ```dataview
 TASK
 FROM "myna"

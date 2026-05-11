@@ -1,5 +1,6 @@
 ---
 created: 2026-03-30
+aliases: ["Jessica Ryan"]
 ---
 
 #person #peer

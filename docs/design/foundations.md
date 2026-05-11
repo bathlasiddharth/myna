@@ -13,7 +13,7 @@ myna/
 ├── Projects/                         # One markdown file per project
 ├── People/                           # One markdown file per person
 ├── Meetings/
-│   ├── 1-1s/                         # One file per person, sessions appended
+│   ├── 1-1s/                         # One file per person, sessions prepended (newest at top)
 │   ├── Recurring/                    # Team meetings, standups, syncs
 │   └── Adhoc/                        # One-off meetings
 ├── Drafts/                               # Flat folder, type-prefixed filenames
@@ -58,6 +58,8 @@ myna/
     │   ├── audit.md                  # Agent action log
     │   ├── prompts.md                # User prompt log (if enabled)
     │   └── processed-channels.md     # Slack dedup: last timestamp per channel
+    ├── state/                        # Mutable runtime state (not logs)
+    │   └── email-sync.yaml           # last_processed_at timestamp for email dedup fallback
     ├── sources/                      # Verbatim source text, one file per entity
     ├── links.md                      # Central link index
     ├── parked/                       # Parked context snapshots
@@ -68,6 +70,8 @@ myna/
 - Project files: `{project-name}.md` — lowercase, hyphens for spaces (e.g., `auth-migration.md`)
 - Person files: `{full-name}.md` — lowercase, hyphens (e.g., `sarah-chen.md`)
 - Meeting files: same slug convention. 1:1s use person name, recurring uses meeting name, adhoc uses `{YYYY-MM-DD}-{meeting-name}` (date first, for chronological sort).
+
+**Alias requirement:** Project and person files must include `aliases: ["{Display Name}"]` in frontmatter. This lets wiki-links use the display name — `[[Sarah Chen]]` resolves to `sarah-chen.md`, `[[Auth Migration]]` resolves to `auth-migration.md` — which enables clickable hyperlinks in `[person:: [[Sarah Chen]]]` and `[project:: [[Auth Migration]]]` inline fields.
 - Daily notes: `{YYYY-MM-DD}.md` (e.g., `2026-05-01.md`) — lives at `Journal/` root; moved to `Journal/Archive/Daily/` when a new daily note is created
 - Weekly notes: `{YYYY-W\d\d}.md` (e.g., `2026-W18.md`) — lives at `Journal/` root; moved to `Journal/Archive/Weekly/` when a new weekly note is created
 - Monthly notes: `{YYYY-MM}.md` (e.g., `2026-05.md`) — lives at `Journal/` root; moved to `Journal/Archive/Monthly/` when a new monthly note is created
@@ -94,13 +98,13 @@ created: {YYYY-MM-DD}
 
 **Description:** {from projects.yaml or user-provided}
 **Status:** active
-**Key People:** [[sarah-chen]], [[alex-kumar]]
+**Key People:** [[Sarah Chen]], [[Alex Kumar]]
 
 ## Timeline
 
 > Append-only chronological log. Sorted by event date, not processing date.
 
-- [{YYYY-MM-DD} | {source}] {content} [{provenance}] ({source-detail})
+- [{YYYY-MM-DD}] {content} [{provenance}] ({source-detail})
 
 ## Open Tasks
 
@@ -119,7 +123,7 @@ SORT priority DESC, due ASC
 
 > Free-form scratchpad. Every entry auto-dated with source.
 
-- [{YYYY-MM-DD} | {source}] {thought or note}
+- [{YYYY-MM-DD}] {thought or note}
 ```
 
 **Field notes:**
@@ -129,10 +133,10 @@ SORT priority DESC, due ASC
 - Callout blocks for blockers and decisions:
   ```
   > [!warning] Blocker
-  > [{date} | {source}] {blocker description} [{provenance}]
+  > [{date}] {blocker description} [{provenance}]
 
   > [!info] Decision
-  > [{date} | {source}] {decision} [{provenance}]
+  > [{date}] {decision} [{provenance}]
   ```
 
 ### 2.2 Person File
@@ -161,7 +165,7 @@ created: {YYYY-MM-DD}
 
 > Chronological log of observations. Each entry has type, area, and source.
 
-- [{YYYY-MM-DD} | {source}] **{type}:** {observation} [{provenance}] ({source-detail})
+- [{YYYY-MM-DD}] **{type}:** {observation} [{provenance}] ({source-detail})
 
 Types: strength, growth-area, contribution
 
@@ -173,7 +177,7 @@ Types: strength, growth-area, contribution
 
 > Accomplishments and recognition entries.
 
-- [{YYYY-MM-DD} | {source}] {what they did} — {context} [{provenance}] ({source-detail})
+- [{YYYY-MM-DD}] {what they did} — {context} [{provenance}] ({source-detail})
 
 ## Personal Notes
 
@@ -192,7 +196,7 @@ Types: strength, growth-area, contribution
 
 `Meetings/1-1s/{person-name}.md`
 
-One file per person. Sessions appended chronologically, newest at the bottom.
+One file per person. Sessions prepended below the frontmatter and tags — newest at the top.
 
 ```markdown
 ---
@@ -403,7 +407,7 @@ week_start: {YYYY-MM-DD}
 
 > Append-only. Each entry has date, description, category, source, and provenance.
 
-- [{YYYY-MM-DD} | {source}] **{category}:** {description} [{provenance}] ({source-detail})
+- [{YYYY-MM-DD}] **{category}:** {description} [{provenance}] ({source-detail})
 ```
 
 **Categories (IC):** decisions-and-influence, unblocking-others, issue-prevention, code-reviews, feedback-given, documentation, escalations-handled, delegation-management, best-practices, risk-mitigation, coaching-and-mentoring
@@ -492,7 +496,7 @@ created: {YYYY-MM-DD}
 
 > Team-level observations: retro themes, cross-1:1 patterns, process changes.
 
-- [{YYYY-MM-DD} | {source}] {observation} [{provenance}]
+- [{YYYY-MM-DD}] {observation} [{provenance}]
 
 ## Health Snapshots
 
@@ -592,7 +596,7 @@ Links are also saved in the relevant entity's Links section. The central index p
 
 ### 2.15 Unified Dashboard
 
-`_system/dashboards/dashboard.md`
+`Dashboards/dashboard.md`
 
 A Dataview-powered file with live queries. Always up-to-date without manual refresh.
 
@@ -859,8 +863,8 @@ tags:
 Tag and compact source at end of line:
 
 ```
-- Shipped auth migration on time [Auto] (email, Sarah, 2026-03-15)
-- Strong escalation handling during incident [Inferred] (meeting, 1:1 with Sarah, 2026-03-20)
+- Shipped auth migration on time [Auto] (email, Sarah)
+- Strong escalation handling during incident [Inferred] (meeting, 1:1 with Sarah)
 - Led the design review [User]
 - API spec deadline confirmed as Friday [Verified] (was Inferred, confirmed 2026-04-03)
 ```
@@ -916,7 +920,7 @@ Features that compile data (performance narratives, person briefings, self-narra
 Every vault entry uses a consistent header:
 
 ```
-[{YYYY-MM-DD} | {source}]
+[{YYYY-MM-DD}]
 ```
 
 **Source values:**
@@ -931,7 +935,7 @@ Every vault entry uses a consistent header:
 For provenance marker lines, the source goes in parentheses at the end:
 
 ```
-- {content} [{provenance}] ({source-type}, {identity}, {date})
+- {content} [{provenance}] ({source-type}, {identity})
 ```
 
 **Source identity (keep compact):**
@@ -1008,9 +1012,9 @@ Myna does NOT ship an MCP server for vault operations. Skills interact with the 
 |-------|---------|
 | Open tasks | `- \[ \]` |
 | Completed tasks | `- \[x\]` |
-| Filter by project | `\[project:: {name}\]` in task line |
+| Filter by project | `\[project:: \[\[{name}\]\]\]` in task line |
 | Filter by type | `\[type:: {type}\]` (task, delegation, dependency, reply-needed, retry) |
-| Filter by person | `\[person:: {name}\]` |
+| Filter by person | `\[person:: \[\[{name}\]\]\]` |
 | Overdue detection | `📅 {date}` — compare against today |
 | Pending review | `\[review-status:: pending\]` |
 | Recurrence | `🔁 every {interval}` |
@@ -1099,7 +1103,7 @@ Skills don't wait for other skills to run. Each skill reads whatever is currentl
 {new content}
 ```
 
-For append-only sections like timelines and observations, no separator is needed — the `[{date} | {source}]` header and provenance marker already distinguish agent entries.
+For append-only sections like timelines and observations, no separator is needed — the `[{date}]` header and provenance marker already distinguish agent entries.
 
 **Carry-forward creates a copy:** Unchecked meeting prep items → new entry in next session with "(carried from {date})". Original left untouched.
 
@@ -1250,8 +1254,8 @@ Inline `#tags` at the top of files (not YAML frontmatter arrays). Auto-applied b
 `[[file-name]]` for cross-references between vault files. Always verify the target file exists before creating a link.
 
 ```markdown
-Key People: [[sarah-chen]], [[alex-kumar]]
-See also: [[auth-migration]]
+Key People: [[Sarah Chen]], [[Alex Kumar]]
+See also: [[Auth Migration]]
 ```
 
 ### 10.3 Callout Blocks
@@ -1260,13 +1264,13 @@ Visual emphasis for blockers, decisions, and warnings:
 
 ```markdown
 > [!warning] Blocker
-> [2026-04-03 | email from Sarah] API dependency not available until April 15 [Auto]
+> [2026-04-03] API dependency not available until April 15 [Auto] (email, Sarah)
 
 > [!info] Decision
-> [2026-04-03 | meeting, 1:1 with Sarah] Go with Option B for caching [Auto]
+> [2026-04-03] Go with Option B for caching [Auto] (meeting, 1:1 with Sarah)
 
 > [!tip] Recognition
-> [2026-04-03 | email from James] Great work on the incident response [Auto]
+> [2026-04-03] Great work on the incident response [Auto] (email, manager)
 ```
 
 ### 10.4 Dataview Queries
@@ -1285,15 +1289,15 @@ SORT due ASC
 All TODOs use Obsidian Tasks plugin format:
 
 ```markdown
-- [ ] Review Sarah's design doc 📅 2026-04-10 ⏫ [project:: Auth Migration] [type:: task] [Auto] (email, Sarah, 2026-04-05)
+- [ ] Review Sarah's design doc 📅 2026-04-10 ⏫ [project:: [[Auth Migration]]] [type:: task] [Auto] (email, Sarah)
 ```
 
-Optional fields (`[person:: ]`, `[review-status:: ]`, `[effort:: ]`) are omitted when not applicable — only include fields that have values.
+Optional fields (`[person:: [[Name]]]`, `[review-status:: ]`, `[effort:: ]`) are omitted when not applicable — only include fields that have values.
 
 **Task fields as inline properties:**
-- `[project:: {name}]` — which project
+- `[project:: [[{name}]]]` — which project (wiki-link; project file needs `aliases: ["{name}"]`)
 - `[type:: {task | delegation | dependency | reply-needed | retry}]` — task type
-- `[person:: {name}]` — owner (for delegations) or who you're waiting on
+- `[person:: [[{name}]]]` — owner (for delegations) or who you're waiting on (wiki-link; person file needs `aliases: ["{name}"]`)
 - `[review-status:: {pending | reviewed}]` — set to pending when fields are inferred
 - Priority emoji: ⏫ high, 🔼 medium, (none) low
 - Due date: 📅 YYYY-MM-DD
@@ -1303,7 +1307,7 @@ Optional fields (`[person:: ]`, `[review-status:: ]`, `[effort:: ]`) are omitted
 
 **Agent always creates formatted tasks from natural language.** User never types task syntax.
 
-**Inferred fields are marked:** `[project:: Auth Migration (inferred)]` so the user knows what to verify during review.
+**Inferred fields are marked:** `[project:: [[Auth Migration]] (inferred)]` so the user knows what to verify during review.
 
 ### 10.6 File Links in Agent Output
 

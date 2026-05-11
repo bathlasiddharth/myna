@@ -6,7 +6,7 @@ user-invocable: true
 argument-hint: "draft reply to [person] | follow-up email for [meeting] | follow-up meeting with [people] | status update for [project] | escalate [blocker] | recognition for [person] | help me say no to [request] | prep for [conversation] | monthly update | draft my MBR | draft my QBR"
 ---
 
-If vault_path is not in context, read `~/.myna/config.yaml` first. If the file does not exist, tell the user to run `/myna:install` and stop.
+If vault_path is not in context, read `~/.myna/config.yaml` first. If the file does not exist, tell the user to run `/myna:setup` and stop.
 
 # draft
 
@@ -68,7 +68,7 @@ When in doubt: check audience tier. Upward or cross-team → apply BLUF. Peer or
 3. Determine audience tier from people.yaml (`upward`, `peer`, `direct`, `cross-team`).
 4. Apply communication-style.yaml preset for that tier.
 5. Draft the reply addressing all open questions in the thread. Apply BLUF for upward/cross-team; skip for peer/direct casual messages.
-6. Show inline. Save to `Drafts/[Email] Reply to {person}.md` if user asks.
+6. Show inline. Save to `Drafts/[Email] Reply to {person} — {topic}.md` if user asks. Before writing, check `Drafts/` for an existing file with a similar name (same person). If one exists, use a more specific name that includes the topic or date to avoid overwriting it (e.g., `[Email] Reply to James — API timeline.md`).
 7. Create linked TODO: `- [ ] Review and send reply to {person} about {topic} 📅 {today} [type:: task]`
 
 **No instructions:** If user just names a thread, draft addressing all open questions using sender's audience tier preset.
@@ -415,7 +415,7 @@ Default: show inline, offer to save. For longer multi-section drafts (monthly up
 When saving:
 - Create `Drafts/[{Type}] {topic}.md` with frontmatter block.
 - Add at bottom: `*Source: {what prompted this draft}*`
-- Create linked TODO in the appropriate project file or daily note:
+- Create linked TODO in the appropriate project file, or in `Journal/{YYYY-MM-DD}.md` if no project is associated:
   `- [ ] Review and send {draft name} 📅 {today} [type:: task] [project:: {project or null}]`
 - Show the Obsidian URI and full disk path.
 

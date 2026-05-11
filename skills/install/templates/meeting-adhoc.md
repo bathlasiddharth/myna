@@ -1,10 +1,19 @@
 ---
 type: adhoc
-date: {{date}}
 ---
 
 #meeting #adhoc
 
-## Context
+## {{date}} Session
 
-**Purpose:**
+### Prep
+
+- [ ] {{prep items relevant to meeting type}}
+
+### Notes
+
+**Discussion:**
+
+**Action Items:**
+
+**Decisions:**

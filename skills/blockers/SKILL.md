@@ -6,7 +6,7 @@ user-invocable: true
 argument-hint: "[optional: scope to a specific file or folder]"
 ---
 
-If vault_path is not in context, read `~/.myna/config.yaml` first. If the file does not exist, tell the user to run `/myna:install` and stop.
+If vault_path is not in context, read `~/.myna/config.yaml` first. If the file does not exist, tell the user to run `/myna:setup` and stop.
 
 Read `user.name` from config — needed to separate your tasks from delegated ones.
 
@@ -22,17 +22,19 @@ Three signal types:
 
 **1. Explicit blocker callouts**
 
-Grep across all `.md` files under `vault_path/`:
+Grep across `{vault_path}/myna/**/*.md`:
 `\[!warning\] Blocker`
 
-**2. Blocked tasks**
+**2. Dependency tasks (cross-team / external blockers)**
 
-Grep across all `.md` files:
-`- \[ \].*\[status:: blocked\]`
+Grep across `{vault_path}/myna/**/*.md`:
+`- \[ \].*\[type:: dependency\]`
+
+These are tasks where you are waiting on another team or person. Each is a potential external blocker for your work.
 
 **3. Overdue tasks**
 
-Grep across all `.md` files:
+Grep across `{vault_path}/myna/**/*.md`:
 `- \[ \].*📅 \d{4}-\d{2}-\d{2}`
 
 Filter results for dates before today. ISO date format sorts lexicographically — compare string directly against today's date.
@@ -41,9 +43,9 @@ Filter results for dates before today. ISO date format sorts lexicographically �
 
 ## Scope
 
-Default: entire vault (`vault_path/**/*.md`).
+Default: Myna-managed files only (`{vault_path}/myna/**/*.md`).
 
-If the user scopes to a specific file or folder: limit the grep to that path.
+If the user scopes to a specific file or folder under `myna/`: limit the grep to that path.
 
 ---
 
@@ -72,7 +74,7 @@ Within each section (Your Blockers / Delegated), group results under project hea
 
 ## Separating Your Blockers from Delegated
 
-For each task result, check for a `[person:: {name}]` field:
+For each task result, check for a `[person:: {name}]` field. The person value may be a plain name (`[person:: Sarah Chen]`) or a wiki-linked name (`[person:: [[Sarah Chen]]]`) — normalize by stripping `[[` and `]]` before comparing.
 
 - If `person` matches `user.name` from config, or no person field is present: treat as **your blocker**.
 - If `person` is someone else: treat as **delegated blocker** (waiting on them).

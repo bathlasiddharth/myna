@@ -6,7 +6,7 @@ user-invocable: true
 argument-hint: "[day | week | priorities | am I over-committed?]"
 ---
 
-If vault_path is not in context, read `~/.myna/config.yaml` first. If the file does not exist, tell the user to run `/myna:install` and stop.
+If vault_path is not in context, read `~/.myna/config.yaml` first. If the file does not exist, tell the user to run `/myna:setup` and stop.
 
 # plan
 
@@ -70,7 +70,7 @@ Show a concrete, ordered picture of the day.
 
 **Priority ordering logic:**
 
-Rank tasks by: (1) overdue, (2) blocks another person's work `[type:: dependency]`, (3) due today with high priority `⏫`, (4) due today, (5) high priority but no due date, (6) carried forward multiple times (check for prior daily notes where this task appeared).
+Rank tasks by: (1) overdue, (2) external waiting points that can block your plan `[type:: dependency]` — these are things you are waiting on from others and should follow up on, (3) due today with high priority `⏫`, (4) due today, (5) high priority but no due date, (6) carried forward multiple times (check for prior daily notes where this task appeared).
 
 ---
 
@@ -93,7 +93,7 @@ Show the 3 things that matter most right now, with clear reasoning.
 🔄 Recurring carry-overs:
 - {task} has been carried forward {N} days. Either commit to it today or explicitly defer to {date}.
 
-**Include carry-over detection:** Compare task names across the last 3 daily notes' Immediate Attention sections. A task that appears in 3+ consecutive notes is a recurring carry-over — flag it explicitly with the count.
+**Include carry-over detection:** Compare task names across the last 3 daily notes' Immediate Attention sections. Read both `Journal/{YYYY-MM-DD}.md` (today) and `Journal/Archive/Daily/` (previous notes) — prior notes are archived there after each sync. A task that appears in 3+ consecutive notes is a recurring carry-over — flag it explicitly with the count.
 
 ---
 

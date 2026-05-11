@@ -7,7 +7,7 @@ user-invocable: false
 
 # Vault Operations
 
-If vault_path is not in context, read `~/.myna/config.yaml` first. If the file does not exist, tell the user to run `/myna:install` and stop.
+If vault_path is not in context, read `~/.myna/config.yaml` first. If the file does not exist, tell the user to run `/myna:setup` and stop.
 
 All vault file I/O uses Claude Code built-in tools. No MCP server for vault operations.
 
@@ -32,9 +32,9 @@ Query open and completed tasks across the vault using Grep:
 |-------|-------------|
 | Open tasks | `- \[ \]` |
 | Completed tasks | `- \[x\]` |
-| Filter by project | `\[project:: {name}\]` |
+| Filter by project | `\[project:: \[\[{name}\]\]\]` |
 | Filter by type | `\[type:: {type}\]` — values: `task`, `delegation`, `dependency`, `reply-needed`, `retry` |
-| Filter by person | `\[person:: {name}\]` |
+| Filter by person | `\[person:: \[\[{name}\]\]\]` |
 | Due date (for overdue detection) | `📅 {YYYY-MM-DD}` — compare matched date against today |
 | Pending review | `\[review-status:: pending\]` |
 | High priority | `⏫` |
@@ -43,6 +43,8 @@ Query open and completed tasks across the vault using Grep:
 | Retry tasks | `\[type:: retry\]` |
 
 **Combining filters:** Run Grep for the primary filter, then filter results in-context for secondary conditions. Example: find overdue high-priority tasks → Grep for `- \[ \]` in Projects/, then filter for lines containing `⏫` and a `📅` date before today.
+
+**Scope task queries to live folders only:** `Projects/`, `People/`, `Meetings/`, `Team/`, and current journal files in `Journal/` root. Exclude `_system/templates/`, `_system/sources/`, and `Journal/Archive/` from task queries unless the user explicitly requests archived data. Templates contain example task syntax that would pollute live-task results.
 
 ## Frontmatter Operations
 
@@ -85,10 +87,11 @@ Deduplicate results.
 2. Substitute `{{variable}}` placeholders with actual values — `{{name}}`, `{{date}}`, `{{project}}`, etc.
 3. `Write` the new file with substituted content
 
-If the template doesn't exist, create a minimal file with:
-- `#tags` on the first line (no YAML frontmatter)
-- Use `#type/value` tags for typed metadata (e.g., `#status/active`, `#tier/direct`)
-- Empty sections matching the file type's standard structure
+If the template doesn't exist, create a minimal file with the required YAML frontmatter for the file type, followed by the appropriate inline tags and empty sections. Key minimal structures:
+- **Project:** `created: {date}` frontmatter + `#project` tag + `## Overview`, `## Timeline`, `## Open Tasks`, `## Links`, `## Notes` sections
+- **Person:** `created: {date}` frontmatter + `#person #{relationship-tier}` tags + `## Overview`, `## Observations`, `## Pending Feedback`, `## Recognition`, `## Personal Notes`, `## Meeting History` sections
+- **Draft:** `type`, `audience_tier`, `related_project`, `related_person`, `created` frontmatter + `#draft` tag + content placeholder
+- **Other types:** include at minimum a `created: {date}` frontmatter field and the canonical tag for the file type
 
 ## Vault Path Patterns
 
@@ -108,12 +111,12 @@ If the template doesn't exist, create a minimal file with:
 | Meeting (adhoc) | `{vault}/myna/Meetings/Adhoc/{YYYY-MM-DD}-{slug}.md` |
 | Draft | `{vault}/myna/Drafts/[{Type}] {topic}.md` |
 | Review queue | `{vault}/myna/ReviewQueue/review-{queue}.md` |
-| Processed audit | `{vault}/myna/ReviewQueue/processed/processed-{YYYY-MM-DD}.md` |
+| Processed audit | `{vault}/myna/ReviewQueue/processed-{YYYY-MM-DD}.md` |
 | Parked context | `{vault}/myna/_system/parked/{slug}.md` |
 | Config | `{vault}/myna/_system/config/{name}.yaml` |
 | Source | `{vault}/myna/_system/sources/{entity}.md` |
 | Learnings | `{vault}/myna/_meta/learnings/{domain}.md` |
-| Dashboard | `{vault}/myna/_system/dashboards/dashboard.md` |
+| Dashboard | `{vault}/myna/Dashboards/dashboard.md` |
 | Link index | `{vault}/myna/_system/links.md` |
 | Prompt log | `{vault}/myna/_system/logs/prompts.md` |
 | Team | `{vault}/myna/Team/{slug}.md` |
@@ -124,6 +127,8 @@ If the template doesn't exist, create a minimal file with:
 - Weekly notes: `{YYYY-WNN}.md` (e.g. `2026-W18.md`)
 - Contributions: use Monday's date
 - Drafts: `[{Type}] {topic}` — types: Email, Meeting, Status, Escalation, Recognition, Self, Say-No, Conversation-Prep
+
+**Journal rolling archive:** When creating a new daily, weekly, or monthly note, move the previous note of the same type from `Journal/` root to the appropriate archive subfolder. Use Bash `mv`. **Never archive `contributions-{YYYY-MM-DD}.md` files** — they accumulate in `Journal/` root and are not subject to rolling archive. Only archive files matching the date-only patterns: daily (`{YYYY-MM-DD}.md`), weekly (`{YYYY-W\d\d}.md`), monthly (`{YYYY-MM}.md`).
 
 ## File Safety
 

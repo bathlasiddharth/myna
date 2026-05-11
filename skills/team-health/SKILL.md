@@ -8,7 +8,7 @@ argument-hint: "[optional: person name to focus on one person]"
 
 # Team Health Overview
 
-If vault_path is not in context, read `~/.myna/config.yaml` first. If the file does not exist, tell the user to run `/myna:install` and stop.
+If vault_path is not in context, read `~/.myna/config.yaml` first. If the file does not exist, tell the user to run `/myna:setup` and stop.
 
 Point-in-time dashboard for all direct reports. Read-only — inline output. No vault writes unless the user asks to save.
 
@@ -22,13 +22,13 @@ For each person in people.yaml with `relationship_tier: direct`:
 
 | Signal | Source | How to get it |
 |--------|--------|---------------|
-| Open tasks | Grep `[person:: {slug}]` + `- [ ]` across `Projects/` | Count open, count overdue (📅 date < today) |
-| Delegations | Grep `[type:: delegation] [person:: {slug}]` across `Projects/` | Count open delegations, count overdue |
+| Open tasks | Grep `[person:: {name}]` + `- [ ]` across `Projects/` — search display name, full name, slug, all aliases, and wiki-link forms `[[full-name]]`/`[[slug]]`. Deduplicate across forms. | Count open, count overdue (📅 date < today) |
+| Delegations | Grep `[type:: delegation] [person:: {name}]` across `Projects/` — same multi-form search | Count open delegations, count overdue |
 | Last 1:1 date | `Meetings/1-1s/{person-slug}.md` | Most recent session header (`## {YYYY-MM-DD} Session`) |
-| Last feedback date | `People/{person-slug}.md` Observations section | Date of most recent entry — this is the feedback gap signal |
-| Feedback gap | Compare last observation entry date to today vs `feedback_cycle_days` from workspace.yaml (default: 30; per-person override allowed) | Flag if gap > threshold |
+| Last feedback date | `People/{person-slug}.md` Observations section | Date of most recent `strength`, `growth-area`, or `contribution` observation entry — this is the feedback gap signal. Do not count Recognition or Personal Notes entries — those don't reset the feedback clock. |
+| Feedback gap | Compare last observation entry date to today vs `feedback_cycle_days` from workspace.yaml (default: 30; per-person override from people.yaml takes precedence) | Flag if gap > threshold. If `features.feedback_gap_detection` is disabled, skip computing this entirely — do not gather data or show the column. |
 | Attention gap | `People/{person-slug}.md` observations + `Meetings/1-1s/{person-slug}.md` session headers and prep sections | Signals below |
-| Recent contributions | `People/{person-slug}.md` recognition log + `Journal/contributions-{week}.md` | Entries dated in the last 14 days |
+| Recent contributions | `People/{person-slug}.md` Recognition section | Entries dated in the last 14 days. Do not use `Journal/contributions-{week}.md` — that log records the user's own contributions, not the direct report's. |
 
 **Attention gap signals (all about YOUR behavior — zero inference about the person's state):**
 - No observation logged in 45+ days → "No observations in [N] days"
@@ -36,7 +36,9 @@ For each person in people.yaml with `relationship_tier: direct`:
 - No career development topics logged in 4+ months → Grep `career` or `growth` in `Meetings/1-1s/{person-slug}.md`
 - No feedback logged since {date} (beyond feedback_cycle_days threshold) → already reflected in the Feedback column; repeat in Attention if gap is 2× the threshold
 
-Check `features.attention_gap_detection` and `features.feedback_gap_detection` in workspace.yaml. If either is disabled, skip those columns.
+Check `features.attention_gap_detection` and `features.feedback_gap_detection` in workspace.yaml. If either is disabled, skip computing those signals entirely — do not gather the data, and remove the column from the output table. Do not show "—" in a disabled column; remove the column header itself.
+
+**D018 anchor:** All flags in this output are about the user's own records and follow-through — not about the employee's morale, engagement, or relationship quality. Do not infer or label people's internal states. "45-day feedback gap" means the user hasn't logged an observation in 45 days. It says nothing about the employee.
 
 ---
 

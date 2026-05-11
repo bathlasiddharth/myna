@@ -537,7 +537,7 @@ Action items:
 
 **Pass criteria:**
 - Resolves "end of next week" to an actual date relative to 2026-04-11 (should be Friday April 17 or 24 depending on interpretation)
-- Task has ⏫ priority emoji, `📅 YYYY-MM-DD`, `[project:: Phoenix Platform]` (inferred from "Phoenix coverage plan"), `[type:: task]`
+- Task has ⏫ priority emoji, `📅 YYYY-MM-DD`, `[project:: [[Phoenix Platform]]]` (inferred from "Phoenix coverage plan"), `[type:: task]`
 - If project is inferred, task has `[review-status:: pending]` and description notes the inference
 - Written to `Projects/phoenix-platform.md` ## Open Tasks
 
@@ -636,7 +636,7 @@ Action items:
 - Finds the task in `Projects/atlas-migration.md`
 - Splits into 3-4 subtasks with individual due dates and effort estimates
 - Subtasks written as indented TODOs directly under the parent task
-- Subtasks inherit `[project:: Atlas Migration]`
+- Subtasks inherit `[project:: [[Atlas Migration]]]`
 
 **Files to check:**
 - `Projects/atlas-migration.md` — indented subtasks under the parent task

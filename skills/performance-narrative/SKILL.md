@@ -6,9 +6,11 @@ user-invocable: true
 argument-hint: "[person name] [optional: time period] | review my narratives"
 ---
 
-If vault_path is not in context, read `~/.myna/config.yaml` first. If the file does not exist, tell the user to run `/myna:install` and stop.
+If vault_path is not in context, read `~/.myna/config.yaml` first. If the file does not exist, tell the user to run `/myna:setup` and stop.
 
 # Performance Narrative
+
+Check `features.people_management` in workspace.yaml before acting. If disabled, stop silently (unless the user invoked this skill directly, in which case explain that people management is disabled).
 
 Two modes:
 1. **Generate** — compile a performance narrative for one person from vault data
@@ -39,7 +41,7 @@ Read all of the following and filter to the time period:
 | Pending feedback | `People/{person-slug}.md` — Pending Feedback section | Undelivered observations — include in narrative but flag as unverified |
 | 1:1 meeting notes | `Meetings/1-1s/{person-slug}.md` | Discussion items, decisions, action items — session by session |
 | Project timeline entries | `Projects/*.md` — Timeline sections | Any entry mentioning this person's name or wiki-link |
-| Contributions log | `Journal/contributions-{week}.md` — all weeks in the period | Entries mentioning this person |
+| Contributions log | `Journal/contributions-{week}.md` — all weeks in the period | Entries where this employee is the actor, not the recipient. Exclude manager-side entries like "delivered feedback to Sarah" — those are the user's contributions, not the employee's. |
 
 Collect everything. Then bucket it:
 
@@ -72,12 +74,12 @@ Structure the narrative naturally around what the data supports. Typical structu
 
 ### Draft File
 
-Save the narrative to `Drafts/[Performance Narrative] {person-name} {period}.md`.
+Save the narrative to `Drafts/[Self] {person-name} review narrative {period}.md`.
 
 Frontmatter:
 ```yaml
 ---
-type: performance-narrative
+type: self-review
 audience_tier: upward
 related_person: {person-slug}
 period: {YYYY-MM-DD to YYYY-MM-DD}
@@ -118,7 +120,7 @@ Recognized when the user says: "review my narratives", "calibrate my reviews", "
 
 ### What to Read
 
-Glob `Drafts/[Performance Narrative] *.md` — find all performance narrative drafts. If fewer than 2 found, inform: "Calibration needs at least 2 narratives. Found [N] in Drafts/."
+Glob `Drafts/[Self] *.md` — find all `[Self]` draft files. Read frontmatter for each to filter by `type: self-review` and presence of `related_person` and `period` fields. These are performance narrative drafts. If fewer than 2 qualifying drafts found, inform: "Calibration needs at least 2 narratives. Found [N] in Drafts/."
 
 ### What to Check
 
@@ -193,7 +195,7 @@ Glob `Drafts/[Performance Narrative] *.md` — find all performance narrative dr
 - 8 1:1 sessions
 - 2 contributions log entries
 
-**Draft saved:** `Drafts/[Performance Narrative] sarah-chen 2025-10-12 to 2026-04-12.md`
+**Draft saved:** `Drafts/[Self] sarah-chen review narrative 2025-10-12 to 2026-04-12.md`
 
 **Narrative (shown inline):**
 

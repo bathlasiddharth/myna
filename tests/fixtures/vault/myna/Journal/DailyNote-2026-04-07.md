@@ -58,10 +58,10 @@ TASK FROM "myna" WHERE !completed AND type = "delegation" SORT due ASC
 
 ### Contributions Detected
 
-- [2026-04-07 | wrap-up] **decisions-and-influence:** Finished Atlas API spec v2 review with detailed feedback [Auto]
-- [2026-04-07 | wrap-up] **issue-prevention:** Identified two correctness issues in Sarah's API spec before they could ship [Inferred]
-- [2026-04-07 | wrap-up] **coaching-and-mentoring:** Met with Marcus and Alex to scope a fallback design for the Phoenix blocker [User]
-- [2026-04-07 | wrap-up] **decisions-and-influence:** Drove the parallel path decision on Phoenix — fallback design + escalation [Inferred]
+- [2026-04-07] **decisions-and-influence:** Finished Atlas API spec v2 review with detailed feedback [Auto] (capture)
+- [2026-04-07] **issue-prevention:** Identified two correctness issues in Sarah's API spec before they could ship [Inferred] (capture)
+- [2026-04-07] **coaching-and-mentoring:** Met with Marcus and Alex to scope a fallback design for the Phoenix blocker [User]
+- [2026-04-07] **decisions-and-influence:** Drove the parallel path decision on Phoenix — fallback design + escalation [Inferred] (capture)
 
 ### Carried to Tomorrow
 

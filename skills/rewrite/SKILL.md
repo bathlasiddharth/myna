@@ -8,7 +8,7 @@ argument-hint: "fix [message] | tone [message] --audience [person/tier] | rewrit
 
 # myna-rewrite
 
-If vault_path is not in context, read `~/.myna/config.yaml` first. If the file does not exist, tell the user to run `/myna:install` and stop.
+If vault_path is not in context, read `~/.myna/config.yaml` first. If the file does not exist, tell the user to run `/myna:setup` and stop.
 
 Transforms an existing message. The user provides the text; you return the transformed version inline. Always show output inline. User says "save" to write to `Drafts/`.
 

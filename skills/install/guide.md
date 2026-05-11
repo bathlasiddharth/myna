@@ -46,8 +46,8 @@ After install, Myna creates the following folder structure inside your vault's `
 | `Journal/Archive/` | Previous daily, weekly, and monthly notes (moved automatically when new ones are created) |
 | `Team/` | Team health snapshots (managers only) |
 | `ReviewQueue/` | Items requiring your judgment before Myna acts |
-| `Dashboards/` | 10 Dataview-powered dashboards |
-| `_system/config/` | Your 5 config files (YAML) |
+| `Dashboards/` | Dataview-powered dashboards |
+| `_system/config/` | Your 6 config files (YAML) |
 | `_system/templates/` | Templates for new notes |
 | `_system/logs/` | Audit log, prompt log, processed channel timestamps |
 | `_system/sources/` | Source message references for deduplication |
@@ -187,6 +187,18 @@ Controls how Myna drafts emails, messages, and other written content.
 | `difficult_message_approach` | Style for tough conversations (e.g. `direct-but-kind`) |
 | `email_preferences.max_length` | `short`, `medium`, or `long` |
 
+### tags.yaml
+
+Optional auto-tagging rules. Myna applies tags based on project, keyword, person, or source rules.
+
+| Field | What to put |
+|-------|-------------|
+| `name` | Tag name (e.g. `auth-migration`) |
+| `type` | `project-based`, `keyword-based`, `person-based`, or `source-based` |
+| `project` / `keywords` / `person` / `source` | Matching criteria depending on type |
+
+> Note: meetings.yaml and tags.yaml are manual-only today — the Config UI does not expose them. Edit the YAML files directly.
+
 ---
 
 ## 6. MCP Servers
@@ -255,7 +267,7 @@ Myna synthesizes your 5 daily notes into a structured weekly review: projects pr
 triage my inbox
 ```
 
-Myna reads your inbox and writes folder recommendations to `ReviewQueue/review-email-triage.md`. You open the file in Obsidian, edit any recommendations, then say "process triage" to move the emails.
+Myna reads your inbox and writes folder recommendations to `ReviewQueue/review-inbox.md`. You open the file in Obsidian, edit any recommendations, then say "process triage" to move the emails.
 
 ```
 process my email
@@ -302,7 +314,7 @@ The project's `email_folders` or `slack_channels` in `projects.yaml` may not mat
 
 **Review queue is growing but I'm not processing it**
 
-Say "process my review queue" to work through items interactively. For `review-email-triage.md` specifically, check items in Obsidian and then say "process triage" — that file is handled by /myna:email-triage, not /myna:process-review-queue.
+Say "process my review queue" to work through items interactively. For `review-inbox.md` specifically, check items in Obsidian and then say "process triage" — that file is handled by /myna:email-triage, not /myna:process-review-queue.
 
 ---
 
@@ -330,23 +342,6 @@ work_hours:
 
 email:
   processed_folder: per-project  # How processed emails are filed (per-project moves to each project's Processed/)
-
-# ---
-# Email Triage Configuration
-# Controls how "triage my inbox" classifies emails.
-# ---
-triage:
-  inbox_source: ""          # Email folder/label to read for triage (e.g. INBOX)
-  folders:
-    - name: Reply
-      description: "Needs a response from me"
-    - name: FYI
-      description: "Informational, no action needed"
-    - name: Follow-Up
-      description: "Waiting on someone else — check back later"
-    - name: Schedule
-      description: "Needs a meeting or calendar action"
-  draft_replies_folder: ""  # Email folder for draft reply requests
 
 feedback_cycle_days: 30     # Days between feedback gap alerts (default: 30)
 
@@ -379,24 +374,9 @@ features:
   feedback_gap_detection: true
   contribution_detection: true
   milestones: true                    # Birthdays/anniversaries in daily note
-  observations_logging: true
-  recognition_tracking: true
-  person_briefing: true
-  one_on_one_analysis: true
-  performance_narrative: true
   weekly_summary: true
   monthly_updates: true
   park_resume: true
-  meeting_summaries: true
-  email_draft_reply: true
-  message_rewriting: true
-  document_processing: true
-  pre_read_prep: true
-  difficult_conversation: true
-  help_me_say_no: true
-  quick_capture: true
-  link_manager: true
-  auto_tagging: true
 ```
 
 ### communication-style.yaml
@@ -404,7 +384,7 @@ features:
 ```yaml
 # Run /myna:setup for guided configuration.
 
-default_preset: professional  # assertive | analytical | empathetic | formal | executive | professional | conversational | casual | coaching | diplomatic | concise
+default_preset: professional  # professional | conversational | executive | casual | coaching | diplomatic | concise
 
 presets_per_tier:
   upward: ""               # Messages to your manager, VP, execs
@@ -413,6 +393,8 @@ presets_per_tier:
   cross-team: ""           # Messages to other teams
 
 sign_off: ""               # Email sign-off (e.g. Best, Thanks, Cheers)
+
+difficult_message_approach: direct-but-kind
 
 email_preferences:
   max_length: ""           # short | medium | long
@@ -438,6 +420,23 @@ projects: []
 #     description: "Migrating to new OAuth provider"
 #     key_people:                        # Referenced in project file overview
 #       - Sarah Chen
+
+# ---
+# Email Triage Configuration
+# Controls how "triage my inbox" classifies emails.
+# ---
+triage:
+  inbox_source: ""          # Email folder/label to read for triage (e.g. INBOX)
+  folders:
+    - name: Reply
+      description: "Needs a response from me"
+    - name: FYI
+      description: "Informational, no action needed"
+    - name: Follow-Up
+      description: "Waiting on someone else — check back later"
+    - name: Schedule
+      description: "Needs a meeting or calendar action"
+  draft_replies_folder: ""  # Email folder for draft reply requests
 ```
 
 ### people.yaml
