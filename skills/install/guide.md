@@ -49,7 +49,7 @@ After install, Myna creates the following folder structure inside your vault's `
 | `Dashboards/` | Dataview-powered dashboards |
 | `_system/config/` | Your 6 config files (YAML) |
 | `_system/templates/` | Templates for new notes |
-| `_system/logs/` | Audit log, prompt log, processed channel timestamps |
+| `_system/logs/` | Audit log, processed channel timestamps |
 | `_system/sources/` | Source message references for deduplication |
 | `_system/parked/` | Parked context saved by /myna:park |
 | `_meta/learnings/` | Behavioral preferences captured by /myna:learn |
@@ -351,8 +351,6 @@ mcp_servers:
   email: ""                 # Name of your registered email MCP server (e.g. gmail-mcp)
   slack: ""                 # Name of your registered Slack MCP server (e.g. slack-mcp)
   calendar: ""              # Name of your registered calendar MCP server (e.g. gcal-mcp)
-
-prompt_logging: true        # Log user prompts to _system/logs/prompts.md
 
 # ---
 # Feature Toggles

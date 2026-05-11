@@ -94,5 +94,4 @@ One-line summary: Transparent log of every significant agent interpretation for 
 - Enables user to trace back any agent action to its source data
 - Useful for: understanding unexpected review queue items, verifying timeline entries, debugging extraction errors
 - Not exposed as a user feature — it's a system transparency mechanism the user can read when needed
-- **Distinct from prompt logging** (non-functional): prompt logging records what the user asked (`_system/logs/prompts.md`). The audit log records what the agent did in response (`_system/logs/audit.md`). Together they provide full traceability: user input → agent interpretation → agent action.
 

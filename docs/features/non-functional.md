@@ -258,10 +258,6 @@ This applies to every file in the vault — not just timelines.
 - "by Friday", "next week", "in 3 days" → resolved to actual dates using timezone from workspace config
 - Prevents ambiguity in task due dates and timeline entries
 
-#### Prompt Logging
-- All user prompts logged with timestamp to `_system/logs/prompts.md` (configurable — can be disabled)
-- Useful for recovery if a session is lost or for reviewing what was asked
-
 #### Feature Toggles (D020)
 - Every feature has a toggle in workspace.md config (enabled/disabled)
 - Every agent instruction and steering skill checks the toggle before offering or executing a feature

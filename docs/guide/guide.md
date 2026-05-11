@@ -49,7 +49,7 @@ After install, Myna creates the following folder structure inside your vault's `
 | `Dashboards/` | 10 Dataview-powered dashboards |
 | `_system/config/` | Your 5 config files (YAML) |
 | `_system/templates/` | Templates for new notes |
-| `_system/logs/` | Audit log, prompt log, processed channel timestamps |
+| `_system/logs/` | Audit log, processed channel timestamps |
 | `_system/sources/` | Source message references for deduplication |
 | `_system/parked/` | Parked context saved by myna-park |
 | `_meta/learnings/` | Behavioral preferences captured by myna-learn |
