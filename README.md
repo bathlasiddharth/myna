@@ -83,24 +83,25 @@ Full walkthrough: [A Day With Myna](docs/guide/a-day-with-myna.md) · Browse the
 
 ## Getting Started
 
-**Prerequisites:** [Claude Code](https://claude.ai/code) · [Obsidian](https://obsidian.md/) *(recommended but not required — all files are plain text, viewable in any editor)*
+**Prerequisites:** [Claude Code](https://claude.ai/code) · [Obsidian](https://obsidian.md/) *(recommended but not required — all files are plain text, viewable in any editor)* · Python 3 *(required for the Config UI setup path)*
 
-```bash
+Run these commands inside Claude Code:
+
+```
 /plugin marketplace add agentflock/plugins
 /plugin install myna@agentflock
 /myna:setup
 ```
 
-`/myna:setup` creates your Myna folder, opens the Config UI to set up Myna, and adds shell aliases. Or edit the config files directly at `<vault>/myna/_system/config/`.
+`/myna:setup` creates your Myna folder, opens the Config UI to set up Myna, and offers to add shell aliases. Or edit the config files directly at `<vault>/myna/_system/config/`. The vault subfolder is always `myna`.
 
 Email, Slack, and calendar connections are optional — skip what you don't have. Myna works without them from day one.
 
 Once installed, run from any directory — pick the mode that fits:
 
-```bash
+```
 myna          # full access — reads and writes your files
 myna-ro       # read-only — browse and query, no changes
-myna-x        # no file access — conversation only
 ```
 
 First time? Try `sync` to set up your day, or `what can you do?` to see all skills.
@@ -212,8 +213,9 @@ myna/
 ├── Drafts/           # Email drafts, status updates, recognition
 ├── ReviewQueue/      # Items awaiting your judgment
 ├── Team/             # Team-level files
-└── _system/          # Config, logs, dashboards
-    └── config/       # Your projects, people, preferences
+└── _system/          # Config, logs, dashboards, templates
+    ├── config/       # Your projects, people, preferences
+    └── dashboards/   # Dataview dashboards (best viewed in Obsidian)
 ```
 
 Myna runs on Claude Code, but all skills are plain text — readable by any capable LLM. The same instructions can be adapted for other AI tools.

@@ -1,5 +1,6 @@
 ---
 created: 2021-11-03
+aliases: ["Rachel Davis"]
 ---
 
 #person #direct
@@ -24,10 +25,10 @@ created: 2021-11-03
 
 > Chronological log of observations. Each entry has type, area, and source.
 
-- [2025-08-11 | meeting 1:1 with Rachel] **strength:** Mentors new hires quietly — three engineers on the team cite her as the person who helped them ramp [User]
-- [2025-10-14 | meeting Compass kickoff] **contribution:** Architected the onboarding state machine that became the core of Compass v1 [User]
-- [2026-01-08 | meeting 1:1 with Rachel] **growth-area:** Hasn't taken on a stretch project this year — same type of work repeating, may be coasting [User]
-- [2026-02-15 | meeting 1:1 with Rachel] **strength:** Ran the Compass v1 retrospective — surfaced the rollout playbook gap that nobody else flagged [User]
+- [2025-08-11] **strength:** Mentors new hires quietly — three engineers on the team cite her as the person who helped them ramp [User]
+- [2025-10-14] **contribution:** Architected the onboarding state machine that became the core of Compass v1 [User]
+- [2026-01-08] **growth-area:** Hasn't taken on a stretch project this year — same type of work repeating, may be coasting [User]
+- [2026-02-15] **strength:** Ran the Compass v1 retrospective — surfaced the rollout playbook gap that nobody else flagged [User]
 
 ## Pending Feedback
 
@@ -39,8 +40,8 @@ created: 2021-11-03
 
 > Accomplishments and recognition entries.
 
-- [2025-10-14 | meeting Compass kickoff] Architected the onboarding state machine — context: Compass v1's core component [User]
-- [2026-02-15 | meeting 1:1 with Rachel] Led the Compass v1 retrospective and produced the launch playbook — context: now used by other teams [User]
+- [2025-10-14] Architected the onboarding state machine — context: Compass v1's core component [User]
+- [2026-02-15] Led the Compass v1 retrospective and produced the launch playbook — context: now used by other teams [User]
 
 ## Personal Notes
 

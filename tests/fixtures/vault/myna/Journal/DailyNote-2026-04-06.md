@@ -60,9 +60,9 @@ TASK FROM "myna" WHERE !completed AND type = "delegation" SORT due ASC
 
 ### Contributions Detected
 
-- [2026-04-06 | wrap-up] **decisions-and-influence:** Started Atlas API spec v2 review and surfaced two correctness issues [Auto]
-- [2026-04-06 | wrap-up] **delegation-management:** Reviewed Phoenix blocker timeline with David; escalation path agreed [Inferred]
-- [2026-04-06 | wrap-up] **strategic-alignment:** Delivered portfolio one-pagers to James, passed review clean on Atlas [Auto]
+- [2026-04-06] **decisions-and-influence:** Started Atlas API spec v2 review and surfaced two correctness issues [Auto] (capture)
+- [2026-04-06] **delegation-management:** Reviewed Phoenix blocker timeline with David; escalation path agreed [Inferred] (capture)
+- [2026-04-06] **strategic-alignment:** Delivered portfolio one-pagers to James, passed review clean on Atlas [Auto] (capture)
 
 ### Carried to Tomorrow
 

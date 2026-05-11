@@ -1,23 +1,39 @@
+---
+week_start: {{week-start-date}}
+---
+
 #weekly
 
 ## Week Capacity
 
 | Day | Meetings | Focus Time | Task Effort |
 |-----|----------|------------|-------------|
-| Mon | {{mon-meetings}} hrs | {{mon-focus}} hrs | {{mon-tasks}} hrs |
-| Tue | {{tue-meetings}} hrs | {{tue-focus}} hrs | {{tue-tasks}} hrs |
-| Wed | {{wed-meetings}} hrs | {{wed-focus}} hrs | {{wed-tasks}} hrs |
-| Thu | {{thu-meetings}} hrs | {{thu-focus}} hrs | {{thu-tasks}} hrs |
-| Fri | {{fri-meetings}} hrs | {{fri-focus}} hrs | {{fri-tasks}} hrs |
-
-{{capacity-notes}}
+| Mon | hrs      | hrs        | hrs         |
+| Tue | hrs      | hrs        | hrs         |
+| Wed | hrs      | hrs        | hrs         |
+| Thu | hrs      | hrs        | hrs         |
+| Fri | hrs      | hrs        | hrs         |
 
 ## Weekly Goals
 
-> User-editable. Set your priorities for the week.
+> User-editable. Set at start of week.
 
 ## Carry-Forwards
 
-> Items carried from last week.
+> Items carried from previous week.
 
-{{carry-forwards}}
+## Weekly Summary — {{week-start-date}}
+
+> Written by wrap-up skill ("weekly summary").
+
+### Accomplishments
+
+### Decisions Made
+
+### Blockers
+
+### Tasks: Completed vs Carried
+
+### Self-Reflection
+
+> Agent-generated prompts based on the week's patterns.

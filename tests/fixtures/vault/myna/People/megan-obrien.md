@@ -1,5 +1,6 @@
 ---
 created: 2025-01-10
+aliases: ["Megan O'Brien"]
 ---
 
 #person #peer

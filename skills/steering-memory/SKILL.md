@@ -7,7 +7,7 @@ user-invocable: false
 
 # Memory Model
 
-If vault_path is not in context, read `~/.myna/config.yaml` first. If the file does not exist, tell the user to run `/myna:install` and stop.
+If vault_path is not in context, read `~/.myna/config.yaml` first. If the file does not exist, tell the user to run `/myna:setup` and stop.
 
 ## Three-Layer Precedence
 
@@ -16,13 +16,13 @@ Myna's behavioral rules live in three layers. Applied together at runtime with e
 | Layer | Lives in | Authoritative for |
 |-------|----------|-------------------|
 | Hard rules | 6 steering skills (myna-steering-*) | Safety, scope, draft-never-send, vault-only writes, append-only discipline |
-| User bootstrap | CLAUDE.md | Initial preferences and project context set by user at setup |
+| User bootstrap | Agent Session Start + `workspace.yaml` identity fields | Initial preferences and project context loaded at session start |
 | Emergent preferences | `_meta/learnings/{domain}.md` | Observed user preferences, patterns, corrections |
 
 **Runtime resolution:**
-1. **Hard rules in steering ALWAYS win.** Immutable. Cannot be overridden by any learning or CLAUDE.md entry.
-2. **Active learnings override CLAUDE.md** when they conflict on the same scope. Learnings reflect the user's current state; CLAUDE.md is bootstrap.
-3. **CLAUDE.md applies** in the absence of a relevant learning.
+1. **Hard rules in steering ALWAYS win.** Immutable. Cannot be overridden by any learning or bootstrap preference.
+2. **Active learnings override bootstrap** when they conflict on the same scope. Learnings reflect the user's current state; bootstrap is the initial default.
+3. **Bootstrap preferences apply** in the absence of a relevant learning.
 
 ## Session-Start Load
 
@@ -55,7 +55,7 @@ Invoke `/myna:learn` when the user expresses intent to write to, query, or remov
 Learnings inform behavior, never content. Never reference learnings in:
 - Drafts, replies, briefings, prep docs
 - Any user-facing text another person will read
-- Vault entries
+- Non-memory vault entries (projects, people, meetings, tasks, journal)
 
 The only exception: when the user explicitly asks to summarize or list current learnings — and only to the user, never in content meant for others.
 

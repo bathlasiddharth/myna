@@ -7,7 +7,7 @@ user-invocable: false
 
 # Data Conventions
 
-If vault_path is not in context, read `~/.myna/config.yaml` first. If the file does not exist, tell the user to run `/myna:install` and stop.
+If vault_path is not in context, read `~/.myna/config.yaml` first. If the file does not exist, tell the user to run `/myna:setup` and stop.
 
 ## Provenance Markers
 
@@ -38,7 +38,7 @@ Every agent-written entry carries exactly one marker:
 Every vault entry includes a date and source header:
 
 ```
-[{YYYY-MM-DD} | {source}]
+[{YYYY-MM-DD}]
 ```
 
 **Source values:**
@@ -55,23 +55,23 @@ Entries are sorted by **when the event happened**, not when it was processed. An
 Tag and compact source at end of line:
 
 ```
-- {content} [{provenance}] ({source-type}, {identity}, {date})
+- {content} [{provenance}] ({source-type}, {identity})
 ```
 
 Source identity rules (keep compact):
 - Email: first name of sender only — not full name or email address
 - Slack: channel name or person first name
 - Meeting: meeting name
-- Capture: date only — `(capture, {date})`
+- Capture: no identity needed — `(capture)`
 - `[User]`: no source needed — self-evident
 
 Examples:
 
 ```
-- Shipped auth migration on time [Auto] (email, Sarah, 2026-03-15)
-- Strong escalation handling during incident [Inferred] (meeting, 1:1 with Sarah, 2026-03-20)
-- Led the design review [User]
-- API spec deadline confirmed as Friday [Verified] (was Inferred, confirmed 2026-04-03)
+- [2026-03-15] Shipped auth migration on time [Auto] (email, Sarah)
+- [2026-03-20] Strong escalation handling during incident [Inferred] (meeting, 1:1 with Sarah)
+- [2026-04-03] Led the design review [User]
+- [2026-04-03] API spec deadline confirmed as Friday [Verified] (was Inferred, confirmed 2026-04-03)
 ```
 
 ## Append-Only Discipline
@@ -92,7 +92,7 @@ The agent never modifies or deletes existing content. All existing content is tr
 {new content}
 ```
 
-For append-only sections (timelines, observations), the `[{date} | {source}]` header and provenance marker already distinguish agent entries — no separator needed.
+For append-only sections (timelines, observations), the `[{date}]` header and provenance marker already distinguish agent entries — no separator needed.
 
 **Carry-forward:** Unchecked items create a NEW entry in the destination with "(carried from {date})". Original left untouched.
 
@@ -103,37 +103,39 @@ For append-only sections (timelines, observations), the `[{date} | {source}]` he
 ### Timeline Entry
 
 ```
-- [{YYYY-MM-DD} | {source}] {content} [{provenance}] ({source-type}, {identity}, {date})
+- [{YYYY-MM-DD}] {content} [{provenance}] ({source-type}, {identity})
 ```
 
 ### Observation
 
 ```
-- [{YYYY-MM-DD} | {source}] **{type}:** {content} [{provenance}] ({source-type}, {identity}, {date})
+- [{YYYY-MM-DD}] **{type}:** {content} [{provenance}] ({source-type}, {identity})
 ```
 
 ### Recognition
 
 ```
-- [{YYYY-MM-DD} | {source}] {content} [{provenance}] ({source-type}, {identity}, {date})
+- [{YYYY-MM-DD}] {content} [{provenance}] ({source-type}, {identity})
 ```
 
 ### Contribution
 
 ```
-- [{YYYY-MM-DD} | {source}] **{category}:** {content} [{provenance}] ({source-type}, {identity}, {date})
+- [{YYYY-MM-DD}] **{category}:** {content} [{provenance}] ({source-type}, {identity})
 ```
 
 ### Task (Obsidian Tasks Plugin)
 
 ```
-- [ ] {description} 📅 {YYYY-MM-DD} ⏫ [project:: {name}] [type:: {type}] [{provenance}] ({source-type}, {identity}, {date})
+- [ ] {description} 📅 {YYYY-MM-DD} ⏫ [project:: [[{name}]]] [type:: {type}] [{provenance}] ({source-type}, {identity}, {YYYY-MM-DD})
 ```
 
+For tasks, `📅` is the **due date**, not the source date. Include the source date in the compact source reference so the origin of the task is traceable. Omit the source date only for `[User]` tasks (self-evident) and `(capture)` sources (captured now).
+
 **Task fields as inline properties:**
-- `[project:: {name}]` — which project
+- `[project:: [[{name}]]]` — which project (wiki-link to project file)
 - `[type:: {task | delegation | dependency | reply-needed | retry}]` — task type
-- `[person:: {name}]` — owner (for delegations) or who you're waiting on
+- `[person:: [[{name}]]]` — owner (for delegations) or who you're waiting on (wiki-link to person file)
 - `[review-status:: {pending | reviewed}]` — set to pending when fields are inferred
 - `[effort:: {estimate}]` — effort estimate
 - Priority emoji: ⏫ high, 🔼 medium, (none) low
@@ -141,17 +143,21 @@ For append-only sections (timelines, observations), the `[{date} | {source}]` he
 - Start date: 🛫 YYYY-MM-DD
 - Recurrence: 🔁 every {interval}
 
-Only include fields that have values — omit optional fields when not applicable. Inferred fields are marked: `[project:: Auth Migration (inferred)]`.
+Only include fields that have values — omit optional fields when not applicable. Inferred fields are marked: `[project:: [[Auth Migration]] (inferred)]`.
+
+**Alias requirement:** Person and project files must include `aliases: ["{Display Name}"]` in their frontmatter so that wiki-links like `[[Sarah Chen]]` resolve correctly even though the file is named `sarah-chen.md`.
 
 The agent always creates formatted tasks from natural language. The user never types task syntax.
 
 ### Review Queue Entry
 
 ```
-- [ ] **{heading}** — {source reference}
-  Ambiguity: {why this needs review}
-  Proposed: {destination file and section}
-  Content: {the entry to write if approved}
+- [ ] **{proposed action}**
+  Source: {where the item came from — file, email subject, channel}
+  Interpretation: {what the agent thinks this is}
+  Ambiguity: {why it's in the queue — what's unclear}
+  Proposed destination: {where it would be written if approved}
+  ---
 ```
 
 ## Obsidian Conventions
@@ -176,13 +182,13 @@ Key People: [[People/sarah-chen]], [[People/alex-kumar]]
 
 ```
 > [!warning] Blocker
-> [{date} | {source}] {content} [{provenance}]
+> [{date}] {content} [{provenance}]
 
 > [!info] Decision
-> [{date} | {source}] {content} [{provenance}]
+> [{date}] {content} [{provenance}]
 
 > [!tip] Recognition
-> [{date} | {source}] {content} [{provenance}]
+> [{date}] {content} [{provenance}]
 ```
 
 ### Dataview Queries
@@ -196,13 +202,3 @@ WHERE !completed AND type = "delegation" AND due < date(today)
 SORT due ASC
 ```
 
-### File Links in Output
-
-When referencing a vault file in chat output, use wikilink format: `[[path/to/file]]`. Never use plain file paths — they open in Chrome, not Obsidian.
-
-When creating or updating a vault file, also include the Obsidian URI and the full disk path so the user can navigate from the terminal or Obsidian:
-
-```
-obsidian://open?vault={vault}&file={path}
-{full-disk-path}
-```

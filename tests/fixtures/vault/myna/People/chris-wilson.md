@@ -1,5 +1,6 @@
 ---
 created: 2025-05-22
+aliases: ["Chris Wilson"]
 ---
 
 #person #peer
@@ -24,17 +25,17 @@ created: 2025-05-22
 
 > Chronological log of observations. Each entry has type, area, and source.
 
-- [2025-09-15 | meeting Compass security review] **strength:** Caught two auth bypass vectors in the Compass onboarding flow during review [User]
-- [2026-01-12 | email from Chris] **strength:** Wrote the Q1 security hardening proposal that seeded the Sentinel project [User]
-- [2026-03-12 | meeting Incident postmortem] **contribution:** Authored the March 12 cache poisoning postmortem root cause analysis — forensic-level detail [Auto]
-- [2026-04-04 | meeting Sentinel kickoff] **strength:** Accepted Sarah's phased security hardening approach without ego — said "that's better than mine" in the room [User]
+- [2025-09-15] **strength:** Caught two auth bypass vectors in the Compass onboarding flow during review [User]
+- [2026-01-12] **strength:** Wrote the Q1 security hardening proposal that seeded the Sentinel project [User]
+- [2026-03-12] **contribution:** Authored the March 12 cache poisoning postmortem root cause analysis — forensic-level detail [Auto] (meeting, Incident postmortem)
+- [2026-04-04] **strength:** Accepted Sarah's phased security hardening approach without ego — said "that's better than mine" in the room [User]
 
 ## Pending Feedback
 
 ## Recognition
 
-- [2025-09-15 | meeting Compass security review] Caught two auth bypass vectors in Compass — context: prevented what would have been a SEV1 incident post-launch [User]
-- [2026-03-12 | meeting Incident postmortem] Authored the March 12 postmortem root cause analysis — context: became the reference for how we write postmortems now [Auto]
+- [2025-09-15] Caught two auth bypass vectors in Compass — context: prevented what would have been a SEV1 incident post-launch [User]
+- [2026-03-12] Authored the March 12 postmortem root cause analysis — context: became the reference for how we write postmortems now [Auto] (meeting, Incident postmortem)
 
 ## Personal Notes
 

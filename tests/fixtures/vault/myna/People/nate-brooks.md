@@ -1,5 +1,6 @@
 ---
 created: 2025-12-08
+aliases: ["Nate Brooks"]
 ---
 
 #person #direct
@@ -25,19 +26,19 @@ created: 2025-12-08
 
 > Chronological log of observations. Each entry has type, area, and source.
 
-- [2025-12-22 | meeting 1:1 with Nate] **strength:** First PR merged within three weeks — a dashboard tile for Aurora [User]
-- [2026-01-28 | meeting 1:1 with Nate] **growth-area:** Stalled for a week on an open-ended task about improving dashboard performance — didn't raise the hand [User]
-- [2026-02-18 | meeting 1:1 with Nate] **strength:** After the last 1:1, started booking 15-min pairs with Sarah and Alex proactively when stuck [User]
-- [2026-03-11 | slack #aurora-dashboard] **strength:** Shipped the Aurora filter refactor — clean code, thoughtful tests [Auto]
-- [2026-03-25 | meeting 1:1 with Nate] **strength:** Started leading the Aurora Dashboard project (his first lead role) — owning scope, reviewers, and timeline [User]
-- [2026-04-08 | meeting 1:1 with Nate] **strength:** Brought a written status doc for Aurora to 1:1 — format was clean, showed real thought [User]
+- [2025-12-22] **strength:** First PR merged within three weeks — a dashboard tile for Aurora [User]
+- [2026-01-28] **growth-area:** Stalled for a week on an open-ended task about improving dashboard performance — didn't raise the hand [User]
+- [2026-02-18] **strength:** After the last 1:1, started booking 15-min pairs with Sarah and Alex proactively when stuck [User]
+- [2026-03-11] **strength:** Shipped the Aurora filter refactor — clean code, thoughtful tests [Auto] (slack, #aurora-dashboard)
+- [2026-03-25] **strength:** Started leading the Aurora Dashboard project (his first lead role) — owning scope, reviewers, and timeline [User]
+- [2026-04-08] **strength:** Brought a written status doc for Aurora to 1:1 — format was clean, showed real thought [User]
 
 ## Pending Feedback
 
 ## Recognition
 
-- [2026-02-18 | meeting 1:1 with Nate] Proactively sought pairing when stuck — context: turned a pattern around in 3 weeks [User]
-- [2026-03-11 | slack #aurora-dashboard] Shipped the Aurora filter refactor — context: cleaned up 600 lines of tangled logic [Auto]
+- [2026-02-18] Proactively sought pairing when stuck — context: turned a pattern around in 3 weeks [User]
+- [2026-03-11] Shipped the Aurora filter refactor — context: cleaned up 600 lines of tangled logic [Auto] (slack, #aurora-dashboard)
 
 ## Personal Notes
 

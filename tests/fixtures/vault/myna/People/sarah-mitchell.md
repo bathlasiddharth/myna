@@ -1,5 +1,6 @@
 ---
 created: 2025-08-14
+aliases: ["Sarah Mitchell"]
 ---
 
 #person #cross-team
@@ -25,12 +26,12 @@ created: 2025-08-14
 
 > Chronological log of observations. Each entry has type, area, and source.
 
-- [2025-09-20 | meeting Q4 planning kickoff] **strength:** Came to the meeting with a one-page summary of Q4 growth metrics and three specific asks for Platform [User]
-- [2025-12-02 | email from Sarah Mitchell] **strength:** Pre-read doc for the Q1 portfolio review was the clearest I've seen this quarter — used the one-page summary + appendix pattern [User]
-- [2026-02-18 | meeting Atlas stakeholder sync] **growth-area:** Pushed hard for a date commitment on Atlas before our internal design was locked — pattern I've seen before [User]
-- [2026-03-05 | meeting Q1 cross-team sync] **strength:** Came to the meeting with a one-page summary of growth metrics and clear asks [User]
-- [2026-03-22 | email from Sarah Mitchell] **contribution:** Pulled together the Q2 planning input from three cross-functional teams [Auto]
-- [2026-04-06 | email from Sarah Mitchell] **strength:** Followed up on the Q2 dependencies request with a concrete deadline instead of an open-ended nudge [Auto]
+- [2025-09-20] **strength:** Came to the meeting with a one-page summary of Q4 growth metrics and three specific asks for Platform [User]
+- [2025-12-02] **strength:** Pre-read doc for the Q1 portfolio review was the clearest I've seen this quarter — used the one-page summary + appendix pattern [User]
+- [2026-02-18] **growth-area:** Pushed hard for a date commitment on Atlas before our internal design was locked — pattern I've seen before [User]
+- [2026-03-05] **strength:** Came to the meeting with a one-page summary of growth metrics and clear asks [User]
+- [2026-03-22] **contribution:** Pulled together the Q2 planning input from three cross-functional teams [Auto] (email, Sarah)
+- [2026-04-06] **strength:** Followed up on the Q2 dependencies request with a concrete deadline instead of an open-ended nudge [Auto] (email, Sarah)
 
 ## Pending Feedback
 
@@ -40,8 +41,8 @@ created: 2025-08-14
 
 > Accomplishments and recognition entries.
 
-- [2025-12-02 | email from James] Best pre-read doc of the Q1 portfolio review cycle — context: David adopted her template for all Growth updates [Auto]
-- [2026-03-22 | email from Sarah Mitchell] Coordinated Q2 planning input across Growth, Platform, and Payments — context: unblocked the planning kickoff [Auto]
+- [2025-12-02] Best pre-read doc of the Q1 portfolio review cycle — context: David adopted her template for all Growth updates [Auto] (email, James)
+- [2026-03-22] Coordinated Q2 planning input across Growth, Platform, and Payments — context: unblocked the planning kickoff [Auto] (email, Sarah)
 
 ## Personal Notes
 

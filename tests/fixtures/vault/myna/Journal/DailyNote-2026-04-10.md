@@ -57,8 +57,8 @@ TASK FROM "myna" WHERE !completed AND type = "delegation" SORT due ASC
 
 ### Contributions Detected
 
-- [2026-04-10 | wrap-up] **people-development:** Marcus 1:1 — surfaced scope-cut discomfort, reframed it; talked through parental leave coverage [User]
-- [2026-04-10 | wrap-up] **issue-prevention:** Reviewed Sarah's updated caching design and caught one section that needed clarification [Auto]
+- [2026-04-10] **people-development:** Marcus 1:1 — surfaced scope-cut discomfort, reframed it; talked through parental leave coverage [User]
+- [2026-04-10] **issue-prevention:** Reviewed Sarah's updated caching design and caught one section that needed clarification [Auto] (capture)
 
 ### Carried to Tomorrow
 

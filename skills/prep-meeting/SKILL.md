@@ -8,7 +8,7 @@ argument-hint: '"prep for my 1:1 with Sarah", "prep for my remaining meetings", 
 
 # myna-prep-meeting
 
-If vault_path is not in context, read `~/.myna/config.yaml` first. If the file does not exist, tell the user to run `/myna:install` and stop.
+If vault_path is not in context, read `~/.myna/config.yaml` first. If the file does not exist, tell the user to run `/myna:setup` and stop.
 
 Generate meeting prep — a set of checkboxes covering what to discuss, what to review, and what needs decisions — written to the meeting file before the meeting.
 
@@ -34,16 +34,27 @@ Generate meeting prep — a set of checkboxes covering what to discuss, what to 
 
 Determine meeting type before generating prep — the type determines what content to include.
 
+Check `features.meeting_prep` in workspace.yaml before proceeding. If disabled, stop silently.
+
 **Inference priority:**
 1. meetings.yaml override — if the meeting has an entry, use its configured `type`
-2. Attendee count of 2 → 1:1 (check person against people.yaml by name or email)
+2. Event title contains "Review", "Design Review", "Doc Review" → design/doc review (title overrides attendee count)
 3. Event title matches a project name or alias from projects.yaml → project meeting
-4. All attendees are in the user's direct reports (people.yaml, relationship_tier: direct) → team meeting
-5. Mix of directs and cross-team attendees → cross-team/coordination meeting
-6. Recurring event with team-like attendee pattern → standup/sync
-7. "Review", "Design Review", "Doc Review" in title → design/doc review
+4. Attendee count of 2 → likely 1:1 (check person against people.yaml by name or email) — **only if signals 2-3 don't apply**
+5. All attendees are in the user's direct reports (people.yaml, relationship_tier: direct) → team meeting
+6. Mix of directs and cross-team attendees → cross-team/coordination meeting
+7. Recurring event with team-like attendee pattern → standup/sync
 
-When not confident, ask the user once: "Is this a 1:1 with Sarah or a team meeting?" Save the answer as an override in meetings.yaml so you don't ask again.
+When not confident (especially for 2-person meetings where the other person is on a project you share), ask the user once: "Is this a 1:1 with Sarah or a project sync?" Save the answer as an override in meetings.yaml using this format:
+
+```yaml
+meetings:
+  - name: {exact calendar event title}
+    type: {1-1 | recurring | adhoc | project}
+    project: {project-slug or null}
+```
+
+Read existing meetings.yaml first to avoid duplicate entries. Append the new entry only if the meeting name is not already present.
 
 **Meeting types and their prep behaviors:**
 - `1-1` — deepest prep, see 1:1 section
@@ -63,13 +74,13 @@ When not confident, ask the user once: "Is this a 1:1 with Sarah or a team meeti
 | Recurring (standup, sync, regular team) | `Meetings/Recurring/{meeting-slug}.md` |
 | Adhoc or one-off | `Meetings/Adhoc/{YYYY-MM-DD}-{meeting-slug}.md` |
 
-If the file doesn't exist, create it from the appropriate template (see File Templates below). If it exists, prepend a new session section.
+If the file doesn't exist, create it from the appropriate template (see File Templates below). If it exists, prepend a new session section below the frontmatter and tags.
 
 ---
 
 ## Session Structure
 
-Each session is a top-level `## {YYYY-MM-DD} Session` block prepended to the top of the meeting file, after the frontmatter and tags. Within it, two sections:
+Each session is a top-level `## {YYYY-MM-DD} Session` block prepended to the meeting file, after the frontmatter and tags. Sessions accumulate in reverse chronological order — newest at the top. Within each session block, two sections:
 
 **Video call URL:** Before writing the session, check the calendar event for a video call URL. Check in order: `conferenceData.entryPoints[].uri` (type: video), then the `location` field for a URL matching `zoom.us`, `meet.google.com`, `teams.microsoft.com`, or similar. If found, include it as a `📹 Join:` line at the top of the Prep section. If not found, omit the line entirely — do not write "N/A" or leave it empty.
 
@@ -148,13 +159,13 @@ Keep factual — dates, specific deliverables. Not "I've been very busy."
 Tasks where `[person:: {name}]` or delegations from/to this person across all project files.
 
 **5. Pending feedback with coaching suggestion**
-Read `People/{person}.md` `## Pending Feedback` section. For each item, include it as a checkbox and add a coaching note if the topic is sensitive.
+Skip this section if `features.people_management` is disabled in workspace.yaml. Read `People/{person}.md` `## Pending Feedback` section. For each item, include it as a checkbox and add a coaching note if the topic is sensitive.
 
 **6. Career development context**
-From `People/{person}.md`: growth areas, time since last career conversation. Flag if it's been more than 30 days (configurable `feedback_cycle_days`).
+From `People/{person}.md`: growth areas, time since last career conversation. Read the per-person `feedback_cycle_days` from people.yaml first; fall back to `feedback_cycle_days` from workspace.yaml (default: 30). Flag if the gap exceeds the threshold. Skip this section if `features.feedback_gap_detection` is disabled in workspace.yaml.
 
 **7. Personal notes**
-From `People/{person}.md` `## Personal Notes`. Include any notes about things they mentioned (marathon, vacation, family).
+Skip this section if `features.people_management` is disabled in workspace.yaml. From `People/{person}.md` `## Personal Notes`. Include any notes about things they mentioned (marathon, vacation, family).
 
 **8. Recent decisions on shared projects**
 Timeline decisions from shared project files since the last 1:1.
@@ -249,7 +260,7 @@ person: [[{person-slug}]]
 
 #meeting #1-1
 ```
-Sessions are prepended below the tags (newest at top).
+Sessions are prepended below the tags — newest at the top.
 
 ### Recurring File (create if missing)
 ```markdown
@@ -321,7 +332,7 @@ For batch (all remaining today):
 8. Read `Projects/auth-migration.md` timeline: 2 decisions since last 1:1, 1 active blocker
 9. Generate prep session with all sections, coaching note for pending feedback and 41-day career gap
 
-Prepended to `Meetings/1-1s/sarah-chen.md` (after frontmatter and tags, above any previous sessions):
+Appended to `Meetings/1-1s/sarah-chen.md` (after frontmatter, tags, and any previous sessions):
 ```markdown
 ## 2026-04-10 Session
 

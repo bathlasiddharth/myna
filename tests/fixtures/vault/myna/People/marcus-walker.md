@@ -1,5 +1,6 @@
 ---
 created: 2024-09-15
+aliases: ["Marcus Walker"]
 ---
 
 #person #direct #marcus-walker
@@ -25,20 +26,20 @@ created: 2024-09-15
 
 > Chronological log of observations. Each entry has type, area, and source.
 
-- [2024-11-14 | meeting 1:1 with Marcus] **strength:** Shipped first PR within two weeks of joining — a schema migration test harness [User]
-- [2025-01-22 | meeting 1:1 with Marcus] **growth-area:** Estimates are running 2x optimistic on his first three tasks — pattern to watch [User]
-- [2025-04-08 | meeting Platform Weekly] **strength:** Voluntarily owned the recurring load test setup that nobody wanted [User]
-- [2025-09-16 | email from James] **contribution:** Helped resolve the September storage backup regression — paired with Alex [Auto]
-- [2025-12-05 | meeting 1:1 with Marcus] **growth-area:** First missed deadline on a customer-facing migration — we agreed on weekly check-ins [User]
-- [2026-01-14 | meeting 1:1 with Marcus] **strength:** Noticeable improvement in estimation accuracy after the check-in process — last three tasks within 10% [User]
-- [2026-02-05 | meeting 1:1 with Marcus] **growth-area:** Estimates slipping again on Phoenix work — 50-100% optimistic, pattern is repeating [User]
-- [2026-02-22 | meeting 1:1 with Marcus] **strength:** First on-call rotation went smoothly — ran the playbook by the book, escalated exactly once and appropriately [User]
-- [2026-03-10 | slack #phoenix-eng] **growth-area:** Pushed back hard in public on Alex's review feedback — handle disagreements 1:1 first [User]
-- [2026-03-20 | meeting Platform Weekly] **strength:** Owned the public apology to Alex the same day — no one asked him to [User]
-- [2026-03-25 | meeting 1:1 with Marcus] **growth-area:** Three commitments slipped in two weeks — need to discuss workload and prioritization [User]
-- [2026-04-03 | slack #phoenix-eng] **strength:** Took the validator blocker personally — started pinging infra team without being asked [Inferred]
-- [2026-04-07 | meeting Phoenix blocker review] **growth-area:** Froze in the meeting when the scope cut came up — needs practice with uncomfortable conversations [User]
-- [2026-04-10 | meeting 1:1 with Marcus] **strength:** Brought a written fallback design to 1:1 — clean structure, realistic estimates, called out his own risks [User]
+- [2024-11-14] **strength:** Shipped first PR within two weeks of joining — a schema migration test harness [User]
+- [2025-01-22] **growth-area:** Estimates are running 2x optimistic on his first three tasks — pattern to watch [User]
+- [2025-04-08] **strength:** Voluntarily owned the recurring load test setup that nobody wanted [User]
+- [2025-09-16] **contribution:** Helped resolve the September storage backup regression — paired with Alex [Auto] (email, James)
+- [2025-12-05] **growth-area:** First missed deadline on a customer-facing migration — we agreed on weekly check-ins [User]
+- [2026-01-14] **strength:** Noticeable improvement in estimation accuracy after the check-in process — last three tasks within 10% [User]
+- [2026-02-05] **growth-area:** Estimates slipping again on Phoenix work — 50-100% optimistic, pattern is repeating [User]
+- [2026-02-22] **strength:** First on-call rotation went smoothly — ran the playbook by the book, escalated exactly once and appropriately [User]
+- [2026-03-10] **growth-area:** Pushed back hard in public on Alex's review feedback — handle disagreements 1:1 first [User]
+- [2026-03-20] **strength:** Owned the public apology to Alex the same day — no one asked him to [User]
+- [2026-03-25] **growth-area:** Three commitments slipped in two weeks — need to discuss workload and prioritization [User]
+- [2026-04-03] **strength:** Took the validator blocker personally — started pinging infra team without being asked [Inferred] (slack, #phoenix-eng)
+- [2026-04-07] **growth-area:** Froze in the meeting when the scope cut came up — needs practice with uncomfortable conversations [User]
+- [2026-04-10] **strength:** Brought a written fallback design to 1:1 — clean structure, realistic estimates, called out his own risks [User]
 
 ## Pending Feedback
 
@@ -51,11 +52,11 @@ created: 2024-09-15
 
 > Accomplishments and recognition entries.
 
-- [2024-11-14 | meeting 1:1 with Marcus] First PR shipped in under two weeks — context: schema migration test harness, still in use [User]
-- [2025-09-16 | email from James] Helped resolve the September backup regression — context: paired with Alex and stayed past 8 PM [Auto]
-- [2026-02-22 | meeting 1:1 with Marcus] Ran his first on-call rotation cleanly — context: handled three pages without over-escalating [User]
-- [2026-03-20 | meeting Platform Weekly] Owned the public apology to Alex the same day — context: closed the loop before the next standup [User]
-- [2026-04-10 | meeting 1:1 with Marcus] Wrote the Phoenix fallback design proactively — context: turned a stuck blocker into forward motion [User]
+- [2024-11-14] First PR shipped in under two weeks — context: schema migration test harness, still in use [User]
+- [2025-09-16] Helped resolve the September backup regression — context: paired with Alex and stayed past 8 PM [Auto] (email, James)
+- [2026-02-22] Ran his first on-call rotation cleanly — context: handled three pages without over-escalating [User]
+- [2026-03-20] Owned the public apology to Alex the same day — context: closed the loop before the next standup [User]
+- [2026-04-10] Wrote the Phoenix fallback design proactively — context: turned a stuck blocker into forward motion [User]
 
 ## Personal Notes
 

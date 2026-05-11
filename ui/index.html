@@ -229,16 +229,10 @@
                 <label class="field-label" for="user-role">Role</label>
                 <select id="user-role" class="field-input" onchange="handleRoleChange()">
                   <option value="">Select a role</option>
-                  <option value="cto">CTO</option>
-                  <option value="director-of-engineering">Director of Engineering</option>
                   <option value="engineering-manager">Engineering Manager</option>
-                  <option value="product-manager">Product Manager</option>
-                  <option value="security-engineer">Security Engineer</option>
-                  <option value="software-developer">Software Developer</option>
                   <option value="tech-lead">Tech Lead</option>
-                  <option value="technical-program-manager">Technical Program Manager</option>
-                  <option value="vp-of-engineering">VP of Engineering</option>
-                  <option value="vp-of-product">VP of Product</option>
+                  <option value="senior-engineer">Senior Engineer</option>
+                  <option value="pm">PM</option>
                   <option value="_custom">Custom...</option>
                 </select>
                 <input type="text" id="user-role-custom" class="field-input mt-2 hidden" placeholder="Enter your role" />
@@ -337,22 +331,13 @@
             <div class="form-section">
               <h2 class="section-title">Cadence</h2>
 
-              <div class="grid grid-cols-2 gap-4">
-                <div class="field-group">
-                  <label class="field-label" for="feedback-cycle">Feedback cycle</label>
-                  <select id="feedback-cycle" class="field-input" onchange="saveTab('identity')">
-                    <option value="14">Every 2 weeks</option>
-                    <option value="30" selected>Every month</option>
-                    <option value="90">Quarterly</option>
-                  </select>
-                </div>
-                <div class="field-group">
-                  <label class="field-label" for="journal-archive">Journal archive after</label>
-                  <div class="relative">
-                    <input type="number" id="journal-archive" class="field-input pr-12" min="1" max="365" placeholder="30" />
-                    <span class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm pointer-events-none">days</span>
-                  </div>
-                </div>
+              <div class="field-group">
+                <label class="field-label" for="feedback-cycle">Feedback cycle</label>
+                <select id="feedback-cycle" class="field-input" onchange="saveTab('identity')">
+                  <option value="14">Every 2 weeks</option>
+                  <option value="30" selected>Every month</option>
+                  <option value="90">Quarterly</option>
+                </select>
               </div>
 
 
@@ -415,13 +400,26 @@
             </div>
 
             <div class="form-section" id="draft-replies-section" style="display:none">
-              <h2 class="section-title">Draft Replies</h2>
+              <h2 class="section-title">Email Triage</h2>
 
               <div class="field-group">
-                <label class="field-label" for="notes-email">Notes forwarding email</label>
-                <input type="email" id="notes-email" class="field-input" placeholder="e.g. notes@yourapp.com" />
-                <p class="field-hint">Forward email threads to this address with your notes in the body to trigger a draft reply. Used by the DraftReplies workflow.</p>
+                <label class="field-label" for="triage-inbox-source">Inbox source folder</label>
+                <input type="text" id="triage-inbox-source" class="field-input font-mono" placeholder="INBOX" />
+                <p class="field-hint">The email folder Myna scans for new mail to triage. Defaults to INBOX.</p>
               </div>
+
+              <div class="field-group">
+                <label class="field-label" for="triage-draft-replies-folder">Draft replies folder</label>
+                <input type="text" id="triage-draft-replies-folder" class="field-input font-mono" placeholder="DraftReplies" />
+                <p class="field-hint">Email folder where you forward threads with reply notes. Myna reads this folder to create draft replies.</p>
+              </div>
+
+              <div class="field-group">
+                <label class="field-label" for="email-processed-folder">Processed email folder</label>
+                <input type="text" id="email-processed-folder" class="field-input font-mono" placeholder="e.g. Processed" />
+                <p class="field-hint">Folder where Myna moves emails after triage to prevent reprocessing.</p>
+              </div>
+
             </div>
 
           </form>
@@ -442,11 +440,13 @@
                 <label class="field-label" for="comm-default-preset">Default preset</label>
                 <select id="comm-default-preset" class="field-input" onchange="handleCommStyleChange('default')">
                   <option value="">Select a style</option>
-                  <option value="assertive">Assertive — direct, clear ask, no hedging</option>
-                  <option value="analytical">Analytical — evidence-first, structured reasoning</option>
-                  <option value="empathetic">Empathetic — relationship-first, acknowledges context</option>
-                  <option value="formal">Formal — polished, structured, safe for any audience</option>
+                  <option value="professional">Professional — polished, clear, appropriate for any audience</option>
+                  <option value="conversational">Conversational — warm, natural, collegial tone</option>
                   <option value="executive">Executive — BLUF, outcome-focused, so-what first</option>
+                  <option value="casual">Casual — relaxed, informal, no-formality needed</option>
+                  <option value="coaching">Coaching — encouraging, growth-oriented, forward-looking</option>
+                  <option value="diplomatic">Diplomatic — tactful, balances honesty with relationship care</option>
+                  <option value="concise">Concise — shortest possible, essentials only</option>
                   <option value="_custom">Custom</option>
                 </select>
                 <input type="text" id="comm-default-preset-custom" class="field-input mt-2 hidden" placeholder="Describe your communication style" />
@@ -461,11 +461,13 @@
                 <label class="field-label" for="comm-upward">Upward (manager, leadership)</label>
                 <select id="comm-upward" class="field-input" onchange="handleCommStyleChange('upward')">
                   <option value="">Use default</option>
-                  <option value="assertive">Assertive — direct, clear ask, no hedging</option>
-                  <option value="analytical">Analytical — evidence-first, structured reasoning</option>
-                  <option value="empathetic">Empathetic — relationship-first, acknowledges context</option>
-                  <option value="formal">Formal — polished, structured, safe for any audience</option>
+                  <option value="professional">Professional — polished, clear, appropriate for any audience</option>
+                  <option value="conversational">Conversational — warm, natural, collegial tone</option>
                   <option value="executive">Executive — BLUF, outcome-focused, so-what first</option>
+                  <option value="casual">Casual — relaxed, informal, no-formality needed</option>
+                  <option value="coaching">Coaching — encouraging, growth-oriented, forward-looking</option>
+                  <option value="diplomatic">Diplomatic — tactful, balances honesty with relationship care</option>
+                  <option value="concise">Concise — shortest possible, essentials only</option>
                   <option value="_custom">Custom</option>
                 </select>
                 <input type="text" id="comm-upward-custom" class="field-input mt-2 hidden" placeholder="Describe your communication style" />
@@ -475,11 +477,13 @@
                 <label class="field-label" for="comm-peer">Peer</label>
                 <select id="comm-peer" class="field-input" onchange="handleCommStyleChange('peer')">
                   <option value="">Use default</option>
-                  <option value="assertive">Assertive — direct, clear ask, no hedging</option>
-                  <option value="analytical">Analytical — evidence-first, structured reasoning</option>
-                  <option value="empathetic">Empathetic — relationship-first, acknowledges context</option>
-                  <option value="formal">Formal — polished, structured, safe for any audience</option>
+                  <option value="professional">Professional — polished, clear, appropriate for any audience</option>
+                  <option value="conversational">Conversational — warm, natural, collegial tone</option>
                   <option value="executive">Executive — BLUF, outcome-focused, so-what first</option>
+                  <option value="casual">Casual — relaxed, informal, no-formality needed</option>
+                  <option value="coaching">Coaching — encouraging, growth-oriented, forward-looking</option>
+                  <option value="diplomatic">Diplomatic — tactful, balances honesty with relationship care</option>
+                  <option value="concise">Concise — shortest possible, essentials only</option>
                   <option value="_custom">Custom</option>
                 </select>
                 <input type="text" id="comm-peer-custom" class="field-input mt-2 hidden" placeholder="Describe your communication style" />
@@ -489,11 +493,13 @@
                 <label class="field-label" for="comm-direct">Direct reports</label>
                 <select id="comm-direct" class="field-input" onchange="handleCommStyleChange('direct')">
                   <option value="">Use default</option>
-                  <option value="assertive">Assertive — direct, clear ask, no hedging</option>
-                  <option value="analytical">Analytical — evidence-first, structured reasoning</option>
-                  <option value="empathetic">Empathetic — relationship-first, acknowledges context</option>
-                  <option value="formal">Formal — polished, structured, safe for any audience</option>
+                  <option value="professional">Professional — polished, clear, appropriate for any audience</option>
+                  <option value="conversational">Conversational — warm, natural, collegial tone</option>
                   <option value="executive">Executive — BLUF, outcome-focused, so-what first</option>
+                  <option value="casual">Casual — relaxed, informal, no-formality needed</option>
+                  <option value="coaching">Coaching — encouraging, growth-oriented, forward-looking</option>
+                  <option value="diplomatic">Diplomatic — tactful, balances honesty with relationship care</option>
+                  <option value="concise">Concise — shortest possible, essentials only</option>
                   <option value="_custom">Custom</option>
                 </select>
                 <input type="text" id="comm-direct-custom" class="field-input mt-2 hidden" placeholder="Describe your communication style" />
@@ -503,11 +509,13 @@
                 <label class="field-label" for="comm-cross-team">Cross-team</label>
                 <select id="comm-cross-team" class="field-input" onchange="handleCommStyleChange('cross-team')">
                   <option value="">Use default</option>
-                  <option value="assertive">Assertive — direct, clear ask, no hedging</option>
-                  <option value="analytical">Analytical — evidence-first, structured reasoning</option>
-                  <option value="empathetic">Empathetic — relationship-first, acknowledges context</option>
-                  <option value="formal">Formal — polished, structured, safe for any audience</option>
+                  <option value="professional">Professional — polished, clear, appropriate for any audience</option>
+                  <option value="conversational">Conversational — warm, natural, collegial tone</option>
                   <option value="executive">Executive — BLUF, outcome-focused, so-what first</option>
+                  <option value="casual">Casual — relaxed, informal, no-formality needed</option>
+                  <option value="coaching">Coaching — encouraging, growth-oriented, forward-looking</option>
+                  <option value="diplomatic">Diplomatic — tactful, balances honesty with relationship care</option>
+                  <option value="concise">Concise — shortest possible, essentials only</option>
                   <option value="_custom">Custom</option>
                 </select>
                 <input type="text" id="comm-cross-team-custom" class="field-input mt-2 hidden" placeholder="Describe your communication style" />
@@ -927,7 +935,7 @@
 
           <div id="projects-list" class="flex flex-col gap-2 mb-4"></div>
 
-          <div class="info-box mb-4">Got a goals doc, project brief, or business review? Upload it in <a href="#" onclick="event.preventDefault(); switchTab('files')" class="underline">Files</a> and run <code>/myna-setup import</code> — Myna will extract projects automatically.</div>
+          <div class="info-box mb-4">Got a goals doc, project brief, or business review? Upload it in <a href="#" onclick="event.preventDefault(); switchTab('files')" class="underline">Files</a> and run <code>/myna:setup</code> — Myna will extract projects automatically.</div>
 
           <button type="button" class="add-item-btn" onclick="addProject()">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
@@ -945,7 +953,7 @@
 
           <div id="people-list" class="flex flex-col gap-2 mb-4"></div>
 
-          <div class="info-box mb-4">Got a team directory, org chart, or any doc that lists your colleagues? Upload it in <a href="#" onclick="event.preventDefault(); switchTab('files')" class="underline">Files</a> and run <code>/myna-setup import</code> — Myna will extract people automatically.</div>
+          <div class="info-box mb-4">Got a team directory, org chart, or any doc that lists your colleagues? Upload it in <a href="#" onclick="event.preventDefault(); switchTab('files')" class="underline">Files</a> and run <code>/myna:setup</code> — Myna will extract people automatically.</div>
 
           <button type="button" class="add-item-btn" onclick="addPerson()">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
@@ -972,7 +980,7 @@
 
           <!-- Helper info box -->
           <div class="info-box mt-4 mb-6">
-            Upload any docs that describe your work — team directories, org charts, goals docs, project briefs, business reviews, meeting notes. Run <code>/myna-setup import</code> in a Claude chat to extract people and projects automatically.
+            Upload any docs that describe your work — team directories, org charts, goals docs, project briefs, business reviews, meeting notes. Run <code>/myna:setup</code> in a Claude chat to extract people and projects automatically.
           </div>
 
           <!-- Uploaded files (populated after upload) -->

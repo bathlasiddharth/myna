@@ -1,5 +1,6 @@
 ---
 created: 2025-01-10
+aliases: ["James Miller"]
 ---
 
 #person #upward
@@ -25,9 +26,9 @@ created: 2025-01-10
 
 > Chronological log of observations. Each entry has type, area, and source.
 
-- [2025-06-02 | meeting portfolio review] **strength:** Cut a pre-read from 12 pages to 2 and still landed every decision we needed [User]
-- [2025-12-18 | email from James] **contribution:** Called out Sarah Carter by name for Compass launch — specific, well-written, got filed in her HR record [Auto]
-- [2026-03-15 | email from James] **strength:** Wrote a detailed praise note for Sarah's incident handling, spelling out exactly what she did well [User]
+- [2025-06-02] **strength:** Cut a pre-read from 12 pages to 2 and still landed every decision we needed [User]
+- [2025-12-18] **contribution:** Called out Sarah Carter by name for Compass launch — specific, well-written, got filed in her HR record [Auto] (email, James)
+- [2026-03-15] **strength:** Wrote a detailed praise note for Sarah's incident handling, spelling out exactly what she did well [User]
 
 ## Pending Feedback
 

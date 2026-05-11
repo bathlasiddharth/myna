@@ -6,7 +6,7 @@ user-invocable: true
 argument-hint: "[person name]"
 ---
 
-If vault_path is not in context, read `~/.myna/config.yaml` first. If the file does not exist, tell the user to run `/myna:install` and stop.
+If vault_path is not in context, read `~/.myna/config.yaml` first. If the file does not exist, tell the user to run `/myna:setup` and stop.
 
 # 1:1 Pattern Analysis
 
@@ -28,7 +28,12 @@ Match the user's input against people.yaml via fuzzy resolution. If multiple mat
 
 Sessions are typically organized with a dated heading, a prep section (checklist items), and a notes section (discussion, action items, decisions). Adapt to whatever structure is actually present — the user may have added custom sections or the format may have evolved.
 
-Read all sessions. If the file has more than 12 sessions, default to analyzing the most recent 12. The user can specify a range ("last 6 months", "last 10 sessions").
+Read all sessions. Parse all `## {YYYY-MM-DD} Session` headings and sort ascending by date before analysis.
+
+Default to sessions from the last 12 weeks. The user can specify a different range ("last 6 months", "last 10 sessions").
+
+**Additional sources for action item follow-through:**
+- `Projects/*.md` — Grep for open and completed tasks with `[person:: [[{name}]]` involving this person. Completed tasks (`- [x]`) provide additional evidence that action items were addressed, even if not reflected in meeting notes.
 
 **Note on two distinct item types:**
 - **Prep items** — checkbox items associated with the session. Checkbox state (`[x]` = addressed, `[ ]` = not addressed/carried forward) is the primary signal for carry-forward analysis.

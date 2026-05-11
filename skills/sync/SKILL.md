@@ -8,7 +8,7 @@ argument-hint: "[plan tomorrow]"
 
 # myna-sync
 
-If vault_path is not in context, read `~/.myna/config.yaml` first. If the file does not exist, tell the user to run `/myna:install` and stop.
+If vault_path is not in context, read `~/.myna/config.yaml` first. If the file does not exist, tell the user to run `/myna:setup` and stop.
 
 Sets up or refreshes your day. Rerunnable at any time — each run prepends a fresh snapshot at the top of the daily note; previous snapshots stay untouched.
 
@@ -107,7 +107,9 @@ Populate Week Capacity by reading this week's calendar events (duration + count 
 
 ## Step 4: Archive Previous Daily Note
 
-Before creating or refreshing today's daily note, glob `Journal/*.md` for files matching `\d{4}-\d{2}-\d{2}.md` (daily pattern). Any file found whose name does not match today's date is the previous daily note — move it to `Journal/Archive/Daily/` using Bash `mv`. There should be at most one such file (the previous day's note). Report if moved; if none found, continue silently.
+**Normal sync (today):** Before creating or refreshing today's daily note, glob `Journal/*.md` for files matching `\d{4}-\d{2}-\d{2}.md` (daily pattern). Any file found whose name does not match today's date is the previous daily note — move it to `Journal/Archive/Daily/` using Bash `mv`. There should be at most one such file (the previous day's note). Report if moved; if none found, continue silently.
+
+**Plan tomorrow:** Do NOT archive today's daily note. Today's note remains the active record for the current day. Archive happens only on the normal sync run for the new target date. Only archive any prior daily note that is not today's date and not tomorrow's date.
 
 ---
 
@@ -119,15 +121,15 @@ Collect in parallel:
 
 **Due today:** Grep `{vault}/myna/Projects/` for `- \[ \]` with `📅 {target-date}`. Group by project file. Also grep outside `Projects/` for tasks with `📅 {target-date}` — these are "General" tasks with no project. Retain the full task text and source file for each result.
 
-**Overdue (for briefing signal only):** Grep `{vault}/myna/Projects/` for `- \[ \]` with `📅 {date}` before target date. Count total; surface the top 3 by priority for the briefing. Full list belongs in [[Dashboards/overdue]] dashboard.
+**Overdue (for briefing signal only):** Grep `{vault}/myna/Projects/` for `- \[ \]` with `📅 {date}` before target date. Count total; surface the top 3 by priority for the briefing. Full list available in `Dashboards/dashboard.md`.
 
-**Overdue delegations (for briefing signal only):** Grep `{vault}/myna/` for `- \[ \]` lines containing `[type:: delegation]` with `📅 {date}` before today. Count total; surface any as red-flag bullets in the briefing. Full list belongs in [[Dashboards/delegations]] dashboard.
+**Overdue delegations (for briefing signal only):** Grep `{vault}/myna/` for `- \[ \]` lines containing `[type:: delegation]` with `📅 {date}` before today. Count total; surface any as red-flag bullets in the briefing. Full list available in `Dashboards/dashboard.md`.
 
-**Blockers:** Grep `{vault}/myna/Projects/` for `> \[!blocker\]` callout blocks. For each match, read a window of ~5 surrounding lines. Skip if `resolved:: true` or `status:: resolved` appears within the same callout block. Surface unresolved ones as briefing bullets.
+**Blockers:** Grep `{vault}/myna/Projects/` for `> \[!warning\] Blocker` callout blocks. For each match, read a window of ~5 surrounding lines. Skip if `resolved:: true` or `status:: resolved` appears within the same callout block. Surface unresolved ones as briefing bullets.
 
 **Milestones** (if `features.milestones` is enabled): Read `people.yaml` and all People files. Find birthdays (`birthday: MM-DD`) or work anniversaries (`work_anniversary: YYYY-MM-DD`) within the next 7 days. Surface as briefing bullets.
 
-**Review queue counts:** Read `{vault}/myna/ReviewQueue/review-work.md`, `review-people.md`, `review-self.md`, and `review-email-triage.md`. Count unchecked items (`- \[ \]`) in each. If a file doesn't exist, treat its count as 0. Include total in briefing only if non-zero.
+**Review queue counts:** Read `{vault}/myna/ReviewQueue/review-work.md`, `review-people.md`, `review-self.md`, and `review-inbox.md`. Count unchecked items (`- \[ \]`) in each. If a file doesn't exist, treat its count as 0. Include total in briefing only if non-zero.
 
 ---
 
@@ -188,7 +190,7 @@ date: {YYYY-MM-DD}
 
 ### Dashboards
 
-[[Dashboards/home]] · [[Dashboards/tasks]] · [[Dashboards/this-week]] · [[Dashboards/overdue]] · [[Dashboards/delegations]] · [[Dashboards/blockers]] · [[Dashboards/projects]] · [[Dashboards/people]] · [[Dashboards/meetings]] · [[Dashboards/weekly]]
+[[dashboard]]
 ```
 
 ### Re-run Snapshot Format (prepended at top)
@@ -308,7 +310,7 @@ User says: "good morning"
 6. Delegations: 1 overdue — Alex was supposed to send infra proposal by last Friday.
 7. Review queue: 3 in review-work, 1 in review-self.
 8. Milestones: Sarah's birthday in 3 days.
-9. Meetings.yaml check: "1:1 with Sarah" → matches alias → `Meetings/1-1s/sarah-chen.md`. Append new session. "Design Review" → adhoc → `Meetings/Adhoc/design-review-2026-04-07.md`.
+9. Meetings.yaml check: "1:1 with Sarah" → matches alias → `Meetings/1-1s/sarah-chen.md`. Append new session. "Design Review" → adhoc → `Meetings/Adhoc/2026-04-07-design-review.md`.
 10. Briefing bullets: over-capacity warning, 2 overdue tasks (top by priority), 1 overdue delegation (Alex — infra proposal), Sarah's birthday in 3 days, 4 review queue items.
 11. Output: "Sync complete (8:47 AM). 3 meetings today (2.5 hrs), 4 tasks due today, 2 overdue. Weekly note created for 2026-W15."
 

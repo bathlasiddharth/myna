@@ -5,11 +5,14 @@ dashboard: projects
 
 ## Projects
 
-### Active
+### All Projects
+
+> Project status lives in the `## Overview` body section, not frontmatter.
+> Use this list and open each file to check status.
+
 ```dataview
-TABLE status AS "Status", file.mtime AS "Last Updated"
+TABLE file.link AS "Project", file.mtime AS "Last Updated"
 FROM "myna/Projects"
-WHERE status = "active"
 SORT file.mtime DESC
 ```
 

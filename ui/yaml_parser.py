@@ -503,9 +503,12 @@ def _format_scalar(value) -> str:
     if isinstance(value, str):
         if value == "":
             return '""'
-        # Quote if value contains ': ', starts with special chars, or contains '#'
+        # Quote if value contains ': ', starts with special chars, contains '#',
+        # or contains a comma (commas inside inline list items would parse as
+        # two separate values without quoting, e.g. "Smith, Jane" → two items).
         needs_quote = (
             ": " in value
+            or "," in value
             or value.startswith("[")
             or value.startswith("#")
             or value.startswith('"')

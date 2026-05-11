@@ -4,9 +4,11 @@ Complete these steps to finish setting up Myna.
 
 ## 1. Activate Shell Aliases
 
-Run this to activate the `myna` command:
+If you accepted the shell alias offer during `/myna:setup`, activate the `myna` command now:
 
 - [ ] `source ~/.zshrc` (or `source ~/.bashrc` if using bash)
+
+> Skip this step if you declined aliases or haven't run `/myna:setup` yet — complete Step 5 first.
 
 ## 2. Install Obsidian Plugins
 
@@ -36,8 +38,7 @@ Skip this if you don't have MCP servers installed yet. Myna works without them �
 ## 5. Configure Myna
 
 Option A: Run `/myna:setup` and choose "Open config UI" for a visual editor.
-Option B: Run `/myna:setup` for a guided chat interview.
-Option C: Edit the files directly:
+Option B: Edit the files directly:
 
 - [ ] `myna/_system/config/workspace.yaml` — your name, email, timezone, enable/disable features
 - [ ] `myna/_system/config/projects.yaml` — active projects you want Myna to track
@@ -61,11 +62,11 @@ This step is not required for Myna to function — it only improves the Obsidian
 
 Go to Settings in Obsidian and configure:
 
-- [ ] **Daily Notes** — folder: `myna/Journal/Daily`, template: `myna/_system/templates/daily-note`
-- [ ] **Periodic Notes** — enable weekly notes, folder: `myna/Journal/Weekly`, template: `myna/_system/templates/weekly-note`
+- [ ] **Daily Notes** — folder: `myna/Journal`, template: `myna/_system/templates/daily-note`
+- [ ] **Periodic Notes** — enable weekly notes, folder: `myna/Journal`, template: `myna/_system/templates/weekly-note`
 - [ ] **Dataview** — enable Dataview JS and inline queries (Settings → Dataview)
 - [ ] **Templates** — template folder: `myna/_system/templates`
 
 ---
 
-See [guide.md](docs/guide/guide.md) for the full user guide.
+See [guide.md](guide.md) for the full user guide.

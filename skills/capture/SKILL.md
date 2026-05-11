@@ -6,7 +6,7 @@ user-invocable: true
 argument-hint: "capture: [anything] | observation about [person]: [text] | add task: [description] | create recurring task: [description] | save link: [url] for [entity] | update status of [project]"
 ---
 
-If vault_path is not in context, read `~/.myna/config.yaml` first. If the file does not exist, tell the user to run `/myna:install` and stop.
+If vault_path is not in context, read `~/.myna/config.yaml` first. If the file does not exist, tell the user to run `/myna:setup` and stop.
 
 # capture
 
@@ -68,22 +68,22 @@ When the user says "capture: [text]", decompose the input into its components an
 
 **Project timeline:**
 ```
-- [2026-04-05 | capture] {content} [Auto] (capture, 2026-04-05)
+- [2026-04-05] {content} [Auto] (capture)
 ```
 
 **Person Recognition:**
 ```
-- [2026-04-05 | capture] {what they did} — {context} [Auto] (capture, 2026-04-05)
+- [2026-04-05] {what they did} — {context} [Auto] (capture)
 ```
 
 **Person Observation:**
 ```
-- [2026-04-05 | capture] **{strength|growth-area|contribution}:** {observation} [Auto] (capture, 2026-04-05)
+- [2026-04-05] **{strength|growth-area|contribution}:** {observation} [Auto] (capture)
 ```
 
 **Contributions log** (`Journal/contributions-{YYYY-MM-DD}.md` — Monday date):
 ```
-- [2026-04-05 | capture] **{category}:** {description} [Inferred] (capture, 2026-04-05)
+- [2026-04-05] **{category}:** {description} [Inferred] (capture)
 ```
 
 **Worked example:**
@@ -96,9 +96,9 @@ Decompose:
 - Your contribution (handled the incident — inferred; user didn't explicitly say they were involved) → check `self_tracking` toggle → if enabled, `Journal/contributions-{YYYY-MM-DD}.md` (Monday date) → `[Inferred]`
 
 Writes:
-1. `People/sarah-chen.md` — Recognition: `- [2026-04-05 | capture] Great handling of auth incident — resolved within SLA [Auto] (capture, 2026-04-05)`
-2. `Projects/auth-migration.md` — Timeline: `- [2026-04-05 | capture] Blocker resolved — migration unblocked [Auto] (capture, 2026-04-05)`
-3. `Journal/contributions-2026-03-30.md` — `- [2026-04-05 | capture] **unblocking-others:** Contributed to resolving auth migration blocker [Inferred] (capture, 2026-04-05)`
+1. `People/sarah-chen.md` — Recognition: `- [2026-04-05] Great handling of auth incident — resolved within SLA [Auto] (capture)`
+2. `Projects/auth-migration.md` — Timeline: `- [2026-04-05] Blocker resolved — migration unblocked [Auto] (capture)`
+3. `Journal/contributions-2026-03-30.md` — `- [2026-04-05] **unblocking-others:** Contributed to resolving auth migration blocker [Inferred] (capture)`
 
 Output: "Wrote 3 entries: recognition for Sarah, timeline update for auth migration, contribution logged [Inferred]."
 
@@ -121,12 +121,12 @@ Output: "Wrote 3 entries: recognition for Sarah, timeline update for auth migrat
 
 **Observation entry:**
 ```
-- [{date} | capture] **{type}:** {observation} [User] (capture, {date})
+- [{date}] **{type}:** {observation} [User] (capture)
 ```
 
 **Pending Feedback entry** (when observation has coaching value):
 ```
-- [{date} | capture] {observation} — Coaching note: {framing} [User] (capture, {date})
+- [{date}] {observation} — Coaching note: {framing} [User] (capture)
 ```
 
 **Worked example:**
@@ -135,7 +135,7 @@ User: "observation about Alex: he consistently delivers accurate effort estimate
 
 1. Resolve: Alex → `People/alex-kumar.md`, tier: peer.
 2. Type: strength (explicit praise).
-3. Append to Observations: `- [2026-04-05 | capture] **strength:** Consistently accurate effort estimates — sprint commitments match actuals [User] (capture, 2026-04-05)`
+3. Append to Observations: `- [2026-04-05] **strength:** Consistently accurate effort estimates — sprint commitments match actuals [User] (capture)`
 4. No pending feedback needed (positive observation, nothing to coach).
 
 ---
@@ -149,7 +149,7 @@ Different from the observation capture above: this is a recognition entry specif
 **How:**
 1. Resolve person.
 2. Append to `People/{person-slug}.md` → Recognition section.
-3. Entry format: `- [{date} | capture] {what they did} — {context} [User] (capture, {date})`
+3. Entry format: `- [{date}] {what they did} — {context} [User] (capture)`
 
 ---
 
@@ -173,7 +173,7 @@ Different from the observation capture above: this is a recognition entry specif
 
 **Task format:**
 ```
-- [ ] {title} 📅 {YYYY-MM-DD} ⏫ [project:: {name}] [type:: {task|delegation|dependency|reply-needed}] [person:: [[{name}]]] [effort:: {estimate}] [review-status:: pending] [Auto] (capture, {date})
+- [ ] {title} 📅 {YYYY-MM-DD} ⏫ [project:: {name}] [type:: {task|delegation|dependency|reply-needed}] [person:: {name}] [effort:: {estimate}] [review-status:: pending] [Auto] (capture, {date})
 ```
 
 Include only fields that have values.
@@ -184,13 +184,12 @@ Include only fields that have values.
 - `dependency` — "waiting on X"
 - `reply-needed` — "need a reply from X"
 
-When the user specifies a project AND a person for a task WITHOUT delegation language (e.g., "Add task 'review PR' to Project Alpha for Sarah"), create `[type:: task]` with `[person:: [[Sarah]]]` as the owner — not a delegation.
+When the user specifies a project AND a person for a task WITHOUT delegation language (e.g., "Add task 'review PR' to Project Alpha for Sarah"), create `[type:: task]` with `[person:: [[Sarah Chen]]]` as the owner — not a delegation.
 
 **Person field rules:**
 - Self-assigned tasks (`[type:: task]` with no explicit owner): always include `[person:: [[{user.name}]]]` using `user.name` from workspace.yaml
 - Project tasks with an explicit owner (`[type:: task]` with a named person): `[person:: [[{their-name}]]]`
 - Delegations / dependencies / reply-needed: `[person:: [[{their-name}]]]` using the name as it appears in people.yaml
-- Never use a plain string — always wiki-link with `[[ ]]`
 
 **Destination:** Project file at `Projects/{project-slug}.md` under Open Tasks section, or daily note if no project.
 
@@ -210,7 +209,7 @@ Ask: "Which project is this for? Or should I add it to your personal tasks?"
 
 If user says "auth migration":
 ```
-- [ ] Review Sarah's design doc 📅 2026-04-11 ⏫ [project:: Auth Migration] [type:: task] [person:: [[Sam Bennett]]] [Auto] (capture, 2026-04-05)
+- [ ] Review Sarah's design doc 📅 2026-04-11 ⏫ [project:: [[Auth Migration]]] [type:: task] [person:: [[Sam Bennett]]] [Auto] (capture)
 ```
 
 All fields explicit → write directly, no review queue.
@@ -224,7 +223,7 @@ Parse:
 - Type: task (not delegation — no delegation language used)
 
 ```
-- [ ] Review PR [project:: Project Alpha] [type:: task] [person:: [[Sarah Chen]]] [Auto] (capture, 2026-04-05)
+- [ ] Review PR [project:: [[Project Alpha]]] [type:: task] [person:: [[Sarah Chen]]] [Auto] (capture)
 ```
 
 User: "delegate the onboarding doc review to Sarah"
@@ -235,7 +234,7 @@ Parse:
 - Type: delegation
 
 ```
-- [ ] Onboarding doc review [project:: {project}] [type:: delegation] [person:: [[Sarah Chen]]] [Auto] (capture, 2026-04-05)
+- [ ] Onboarding doc review [project:: [[{project}]]] [type:: delegation] [person:: [[Sarah Chen]]] [Auto] (capture)
 ```
 
 ---
@@ -256,7 +255,7 @@ Parse:
 
 **Recurring task format:**
 ```
-- [ ] {title} 🔁 every {interval} [project:: {name}] [type:: task] [person:: [[{user.name}]]] [User] (capture, {date})
+- [ ] {title} 🔁 every {interval} [project:: [[{name}]]] [type:: task] [person:: [[{user.name}]]] [User] (capture, {date})
 ```
 
 **Worked example:**
@@ -264,7 +263,7 @@ Parse:
 User: "Create recurring task: weekly team status update, every Monday"
 
 ```
-- [ ] Weekly team status update 🔁 every week [type:: task] [person:: [[Sam Bennett]]] [User] (capture, 2026-04-05)
+- [ ] Weekly team status update 🔁 every week [type:: task] [person:: [[Sam Bennett]]] [User] (capture)
 ```
 
 ---
@@ -326,7 +325,7 @@ Output: "Saved link to auth-migration.md and central index."
 **How:**
 1. Resolve project via fuzzy match.
 2. Edit frontmatter: `status: {active|paused|complete}`
-3. Append timeline entry: `- [{date} | capture] Status changed to {status} [User] (capture, {date})`
+3. Append timeline entry: `- [{date}] Status changed to {status} [User] (capture)`
 
 ### Create Project File
 
@@ -337,7 +336,8 @@ Output: "Saved link to auth-migration.md and central index."
 2. Create `Projects/{slug}.md` from template. If template exists at `_system/templates/project.md`, use it. Otherwise create minimal structure:
 
 Minimal project file structure (sections in order):
-- Tags line: `#project #{project-tag} #status/active`
+- Frontmatter: `aliases: ["{Project Display Name}"]` — enables wiki-link resolution from `[[Project Display Name]]`
+- Tags line: `#project #{project-tag}`
 - `## Overview` — Description, Status (active), Key People as wiki-links
 - `## Timeline` — with note: Append-only chronological log
 - `## Open Tasks` — Dataview query: TASK FROM project folder WHERE !completed SORT priority DESC, due ASC
@@ -356,13 +356,11 @@ Minimal project file structure (sections in order):
 
 ```markdown
 ---
-role: {role or unknown}
-team: {team or unknown}
-relationship: {tier}
-pending-feedback: false
+created: {YYYY-MM-DD}
+aliases: ["{full name}"]
 ---
 
-#person #tier/{relationship-tier}
+#person #{relationship-tier}
 
 ## Overview
 
@@ -383,7 +381,7 @@ pending-feedback: false
 
 ## Meeting History
 
-- [[1-1s/{slug}]] — 1:1 meetings
+- [[{slug}]] — 1:1 meetings
 ```
 
 3. Show file path.

@@ -35,4 +35,4 @@ Atlas provider decision meeting. Compass retrospective follow-up with Rachel.
 
 ### Contributions Detected
 
-- [2026-03-09 | wrap-up] **decisions-and-influence:** Facilitated Atlas provider decision — internal OAuth2 platform chosen [Auto]
+- [2026-03-09] **decisions-and-influence:** Facilitated Atlas provider decision — internal OAuth2 platform chosen [Auto] (capture)

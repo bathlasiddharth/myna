@@ -1,5 +1,6 @@
 ---
 created: 2025-01-10
+aliases: ["David Clark"]
 ---
 
 #person #upward
@@ -24,9 +25,9 @@ created: 2025-01-10
 
 > Chronological log of observations. Each entry has type, area, and source.
 
-- [2025-10-02 | meeting 1:1 with David] **strength:** Stepped in to help negotiate with the Payments VP during the Compass launch scope debate [User]
-- [2026-01-12 | meeting 1:1 with David] **strength:** Read every Atlas design doc in detail before the portfolio review — came with three sharp questions [User]
-- [2026-03-30 | meeting 1:1 with David] **growth-area:** Told me I'm over-indexed on Atlas and losing visibility into Phoenix — fair [User]
+- [2025-10-02] **strength:** Stepped in to help negotiate with the Payments VP during the Compass launch scope debate [User]
+- [2026-01-12] **strength:** Read every Atlas design doc in detail before the portfolio review — came with three sharp questions [User]
+- [2026-03-30] **growth-area:** Told me I'm over-indexed on Atlas and losing visibility into Phoenix — fair [User]
 
 ## Pending Feedback
 
