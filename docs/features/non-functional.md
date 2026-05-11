@@ -258,14 +258,6 @@ This applies to every file in the vault — not just timelines.
 - "by Friday", "next week", "in 3 days" → resolved to actual dates using timezone from workspace config
 - Prevents ambiguity in task due dates and timeline entries
 
-#### Feature Toggles (D020)
-- Every feature has a toggle in workspace.md config (enabled/disabled)
-- Every agent instruction and steering skill checks the toggle before offering or executing a feature
-- Disabled features are silently skipped — the agent doesn't mention them, suggest them, or include their output in dashboards/notes
-- Default on/off per feature determined by the user's role during setup — managers get people management on by default, ICs might have it off
-- Users can enable/disable features anytime via natural language ("disable self-tracking", "enable people management") or by editing workspace.md directly
-- Baked into P0 — all agent instructions are toggle-aware from the start. Retrofitting is painful and error-prone.
-
 #### Obsidian Conventions
 - Tags as inline `#tags` at the top of files (not YAML frontmatter arrays)
 - Wiki-links `[[file-name]]` for cross-references between vault files

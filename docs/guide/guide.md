@@ -126,7 +126,6 @@ The primary config file. Required — Myna reads it at every session start.
 | `mcp_servers.email` | Name of your registered email MCP server (e.g. `gmail-mcp`) |
 | `mcp_servers.slack` | Name of your registered Slack MCP server |
 | `mcp_servers.calendar` | Name of your registered calendar MCP server |
-| `features.*` | Toggle individual features on/off (all default to `true`) |
 
 ### projects.yaml
 

@@ -19,10 +19,16 @@ Each entry:
 
 ---
 
+### D043 — Feature toggles removed — always-on skill set
+**Date:** 2026-05-10
+**Context:** The original design (D020) required every feature to have a toggle in workspace.yaml and every skill to check `features.*` before running. In practice, this added setup overhead (users needed to understand a 27-item feature matrix before using Myna) without practical benefit — the skills already degrade gracefully when data is absent.
+**Decision:** Remove the `features:` block from workspace.yaml and all `features.*` checks from skills. Myna ships a complete, always-on skill set. Explicit invocation controls what runs; data-driven degradation handles empty states — no direct reports means people-management sections stay empty; MCP unavailable means the skill skips with a note; no data logged means sections show "None logged." The simpler model: if you don't want a feature, don't invoke it. Supersedes D020.
+**Alternatives rejected:** Keep toggles with fewer items (still adds setup friction), keep toggles as opt-in only (partial mitigation — still requires a feature matrix to be documented and understood).
+
 ### D042 — Config files are YAML, not markdown
 **Date:** 2026-04-05
 **Context:** The original design had config files as markdown (workspace.md, registry.md, etc.). During Phase 0, the user specified that config files should be YAML for cleaner machine parsing. Six files: workspace.yaml, projects.yaml, people.yaml, meetings.yaml, communication-style.yaml, tags.yaml.
-**Decision:** All Myna config files use YAML format, stored under `_system/config/`. The previous naming (workspace.md, registry.md, tags.md) is superseded. The six config files are: workspace.yaml (user identity, preferences, feature toggles), projects.yaml (projects, aliases, source mappings, triage folders), people.yaml (people, relationship tiers, aliases), meetings.yaml (optional meeting type overrides), communication-style.yaml (writing style presets per audience tier), tags.yaml (auto-tagging rules). All are gitignored.
+**Decision:** All Myna config files use YAML format, stored under `_system/config/`. The previous naming (workspace.md, registry.md, tags.md) is superseded. The six config files are: workspace.yaml (user identity, preferences, and system settings), projects.yaml (projects, aliases, source mappings, triage folders), people.yaml (people, relationship tiers, aliases), meetings.yaml (optional meeting type overrides), communication-style.yaml (writing style presets per audience tier), tags.yaml (auto-tagging rules). All are gitignored.
 **Alternatives rejected:** Keep markdown config (harder to parse reliably, mixes content and structure). JSON config (less human-readable than YAML, harder to hand-edit).
 
 ### D024 — Review queue reserved for genuinely ambiguous items only
