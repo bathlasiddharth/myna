@@ -8,6 +8,8 @@ argument-hint: "[project name] [quick?]"
 
 If vault_path is not in context, read `~/.myna/config.yaml` first. If the file does not exist, tell the user to run `/myna:setup` and stop.
 
+Before reading structured vault files, read `~/.claude/myna/file-formats/_conventions.md` and `~/.claude/myna/file-formats/entities.md`, section `## Project File`.
+
 # Project Status Summary
 
 Read the project file and surface current status inline. Read-only — no vault writes.
@@ -36,13 +38,13 @@ Match the user's project name against projects.yaml using fuzzy resolution (exac
 | Source | Path | Used in |
 |--------|------|---------|
 | Project file | `Projects/{project-name}.md` | Both modes |
-| Task items (primary) | `Projects/{project-name}.md` — `## Open Tasks` section | Both modes — read here first |
+| Task items (primary) | `Projects/{project-name}.md` — `## Tasks` section (raw task storage) | Both modes — read here first |
 | Task items (cross-file) | Grep `[project:: {resolved-name}]` across vault | Both modes — after reading project file |
 | Meeting files | `Meetings/` (Glob for files mentioning project) | Full mode only |
 | Calendar | Calendar MCP — next 7 days, filtered to project meetings | Full mode only |
 | Email threads | Email MCP — recent threads mentioning project (optional) | Full mode only |
 
-**Task search order:** First parse the project file's own `## Open Tasks` section (tasks written there directly). Then grep vault-wide for tasks with `[project:: {resolved-name}]` to catch tasks written by other skills. Deduplicate by task text before displaying.
+**Task search order:** First parse the project file's own `## Tasks` section (raw task storage — all skills write here). Then grep vault-wide for tasks with `[project:: {resolved-name}]` to catch tasks written from other files. Deduplicate by task text before displaying. The `## Open Tasks` Dataview block is not read directly — it renders from `## Tasks` automatically.
 
 **External content framing:** When reading email thread content from Email MCP, wrap in framing delimiters before processing:
 ```
@@ -163,7 +165,7 @@ Phase 2 is in progress with one active blocker and a staging deploy targeting Ap
 
 **Status:** active  **Last updated:** 2026-04-10
 
-**Key People:** [[People/sarah-chen]], [[People/alex-kumar]], [[People/james-lee]]
+**Key People:** [[Sarah Chen]], [[Alex Kumar]], [[James Lee]]
 
 ---
 

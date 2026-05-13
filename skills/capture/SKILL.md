@@ -8,6 +8,8 @@ argument-hint: "capture: [anything] | observation about [person]: [text] | add t
 
 If vault_path is not in context, read `~/.myna/config.yaml` first. If the file does not exist, tell the user to run `/myna:setup` and stop.
 
+Before reading or writing structured vault files, read `~/.claude/myna/file-formats/_conventions.md` and the relevant domain files: `~/.claude/myna/file-formats/entities.md` (sections `## Project File`, `## Person File`) and `~/.claude/myna/file-formats/journal.md`, section `## Contributions Log (Weekly)`.
+
 # capture
 
 Routes user-entered data to the right vault destinations. One capture can produce multiple entries — one per destination. Nothing is silently dropped.
@@ -66,24 +68,24 @@ When the user says "capture: [text]", decompose the input into its components an
 
 **Entry formats by destination:**
 
-**Project timeline:**
+**Project timeline** (prepend to `## Timeline` — newest-first):
 ```
-- [2026-04-05] {content} [Auto] (capture)
-```
-
-**Person Recognition:**
-```
-- [2026-04-05] {what they did} — {context} [Auto] (capture)
+- {content} [Auto] (capture, {user.name}, {YYYY-MM-DD})
 ```
 
-**Person Observation:**
+**Person Recognition** (prepend to `## Recognition` — newest-first):
 ```
-- [2026-04-05] **{strength|growth-area|contribution}:** {observation} [Auto] (capture)
+- {what they did} — {context} [Auto] (capture, {user.name}, {YYYY-MM-DD})
 ```
 
-**Contributions log** (`Journal/contributions-{YYYY-MM-DD}.md` — Monday date):
+**Person Observation** (prepend to `## Observations` — newest-first):
 ```
-- [2026-04-05] **{category}:** {description} [Inferred] (capture)
+- **{strength|growth-area|contribution}:** {observation} [Auto] (capture, {user.name}, {YYYY-MM-DD})
+```
+
+**Contributions log** (prepend to `## Contributions — Week of {YYYY-MM-DD}` in `Journal/contributions-{YYYY-MM-DD}.md` — Monday date, newest-first):
+```
+- **{category}:** {description} [Inferred] (capture, {user.name}, {YYYY-MM-DD})
 ```
 
 **Worked example:**
@@ -96,9 +98,9 @@ Decompose:
 - Your contribution (handled the incident — inferred; user didn't explicitly say they were involved) → check `self_tracking` toggle → if enabled, `Journal/contributions-{YYYY-MM-DD}.md` (Monday date) → `[Inferred]`
 
 Writes:
-1. `People/sarah-chen.md` — Recognition: `- [2026-04-05] Great handling of auth incident — resolved within SLA [Auto] (capture)`
-2. `Projects/auth-migration.md` — Timeline: `- [2026-04-05] Blocker resolved — migration unblocked [Auto] (capture)`
-3. `Journal/contributions-2026-03-30.md` — `- [2026-04-05] **unblocking-others:** Contributed to resolving auth migration blocker [Inferred] (capture)`
+1. `People/sarah-chen.md` — Recognition (prepend): `- Great handling of auth incident — resolved within SLA [Auto] (capture, {user.name}, 2026-04-05)`
+2. `Projects/auth-migration.md` — Timeline (prepend): `- Blocker resolved — migration unblocked [Auto] (capture, {user.name}, 2026-04-05)`
+3. `Journal/contributions-2026-03-30.md` — Contributions (prepend): `- **unblocking-others:** Contributed to resolving auth migration blocker [Inferred] (capture, {user.name}, 2026-04-05)`
 
 Output: "Wrote 3 entries: recognition for Sarah, timeline update for auth migration, contribution logged [Inferred]."
 
@@ -119,14 +121,14 @@ Output: "Wrote 3 entries: recognition for Sarah, timeline update for auth migrat
 4. Append to `People/{person-slug}.md` → Observations section.
 5. If it's a growth area with coaching potential, also append to Pending Feedback section.
 
-**Observation entry:**
+**Observation entry** (prepend to `## Observations` — newest-first):
 ```
-- [{date}] **{type}:** {observation} [User] (capture)
+- **{type}:** {observation} [User] (capture, {user.name}, {YYYY-MM-DD})
 ```
 
-**Pending Feedback entry** (when observation has coaching value):
+**Pending Feedback entry** (when observation has coaching value; append to `## Pending Feedback`):
 ```
-- [{date}] {observation} — Coaching note: {framing} [User] (capture)
+- {observation} — Coaching note: {framing} [User] (capture, {YYYY-MM-DD})
 ```
 
 **Worked example:**
@@ -135,7 +137,7 @@ User: "observation about Alex: he consistently delivers accurate effort estimate
 
 1. Resolve: Alex → `People/alex-kumar.md`, tier: peer.
 2. Type: strength (explicit praise).
-3. Append to Observations: `- [2026-04-05] **strength:** Consistently accurate effort estimates — sprint commitments match actuals [User] (capture)`
+3. Prepend to Observations: `- **strength:** Consistently accurate effort estimates — sprint commitments match actuals [User] (capture, {user.name}, 2026-04-05)`
 4. No pending feedback needed (positive observation, nothing to coach).
 
 ---
@@ -148,8 +150,8 @@ Different from the observation capture above: this is a recognition entry specif
 
 **How:**
 1. Resolve person.
-2. Append to `People/{person-slug}.md` → Recognition section.
-3. Entry format: `- [{date}] {what they did} — {context} [User] (capture)`
+2. Prepend to `People/{person-slug}.md` → `## Recognition` section (newest-first).
+3. Entry format: `- {what they did} — {context} [User] (capture, {user.name}, {YYYY-MM-DD})`
 
 ---
 
@@ -189,7 +191,7 @@ When the user specifies a project AND a person for a task (e.g., "Add task 'revi
 - Project tasks with an explicit owner (`[type:: task]` with a named person): `[person:: [[{their-name}]]]`
 - Tasks assigned to others or reply-needed: `[person:: [[{their-name}]]]` using the name as it appears in people.yaml
 
-**Destination:** Project file at `Projects/{project-slug}.md` under Open Tasks section, or daily note if no project.
+**Destination:** Project file at `Projects/{project-slug}.md` — prepend to `## Tasks` section (newest-first raw task storage). Or the daily note if no project association.
 
 **Worked examples:**
 
@@ -323,7 +325,7 @@ Output: "Saved link to auth-migration.md and central index."
 **How:**
 1. Resolve project via fuzzy match.
 2. Edit frontmatter: `status: {active|paused|complete}`
-3. Append timeline entry: `- [{date}] Status changed to {status} [User] (capture)`
+3. Prepend timeline entry (newest-first): `- Status changed to {status} [User] (capture, {user.name}, {YYYY-MM-DD})`
 
 ### Create Project File
 
@@ -336,9 +338,10 @@ Output: "Saved link to auth-migration.md and central index."
 Minimal project file structure (sections in order):
 - Frontmatter: `aliases: ["{Project Display Name}"]` — enables wiki-link resolution from `[[Project Display Name]]`
 - Tags line: `#project #{project-tag}`
-- `## Overview` — Description, Status (active), Key People as wiki-links
-- `## Timeline` — with note: Append-only chronological log
-- `## Open Tasks` — Dataview query: TASK FROM project folder WHERE !completed SORT priority DESC, due ASC
+- `## Overview` — Description, Status (active), Key People as wiki-links using readable alias form (`[[Sarah Chen]]`)
+- `## Timeline` — newest-first chronological log; new entries prepended
+- `## Tasks` — raw task storage; all skills write here; new tasks prepended (newest-first)
+- `## Open Tasks` — Dataview live-view block; skills do NOT write here
 - `## Links`
 - `## Notes`
 
@@ -379,7 +382,7 @@ aliases: ["{full name}"]
 
 ## Meeting History
 
-- [[{slug}]] — 1:1 meetings
+- [[{Full Name} 1:1]] — 1:1 meetings
 ```
 
 3. Show file path.

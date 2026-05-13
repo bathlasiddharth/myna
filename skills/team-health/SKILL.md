@@ -10,6 +10,8 @@ argument-hint: "[optional: person name to focus on one person]"
 
 If vault_path is not in context, read `~/.myna/config.yaml` first. If the file does not exist, tell the user to run `/myna:setup` and stop.
 
+Before reading structured vault files, read `~/.claude/myna/file-formats/_conventions.md` and `~/.claude/myna/file-formats/entities.md`, sections `## Person File` and `## Team File`.
+
 Point-in-time dashboard for all direct reports. Read-only — inline output. No vault writes unless the user asks to save.
 
 ---

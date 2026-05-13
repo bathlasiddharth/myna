@@ -10,6 +10,8 @@ argument-hint: "review my queue | process review queue | what's in my queue? | p
 
 If vault_path is not in context, read `~/.myna/config.yaml` first. If the file does not exist, tell the user to run `/myna:setup` and stop.
 
+Before reading or writing structured vault files, read `~/.claude/myna/file-formats/_conventions.md` and the relevant domain files: `~/.claude/myna/file-formats/entities.md` (sections `## Project File`, `## Person File`) and `~/.claude/myna/file-formats/journal.md`, section `## Contributions Log (Weekly)`.
+
 Processes pending review queue items. Writes approved items to their destinations with `[Verified]` tag. Logs all processed items to `ReviewQueue/processed-{YYYY-MM-DD}.md` for audit trail.
 
 **Does NOT handle `review-inbox.md`** — email triage is handled by /myna:email-triage. If the glob for queue files picks up `review-inbox.md`, skip it without parsing.
@@ -102,7 +104,7 @@ Queue state: 5 items (3 in review-work, 1 in review-people, 1 in review-self)
 Source: email from James, April 3 — "someone should verify this"
 Interpretation: A task needs to be added to the auth-migration project
 Ambiguity: "someone" — can't determine owner. Could be you or James.
-Proposed destination: [[Projects/auth-migration]] — Agent-Added Tasks
+Proposed destination: [[Auth Migration]] → `## Tasks`
 Content if approved:
   - [ ] Verify Platform team confirmed Mar 15 deadline 📅 2026-04-10 [project:: [[Auth Migration]]] [type:: task] [Inferred]
 
@@ -111,7 +113,7 @@ Approve / Edit / Skip / Discard?
 
 User: "approve and assign to me"
 
-Write to `Projects/auth-migration.md` (Open Tasks section):
+Prepend to `Projects/auth-migration.md` `## Tasks` section (newest-first):
 ```
 - [ ] Verify Platform team confirmed Mar 15 deadline 📅 2026-04-10 [project:: [[Auth Migration]]] [type:: task] [person:: [[{user.name}]]] [Verified] (was Inferred, verified 2026-04-05)
 ```
@@ -152,12 +154,13 @@ For each approved item (chat or file mode):
    - If no existing provenance marker is present, append `[Verified] (verified {YYYY-MM-DD})` at the end of the entry.
 5. Remove the item from the queue file.
 
-**Destination write formats (per section type):**
+**Destination write formats (per section type)** — all use content-first format, newest-first within section:
 
-- Project timeline: `- [{YYYY-MM-DD}] {content} [Verified] ({source-detail})`
-- Person file Observations: `- [{YYYY-MM-DD}] **{type}:** {observation} [Verified] ({source-detail})`
-- Task entry: `- [ ] {task} [Verified]` (or `- [x] {task} [Verified]` if marking complete)
-- Contributions log: `- [{YYYY-MM-DD}] **{category}:** {description} [Verified] ({source-detail})`
+- Project `## Timeline` (prepend): `- {content} [Verified] ({source-type}, {identity}, {YYYY-MM-DD})`
+- Project `## Tasks` (prepend): `- [ ] {task} [Verified]` (with full task metadata fields preserved)
+- Person `## Observations` (prepend): `- **{type}:** {observation} [Verified] ({source-type}, {identity}, {YYYY-MM-DD})`
+- Person `## Recognition` (prepend): `- {what they did} — {context} [Verified] ({source-type}, {identity}, {YYYY-MM-DD})`
+- Contributions log `## Contributions — Week of {YYYY-MM-DD}` (prepend): `- **{category}:** {description} [Verified] ({source-type}, {identity}, {YYYY-MM-DD})`
 
 The `[Verified]` marker and provenance conventions are defined in /myna:steering-conventions.
 
@@ -233,13 +236,13 @@ Total: 6 items. Say 'review my queue' to go through them interactively, or open 
 
 ### review-work
 Contains: ambiguous tasks, delegations, decisions, blockers, timeline entries.
-Destination examples: `[[Projects/auth-migration]]` → Timeline or Agent-Added Tasks section.
+Destination examples: `[[Auth Migration]]` → `## Timeline` or `## Tasks` section.
 
 **Destination path resolution:** Strip any folder prefix from the wiki-link (e.g., `[[Projects/auth-migration]]` → `auth-migration`). Look up the file under the configured `myna/` subfolder using Glob. Require the file to exist before writing — do not create files automatically.
 
 ### review-people
 Contains: ambiguous observations, recognition entries.
-Destination examples: `[[People/sarah-chen]]` → Observations or Recognition section.
+Destination examples: `[[Sarah Chen]]` → `## Observations` or `## Recognition` section.
 
 ### review-self
 Contains: uncertain contribution candidates.

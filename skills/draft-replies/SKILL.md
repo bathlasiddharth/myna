@@ -10,6 +10,8 @@ If vault_path is not in context, read `~/.myna/config.yaml` first. If the file d
 
 # draft-replies
 
+Before reading or writing structured vault files, read `~/.claude/myna/file-formats/_conventions.md` and `~/.claude/myna/file-formats/drafts.md`, section `## Draft File`.
+
 Process the `DraftReplies` email folder. This is a dedicated workflow: the user forwards emails into `DraftReplies` with instructions about what to draft, and this skill converts them into draft files in `Drafts/`.
 
 **This skill reads ONLY the folder configured as `triage.draft_replies_folder` in `_system/config/projects.yaml`** (default: `DraftReplies`). It never reads other project email folders, the inbox, or any other folder.

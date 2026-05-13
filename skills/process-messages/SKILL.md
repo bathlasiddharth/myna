@@ -18,6 +18,8 @@ Extract structured data from email, Slack, and pasted documents, then route each
 
 Read `_system/config/workspace.yaml`.
 
+Before reading or writing structured vault files, read `~/.claude/myna/file-formats/_conventions.md` and the relevant domain files: `~/.claude/myna/file-formats/entities.md` (sections `## Project File`, `## Person File`) and `~/.claude/myna/file-formats/journal.md`, section `## Contributions Log (Weekly)`.
+
 ---
 
 ## Sources
@@ -119,51 +121,50 @@ For each email/message/document, extract every relevant item across all destinat
 
 ### Entry formats
 
-**Task insertion:** The project file's `## Open Tasks` section contains a Dataview query block — do not append tasks inside it. Instead, write new tasks after the closing ` ``` ` of the Dataview block under a `### Agent-Added Tasks` heading (create the heading if it does not exist). This prevents corrupting the Dataview query.
+**Task insertion:** Write new tasks to the `## Tasks` section in the project file — this is the raw task storage. Do NOT write to or around the `## Open Tasks` Dataview block. Prepend new tasks at the top of the `## Tasks` section (newest-first).
 
-**Timeline entry** (append to `## Timeline` section, sorted by event date):
+**Timeline entry** (prepend to `## Timeline` section — newest-first):
 ```
-- [2026-04-05] Auth migration: API spec deadline confirmed for April 12 [Auto] (email, Sarah)
+- Auth migration: API spec deadline confirmed for April 12 [Auto] (email, Sarah, 2026-04-05)
 ```
 
-**Decision callout** (append to `## Timeline` in the project file):
+**Decision callout** (prepend to `## Timeline` in the project file — newest-first):
 ```
 > [!info] Decision
-> [2026-04-05] Go with OAuth 2.0 PKCE flow — simpler and auditable [Auto] (email, Alex)
+> Go with OAuth 2.0 PKCE flow — simpler and auditable [Auto] (email, Alex, 2026-04-05)
 ```
 
-**Blocker callout** (append to `## Timeline` in the project file):
+**Blocker callout** (prepend to `## Timeline` in the project file — newest-first):
 ```
 > [!warning] Blocker
-> [2026-04-05] Dependency on infra team's cert rotation — blocks launch [Auto] (slack, #auth-team)
+> Dependency on infra team's cert rotation — blocks launch [Auto] (slack, #auth-team, 2026-04-05)
 ```
 
-**Task — self-assigned** (append after the `## Open Tasks` Dataview block under a `### Agent-Added Tasks` heading):
+**Task — self-assigned** (prepend to `## Tasks` section — newest-first):
 ```
-- [ ] Review Sarah's API spec draft 📅 2026-04-09 ⏫ [project:: [[Auth Migration]]] [type:: task] [person:: [[{user.name}]]] [Auto] (email, Sarah)
+- [ ] Review Sarah's API spec draft 📅 2026-04-09 ⏫ [project:: [[Auth Migration]]] [type:: task] [person:: [[{user.name}]]] [Auto] (email, Sarah, 2026-04-05)
 ```
 
 Use `user.name` from workspace.yaml for self-assigned tasks.
 
-**Task — with explicit owner** (append in the same `### Agent-Added Tasks` section):
+**Task — with explicit owner** (prepend to `## Tasks` section — newest-first):
 ```
-- [ ] Sarah to send updated API spec to the team 📅 2026-04-09 ⏫ [project:: [[Auth Migration]]] [type:: task] [person:: [[Sarah Carter]]] [Auto] (email, Sarah)
-```
-
-
-**Observation** (append to `## Observations` section in person file):
-```
-- [2026-04-05] **strength:** Proactively flagged a blocking dependency before it caused a slip [Inferred] (email, James)
+- [ ] Sarah to send updated API spec to the team 📅 2026-04-09 ⏫ [project:: [[Auth Migration]]] [type:: task] [person:: [[Sarah Chen]]] [Auto] (email, Sarah, 2026-04-05)
 ```
 
-**Recognition** (append to `## Recognition` section in person file):
+**Observation** (prepend to `## Observations` section in person file — newest-first):
 ```
-- [2026-04-05] Strong debugging work on the auth service outage [Auto] (email, manager-name)
+- **strength:** Proactively flagged a blocking dependency before it caused a slip [Inferred] (email, James, 2026-04-05)
 ```
 
-**Contribution** (append to `Journal/contributions-{YYYY-MM-DD}.md`, where the date is the Monday of the current week):
+**Recognition** (prepend to `## Recognition` section in person file — newest-first):
 ```
-- [2026-04-05] **unblocking-others:** Resolved auth service dependency question for Sarah's team [Inferred] (email, Sarah)
+- Strong debugging work on the auth service outage [Auto] (email, manager-name, 2026-04-05)
+```
+
+**Contribution** (prepend to `## Contributions — Week of {YYYY-MM-DD}` in `Journal/contributions-{YYYY-MM-DD}.md` — Monday date, newest-first):
+```
+- **unblocking-others:** Resolved auth service dependency question for Sarah's team [Inferred] (email, Sarah, 2026-04-05)
 ```
 
 **Reply-needed task** (write to `ReviewQueue/review-work.md`):
@@ -179,7 +180,7 @@ Use `user.name` from workspace.yaml for self-assigned tasks.
 
 ### Save verbatim source
 
-For every email/message processed, append the full raw text to `_system/sources/{entity}.md` (one file per project, one per person for person-related items). This preserves traceability without cluttering vault files.
+For every email/message processed, prepend the full raw text to `_system/sources/{entity}.md` — newest at top (one file per project, one per person for person-related items). This preserves traceability without cluttering vault files.
 
 ```markdown
 ## 2026-04-05 — email: Sarah Chen
@@ -188,7 +189,7 @@ For every email/message processed, append the full raw text to `_system/sources/
 
 {full email body}
 
-Referenced by: [[Projects/auth-migration]] — timeline entry, task
+Referenced by: [[Auth Migration]] — timeline entry, task
 ```
 
 ---

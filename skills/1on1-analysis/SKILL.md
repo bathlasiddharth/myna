@@ -8,6 +8,8 @@ argument-hint: "[person name]"
 
 If vault_path is not in context, read `~/.myna/config.yaml` first. If the file does not exist, tell the user to run `/myna:setup` and stop.
 
+Before reading structured vault files, read `~/.claude/myna/file-formats/_conventions.md` and `~/.claude/myna/file-formats/meetings.md`, section `## Meeting File — 1:1`.
+
 # 1:1 Pattern Analysis
 
 Reviews 1:1 session notes for a specific person and surfaces factual patterns across sessions. Read-only — inline output only.

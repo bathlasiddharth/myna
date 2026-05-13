@@ -10,6 +10,8 @@ If vault_path is not in context, read `~/.myna/config.yaml` first. If the file d
 
 Read `user.name` from config — needed to separate your tasks from delegated ones.
 
+Before reading vault files, read `~/.claude/myna/file-formats/_conventions.md` and `~/.claude/myna/file-formats/entities.md`, section `## Project File`.
+
 # Blocker Detection
 
 Scans the entire vault for blockers and surfaces them inline. Read-only — no vault writes. Informational only — no auto-escalation.

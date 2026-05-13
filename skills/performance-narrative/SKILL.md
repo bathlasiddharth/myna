@@ -8,6 +8,8 @@ argument-hint: "[person name] [optional: time period] | review my narratives"
 
 If vault_path is not in context, read `~/.myna/config.yaml` first. If the file does not exist, tell the user to run `/myna:setup` and stop.
 
+Before reading structured vault files, read `~/.claude/myna/file-formats/_conventions.md` and `~/.claude/myna/file-formats/entities.md`, sections `## Person File` and `## Project File`. Also read `~/.claude/myna/file-formats/journal.md`, section `## Contributions Log (Weekly)`.
+
 # Performance Narrative
 
 Two modes:

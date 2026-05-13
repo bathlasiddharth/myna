@@ -10,6 +10,11 @@ argument-hint: '"done with 1:1 with Sarah", "process this meeting", "process my 
 
 If vault_path is not in context, read `~/.myna/config.yaml` first. If the file does not exist, tell the user to run `/myna:setup` and stop.
 
+Before reading or writing structured vault files, read `~/.claude/myna/file-formats/_conventions.md` and the relevant domain files:
+- `~/.claude/myna/file-formats/entities.md`, sections `## Project File` and `## Person File`
+- `~/.claude/myna/file-formats/meetings.md`, section for the applicable meeting type (`## Meeting File — 1:1`, `## Meeting File — Recurring`, or `## Meeting File — Adhoc`)
+- `~/.claude/myna/file-formats/journal.md`, section `## Contributions Log (Weekly)`
+
 Process a completed meeting: read the meeting file, close what was discussed, note what wasn't, extract everything useful from Notes, and route each item to the right vault destination.
 
 ---
@@ -71,8 +76,8 @@ For each item extracted, determine:
 
 | What you extract | Where to write |
 |---|---|
-| Action item for you | `Projects/{project}.md` → `## Open Tasks` |
-| Action item for someone else | `Projects/{project}.md` → `## Open Tasks` with `[type:: task]` and `[person::]` set to the owner |
+| Action item for you | `Projects/{project}.md` → `## Tasks` |
+| Action item for someone else | `Projects/{project}.md` → `## Tasks` with `[type:: task]` and `[person::]` set to the owner |
 | Decision made | `Projects/{project}.md` → `## Timeline` (Decision callout) |
 | Blocker raised | `Projects/{project}.md` → `## Timeline` (Blocker callout) |
 | General status update | `Projects/{project}.md` → `## Timeline` |
@@ -103,53 +108,53 @@ Use this exact format for every review queue entry:
 
 ### Entry formats
 
-**Task** (append to `## Open Tasks`):
+**Task** (prepend to `## Tasks` — newest-first):
 ```
 - [ ] Review updated API spec 📅 2026-04-17 🔼 [project:: [[Auth Migration]]] [type:: task] [person:: [[{user.name}]]] [Auto] (meeting, 1:1 with Sarah, 2026-04-10)
 ```
 
 Use `user.name` from workspace.yaml for the person field on self-assigned tasks.
 
-**Task — assigned to another person** (append to `## Open Tasks`):
+**Task — assigned to another person** (prepend to `## Tasks` — newest-first):
 ```
-- [ ] Sarah to draft OAuth integration guide 📅 2026-04-17 [project:: [[Auth Migration]]] [type:: task] [person:: [[Sarah Carter]]] [Auto] (meeting, 1:1 with Sarah, 2026-04-10)
+- [ ] Sarah to draft OAuth integration guide 📅 2026-04-17 [project:: [[Auth Migration]]] [type:: task] [person:: [[Sarah Chen]]] [Auto] (meeting, 1:1 with Sarah, 2026-04-10)
 ```
 
-**Decision callout** (append to `## Timeline`):
+**Decision callout** (prepend to `## Timeline` — newest-first):
 ```
 > [!info] Decision
-> [2026-04-10] Go with OAuth 2.0 PKCE flow for the auth migration [Auto] (meeting, 1:1 with Sarah)
+> Go with OAuth 2.0 PKCE flow for the auth migration [Auto] (meeting, 1:1 with Sarah, 2026-04-10)
 ```
 
-**Blocker callout** (append to `## Timeline`):
+**Blocker callout** (prepend to `## Timeline` — newest-first):
 ```
 > [!warning] Blocker
-> [2026-04-10] Cert rotation from infra team required before launch — waiting on ops [Auto] (meeting, 1:1 with Sarah)
+> Cert rotation from infra team required before launch — waiting on ops [Auto] (meeting, 1:1 with Sarah, 2026-04-10)
 ```
 
-**General timeline entry** (append to `## Timeline`):
+**General timeline entry** (prepend to `## Timeline` — newest-first):
 ```
-- [2026-04-10] Auth migration spec v2 reviewed and approved [Auto] (meeting, 1:1 with Sarah)
-```
-
-**Observation** (append to `## Observations`):
-```
-- [2026-04-10] **strength:** Proactively raised the cert rotation dependency before it became a blocker [Auto] (meeting, 1:1 with Sarah)
+- Auth migration spec v2 reviewed and approved [Auto] (meeting, 1:1 with Sarah, 2026-04-10)
 ```
 
-**Recognition** (append to `## Recognition`):
+**Observation** (prepend to `## Observations` — newest-first):
 ```
-- [2026-04-10] Delivered the auth spec v2 ahead of schedule despite scope creep [Auto] (meeting, 1:1 with Sarah)
+- **strength:** Proactively raised the cert rotation dependency before it became a blocker [Auto] (meeting, 1:1 with Sarah, 2026-04-10)
 ```
 
-**Personal note** (append to `## Personal Notes`):
+**Recognition** (prepend to `## Recognition` — newest-first):
+```
+- Delivered the auth spec v2 ahead of schedule despite scope creep [Auto] (meeting, 1:1 with Sarah, 2026-04-10)
+```
+
+**Personal note** (append to `## Personal Notes` — personal notes keep chronological append-order):
 ```
 - [2026-04-10] Running the SF marathon in June — mentioned training going well
 ```
 
-**Contribution** (append to `Journal/contributions-{YYYY-MM-DD}.md`, Monday date):
+**Contribution** (prepend to `## Contributions — Week of {YYYY-MM-DD}` in `Journal/contributions-{YYYY-MM-DD}.md`, Monday date — newest-first):
 ```
-- [2026-04-10] **people-development:** Delivered feedback on documentation gaps with specific examples [Inferred] (meeting, 1:1 with Sarah)
+- **people-development:** Delivered feedback on documentation gaps with specific examples [Inferred] (meeting, 1:1 with Sarah, 2026-04-10)
 ```
 
 ---
@@ -194,7 +199,7 @@ Before writing, check that destination files exist:
 
 ### Source file
 
-Append to `_system/sources/{entity}.md` (one entry per project or person mentioned). This links extracted items back to the meeting session without bloating vault files.
+Prepend to `_system/sources/{entity}.md` (one entry per project or person mentioned — newest at top). This links extracted items back to the meeting session without bloating vault files.
 
 ```markdown
 ## 2026-04-10 — meeting: 1:1 with Sarah
@@ -202,7 +207,7 @@ Append to `_system/sources/{entity}.md` (one entry per project or person mention
 > Raw notes (verbatim)
 {paste verbatim notes content here}
 
-Referenced by: [[Projects/auth-migration]] — decision, task | [[People/sarah-chen]] — observation, task
+Referenced by: [[Auth Migration]] — decision, task | [[Sarah Chen]] — observation, task
 Items extracted: 1 decision, 3 tasks, 1 observation
 ```
 

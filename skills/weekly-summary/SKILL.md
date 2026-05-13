@@ -10,6 +10,8 @@ argument-hint: "[week of YYYY-MM-DD | last week]"
 
 If vault_path is not in context, read `~/.myna/config.yaml` first. If the file does not exist, tell the user to run `/myna:setup` and stop.
 
+Before reading or writing structured vault files, read `~/.claude/myna/file-formats/_conventions.md` and `~/.claude/myna/file-formats/journal.md`, section `## Weekly Note`.
+
 Generates or updates the weekly summary. Each run appends a fresh `## Weekly Summary — {date}` section to the weekly note. Re-runs are additive — previous sections stay untouched.
 
 ---
@@ -55,9 +57,9 @@ Read in parallel:
 
 **Blockers this week:** Grep `{vault.path}/Projects/` for `[!warning] Blocker` blocks with dates in the target week, plus any blockers that opened before the week and are still unresolved.
 
-**Tasks completed vs carried:** Grep `{vault.path}/` for:
+**Tasks completed vs carried:** Grep `{vault.path}/Projects/` for:
 - `- \[x\]` with completion dates in the target week → completed count
-- Items present in Monday's daily note Immediate Attention and still `- \[ \]` at end of week → carried count
+- `- \[ \]` tasks with `📅 {date}` where the date falls in the target week and the task is still open at week's end → carried count (tasks due during the week that were not completed)
 
 **Team Health:** Read all `People/{slug}.md` files for direct reports (those with `relationship_tier: direct` in people.yaml). For each, gather: open task count, overdue task count, last 1:1 date, feedback gap (days since the last delivered feedback — count only observations with type `strength` or `growth-area` that have been explicitly noted; general observations that aren't feedback do not reset this clock), attention gap (days since any interaction was logged — 1:1, observation, or quick note). Check `Team/{team}.md` for any existing health snapshots this week. If people.yaml has no entries with `relationship_tier: direct`, skip this section silently.
 

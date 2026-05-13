@@ -10,6 +10,8 @@ If vault_path is not in context, read `~/.myna/config.yaml` first. If the file d
 
 # park
 
+Before reading or writing parked context files, read `~/.claude/myna/file-formats/_conventions.md` and `~/.claude/myna/file-formats/system.md`, section `## Parked Context File`.
+
 Saves context for later resumption. The point: a brand new session should be able to read the parked file and pick up exactly where you left off — zero orientation needed.
 
 ## Before You Start

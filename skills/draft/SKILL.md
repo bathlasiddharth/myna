@@ -10,6 +10,8 @@ If vault_path is not in context, read `~/.myna/config.yaml` first. If the file d
 
 # draft
 
+Before reading structured vault files, read `~/.claude/myna/file-formats/_conventions.md` and `~/.claude/myna/file-formats/drafts.md`, section `## Draft File`. Also load `~/.claude/myna/file-formats/entities.md`, sections `## Project File` and `## Person File` when referencing project/people context.
+
 Generates polished professional writing from vault context. Outputs shown inline; saved to `Drafts/` only when user asks or when the draft is long. You never send — the user copies and sends outside Myna.
 
 ## Before You Start

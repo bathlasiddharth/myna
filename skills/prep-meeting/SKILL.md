@@ -10,6 +10,8 @@ argument-hint: '"prep for my 1:1 with Sarah", "prep for my remaining meetings", 
 
 If vault_path is not in context, read `~/.myna/config.yaml` first. If the file does not exist, tell the user to run `/myna:setup` and stop.
 
+Before reading or writing meeting or entity files, read `~/.claude/myna/file-formats/_conventions.md` and `~/.claude/myna/file-formats/meetings.md` (for meeting file structure) and `~/.claude/myna/file-formats/entities.md`, sections `## Person File` and `## Project File`.
+
 Generate meeting prep — a set of checkboxes covering what to discuss, what to review, and what needs decisions — written to the meeting file before the meeting.
 
 ---
@@ -252,7 +254,8 @@ Use a sub-separator if appending to distinguish from original prep:
 ```markdown
 ---
 type: 1-1
-person: [[{person-slug}]]
+person: [[{Full Name}]]
+aliases: ["{Full Name} 1:1"]
 ---
 
 #meeting #1-1

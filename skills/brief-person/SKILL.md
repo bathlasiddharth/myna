@@ -8,6 +8,8 @@ argument-hint: "[person name]"
 
 If vault_path is not in context, read `~/.myna/config.yaml` first. If the file does not exist, tell the user to run `/myna:setup` and stop.
 
+Before reading structured vault files, read `~/.claude/myna/file-formats/_conventions.md` and `~/.claude/myna/file-formats/entities.md`, sections `## Person File` and `## Project File`.
+
 # Person Briefing
 
 Synthesize everything Myna knows about a person and display it inline. Read-only — no vault writes.

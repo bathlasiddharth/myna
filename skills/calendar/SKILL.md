@@ -8,6 +8,8 @@ argument-hint: "reserve [duration] [when] for [what] | remind me [what] at [time
 
 If vault_path is not in context, read `~/.myna/config.yaml` first. If the file does not exist, tell the user to run `/myna:setup` and stop.
 
+Before reading or writing project files, read `~/.claude/myna/file-formats/_conventions.md` and `~/.claude/myna/file-formats/entities.md`, section `## Project File`.
+
 # calendar
 
 Creates personal calendar events (time blocks and reminders) and breaks down tasks into subtasks. Every calendar write is personal-only — no attendees, ever.
@@ -141,7 +143,7 @@ Write these as tasks in the project file? (yes / edit first / cancel)
 
 **Step 3: Write subtasks (on confirmation)**
 
-Append subtasks directly after the `## Open Tasks` section header in the relevant project file (before the Dataview block, not inside it). Use Obsidian Tasks plugin TODO format:
+Write subtasks to the `## Tasks` section in the relevant project file (raw task storage — do not write to or around the `## Open Tasks` Dataview block). Use Obsidian Tasks plugin TODO format:
 
 ```
 - [ ] {subtask description} 📅 {YYYY-MM-DD if suggested} [project:: [[{project}]]] [type:: task] [Auto] (capture, {YYYY-MM-DD})
@@ -149,7 +151,7 @@ Append subtasks directly after the `## Open Tasks` section header in the relevan
 
 If no project file is found, append them to the current daily note at `Journal/{YYYY-MM-DD}.md`. If the daily note does not exist, ask whether to create it or show the subtasks inline only.
 
-Tasks go in the project file, not the Dataview query block — the Dataview query will automatically pick them up.
+Tasks go in `## Tasks`, not the `## Open Tasks` Dataview query block — the Dataview query automatically picks them up from `## Tasks`.
 
 **Step 4: Optionally schedule**
 

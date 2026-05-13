@@ -10,6 +10,8 @@ If vault_path is not in context, read `~/.myna/config.yaml` first. If the file d
 
 # plan
 
+Before reading any structured vault files, read `~/.claude/myna/file-formats/_conventions.md` and `~/.claude/myna/file-formats/entities.md`, section `## Project File`.
+
 Ephemeral planning advice. Reads the vault and calendar, shows recommendations inline. **Never writes to the vault.** If you want to act on the advice — block time, defer a task — use `/myna:sync`, `/myna:calendar`, or `/myna:capture`.
 
 ---
@@ -33,8 +35,8 @@ If intent is ambiguous, ask: "Planning your day, or would you like priority coac
 Read these before showing output:
 
 1. **`{vault}/myna/_system/config/workspace.yaml`** — `work_hours.start` + `work_hours.end` (capacity baseline), `timezone`, `features` map (no toggle gates this skill — read timezone and work hours only)
-2. **Today's daily note** (`{vault}/myna/Journal/{YYYY-MM-DD}.md`) — check Immediate Attention section and any sync snapshots for current state
-3. **Calendar** (via calendar MCP) — events for today (Plan Day / Priority Coaching) or the full week (Week Optimization). If unavailable, note it and work from the daily note.
+2. **Today's daily note** (`{vault}/myna/Journal/{YYYY-MM-DD}.md`) — read only `## Morning Focus` for user-typed intent. Do NOT rely on any other section for task data — source files are canonical per the Read Principle.
+3. **Calendar** (via calendar MCP) — events for today (Plan Day / Priority Coaching) or the full week (Week Optimization). If unavailable, note it and work from project files.
 4. **Open tasks** — Grep `{vault}/myna/Projects/` for `- \[ \]` with due dates, priority flags, and `[person::]` fields
 5. **Project files** — scan `{vault}/myna/Projects/` for blocked items (`[!warning] Blocker`) and stalled projects (no timeline entry in last 14 days)
 
@@ -93,7 +95,7 @@ Show the 3 things that matter most right now, with clear reasoning.
 🔄 Recurring carry-overs:
 - {task} has been carried forward {N} days. Either commit to it today or explicitly defer to {date}.
 
-**Include carry-over detection:** Compare task names across the last 3 daily notes' Immediate Attention sections. Read both `Journal/{YYYY-MM-DD}.md` (today) and `Journal/Archive/Daily/` (previous notes) — prior notes are archived there after each sync. A task that appears in 3+ consecutive notes is a recurring carry-over — flag it explicitly with the count.
+**Include carry-over detection:** Compare task names across project files over the last 3 days — grep `Projects/` for open tasks (`- \[ \]`) with `📅` dates from the past 3 days that are still open today. A task with a due date 3+ days in the past and still unchecked is a recurring carry-over — flag it explicitly with the overdue count (days since due date).
 
 ---
 

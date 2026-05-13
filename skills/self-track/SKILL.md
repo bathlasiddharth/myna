@@ -10,6 +10,8 @@ argument-hint: "log contribution: [description] | what did I do this quarter | d
 
 If vault_path is not in context, read `~/.myna/config.yaml` first. If the file does not exist, tell the user to run `/myna:setup` and stop.
 
+Before reading or writing structured vault files, read `~/.claude/myna/file-formats/_conventions.md` and `~/.claude/myna/file-formats/journal.md`, section `## Contributions Log (Weekly)`.
+
 Logs your contributions and generates self-review documents from them. Input path: log what you did. Output path: compile it into usable documents.
 
 ## 📋 Before You Start
@@ -47,9 +49,9 @@ The user-typed path is always available. The [Auto] and [Inferred] paths are use
 
 **Trigger (user-typed):** "log contribution: [description]", "I just [did something worth logging]"
 
-**Entry format:**
+**Entry format** (content-first, newest-first within the week):
 ```
-- [{YYYY-MM-DD}] **{category}:** {description} [; result: {result}] [provenance] (source)
+- **{category}:** {description} [; result: {result}] [{provenance}] ({source}, {user.name}, {YYYY-MM-DD})
 ```
 `result` captures what changed because of this contribution. Include it when stated or confidently inferable. Omit when genuinely unknown — do not fabricate.
 
@@ -71,7 +73,7 @@ week_start: {YYYY-MM-DD}
 
 ## Contributions — Week of {YYYY-MM-DD}
 
-> Append-only. Each entry: date, category, description, result (if known), provenance, source.
+> Newest-first. Each entry: category, description, result (if known), provenance, source, date.
 ```
 5. **Write the entry immediately** — result or not. The entry is never held pending enrichment.
 6. If `result` is missing or low-confidence: **also** add to `ReviewQueue/review-self.md`:
@@ -95,8 +97,8 @@ User: "log contribution: led the auth migration design review and made the final
 1. Category: `decisions` (made the call).
 2. Result: inferable — "caching architecture direction set, team unblocked."
 3. Monday of current week: 2026-03-30.
-4. Write immediately to `Journal/contributions-2026-03-30.md`:
-   `- [2026-04-05] **decisions:** Led auth migration design review and made final call on caching architecture; result: caching direction set, team unblocked [User]`
+4. Prepend to `Journal/contributions-2026-03-30.md`:
+   `- **decisions:** Led auth migration design review and made final call on caching architecture; result: caching direction set, team unblocked [User] (self-track, {user.name}, 2026-04-05)`
 5. Result was inferred with reasonable confidence — no review queue entry needed.
 
 Output: "Logged: [decisions] Led auth migration design review — caching direction set."
@@ -109,8 +111,8 @@ User: "log contribution: gave feedback to Sarah on her API spec"
 
 1. Category: `feedback`.
 2. Result: not inferable from description alone — omit.
-3. Write immediately to `Journal/contributions-2026-03-30.md`:
-   `- [2026-04-05] **feedback:** Gave feedback to Sarah on her API spec [User]`
+3. Prepend to `Journal/contributions-2026-03-30.md`:
+   `- **feedback:** Gave feedback to Sarah on her API spec [User] (self-track, {user.name}, 2026-04-05)`
 4. Add to `ReviewQueue/review-self.md`:
 ```
 - [ ] Enrich contribution: "Gave feedback to Sarah on her API spec"
@@ -135,7 +137,7 @@ Output: "Logged: [feedback] Gave feedback to Sarah — added to review queue for
 4. Filter entries by the requested criteria:
    - By category: match `**{category}:**` in entry
    - By project: match project name, aliases (from projects.yaml), source details, or wiki-links (`[[{project-slug}]]`) in entry
-   - By date: match `[{date}` prefix
+   - By date: match `{YYYY-MM-DD}` in the trailing source field (e.g., `(source, name, 2026-04-05)`)
    - Count: count matching lines
 5. Show results inline, organized by week.
 
@@ -158,11 +160,11 @@ Output:
 ## 🔍 Feedback — Q1 2026 (8 entries)
 
 **Week of Mar 30:**
-- [2026-04-02] feedback: Gave written feedback to Sarah on API spec quality — focused on error handling coverage; result: Sarah revised error handling section before review
+- **feedback:** Gave written feedback to Sarah on API spec quality — focused on error handling coverage; result: Sarah revised error handling section before review [User] (self-track, {user.name}, 2026-04-02)
 
 **Week of Mar 23:**
-- [2026-03-25] feedback: Delivered feedback on estimation accuracy — coaching session
-- [2026-03-23] feedback: Gave feedback to Marcus on incident communication; result: Marcus updated the post-mortem
+- **feedback:** Delivered feedback on estimation accuracy — coaching session [User] (self-track, {user.name}, 2026-03-25)
+- **feedback:** Gave feedback to Marcus on incident communication; result: Marcus updated the post-mortem [User] (self-track, {user.name}, 2026-03-23)
 
 [... 5 more entries]
 ```

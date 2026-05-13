@@ -10,6 +10,8 @@ argument-hint: "[plan tomorrow]"
 
 If vault_path is not in context, read `~/.myna/config.yaml` first. If the file does not exist, tell the user to run `/myna:setup` and stop.
 
+Before reading or writing any structured vault files, read `~/.claude/myna/file-formats/_conventions.md` and the relevant domain files as needed: `~/.claude/myna/file-formats/journal.md` (sections `## Daily Note`, `## Weekly Note`), `~/.claude/myna/file-formats/entities.md`, section `## Project File`, and `~/.claude/myna/file-formats/meetings.md` (for the applicable meeting file type) when creating or reading meeting files.
+
 Sets up or refreshes your day. Rerunnable at any time — each run prepends a fresh snapshot at the top of the daily note; previous snapshots stay untouched.
 
 ---
@@ -89,7 +91,7 @@ week_start: {YYYY-MM-DD}
 
 ## Carry-Forwards
 
-## Weekly Summary
+## Weekly Summary — {YYYY-MM-DD}
 
 ### Accomplishments
 ### Decisions Made
@@ -206,7 +208,7 @@ date: {YYYY-MM-DD}
 - [ ] {HH:MM} [[{meeting-file}]] — {meeting title} {prep-status}
 ```
 
-Note: re-run snapshots are compact — they omit Dataview sections (those live in the permanent part of the note and update automatically) and focus on what changed. Dashboards link row is permanent and not repeated in re-run snapshots.
+Note: re-run snapshots are compact — they include `### Briefing` and `### Today's Meetings` only (no `### Tasks Due Today` or `### Dashboards` — those live in the first snapshot of the day and remain static). Dashboards link row is permanent and not repeated in re-run snapshots.
 
 ---
 
@@ -226,7 +228,8 @@ For each calendar event today:
    ```markdown
    ---
    type: 1-1
-   person: [[{person-slug}]]
+   person: [[{Full Name}]]
+   aliases: ["{Full Name} 1:1"]
    ---
 
    #meeting #1-1
