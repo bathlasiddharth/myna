@@ -52,6 +52,7 @@ Option B: Edit the files directly:
 - [ ] In Claude Code, type: `what can you do?`
 - [ ] You should see a list of 24 skills
 - [ ] Or if you set the shell alias: run `myna` in your terminal and type the same
+- [ ] Confirm schema files are present: `ls ~/.claude/myna/file-formats/` should list `_conventions.md`, `entities.md`, `meetings.md`, `journal.md`, `drafts.md`, `queues.md`, `system.md`. If missing, re-run `/myna:setup` or the install script.
 
 ---
 

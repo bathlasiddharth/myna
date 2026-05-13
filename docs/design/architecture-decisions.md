@@ -19,6 +19,87 @@ Each entry:
 
 ---
 
+### D065 — Content-first log entry format: category/content before date
+
+**Date:** 2026-05-10
+**Context:** Agent-written log entries (Timeline, Observations, Recognition, Tasks, Contributions) were formatted with a leading date: `[{YYYY-MM-DD}] **{category}:** {content}`. This buried the substantive content behind provenance metadata, making entries hard to scan and reinforcing a "log-first" mental model over a "content-first" one.
+**Decision:** Log entries use content-first format: `- {content} [{provenance}] ({source-type}, {identity}, {YYYY-MM-DD})`. The date and source move to a trailing parenthetical. Personal notes written by the user (not agent-captured entries) retain whatever format the user chose — no reformat. Contributions Log format: `**{category}:** {description}; result: {result} [{provenance}] ({source}, {user.name}, {YYYY-MM-DD})`.
+**Alternatives rejected:** Keep date prefix for sortability (log sections are newest-first already — the date in the trailing field is sufficient for reference). Keep markdown bold date (clutters the visible label). Separate date column (breaks plain-markdown readability).
+
+---
+
+### D064 — Newest-first ordering for all agent-written log sections
+
+**Date:** 2026-05-10
+**Context:** Several skills appended log entries to the bottom of sections (append-only, chronological order). This meant users scrolling to the bottom to find the latest data — opposite of how people read notes. Append-only was treated as a safety property but it conflated two things: immutability of existing entries (correct) and write direction (arbitrary).
+**Decision:** All agent writes to log-like sections prepend new entries at the top (newest at top). This applies to: Timeline, Tasks, Observations, Recognition, Contributions Log, Source File, and meeting session blocks within meeting files. Exception: daily note `## End of Day` blocks are written at the bottom of the file (correct — they are created once and the daily note structure is top-to-bottom narrative). Existing entries are never modified or deleted — only new entries are prepended.
+**Alternatives rejected:** Append (requires scrolling to bottom; inconsistent with how date-sorted lists are normally read). Sorted insert (requires parsing existing dates, fragile, violates tolerance).
+
+---
+
+### D063 — Wiki-link aliases required at entity file creation; readable form in all skill output
+
+**Date:** 2026-05-10
+**Context:** Skills were writing wiki-links using the slug form (`[[people/sarah-chen]]`, `[[Projects/auth-migration]]`). These render in Obsidian but are fragile: if the file moves or is renamed, links break. More importantly, they expose internal naming conventions in user-facing content when readable aliases should be used instead.
+**Decision:** (1) Skills that create entity files (project, person, meeting) must set `aliases:` in the frontmatter at creation time. Minimum alias: the display name. Examples: `aliases: ["Sarah Chen"]` for a person file, `aliases: ["Auth Migration"]` for a project file, `aliases: ["Sarah Chen 1:1"]` for a 1:1 meeting file. (2) All skill-written wiki-links use the readable display form: `[[Sarah Chen]]`, `[[Auth Migration]]`, `[[Sarah Chen 1:1]]`. The alias in the frontmatter resolves this to the slug file. Slug-form links in existing vault files are not retroactively changed — tolerance applies.
+**Alternatives rejected:** Always use slug form (hard to read, exposes internals). Always use full path form like `[[People/sarah-chen]]` (even harder to read, breaks on vault reorganization).
+
+---
+
+### D062 — Project files use `## Tasks` for raw task storage; `## Open Tasks` is a Dataview view only
+
+**Date:** 2026-05-10
+**Context:** Skills were writing tasks to `## Open Tasks` or a sub-section `### Agent-Added Tasks` inside it. The `## Open Tasks` section contains a Dataview query block that automatically renders matching tasks. Writing raw task items to this section would break the Dataview query or silently be ignored by Obsidian, depending on placement.
+**Decision:** Project files have two task-related sections with distinct roles: `## Tasks` is the raw task storage — skills write all new tasks here using `- [ ]` syntax with `📅 YYYY-MM-DD` due dates. `## Open Tasks` is a Dataview live view section — it contains a Dataview query block, skills NEVER write inside or around it. The `### Agent-Added Tasks` sub-section is removed entirely. This split is documented in `docs/design/file-formats/entities.md § Project File`.
+**Alternatives rejected:** Write tasks directly under `## Open Tasks` (corrupts or is silently ignored by the Dataview block). Create a new section per skill (proliferates sections, user has to track multiple places).
+
+---
+
+### D061 — Canonical daily note structure: Morning Focus, Sync blocks, End of Day
+
+**Date:** 2026-05-10
+**Context:** The original daily note template had `### Immediate Attention`, `### Capacity Check`, and `### Open Tasks` (a Dataview block) in the morning section. Four reader skills (wrap-up, plan, weekly-summary, sync) depended on `### Immediate Attention` to find actionable tasks for the day. This created an active-drift bug: `### Immediate Attention` was removed from the canonical template as the design evolved, but the reader skills still referenced it. Skills reading a non-existent section silently got no data.
+**Decision:** The canonical daily note has two types of sections: (1) `## Morning Focus` — free-form text the user types as their intent for the day (not agent-populated). (2) `## Sync — {HH:MM}` blocks containing `### Briefing`, `### Today's Meetings`, `### Tasks Due Today`, `### Dashboards` — created by the sync skill. End-of-day section is `## End of Day — {HH:MM}` at the bottom, containing `### Planned vs Actual`, `### Contributions Detected`, `### Carried to Tomorrow`, `### Quick Notes`. Reader skills (wrap-up, plan, weekly-summary) must not read `### Immediate Attention` or any synthesized daily-note section for task data — they query source files (`Projects/`) directly.
+**Alternatives rejected:** Restore `### Immediate Attention` (adds a Dataview block that needs maintenance, creates a second source of truth for task data). Keep old template and update skills to match (the old structure had confusing Dataview blocks in the daily note that didn't add value over querying project files directly).
+
+---
+
+### D060 — Read Principle: query source files for complete datasets, daily/weekly notes for user intent only
+
+**Date:** 2026-05-10
+**Context:** Several reader skills (wrap-up, plan, weekly-summary) read daily and weekly notes as their primary source of task and work data. This made skill output dependent on whether the daily note had been fully populated — a timing dependency. If sync hadn't run, or the daily note was from yesterday, skills got stale data.
+**Decision:** Skills reading complete datasets (all open tasks, all observations about a person, all contributions this week) must query source files: `Projects/` for tasks, `People/` for observations/recognition, `Meetings/` for meeting history. Skills should read daily/weekly notes only for user-supplied context: `## Morning Focus` for today's intent, `## Quick Notes` for user-typed observations, direct user messages or annotations. This principle is documented in `docs/design/file-formats/_conventions.md ## Read Principle`.
+**Alternatives rejected:** Synthesize everything into the daily note and read from there (creates timing dependency, duplicates source-of-truth, breaks when daily note is stale or absent). Read both always (redundant reads, deduplication complexity).
+
+---
+
+### D059 — Tolerance principle: schema describes what skills create, not what they require
+
+**Date:** 2026-05-10
+**Context:** Skills were brittle when user vaults diverged from the canonical template — for example, a section was renamed by the user, or a section the skill expected didn't exist because the user deleted it.
+**Decision:** The file-format schema describes what skills create (section names, formats, entry structures). When reading, skills locate target content by section name first, then fall back to content patterns (provenance markers, task syntax, frontmatter fields). When writing, skills find the section by name and add to it; if the section is absent, create it in a sensible position. Skills never reorder, rename, or delete user content to "match the schema." This is documented in `docs/design/file-formats/_conventions.md ## Tolerance`.
+**Alternatives rejected:** Fail loudly if schema sections are missing (too brittle, breaks for any customized vault). Ignore missing sections silently (loses data). Re-create the entire file from template (destroys user content).
+
+---
+
+### D058 — Skill schema references: on-demand reads from `~/.claude/myna/file-formats/`
+
+**Date:** 2026-05-10
+**Context:** `docs/design/foundations.md` §2 was the monolithic canonical file-format reference. As skills were built, some referenced it and some didn't — leading to format drift where skills wrote entries in inconsistent formats. The file was too large to read in full for every skill operation, and references to it were vague (no section anchors).
+**Decision:** Each skill that reads or writes vault files must include a schema reference line specifying the exact file(s) and section anchors in `~/.claude/myna/file-formats/` that govern its vault operations. Skills read only the section(s) they need — not the entire schema directory. Reference format: `Before reading or writing {file type}, read ~/.claude/myna/file-formats/{file}.md, section ## {Section Name}.` Multiple files/sections are listed as a bulleted list. Skills read the schema on demand at the moment they are about to read/write — not at session start.
+**Alternatives rejected:** Inline all format specs in each skill (duplication, maintenance burden — a format change requires updating every skill). Reference the full `foundations.md` (too large to scan, no anchors, leads to approximation). No schema reference (proved to cause drift — skills write in inconsistent formats without a live reference).
+
+---
+
+### D057 — Schema centralization: `docs/design/file-formats/` ships to `~/.claude/myna/file-formats/`
+
+**Date:** 2026-05-10
+**Context:** `docs/design/foundations.md` §2 contained all canonical file-format schemas (project files, person files, meeting files, journal, etc.) inline. This was the only authoritative reference for vault format, but skills couldn't reference it at runtime — the file was in the repo, not installed. Skills increasingly diverged from canonical formats as they were authored without a live reference.
+**Decision:** File-format schemas are extracted into a dedicated directory `docs/design/file-formats/` (7 files: `_conventions.md`, `entities.md`, `meetings.md`, `journal.md`, `drafts.md`, `queues.md`, `system.md`). The install script copies this directory to `~/.claude/myna/file-formats/` so it is available at runtime. `foundations.md` §2 is narrowed to a rationale-only pointer — it explains *why* the schema exists and links to `file-formats/`, but does not duplicate the schemas inline. Skills reference schema files by file + section anchor on demand (see D058).
+**Alternatives rejected:** Keep schemas in `foundations.md` and have skills embed format specs (duplication, drift). Ship schemas to the vault (not a system file — vault is user data space). Reference `foundations.md` at runtime (file is in the repo, not installed, and is too large to scan for a single section anchor).
+
+---
+
 ### D056 — Journal/ rolling archive replaces archive_after_days config
 **Date:** 2026-05-01
 **Context:** The vault had a flat `Journal/` folder with a `journal.archive_after_days` config field (default: 30). This created two problems: (1) daily and weekly notes accumulated in `Journal/` root making it progressively cluttered, and (2) the archive threshold was an unnecessary config decision that users had to make upfront without context. In practice no user needs more than one active daily, weekly, or monthly note — the previous note becomes irrelevant the moment a new one is created.

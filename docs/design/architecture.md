@@ -17,7 +17,8 @@ Myna distributes as a Claude Code plugin (D053). Installation is a single comman
 3. **Steering skills** — 6 skills with `user-invocable: false` preloaded at startup via the agent's `skills:` field. Always in context. Referenced as `myna:steering-safety`, `myna:steering-conventions`, etc.
 4. **Feature skills** — 23 skills at `skills/{name}/SKILL.md` in the plugin directory. Only names and descriptions in context at startup. Full content loaded on demand when invoked as `/myna:{name}`.
 5. **Config** — vault path stored in `~/.myna/config.yaml` (written by `install/claude.sh` on first run via `/myna:setup`). Six YAML config files read at session start from `{vault_path}/{subfolder}/_system/config/`.
-6. **First-time setup** — `/myna:setup` is the single entry point. It runs `install/claude.sh` (vault directory creation and `~/.myna/config.yaml`), then opens the Config UI or doc import for configuration.
+6. **Schema directory** — `docs/design/file-formats/` (7 markdown files defining canonical vault formats) is copied to `~/.claude/myna/file-formats/` at install time. Skills read individual files and section anchors from this directory on demand — only when about to read or write a vault file of that type. This is the live runtime reference for format correctness. (D057, D058)
+7. **First-time setup** — `/myna:setup` is the single entry point. It runs `install/claude.sh` (vault directory creation and `~/.myna/config.yaml`), then opens the Config UI or doc import for configuration.
 
 External MCP servers (email, Slack, calendar) are registered with Claude Code via `claude mcp add` and are available as tools in every session. Skills call MCP tools directly by name. Vault operations use Claude Code's built-in tools guided by the `myna:steering-vault-ops` steering skill — no MCP server required for vault access.
 
@@ -599,7 +600,7 @@ myna/
 - Verbatim source text is stored separately in `_system/sources/` (one file per entity) to keep vault files clean while preserving traceability (D015).
 - Config files are YAML, stored under `_system/config/`. Personal config is excluded from the Myna source repo — `.example` files are provided instead.
 
-Complete folder structure with naming conventions: see `design/foundations.md` §1.
+Complete folder structure with naming conventions: see `design/foundations.md` §1. Canonical file formats for each entity type: see `design/file-formats/` (ships to `~/.claude/myna/file-formats/` at install time — D057).
 
 ---
 
