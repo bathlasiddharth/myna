@@ -57,7 +57,7 @@ Missing files or unavailable MCPs: skip and note what was unavailable.
 
 ## Quick Mode Output
 
-3-5 bullets, suitable for a hallway conversation or context switch. Cover:
+Open with one sentence summarizing the current phase, any active blocker, and next key date. Then provide 3-5 bullets, suitable for a hallway conversation or context switch. Cover:
 1. Status and phase
 2. Top blocker (if any)
 3. Next milestone or deadline

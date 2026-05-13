@@ -46,12 +46,6 @@ For each person in people.yaml with `relationship_tier: direct`:
 
 Show a brief narrative summary before the table. 2-3 sentences: who needs the most attention and why, and the overall team picture. All flags are about the user's own records and follow-through — not about any employee's state or engagement (D018). Synthesize only facts present in the vault.
 
-Example:
-```
-### Summary
-Alex and Maya need attention this week — Alex has a 45-day feedback gap and 3 overdue tasks; Maya has had no career conversation in 4 months. Marcus's delegations are all overdue. Sarah is tracking clean.
-```
-
 ### Summary Table
 
 Show a table after the summary for quick scanning:

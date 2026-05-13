@@ -133,7 +133,7 @@ Action items from last session:
 
 ---
 
-### 📋 Summary
+### 📝 Summary
 Sarah has 3 open tasks on the Auth Migration project, with the API spec draft overdue by 1 day. The most pressing item is unblocking the Platform API dependency — she's waiting on a caching decision doc you haven't sent yet. One key thing to know: she has a pending strength observation from the March outage that hasn't been delivered.
 
 ### 📋 Overview
