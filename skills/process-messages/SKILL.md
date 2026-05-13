@@ -251,32 +251,3 @@ Nothing new to process. All folders and channels are up to date.
 ```
 
 Suggest next steps: "Say 'review my queue' to process staged items."
-
----
-
-## Worked Example
-
-**Setup:** projects.yaml has Auth Migration (email_folders: ["Auth Migration/"], slack_channels: ["auth-team"]).
-
-**User says:** "process my email"
-
-1. Read emails from `Auth Migration/` folder — finds 3 new emails
-2. Email 1 (Sarah, "API spec draft ready"):
-   - Strip quotes: only Sarah's new message at top
-   - Extract: action item (review draft), recognition signal (Sarah proactively completed spec)
-   - Write: task in `Projects/auth-migration.md` `[Auto]`, observation in `People/sarah-chen.md` `[Inferred]`
-   - Save verbatim to `_system/sources/auth-migration.md`
-3. Email 2 (Alex, "RE: auth service blocker — RE: API spec"):
-   - Strip quotes: original thread reply is quoted, new content = Alex says "cert rotation done, we're unblocked"
-   - Extract: blocker resolved (timeline entry), contribution for you if you facilitated (review-self)
-   - Write: timeline entry in `Projects/auth-migration.md` `[Auto]`, `ReviewQueue/review-self.md` entry `[Inferred]`
-4. Email 3 (James, same thread again quoting email 2):
-   - Strip quotes: only new content is "Thanks everyone"
-   - Near-duplicate check: blocker-resolved entry already written from email 2 → skip
-   - Extract: nothing new
-5. Move all 3 to `Auth Migration/Processed/`
-6. Process `auth-team` Slack channel since last timestamp:
-   - 2 new messages: status update → timeline entry, action item → task
-   - Update `_system/logs/processed-channels.md` with new timestamp
-
-Output: "Processed 3 emails from 1 folder, 2 messages from 1 channel. 4 items written directly, 1 in review queue, 1 skipped (dedup)."

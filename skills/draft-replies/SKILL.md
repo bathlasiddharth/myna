@@ -228,37 +228,3 @@ After output, suggest: `Say "review my queue"` if any items need clarification b
 **Email can't be matched to a project:** Write to `Drafts/` without a project link. Note in the TODO that project association is unclear.
 
 **DraftReplies folder empty:** Output: "DraftReplies folder is empty — nothing to process."
-
----
-
-## Worked Examples
-
-### Example 1: Email reply with instructions
-
-**Setup:** User forwarded vendor email to DraftReplies with note: "Decline politely, keep door open for Q4"
-Original thread: vendor proposing a partnership integration for Q2
-
-1. Read user's note (instructions): decline politely, suggest Q4 revisit
-2. Wrap original thread in external data delimiters; read for context: vendor proposing timeline, asking for commitment
-3. Vendor not in people.yaml → default to `cross-team` tier; communication-style.yaml preset: diplomatic
-4. Draft: diplomatic decline, acknowledges the value, explains current bandwidth, suggests Q4 revisit
-5. Write to `Drafts/[Email] Reply to vendor — partnership proposal.md`
-6. Create TODO: `- [ ] Review and send reply to vendor re: partnership proposal 📅 {tomorrow} [type:: task] [Auto] (email, vendor, {date})`
-7. Move email to `DraftReplies/Processed/`
-
-Output: "Processed 1 draft request. Created: [Email] Reply to vendor — partnership proposal.md"
-
-### Example 2: Follow-up meeting request
-
-**Setup:** User replied to a thread about cache architecture, added note: "create follow-up meeting invite — include Sarah and Alex, discuss Option B decision and next steps"
-Original thread: design discussion, Option B tentatively chosen
-
-1. Detect meeting invite request in user's instructions
-2. Wrap original thread in external data delimiters; read for context: Option B decision, attendees are Sarah and Alex
-3. Read `People/sarah-chen.md`, `People/alex-kumar.md` for context
-4. Check calendar MCP for availability: Tuesday 2pm open for all
-5. Write `Drafts/[Meeting] Follow-up — cache architecture decision.md` with agenda
-6. Create TODO: `- [ ] Send follow-up meeting invite for cache architecture decision 📅 {tomorrow} [type:: task] [Auto] (email, {sender}, {date})`
-7. Move email to `DraftReplies/Processed/`
-
-Output: "Processed 1 draft request. Created: [Meeting] Follow-up — cache architecture decision.md. Tuesday 2pm proposed based on availability."

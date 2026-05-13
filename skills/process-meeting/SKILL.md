@@ -264,31 +264,3 @@ Processed {N} meetings.
 **Batch mode — which meetings to include:** Any meeting file with a session from today where the `### Notes` section has user-written content (non-empty Discussion, Action Items, or Decisions) and no `> *Processed` marker. Skip empty Notes sections.
 
 **Partial failure (some writes fail):** Complete all writes that succeed. List failures in the output. Don't roll back successful writes — partial processing is better than none.
-
----
-
-## Worked Example
-
-**User says:** "done with 1:1 with Sarah"
-
-1. Resolve "1:1 with Sarah" → `Meetings/1-1s/sarah-chen.md`
-2. Find today's session: `## 2026-04-10 Session`
-3. Determine type: frontmatter `type: 1-1` → use 1:1 extraction emphasis
-4. Read Prep section:
-   - 9 checked items: find 2 matching open tasks in auth-migration.md, mark complete
-   - 2 unchecked items: note for carry-forward (/myna:prep-meeting will add them next time)
-5. Read Notes section; wrap in framing delimiters:
-   - Discussion: "Sarah delivered API spec v2, cert rotation still pending from infra, decision: go with PKCE flow"
-   - Action Items: "I will review the spec by Friday. Sarah will follow up with ops about cert timeline."
-   - Decisions: "OAuth PKCE selected over client credentials — simpler, auditable"
-6. Extract:
-   - Task (yours): "Review Sarah's API spec v2" 📅 Friday → `Projects/auth-migration.md`, `[type:: task]` `[person:: [[{user.name}]]]` `[Auto]`
-   - Task (Sarah's): "Sarah to follow up with ops on cert rotation" → `Projects/auth-migration.md`, `[type:: task]` `[person:: [[Sarah Chen]]]` `[Auto]`
-   - Decision: "OAuth PKCE selected" → `Projects/auth-migration.md` timeline Decision callout `[Auto]`
-   - Blocker: "cert rotation pending from infra" → `Projects/auth-migration.md` timeline Blocker callout `[Auto]`
-   - Observation: "Sarah delivered spec v2 ahead of schedule" → `People/sarah-chen.md` `[Auto]`
-   - Contribution: "delivered feedback on documentation gaps" → `Journal/contributions-2026-04-07.md` `[Inferred]`
-7. Source summary → `_system/sources/auth-migration.md` and `_system/sources/sarah-chen.md`
-8. Append processed marker to `## 2026-04-10 Session` in the meeting file
-
-Output: "Processed 1:1 with Sarah. 9 checked items resolved, 2 unchecked noted for carry-forward. Written: 2 tasks (1 yours, 1 Sarah's), 1 decision, 1 blocker, 1 observation, 1 contribution."
