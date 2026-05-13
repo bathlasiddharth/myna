@@ -28,7 +28,7 @@ One-line summary: "Process my email" extracts structured data from configured fo
   - Action items → task list (`[Auto]` if explicit in email, `[Inferred]` if agent interpreted it as an action item)
   - Decisions → project timeline
   - Blockers → project timeline
-  - Delegation signals → task with `type:: delegation`
+  - Delegation signals → task with `[person::]` set to the owner
   - Timeline-worthy updates → project timeline
   - Recognition signals → person file
   - Your contributions → contributions log
@@ -50,7 +50,7 @@ One-line summary: "Process my messages" extracts structured data from configured
   - Action items → task list (`[Auto]` if explicit, `[Inferred]` if agent interpreted)
   - Decisions → project timeline
   - Blockers → project timeline
-  - Delegation signals → task with `type:: delegation`
+  - Delegation signals → task with `[person::]` set to the owner
   - Timeline-worthy updates → project timeline
   - Recognition signals → person file
   - Your contributions → contributions log

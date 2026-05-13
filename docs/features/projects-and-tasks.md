@@ -35,22 +35,22 @@ One-line summary: Append-only chronological log of everything significant that h
 
 ### Task Management
 
-One-line summary: Add, track, and query TODOs using Obsidian Tasks plugin and Dataview, with delegations as a task type.
+One-line summary: Add, track, and query TODOs using Obsidian Tasks plugin and Dataview.
 
-- Task fields: title (short, scannable — shown in lists and queries), description (context, details, source reference per non-functional rules), project, priority (high/medium/low), start date, due date, effort estimate, type, person (for delegations)
+- Task fields: title (short, scannable — shown in lists and queries), description (context, details, source reference per non-functional rules), project, priority (high/medium/low), start date, due date, effort estimate, type, person (task owner when assigned to someone else)
 - Agent always creates formatted tasks from natural language — user never types task syntax
 - Agent fills in all fields from the source, marking each as `explicit` (directly stated) or `inferred` (agent's guess):
   - **explicit** — directly stated in the source ("by Friday" → due date is explicit)
   - **inferred** — agent's best guess from context ("this seems high priority since it blocks the launch" → priority is inferred)
 - **Review only when needed:** if ALL attributes are explicit from the source, the task is written directly — no review queue, no `review-status` flag. If ANY attribute is inferred, the task gets `review-status:: pending` and goes to the review queue with inferred fields clearly marked so the user knows what to check. Example: `priority:: high (inferred — blocks launch)`, `due:: 2026-04-10 (explicit)`, `project:: Auth Migration (inferred — from email folder)`
 - User corrects inferred values as needed, marks `review-status:: reviewed`. Goal: review queue stays targeted and valuable — not busywork.
-- Delegations are regular tasks with `type:: delegation` and `person::` field for the owner (D013) — no separate delegation tracker
-- Delegation proactive alerts: overdue delegations surfaced in daily note Immediate Attention section; approaching-deadline delegations (within 2 days) shown as a nudge. "What's overdue from my team?" queries all delegations past due date. This is the difference between tracking delegations and actually following up on them.
+- Tasks assigned to others use `[person:: [[Name]]]` on a `[type:: task]` item (D013) — no separate tracker, no delegation type
+- Proactive alerts: overdue tasks assigned to others surfaced in daily note Immediate Attention section; approaching-deadline assigned tasks (within 2 days) shown as a nudge. "What's overdue from my team?" queries all tasks with a person field past due date. This is the difference between tracking assignments and actually following up on them.
 - Task breakdown: "break down [task]" → splits into indented subtasks with individual due dates and effort
 - Tasks live in canonical locations (project files, personal TODOs file)
 - **Two views — my tasks vs others' tasks:** Dataview queries separate tasks into:
   - **My tasks:** tasks owned by you (no `person::` field, or `person::` is you) — what YOU need to do
-  - **Delegated / others' tasks:** tasks with `person::` field pointing to someone else — what you're WAITING ON
+  - **Assigned to others:** tasks with `person::` field pointing to someone else — what you're WAITING ON
   - Both views in project files, daily note, and dashboards. Clear separation so you know at a glance what's on your plate vs what you're tracking.
 - Completed tasks auto-hide from active views via `not done` queries
 
@@ -68,7 +68,7 @@ One-line summary: Tasks that auto-regenerate on a schedule using Tasks plugin na
 One-line summary: Scans project data for signs of blockers and surfaces them in daily notes and project files.
 
 - Detects: tasks overdue by threshold, explicit blocker entries in timelines, blocker keywords in vault data
-- Cross-team dependency tracking: dependencies on other teams are tracked as explicit tasks with `type:: dependency` and a due date (e.g., "Waiting on Team X for API — due March 15"), or as timeline entries with the Dependency category. These are created by the user or approved from the review queue — never inferred from free text, because "Team X mentioned March 15 as a possibility" and "Team X committed to March 15" are critically different. Once explicit, they're tracked like any task: "What am I waiting on from other teams?" queries all dependency-type tasks.
+- Cross-team waits: waiting on another team is expressed as a task with `[person:: [[Name]]]` and a due date (e.g., "Waiting on Platform team for API access — due March 15"), or as a timeline entry with the Dependency category. These are created by the user or approved from the review queue — never inferred from free text. "What am I waiting on from other teams?" queries all tasks with a person field past due date.
 - Each detected blocker includes source reference (which file, which entry)
 - Surfaced in: daily note (Immediate Attention section), project file (Blockers callout)
 - Informational only — no auto-actions, no auto-escalation

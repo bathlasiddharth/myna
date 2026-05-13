@@ -282,7 +282,7 @@ date: {YYYY-MM-DD}
 > Auto-generated, user-editable throughout the day.
 
 - {overdue tasks}
-- {overdue delegations}
+- {tasks assigned to others that are overdue}
 - {approaching deadlines}
 - {blockers}
 
@@ -296,12 +296,12 @@ SORT priority DESC
 LIMIT 20
 ```
 
-### Delegations
+### Assigned to Others
 
 ```dataview
 TASK
 FROM "myna"
-WHERE !completed AND type = "delegation"
+WHERE !completed AND person
 SORT due ASC
 ```
 
@@ -593,11 +593,11 @@ Links are also saved in the relevant entity's Links section. The central index p
 A Dataview-powered file with live queries. Always up-to-date without manual refresh.
 
 **Sections:**
-- Immediate Attention (overdue tasks, overdue delegations, blockers)
+- Immediate Attention (overdue tasks, tasks assigned to others that are overdue, blockers)
 - Today's Meetings (from calendar, linked to prep files)
 - Review Queue (count per queue with links)
 - Active Projects (status per project)
-- Delegation Tracker (overdue + approaching deadline)
+- Assigned to Others (tasks with person field set — overdue + approaching deadline)
 - People Overview (upcoming 1:1s, feedback gaps)
 - Team Health (for managers — summarized from Team/ files)
 - Current Drafts (list of files in Drafts/ folder)
@@ -944,7 +944,7 @@ Myna does NOT ship an MCP server for vault operations. Skills interact with the 
 | Open tasks | `- \[ \]` |
 | Completed tasks | `- \[x\]` |
 | Filter by project | `\[project:: \[\[{name}\]\]\]` in task line |
-| Filter by type | `\[type:: {type}\]` (task, delegation, dependency, reply-needed, retry) |
+| Filter by type | `\[type:: {type}\]` (task, reply-needed) |
 | Filter by person | `\[person:: \[\[{name}\]\]\]` |
 | Overdue detection | `📅 {date}` — compare against today |
 | Pending review | `\[review-status:: pending\]` |
@@ -1152,13 +1152,11 @@ Nothing is silently dropped because the agent tried to pick "the best" destinati
 
 ### 9.8 Error Recovery
 
-**Pattern:** When a multi-step operation partially fails, report what succeeded and what failed. Create a retry TODO if the failure is something the user would want to retry.
+**Pattern:** When a multi-step operation partially fails, report what succeeded and what failed inline. Do not create vault tasks for failures — report directly in the CLI output so the user sees it immediately.
 
 ```
-- [ ] 🔄 Retry: {what failed and why} [type:: retry] [created:: {date}]
+Partial success: processed 3 of 4 emails. Failed: "Q2 Budget Review" — project routing unclear (no matching folder in registry). Action: manually assign or add to projects.yaml.
 ```
-
-Retry TODOs surface in the daily note Immediate Attention section so they don't get lost.
 
 ---
 
@@ -1205,7 +1203,7 @@ Live queries in dashboard and daily/weekly notes. Standard Dataview syntax:
 ```dataview
 TASK
 FROM "myna/Projects"
-WHERE !completed AND type = "delegation" AND due < date(today)
+WHERE !completed AND person AND due < date(today)
 SORT due ASC
 ```
 
@@ -1221,8 +1219,8 @@ Optional fields (`[person:: [[Name]]]`, `[review-status:: ]`, `[effort:: ]`) are
 
 **Task fields as inline properties:**
 - `[project:: [[{name}]]]` — which project (wiki-link; project file needs `aliases: ["{name}"]`)
-- `[type:: {task | delegation | dependency | reply-needed | retry}]` — task type
-- `[person:: [[{name}]]]` — owner (for delegations) or who you're waiting on (wiki-link; person file needs `aliases: ["{name}"]`)
+- `[type:: {task | reply-needed}]` — task type
+- `[person:: [[{name}]]]` — owner (when assigned to someone else) or who you're waiting on (wiki-link; person file needs `aliases: ["{name}"]`)
 - `[review-status:: {pending | reviewed}]` — set to pending when fields are inferred
 - Priority emoji: ⏫ high, 🔼 medium, (none) low
 - Due date: 📅 YYYY-MM-DD

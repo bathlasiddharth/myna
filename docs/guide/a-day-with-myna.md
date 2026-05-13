@@ -61,7 +61,7 @@ You don't want to retype what you just discussed into five different files.
 done with 1:1 with Marcus
 ```
 
-Myna extracts the delegations (fallback doc due Apr 14), the personal note (leave confirmed), the growth-area observation, and tees up a task for you to draft the coverage plan with HR. The Apr 10 session gets marked processed.
+Myna extracts the action items (fallback doc assigned to Marcus, due Apr 14), the personal note (leave confirmed), the growth-area observation, and tees up a task for you to draft the coverage plan with HR. The Apr 10 session gets marked processed.
 
 ---
 
@@ -217,7 +217,7 @@ Your brain is tired. You want one view of everything stuck.
 what's blocked?
 ```
 
-Phoenix validator (20 days), the dependency task overdue since Apr 8. Each blocker with age, source, next action.
+Phoenix validator (20 days), the platform-team API task overdue since Apr 8. Each blocker with age, source, next action.
 
 ---
 

@@ -248,7 +248,7 @@ This applies to every file in the vault — not just timelines.
 - If a multi-step operation partially fails, report what succeeded and what failed
 - Never leave the vault in a half-done state — either complete the operation or roll back cleanly
 - Include enough detail for the user to manually fix if needed
-- **Track failures for follow-up:** if something fails that the user would want to retry later (email processing couldn't reach MCP, a file write failed, a meeting prep couldn't find calendar data), create a TODO with `type:: retry` and a description of what failed and why. Surfaced in daily note so it doesn't get lost.
+- **Report failures inline:** if something fails that the user would want to retry later (email processing couldn't reach MCP, a file write failed, a meeting prep couldn't find calendar data), report it directly in CLI output with enough context to act on it. No vault task is created — the inline report is immediate and doesn't require the user to check the daily note.
 
 #### Quiet Mode for Background Agents
 - P1 automation agents log to `_system/logs/`, minimal stdout

@@ -97,11 +97,11 @@ Each entry:
 **Decision:** Decisions are logged as timeline entries in the relevant project file with a `Decision` category tag. No separate decision log file. Decisions are discoverable via Dataview queries filtering by category.
 **Alternatives rejected:** Separate decision log (one more file to maintain, decisions lose project context).
 
-### D013 — Delegations are tasks with type:: delegation, not a separate tracker
-**Date:** 2026-04-03
-**Context:** Need to track tasks delegated to others. Could be a separate tracker file or a property on regular tasks.
-**Decision:** Delegations are regular TODOs with `type:: delegation` and a `person::` field for the owner. They live in the same task files as other tasks. Surfaced via Dataview queries filtering by type. No separate delegation tracker file.
-**Alternatives rejected:** Separate delegation tracker (duplicates task data, two places to update).
+### D013 — Task ownership is expressed via person:: field, not a delegation type
+**Date:** 2026-04-03 (updated 2026-05-10)
+**Context:** Need to track tasks delegated to others. Could be a separate tracker file, a dedicated type, or a field on regular tasks.
+**Decision:** Task ownership is carried by `[person:: [[Name]]]` on a `[type:: task]` item. No `delegation` type. Tasks live in the same task files regardless of who owns them. Surfaced via queries filtering by `[person::]`. No separate delegation tracker file.
+**Alternatives rejected:** Separate delegation tracker (duplicates task data, two places to update); delegation type (redundant with person field — ownership is already expressed by who the task is assigned to).
 
 ### D012 — Clean folder structure, agent internals under _system
 **Date:** 2026-04-02

@@ -38,7 +38,7 @@ One-line summary: One file per meeting with two sections — Prep (auto-generate
     - Career development context: growth areas in person file, recent observations tagged in those areas, time since last career conversation
     - Personal notes ("asked about the marathon last time")
   - **Project meetings:** open tasks for that project, recent timeline entries, dependency status, blockers, decisions needed
-  - **Team standup/sync:** your updates to share (tasks completed, in progress), overdue delegations to follow up on, blockers across the team, action items from last standup
+  - **Team standup/sync:** your updates to share (tasks completed, in progress), overdue tasks assigned to others to follow up on, blockers across the team, action items from last standup
   - **Design/doc review:** link to the document being reviewed, related project context, previous decisions on this topic, pre-read prep if available (see writing-and-drafts Pre-Read Preparation)
   - **Cross-team meeting:** open dependencies on the other team, what you're waiting on from them, recent comms with attendees, what you need from this meeting
   - **Conversation coaching for sensitive items:** for prep items that involve difficult or high-stakes topics, the agent adds a brief suggestion on how to bring it up — calibrated to your communication style (from `communication-style.md`) and your relationship with the attendees (audience tier from registry). Examples:
@@ -66,7 +66,7 @@ One-line summary: "Process this meeting" or "process my meetings" reads the meet
   - **Checked prep items** → marks as resolved/discussed. Closes associated TODOs where applicable.
   - **Unchecked prep items** → carries forward to next meeting's Prep section automatically
   - **Action items (for you)** → task list
-  - **Action items (for others)** → task with `type:: delegation`
+  - **Action items (for others)** → task with `[person::]` set to the owner
   - **Decisions** → project timeline with Decision category (D014)
   - **Observations about people** → person file
   - **Blockers** → project timeline

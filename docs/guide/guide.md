@@ -72,9 +72,9 @@ After install, Myna creates the following folder structure inside your vault's `
 | **myna-process-meeting** | Process a completed meeting — closes checked prep items, extracts tasks/decisions/observations, routes each to the vault. |
 | **myna-brief-person** | Deep-dive briefing on one person — role, shared projects, open items, pending feedback, 1:1 history, personal notes. |
 | **myna-brief-project** | Catch up on a project — quick (3-5 bullet TL;DR) or full (status, timeline, blockers, tasks, dependencies). |
-| **myna-team-health** | Portfolio view of all direct reports — tasks, overdue, delegations, feedback gap, attention gap, last 1:1. Managers only. |
+| **myna-team-health** | Portfolio view of all direct reports — tasks, overdue, tasks assigned to them, feedback gap, attention gap, last 1:1. Managers only. |
 | **myna-unreplied-threads** | Show what's waiting on you and what others owe you — queries reply-needed tasks in the vault. |
-| **myna-blockers** | Scan all active projects for blockers — explicit callouts, overdue dependency tasks, overdue tasks. |
+| **myna-blockers** | Scan all active projects for blockers — explicit callouts, overdue items blocking downstream work. |
 | **myna-1on1-analysis** | Analyze 1:1 patterns with a specific person — action item follow-through, recurring topics, carry-forward rate. |
 | **myna-performance-narrative** | Generate a performance narrative for a team member's review cycle. Also calibrates consistency across multiple narratives. |
 | **myna-draft** | Generate professional written content — email replies, follow-ups, status updates, escalations, recognition, monthly updates. |
@@ -213,7 +213,7 @@ MCP servers provide Myna with read access to your inbox, channels, and calendar.
 sync
 ```
 
-Myna creates today's daily note with your capacity check, meeting list, overdue tasks, and delegation alerts. Generates prep files for each of today's meetings. If it's Monday, creates the weekly note too.
+Myna creates today's daily note with your capacity check, meeting list, overdue tasks, and overdue tasks assigned to others. Generates prep files for each of today's meetings. If it's Monday, creates the weekly note too.
 
 ### Preparing for a 1:1
 

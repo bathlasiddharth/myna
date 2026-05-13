@@ -64,7 +64,7 @@ Skills are invoked as `/myna:{name}` (e.g., `/myna:sync`, `/myna:plan`). The ful
 
 #### 1. myna-sync
 
-Sets up or refreshes your day. Creates the daily note (or prepends a new snapshot if re-run), generates meeting prep files for today's meetings, surfaces overdue tasks, delegation alerts, blocker flags, review queue count, and upcoming milestones. Also creates tomorrow's daily note when invoked with "plan tomorrow". Auto-archives old journal notes.
+Sets up or refreshes your day. Creates the daily note (or prepends a new snapshot if re-run), generates meeting prep files for today's meetings, surfaces overdue tasks, overdue tasks assigned to others, blocker flags, review queue count, and upcoming milestones. Also creates tomorrow's daily note when invoked with "plan tomorrow". Auto-archives old journal notes.
 
 **Features covered:** Morning Sync, Daily Note, Weekly Note (created on first sync of the week), Plan Tomorrow, Journal auto-archiving
 
@@ -74,7 +74,7 @@ Sets up or refreshes your day. Creates the daily note (or prepends a new snapsho
 
 **Writes:** `Journal/{YYYY-MM-DD}.md`, `Journal/{YYYY-WNN}.md`, `Meetings/` prep files
 
-**Example:** User says "sync" → reads calendar (4 meetings, 2 hrs total), open tasks (2 overdue, 5 hrs estimated), delegation alerts (1 overdue from Marcus) → creates daily note with Capacity Check, Immediate Attention, Today's Meetings → generates prep for each meeting → "Sync complete (8:30 AM). 4 meetings, 2 overdue tasks, 1 overdue delegation, 5 items in review queue."
+**Example:** User says "sync" → reads calendar (4 meetings, 2 hrs total), open tasks (2 overdue, 5 hrs estimated), tasks assigned to others (1 overdue from Marcus) → creates daily note with Capacity Check, Immediate Attention, Today's Meetings → generates prep for each meeting → "Sync complete (8:30 AM). 4 meetings, 2 overdue tasks, 1 overdue task assigned to Marcus, 5 items in review queue."
 
 ---
 
@@ -90,7 +90,7 @@ Provides ephemeral planning advice without writing to the vault. Analyzes your c
 
 **Writes:** inline output only (no vault writes)
 
-**Example:** User says "what should I focus on?" → analyzes: 3 meetings (2 hrs), 6 hrs task effort, 5 hrs focus time → "You're slightly over-capacity. Top 3 priorities: (1) API spec review — due tomorrow, blocks Sarah, (2) delegation follow-ups — Marcus overdue, (3) MBR draft — deferred twice. Consider moving the MBR to Thursday when you have a lighter calendar."
+**Example:** User says "what should I focus on?" → analyzes: 3 meetings (2 hrs), 6 hrs task effort, 5 hrs focus time → "You're slightly over-capacity. Top 3 priorities: (1) API spec review — due tomorrow, blocks Sarah, (2) follow up with Marcus — assigned task overdue, (3) MBR draft — deferred twice. Consider moving the MBR to Thursday when you have a lighter calendar."
 
 ---
 
@@ -108,7 +108,7 @@ Closes out the day. Compares planned vs actual, logs contributions, moves unfini
 
 **Contribution detection:** Explicit completions → [Auto]. Interpreted influence → [Inferred]. Uncertain → review-self queue.
 
-**Example:** User says "wrap up" → compares morning plan against current state → "Completed: API spec review, 2/3 delegation follow-ups. Not started: MBR draft (moved to tomorrow). Contributions: API spec review [Auto], cache question resolution [Inferred]. 1 uncertain contribution in review-self."
+**Example:** User says "wrap up" → compares morning plan against current state → "Completed: API spec review, 2 follow-up tasks. Not started: MBR draft (moved to tomorrow). Contributions: API spec review [Auto], cache question resolution [Inferred]. 1 uncertain contribution in review-self."
 
 ---
 
@@ -194,7 +194,7 @@ Generates or updates meeting prep for a specific meeting or all remaining meetin
 
 **Writes:** `Meetings/1-1s/{person}.md`, `Meetings/Recurring/{name}.md`, or `Meetings/Adhoc/{YYYY-MM-DD}-{name}.md` — Prep section
 
-**Meeting type determines prep depth:** 1:1 (follow-through, pending feedback, coaching), project meeting (tasks, timeline, blockers), standup (updates, delegations), design review (doc link, decisions), cross-team (dependencies, recent comms).
+**Meeting type determines prep depth:** 1:1 (follow-through, pending feedback, coaching), project meeting (tasks, timeline, blockers), standup (updates, tasks assigned to others), design review (doc link, decisions), cross-team (waiting-on tasks, recent comms).
 
 **Example:** User says "prep for my 1:1 with Sarah" → generates prep: follow-through check, pending feedback with coaching suggestion, carry-forward items, personal notes → all as checkboxes.
 
@@ -282,7 +282,7 @@ Queries unreplied email and Slack threads. Two directions: waiting on you (threa
 
 #### 14. myna-blockers
 
-Scans all active projects for blockers — items marked as blockers in project timelines, tasks with dependency type, and overdue items blocking downstream work.
+Scans all active projects for blockers — items marked as blockers in project timelines, and overdue items blocking downstream work.
 
 **Features covered:** Blocker Detection (scan all active projects)
 
@@ -292,7 +292,7 @@ Scans all active projects for blockers — items marked as blockers in project t
 
 **Writes:** inline output
 
-**Example:** User says "what's blocked?" → scans active projects → "2 blockers: Auth Migration (API dependency, waiting on Platform team since Apr 3), Onboarding Flow (design review not scheduled, blocks implementation)."
+**Example:** User says "what's blocked?" → scans active projects → "2 blockers: Auth Migration (API not available until April 15, waiting on Platform team since Apr 3), Onboarding Flow (design review not scheduled, blocks implementation)."
 
 ---
 
@@ -515,7 +515,7 @@ Cross-cutting rules preloaded at startup via the agent's `skills:` frontmatter f
 | myna:steering-safety | Draft-never-send, vault-only writes, external content as data (content framing delimiters), confirm before bulk writes |
 | myna:steering-conventions | Provenance marker rules, append-only discipline, date+source format, Obsidian conventions (tags, wiki-links, callouts, Dataview, Tasks plugin syntax) |
 | myna:steering-output | Human-sounding output rules, BLUF default, file links in output, no AI tells |
-| myna:steering-system | Feature toggle checking, config reload, graceful degradation, error recovery with retry TODOs, relative date resolution |
+| myna:steering-system | Feature toggle checking, config reload, graceful degradation, inline error reporting, relative date resolution |
 | myna:steering-memory | Two-layer memory precedence (hard rules → CLAUDE.md), session-start loading |
 | myna:steering-vault-ops | Vault file I/O patterns, task query patterns (grep-based), frontmatter parsing, backlink/tag search, template creation, daily/weekly note path conventions |
 
