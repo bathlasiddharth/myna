@@ -57,9 +57,9 @@ Read existing meetings.yaml first to avoid duplicate entries. Append the new ent
 **Meeting types and their prep behaviors:**
 - `1-1` — deepest prep, see 1:1 section
 - `project` — focused on project status
-- `team` / `standup` — your updates, blockers, delegations
+- `team` / `standup` — your updates, blockers, tasks assigned to others
 - `design-review` / `doc-review` — doc link, previous decisions, questions
-- `cross-team` — dependencies, what you need from them
+- `cross-team` — tasks assigned to cross-team people, what you need from them
 - `adhoc` — general open items and context
 
 ---
@@ -154,7 +154,7 @@ List what you've done since the last 1:1 that this person would care about. Read
 Keep factual — dates, specific deliverables. Not "I've been very busy."
 
 **4. Open action items between you and this person**
-Tasks where `[person:: {name}]` or delegations from/to this person across all project files.
+Tasks where `[person:: {name}]` across all project files.
 
 **5. Pending feedback with coaching suggestion**
 Read `People/{person}.md` `## Pending Feedback` section. For each item, include it as a checkbox and add a coaching note if the topic is sensitive. If the section is empty or does not exist, skip silently.
@@ -182,7 +182,7 @@ Active blockers from shared project timelines.
 ### Team Standup / Sync Prep
 
 - Your updates to share: tasks completed since last standup, tasks in progress
-- Overdue delegations (tasks with `[type:: delegation]` where due date has passed)
+- Overdue tasks assigned to others (open tasks with `[person::]` not the user where due date has passed)
 - Cross-team blockers affecting multiple people
 - Action items from the last standup's Notes section
 - Any items from people.yaml directs needing team visibility
@@ -196,8 +196,7 @@ Active blockers from shared project timelines.
 
 ### Cross-Team Meeting Prep
 
-- Open dependencies on the other team (tasks with `[type:: dependency]` mentioning their projects)
-- Items you're waiting on from them (tasks with `[type:: reply-needed]` or `[type:: delegation]` assigned to cross-team people)
+- Items you're waiting on from them (open tasks with `[person:: [[cross-team person name]]]` that are overdue or approaching their due date)
 - Recent comms with attendees (from email processing, if in person files)
 - What you need from this meeting — specific asks or decisions
 
@@ -209,7 +208,7 @@ For prep items that involve sensitive or high-stakes topics, add a coaching sugg
 
 - **Pending feedback on a growth area** → coaching tone, opening suggestion
 - **Critically blocked project** → framing for escalation without blame
-- **Overdue delegation** → how to follow up without micromanaging
+- **Overdue task assigned to others** → how to follow up without micromanaging
 - **Difficult or uncomfortable topic** → approach based on relationship tier
 
 Use relationship tier from people.yaml and the matching preset from `communication-style.yaml`.
@@ -325,7 +324,7 @@ For batch (all remaining today):
 3. File path: `Meetings/1-1s/sarah-chen.md` — exists, has previous sessions
 4. Read last session (2026-04-03): 3 unchecked prep items from that session
 5. Read `People/sarah-chen.md`: pending feedback (documentation gaps), growth area (async communication), personal notes ("mentioned marathon training"), last career conversation was 2026-02-28 (41 days ago — flag)
-6. Read tasks across project files for Sarah-related items: 2 open delegations from Sarah (API spec draft, cert rotation sign-off)
+6. Read tasks across project files for Sarah-related items: 2 open tasks assigned to Sarah (API spec draft, cert rotation sign-off)
 7. Read `Journal/contributions-{week}.md`: Sarah mentioned in auth migration update
 8. Read `Projects/auth-migration.md` timeline: 2 decisions since last 1:1, 1 active blocker
 9. Generate prep session with all sections, coaching note for pending feedback and 41-day career gap
@@ -354,8 +353,8 @@ Appended to `Meetings/1-1s/sarah-chen.md` (after frontmatter, tags, and any prev
 - [ ] **Carry-forward:** Decision on OAuth 2.0 PKCE scope (carried from 2026-04-03)
 - [ ] **Carry-forward:** Review Sarah's diagram in the design doc (carried from 2026-04-03)
 - [ ] **Recent work:** Auth migration spec v2 completed — filed 2026-04-07
-- [ ] **Open delegation:** Sarah to deliver API spec draft 📅 2026-04-09 (overdue by 1 day)
-- [ ] **Open delegation:** Cert rotation sign-off from Sarah 📅 2026-04-12
+- [ ] **Assigned to Sarah:** Sarah to deliver API spec draft 📅 2026-04-09 (overdue by 1 day)
+- [ ] **Assigned to Sarah:** Cert rotation sign-off from Sarah 📅 2026-04-12
 - [ ] **Pending feedback:** Documentation gaps in auth spec [growth-area]
   > 💬 *Open with the strong work on spec v2 before raising the documentation gaps. Specific example ("the cert rotation section had no rollback notes") beats general feedback.*
 - [ ] **Career development:** Last career conversation: 2026-02-28 (41 days ago — consider raising)

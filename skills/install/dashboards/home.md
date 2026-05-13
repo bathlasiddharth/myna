@@ -27,14 +27,7 @@ SORT due ASC
 
 ### Active Blockers
 
-> Blocker callouts written as `> [!warning] Blocker` in project timelines. Review Projects/ files for active blockers.
-
-```dataview
-TASK
-FROM "myna/Projects"
-WHERE !completed AND type = "dependency" AND due < date(today)
-SORT due ASC
-```
+> Blocker callouts are written as `> [!warning] Blocker` in project timelines. Review Projects/ files for active blockers.
 
 ## Review Queue
 

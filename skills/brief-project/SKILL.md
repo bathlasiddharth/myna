@@ -102,12 +102,8 @@ Skip the blocker bullet if there are no open blockers. Skip recent development i
 - [ ] [task] — due [date] ⏫/🔼
 - ...
 
-**Delegated (waiting on others):**
+**Assigned to others:**
 - [ ] [task] — [person], due [date]
-- ...
-
-**Dependencies (waiting on other teams):**
-- [ ] [dependency description] — due [date] [type:: dependency]
 - ...
 
 ### 📅 Upcoming Meetings (next 7 days)
@@ -125,7 +121,7 @@ Group recurring meetings: if the same meeting title appears on multiple days, co
 
 ### 📈 Task Summary
 [X] open tasks — [Y] overdue, [Z] due this week
-[A] delegations — [B] overdue
+[A] assigned to others — [B] overdue
 ```
 
 ---
@@ -180,12 +176,9 @@ Phase 2 is underway. Sarah's API spec draft is in review. The Platform API depen
 - [ ] Review API spec v2 📅 2026-04-11 ⏫ [project:: [[Auth Migration]]] [person:: [[Sam Bennett]]]
 - [ ] Unblock Platform team dependency — follow up with James 📅 2026-04-11 🔼 [project:: [[Auth Migration]]] [person:: [[Sam Bennett]]]
 
-**Delegated (waiting on others):**
-- [ ] Draft API spec v2 — Sarah, due 2026-04-10 [type:: delegation] [person:: [[Sarah Carter]]]
-- [ ] Staging infrastructure setup — Alex, due 2026-04-14 [type:: delegation] [person:: [[Alex Kumar]]]
-
-**Dependencies (waiting on other teams):**
-- [ ] Platform API endpoint spec — Platform team, due 2026-04-08 (overdue) [type:: dependency]
+**Assigned to others:**
+- [ ] Draft API spec v2 — Sarah, due 2026-04-10 [person:: [[Sarah Carter]]]
+- [ ] Staging infrastructure setup — Alex, due 2026-04-14 [person:: [[Alex Kumar]]]
 
 ### 📅 Upcoming Meetings (next 7 days)
 - Thu Apr 14, 10:00 AM — Auth Migration Weekly Sync
@@ -200,7 +193,7 @@ Phase 2 is underway. Sarah's API spec draft is in review. The Platform API depen
 
 ### 📈 Task Summary
 5 open tasks — 1 overdue, 3 due this week
-2 delegations — 1 overdue (Platform API spec)
+2 assigned to others — 1 overdue (Platform API spec)
 ```
 
 ---

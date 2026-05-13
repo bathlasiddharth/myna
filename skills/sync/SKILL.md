@@ -122,7 +122,7 @@ Collect in parallel:
 
 **Overdue (for briefing signal only):** Grep `{vault}/myna/Projects/` for `- \[ \]` with `📅 {date}` before target date. Count total; surface the top 3 by priority for the briefing. Full list available in `Dashboards/dashboard.md`.
 
-**Overdue delegations (for briefing signal only):** Grep `{vault}/myna/` for `- \[ \]` lines containing `[type:: delegation]` with `📅 {date}` before today. Count total; surface any as red-flag bullets in the briefing. Full list available in `Dashboards/dashboard.md`.
+**Overdue tasks assigned to others (for briefing signal only):** Grep `{vault}/myna/` for `- \[ \]` lines containing `[person::]` with `📅 {date}` before today, where the person value does not match `user.name` from workspace.yaml. Count total; surface any as red-flag bullets in the briefing. Full list available in `Dashboards/dashboard.md`.
 
 **Blockers:** Grep `{vault}/myna/Projects/` for `> \[!warning\] Blocker` callout blocks. For each match, read a window of ~5 surrounding lines. Skip if `resolved:: true` or `status:: resolved` appears within the same callout block. Surface unresolved ones as briefing bullets.
 
@@ -159,7 +159,7 @@ date: {YYYY-MM-DD}
 
 {3–7 bullets covering what matters most today. AI-generated signal, not raw data. Include:}
 - Overdue tasks that need attention today (count + top items by priority)
-- Overdue delegations as red-flag items
+- Overdue tasks assigned to others as red-flag items
 - Unresolved blockers
 - Prep warnings for today's meetings (e.g., "Design review at 2 PM — no prep file yet")
 - Capacity flag if task effort exceeds focus time ("Over capacity by {N} hrs")
@@ -310,7 +310,7 @@ User says: "good morning"
 7. Review queue: 3 in review-work, 1 in review-self.
 8. Milestones: Sarah's birthday in 3 days.
 9. Meetings.yaml check: "1:1 with Sarah" → matches alias → `Meetings/1-1s/sarah-chen.md`. Append new session. "Design Review" → adhoc → `Meetings/Adhoc/2026-04-07-design-review.md`.
-10. Briefing bullets: over-capacity warning, 2 overdue tasks (top by priority), 1 overdue delegation (Alex — infra proposal), Sarah's birthday in 3 days, 4 review queue items.
+10. Briefing bullets: over-capacity warning, 2 overdue tasks (top by priority), 1 overdue task assigned to Alex (infra proposal), Sarah's birthday in 3 days, 4 review queue items.
 11. Output: "Sync complete (8:47 AM). 3 meetings today (2.5 hrs), 4 tasks due today, 2 overdue. Weekly note created for 2026-W15."
 
 ### Example 2: Re-sync mid-afternoon

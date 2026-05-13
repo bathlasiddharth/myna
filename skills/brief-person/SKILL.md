@@ -33,8 +33,8 @@ Once resolved, read these files in parallel:
 
 **Open Items detection:** Grep open tasks (`- [ ]`) across `Projects/` that mention this person. Search all identity forms from people.yaml: display name, full name, slug, and all aliases. Also search wiki-link forms `[[full-name]]` and `[[slug]]` since different skills may write either form.
 
-- **Assigned to them:** tasks with `[person:: {name}]` (any name form) and no `[type:: delegation]` indicating self-ownership, or explicit `[type:: delegation]` where this person is the owner
-- **Dependencies involving {name}:** `[type:: dependency]` or `[type:: reply-needed]` tasks mentioning this person. Do not assert direction unless the task text or owner field makes it explicit that the user is the one who owes action.
+- **Assigned to them:** any open `[type:: task]` where `[person:: {name}]` appears (any name form) and the name does not match `user.name` from workspace.yaml.
+- **Reply-needed involving {name}:** `[type:: reply-needed]` tasks mentioning this person. Do not assert direction unless the task text or owner field makes it explicit that the user is the one who owes action.
 
 Missing files are not errors — skip and note what was unavailable.
 
@@ -64,7 +64,7 @@ Show all sections inline. Always include every section — if a section has no d
 - [task description] — due [date] (from [project])
 - ...
 
-**Dependencies involving {name}:**
+**Reply-needed involving {name}:**
 - [task or item description] — [source]
 - ...
 
@@ -138,11 +138,11 @@ Senior engineer on the Platform team. Working on the Auth Migration and Platform
 - **Platform API** — active — On track, no blockers
 
 ### ✅ Open Items
-**You delegated to them:**
+**Assigned to them:**
 - Draft API spec v2 — due 2026-04-11 (Auth Migration)
 - Review platform onboarding guide — no due date (Platform API)
 
-**They're waiting on you:**
+**Reply-needed involving them:**
 - Approve caching architecture decision — flagged in 1:1 (2026-04-02)
 
 ### 💬 Pending Feedback

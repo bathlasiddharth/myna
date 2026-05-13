@@ -35,7 +35,7 @@ Read these before showing output:
 1. **`{vault}/myna/_system/config/workspace.yaml`** — `work_hours.start` + `work_hours.end` (capacity baseline), `timezone`, `features` map (no toggle gates this skill — read timezone and work hours only)
 2. **Today's daily note** (`{vault}/myna/Journal/{YYYY-MM-DD}.md`) — check Immediate Attention section and any sync snapshots for current state
 3. **Calendar** (via calendar MCP) — events for today (Plan Day / Priority Coaching) or the full week (Week Optimization). If unavailable, note it and work from the daily note.
-4. **Open tasks** — Grep `{vault}/myna/Projects/` for `- \[ \]` with due dates, priority flags, and `[type:: delegation]`
+4. **Open tasks** — Grep `{vault}/myna/Projects/` for `- \[ \]` with due dates, priority flags, and `[person::]` fields
 5. **Project files** — scan `{vault}/myna/Projects/` for blocked items (`[!warning] Blocker`) and stalled projects (no timeline entry in last 14 days)
 
 ---
@@ -61,7 +61,7 @@ Show a concrete, ordered picture of the day.
 - ...
 
 ⚠️ Flags:
-- {overdue delegation}: {person} was due to send {thing} by {date}
+- {overdue task assigned to {person}}: {person} was due to send {thing} by {date}
 - {approaching deadline}: {task} due tomorrow, not started
 - {deferred N times}: {task} has been carried forward {N} days
 
@@ -70,7 +70,7 @@ Show a concrete, ordered picture of the day.
 
 **Priority ordering logic:**
 
-Rank tasks by: (1) overdue, (2) external waiting points that can block your plan `[type:: dependency]` — these are things you are waiting on from others and should follow up on, (3) due today with high priority `⏫`, (4) due today, (5) high priority but no due date, (6) carried forward multiple times (check for prior daily notes where this task appeared).
+Rank tasks by: (1) overdue, (2) tasks assigned to others with a past due date (open tasks where `[person::]` is not the user and date < today) — these are things you're waiting on and should follow up on, (3) due today with high priority `⏫`, (4) due today, (5) high priority but no due date, (6) carried forward multiple times (check for prior daily notes where this task appeared).
 
 ---
 
@@ -84,11 +84,11 @@ Show the 3 things that matter most right now, with clear reasoning.
 
 1. {task or goal} — {specific reason: "blocks Sarah's API work, deadline Friday"}
 2. {task or goal} — {specific reason: "deferred 3 times, high-priority project"}
-3. {task or goal} — {specific reason: "overdue delegation from Marcus, 5 days late"}
+3. {task or goal} — {specific reason: "overdue task assigned to Marcus, 5 days late"}
 
 ⚠️ Watch list:
 - {task}: {flag — "no due date, has been sitting for 2 weeks"}
-- {delegation}: {flag — "asked Alex for X on {date}, no update"}
+- {task assigned to others}: {flag — "asked Alex for X on {date}, no update"}
 
 🔄 Recurring carry-overs:
 - {task} has been carried forward {N} days. Either commit to it today or explicitly defer to {date}.
@@ -119,7 +119,7 @@ Step back from today and look at the full week.
 💡 Optimization suggestions:
 - {Specific suggestion: "Wednesday morning has 3 hrs free — good time for the MBR draft you've been deferring"}
 - {Meeting suggestion: "The platform sync Tuesday has no agenda items matching your current priorities — consider whether you need to attend"}
-- {Delegation suggestion: "Marcus's infra proposal is 5 days overdue — follow up now before Friday crunch"}
+- {Follow-up suggestion: "Marcus's infra proposal is 5 days overdue — follow up now before Friday crunch"}
 
 🔮 This week's risk: {top 1–2 things most likely to cause problems if not addressed}
 

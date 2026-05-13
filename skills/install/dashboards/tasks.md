@@ -29,14 +29,6 @@ WHERE !completed AND due > date(today) AND due <= date(today) + dur(7 days)
 SORT due ASC
 ```
 
-### Delegations
-```dataview
-TASK
-FROM "myna"
-WHERE !completed AND type = "delegation"
-SORT due ASC
-```
-
 ## Needs Owner
 
 Tasks with no assigned person (`person::` field missing). Each group shows the source file as a wikilink.

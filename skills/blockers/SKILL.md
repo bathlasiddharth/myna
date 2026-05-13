@@ -1,7 +1,7 @@
 ---
 name: blockers
 disable-model-invocation: true
-description: Scan the entire vault for blockers — explicit blocker callouts, blocked tasks, and overdue tasks. Separates your blockers from delegated ones. Invoke for "what's blocked?", "show me blockers", "any blockers?".
+description: Scan the entire vault for blockers — explicit blocker callouts and overdue tasks. Separates your blockers from tasks assigned to others. Invoke for "what's blocked?", "show me blockers", "any blockers?".
 user-invocable: true
 argument-hint: "[optional: scope to a specific file or folder]"
 ---
@@ -18,21 +18,14 @@ Scans the entire vault for blockers and surfaces them inline. Read-only — no v
 
 ## What Counts as a Blocker
 
-Three signal types:
+Two signal types:
 
 **1. Explicit blocker callouts**
 
 Grep across `{vault_path}/myna/**/*.md`:
 `\[!warning\] Blocker`
 
-**2. Dependency tasks (cross-team / external blockers)**
-
-Grep across `{vault_path}/myna/**/*.md`:
-`- \[ \].*\[type:: dependency\]`
-
-These are tasks where you are waiting on another team or person. Each is a potential external blocker for your work.
-
-**3. Overdue tasks**
+**2. Overdue tasks**
 
 Grep across `{vault_path}/myna/**/*.md`:
 `- \[ \].*📅 \d{4}-\d{2}-\d{2}`
@@ -55,7 +48,7 @@ The same blocker or task may appear multiple times — across files, or matching
 
 - Match tasks by their text content (the content after `- [ ]`, stripped of metadata).
 - If the same task text appears in multiple files, keep only one instance. Prefer the `Projects/` file over meeting files; prefer meeting files over other sources.
-- If the same task matches multiple signals, keep only the most specific: signal 2 (blocked) over signal 3 (overdue); signal 1 (callout) is always kept separately as it carries source context.
+- If the same task matches multiple signals, keep only the most specific: signal 1 (callout) is always kept separately as it carries source context; signal 2 (overdue) is deduplicated against callouts if the same task appears in both.
 - Apply deduplication before grouping.
 
 ---

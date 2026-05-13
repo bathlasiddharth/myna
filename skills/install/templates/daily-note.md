@@ -33,15 +33,6 @@ SORT priority DESC
 LIMIT 20
 ```
 
-### Delegations
-
-```dataview
-TASK
-FROM "myna"
-WHERE !completed AND type = "delegation"
-SORT due ASC
-```
-
 ### Review Queue
 
 {count} items pending.

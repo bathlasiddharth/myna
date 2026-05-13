@@ -1,7 +1,7 @@
 ---
 name: team-health
 disable-model-invocation: true
-description: Portfolio view of all direct reports — tasks, overdue, delegations, feedback gap, attention gap, last 1:1. Team-wide glance, not a deep dive (use /myna:brief-person for that). Invoke for "how is my team doing?" or "team health".
+description: Portfolio view of all direct reports — tasks, overdue, tasks assigned to them, feedback gap, attention gap, last 1:1. Team-wide glance, not a deep dive (use /myna:brief-person for that). Invoke for "how is my team doing?" or "team health".
 user-invocable: true
 argument-hint: "[optional: person name to focus on one person]"
 ---
@@ -23,7 +23,7 @@ For each person in people.yaml with `relationship_tier: direct`:
 | Signal | Source | How to get it |
 |--------|--------|---------------|
 | Open tasks | Grep `[person:: {name}]` + `- [ ]` across `Projects/` — search display name, full name, slug, all aliases, and wiki-link forms `[[full-name]]`/`[[slug]]`. Deduplicate across forms. | Count open, count overdue (📅 date < today) |
-| Delegations | Grep `[type:: delegation] [person:: {name}]` across `Projects/` — same multi-form search | Count open delegations, count overdue |
+| Tasks assigned to them | Grep `[person:: {name}]` + `- [ ]` + `[type:: task]` across `Projects/` — same multi-form search | Count open, count overdue (📅 date < today) |
 | Last 1:1 date | `Meetings/1-1s/{person-slug}.md` | Most recent session header (`## {YYYY-MM-DD} Session`) |
 | Last feedback date | `People/{person-slug}.md` Observations section | Date of most recent `strength`, `growth-area`, or `contribution` observation entry — this is the feedback gap signal. Do not count Recognition or Personal Notes entries — those don't reset the feedback clock. |
 | Feedback gap | Compare last observation entry date to today vs `feedback_cycle_days` from workspace.yaml (default: 30; per-person override from people.yaml takes precedence) | Flag if gap > threshold. |
@@ -49,18 +49,18 @@ Show a table first for quick scanning:
 ```
 ## 🏥 Team Health — [date]
 
-| Person | Open | Overdue | Delegations | Feedback | Last 1:1 | Attention |
-|--------|------|---------|-------------|----------|----------|-----------|
-| Sarah  | 5    | 1       | 0 open      | 12 days  | Apr 2    | ✅        |
-| Alex   | 8    | 3       | 2 (1 overdue) | 45 days ⚠️ | Mar 28 | ⚠️ 52d no obs |
-| Marcus | 4    | 0       | 3 overdue ⚠️ | 28 days | Apr 5    | ⚠️ 3 1:1s no new topics |
-| Maya   | 6    | 1       | 0 open      | 61 days ⚠️ | Apr 1  | ⚠️ No career 4mo |
+| Person | Open | Overdue | Assigned to them | Feedback | Last 1:1 | Attention |
+|--------|------|---------|------------------|----------|----------|-----------|
+| Sarah  | 5    | 1       | 0 open           | 12 days  | Apr 2    | ✅        |
+| Alex   | 8    | 3       | 2 (1 overdue)    | 45 days ⚠️ | Mar 28 | ⚠️ 52d no obs |
+| Marcus | 4    | 0       | 3 overdue ⚠️     | 28 days  | Apr 5    | ⚠️ 3 1:1s no new topics |
+| Maya   | 6    | 1       | 0 open           | 61 days ⚠️ | Apr 1  | ⚠️ No career 4mo |
 ```
 
 Columns:
 - **Open** — count of open tasks assigned to this person
 - **Overdue** — count of tasks past due date
-- **Delegations** — open delegation count; flag overdue with ⚠️
+- **Assigned to them** — count of open tasks assigned to this person; flag overdue with ⚠️
 - **Feedback** — days since last logged observation. Flag with ⚠️ if gap exceeds `feedback_cycle_days` threshold.
 - **Last 1:1** — date of most recent 1:1 session (from vault). If calendar MCP is available, append "Next: [date]" after the last date.
 - **Attention** — ✅ if no gaps, or brief flag description if gaps detected
@@ -105,34 +105,34 @@ If no contributions in the last 14 days for a person, that person simply doesn't
 **Directs from people.yaml:** Sarah Chen, Alex Kumar, Marcus James, Maya Patel
 
 **Data gathered per person:**
-- Sarah: 5 open tasks, 1 overdue, 0 delegations, last observation Apr 2 (12 days), last 1:1 Apr 2, no attention gaps
-- Alex: 8 open tasks, 3 overdue, 2 open delegations (1 overdue), last observation Feb 24 (45 days — threshold 30), last 1:1 Mar 28, no observations in 52 days
-- Marcus: 4 open tasks, 0 overdue, 3 overdue delegations, last observation Mar 15 (28 days), last 1:1 Apr 5, last 3 1:1 sessions had no new topics from you
-- Maya: 6 open tasks, 1 overdue, 0 delegations, last observation Feb 10 (61 days — threshold 30), last 1:1 Apr 1, no career/growth topics in 4 months
+- Sarah: 5 open tasks, 1 overdue, 0 tasks assigned to her, last observation Apr 2 (12 days), last 1:1 Apr 2, no attention gaps
+- Alex: 8 open tasks, 3 overdue, 2 tasks assigned to him (1 overdue), last observation Feb 24 (45 days — threshold 30), last 1:1 Mar 28, no observations in 52 days
+- Marcus: 4 open tasks, 0 overdue, 3 tasks assigned to him (all overdue), last observation Mar 15 (28 days), last 1:1 Apr 5, last 3 1:1 sessions had no new topics from you
+- Maya: 6 open tasks, 1 overdue, 0 tasks assigned to her, last observation Feb 10 (61 days — threshold 30), last 1:1 Apr 1, no career/growth topics in 4 months
 
 **Output:**
 
 ```
 ## 🏥 Team Health — 2026-04-12
 
-| Person | Open | Overdue | Delegations   | Feedback   | Last 1:1 | Attention |
-|--------|------|---------|---------------|------------|----------|-----------|
-| Sarah  | 5    | 1       | 0 open        | 12 days    | Apr 2    | ✅        |
-| Alex   | 8    | 3       | 2 (1 overdue) | 45 days ⚠️ | Mar 28   | ⚠️ 52d no obs |
-| Marcus | 4    | 0       | 3 overdue ⚠️  | 28 days    | Apr 5    | ⚠️ 3 1:1s no new topics |
-| Maya   | 6    | 1       | 0 open        | 61 days ⚠️ | Apr 1    | ⚠️ No career 4mo |
+| Person | Open | Overdue | Assigned to them | Feedback   | Last 1:1 | Attention |
+|--------|------|---------|------------------|------------|----------|-----------|
+| Sarah  | 5    | 1       | 0 open           | 12 days    | Apr 2    | ✅        |
+| Alex   | 8    | 3       | 2 (1 overdue)    | 45 days ⚠️ | Mar 28   | ⚠️ 52d no obs |
+| Marcus | 4    | 0       | 3 overdue ⚠️     | 28 days    | Apr 5    | ⚠️ 3 1:1s no new topics |
+| Maya   | 6    | 1       | 0 open           | 61 days ⚠️ | Apr 1    | ⚠️ No career 4mo |
 
 ---
 
 ### ⚠️ Needs Attention
 
-**Alex Kumar** — 45-day feedback gap, 3 overdue tasks, 1 overdue delegation
+**Alex Kumar** — 45-day feedback gap, 3 overdue tasks, 1 overdue task assigned to him
 - Last observation: 2026-02-24 (45 days ago, threshold: 30 days)
 - Overdue tasks: "Review caching proposal" (12d), "Platform API doc" (5d), "Security audit response" (2d)
 - No observations logged since Feb 24
 
-**Marcus James** — 3 overdue delegations, 3 1:1 sessions with no new topics from you
-- Overdue delegations: "Onboarding guide update" (8d), "Q2 roadmap input" (3d), "Architecture review notes" (1d)
+**Marcus James** — 3 overdue tasks assigned to him, 3 1:1 sessions with no new topics from you
+- Overdue tasks assigned to him: "Onboarding guide update" (8d), "Q2 roadmap input" (3d), "Architecture review notes" (1d)
 - Last 3 1:1 prep sections (Apr 5, Mar 22, Mar 8) had no new topics added by you
 
 **Maya Patel** — 61-day feedback gap, no career topics in 4 months

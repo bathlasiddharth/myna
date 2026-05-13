@@ -17,36 +17,19 @@ SORT file.mtime DESC
 
 ### Open Action Items from 1:1s
 
-#### Assigned to me
+#### All open action items
 ```dataview
 TASK
 FROM "myna/Meetings/1-1s"
-WHERE !completed AND type != "delegation"
-SORT due ASC
-```
-
-#### Assigned to others (delegations)
-```dataview
-TASK
-FROM "myna/Meetings/1-1s"
-WHERE !completed AND type = "delegation"
+WHERE !completed AND type = "task"
 SORT due ASC
 ```
 
 ### Overdue Action Items
 
-#### Assigned to me
 ```dataview
 TASK
 FROM "myna/Meetings/1-1s"
-WHERE !completed AND due < date(today) AND type != "delegation"
-SORT due ASC
-```
-
-#### Assigned to others
-```dataview
-TASK
-FROM "myna/Meetings/1-1s"
-WHERE !completed AND due < date(today) AND type = "delegation"
+WHERE !completed AND due < date(today) AND type = "task"
 SORT due ASC
 ```

@@ -13,14 +13,6 @@ WHERE !completed AND due < date(today)
 SORT due ASC
 ```
 
-### Delegations
-```dataview
-TASK
-FROM "myna"
-WHERE !completed AND type = "delegation" AND due < date(today)
-SORT due ASC
-```
-
 ### By Project
 ```dataview
 TASK
