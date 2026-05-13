@@ -26,7 +26,7 @@ Obsidian Vault     Company MCP Servers
 
 When you type a prompt, the Myna agent reads it and determines which skill to invoke. Skills are loaded on demand — at startup, only their names and one-line descriptions are in context. When a skill is triggered, its full instructions are loaded and executed. Cross-cutting rules (safety, output style, vault conventions, memory) live in 6 steering skills that are always preloaded.
 
-Myna has 24 feature skills covering every domain of your workflow, and 6 steering skills that enforce consistent behavior across all of them. Every skill is a plain markdown file — there is no compiled code, no binary, no framework.
+Myna has 23 feature skills covering every domain of your workflow, and 6 steering skills that enforce consistent behavior across all of them. Every skill is a plain markdown file — there is no compiled code, no binary, no framework.
 
 ---
 
@@ -52,19 +52,18 @@ After install, Myna creates the following folder structure inside your vault's `
 | `_system/logs/` | Audit log, processed channel timestamps |
 | `_system/sources/` | Source message references for deduplication |
 | `_system/parked/` | Parked context saved by /myna:park |
-| `_meta/learnings/` | Behavioral preferences captured by /myna:learn |
 
 ---
 
 ## 4. Skills Reference
 
-### Feature Skills (24)
+### Feature Skills (23)
 
 | Skill | Description |
 |-------|-------------|
 | **/myna:sync** | Set up or refresh your day — creates daily note, generates meeting prep, surfaces overdue tasks and review queue. Handles "plan tomorrow" and weekly note creation. |
 | **/myna:plan** | Planning advice — analyzes workload, meetings, and tasks. Three modes: Plan Day, Priority Coaching, Week Optimization. Never writes to vault. |
-| **/myna:wrap-up** | Close out your day — compares planned vs actual, logs contributions, moves unfinished items to tomorrow, runs a learning reflection. |
+| **/myna:wrap-up** | Close out your day — compares planned vs actual, logs contributions, moves unfinished items to tomorrow. |
 | **/myna:weekly-summary** | Summarize your week — synthesizes daily notes, contributions, decisions, and task completions. Includes team health snapshot for managers. |
 | **/myna:email-triage** | Sort inbox emails into folders. Three-step flow: read inbox, write recommendations, then process triage to move emails. |
 | **/myna:process-messages** | Extract structured data from email, Slack, or pasted documents and route to the vault. Populates tasks, timelines, person files, and review queues. |
@@ -84,7 +83,6 @@ After install, Myna creates the following folder structure inside your vault's `
 | **/myna:calendar** | Create personal calendar time blocks, reminders, and task breakdowns. Finds free slots, proposes options, user confirms. |
 | **/myna:self-track** | Log contributions and generate self-review documents — brag docs, self-reviews, promo packets. Your contributions only. |
 | **/myna:park** | Save working context for zero-loss resumption in a new session. Resume by name or list all parked items. |
-| **/myna:learn** | Manage Myna's emergent memory — capture behavioral preferences, reflect on session patterns, delete wrong rules. |
 | **/myna:process-review-queue** | Process review queue items across review-work, review-people, and review-self queues — interactively or from pre-checked items. |
 
 ### Steering Skills (6)
@@ -98,7 +96,7 @@ Steering skills are always active. You don't invoke them directly.
 | **myna:steering-output** | Human voice, BLUF for professional writing, output density |
 | **myna:steering-vault-ops** | File I/O patterns, task queries, frontmatter, vault path conventions |
 | **myna:steering-system** | Feature toggles, config reload, graceful degradation, error recovery |
-| **myna:steering-memory** | Three-layer memory precedence, session-start loading, domain mapping |
+| **myna:steering-memory** | Two-layer memory precedence, session-start loading |
 
 ---
 

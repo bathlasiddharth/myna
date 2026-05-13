@@ -58,7 +58,7 @@ SORT created DESC
 ```dataview
 TABLE file.link AS "File", file.mtime AS "Modified"
 FROM "myna"
-WHERE !contains(file.path, "_system") AND !contains(file.path, "_meta")
+WHERE !contains(file.path, "_system")
 SORT file.mtime DESC
 LIMIT 10
 ```

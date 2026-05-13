@@ -23,6 +23,5 @@ FROM "myna"
 WHERE !completed AND due > date(today) AND due <= date(today) + dur(7 days)
   AND !contains(file.path, "Projects/")
   AND !contains(file.path, "_system/")
-  AND !contains(file.path, "_meta/")
 SORT due ASC
 ```
