@@ -36,13 +36,6 @@ myna/
 │   ├── review-self.md                # Uncertain contribution candidates
 │   ├── review-triage.md              # Email triage folder recommendations
 │   └── processed-{YYYY-MM-DD}.md     # Audit trail of processed items (dated)
-├── _meta/                            # User-readable behavioral metadata
-│   └── learnings/                    # Per-domain emergent learnings (Active/Proposed)
-│       ├── email.md
-│       ├── meetings.md
-│       ├── tasks.md
-│       ├── people.md
-│       └── general.md
 └── _system/
     ├── config/                       # 6 YAML config files (gitignored)
     │   ├── workspace.yaml
@@ -609,45 +602,6 @@ A Dataview-powered file with live queries. Always up-to-date without manual refr
 - Team Health (for managers — summarized from Team/ files)
 - Current Drafts (list of files in Drafts/ folder)
 - Recent Activity (latest vault writes)
-
-### 2.16 Learnings File
-
-`_meta/learnings/{domain}.md` — one file per domain. Domains: `email`, `meetings`, `tasks`, `people`, `general`.
-
-```markdown
-# Learnings — {Domain}
-
-## Active
-
-### {Sub-domain or general}
-- {rule or observation}. [Marker] ({date or dates}, {evidence})
-
-## Proposed
-
-### {Sub-domain or general}
-- {rule or observation}. [Inferred] ({date}, {evidence}) [obs: N]
-```
-
-**Sections:**
-- **Active** — entries that take effect immediately. Loaded at session start and applied to Myna's behavior.
-- **Proposed** — entries observed but not yet confirmed. Dormant until promoted to Active by repetition (3 observations across reflection passes) or explicit user confirmation during a promotion negotiation.
-
-**Provenance markers** (per §4 Provenance Marker Rules):
-- `[User]` — user explicitly requested capture ("remember that…")
-- `[Auto]` — main agent captured from a clear in-session directive ("never X", "stop Y")
-- `[Inferred]` — captured by reflection from an observed pattern; needs promotion or confirmation
-- `[Verified]` — was `[Inferred]`, user confirmed during promotion negotiation (rewrite-with-scope)
-
-**Observation count.** The `[obs: N]` suffix on Proposed entries tracks reflection-pass observation count. Each reflection pass increments by at most +1, regardless of how many in-session occurrences. When N reaches 3, the entry auto-promotes to Active and the suffix is removed.
-
-**Multiple observations on Active entries** are recorded inline as evidence accumulates:
-```markdown
-- Avoid Friday afternoon meetings. [Inferred] (3 reschedules: 2026-03-21, 2026-03-28, 2026-04-04)
-```
-
-**Lazy file creation.** Learning files are created by the myna-learn skill on first write. Empty domain files are not pre-populated. The user may edit learning files directly; the skill respects manual edits and does not validate format.
-
-**Domain mapping** is defined in the myna-steering-memory skill. Skills and the main agent route memory operations using that table. The full set of operations (`capture`, `reflect`, `delete`, and the `negotiate` sub-procedure) are described in the myna-learn skill.
 
 ---
 
@@ -1288,77 +1242,24 @@ When the agent creates, updates, or references a file, include both Obsidian URI
 
 ## 11. Memory Model
 
-Behavioral rules in Myna live in three layers with explicit precedence (D048). The layers are loaded together at session start and compose at runtime.
+Behavioral rules in Myna live in two layers with explicit precedence. The layers are loaded together at session start and compose at runtime.
 
-### 11.1 Three Layers
+### 11.1 Two Layers
 
 | Layer | Lives in | Authoritative for | Skill writes? |
 |-------|----------|-------------------|---------------|
 | Hard rules | 6 steering skills (myna-steering-*) | Safety, scope, draft-never-send, vault-only writes, append-only discipline, vault tool patterns | Never |
-| User bootstrap | `CLAUDE.md` | Initial preferences and project context written by the user at setup | Never |
-| Emergent preferences | `vault/_meta/learnings/{domain}.md` | Observed user preferences, patterns, and corrections | myna-learn only |
+| Workspace config | `CLAUDE.md` / `workspace.yaml` | User preferences, project context, initial configuration | Never (user edits directly) |
 
 ### 11.2 Runtime Resolution
 
-1. **Hard rules in steering ALWAYS win.** Immutable; cannot be overridden by any learning or `CLAUDE.md` entry.
-2. **Active learnings override `CLAUDE.md`** when they conflict on the same scope. Learnings reflect the user's current state observed from interaction; `CLAUDE.md` is bootstrap.
-3. **`CLAUDE.md` applies** in the absence of a relevant learning.
+1. **Hard rules in steering ALWAYS win.** Immutable; cannot be overridden by any `CLAUDE.md` entry or workspace config.
+2. **`CLAUDE.md` / `workspace.yaml` applies** otherwise.
 
-The myna-learn skill never edits `CLAUDE.md`. Conflicts between learnings and `CLAUDE.md` are resolved by precedence at runtime, not by file edits — the user manages `CLAUDE.md` manually. Drift between the two files is acceptable: runtime behavior is unambiguous and the user can read either file to audit.
+**Why hard rules go in steering, not `CLAUDE.md`:** safety and scope rules must NEVER be overridable by user configuration. Putting them in steering — outside the precedence question entirely — protects them structurally.
 
-**Why hard rules go in steering, not `CLAUDE.md`:** safety and scope rules must NEVER be overridable by inference. Putting them in steering — outside the precedence question entirely — protects them structurally. The 3-layer model only applies to soft preferences; hard rules are above the model.
+### 11.3 Session Memory Save (Wrap-Up)
 
-### 11.3 Active vs Proposed Lifecycle
+At the end of each day, myna-wrap-up saves behavioral corrections observed during the session to Claude Code memory (feedback type). These corrections persist across sessions as part of Claude Code's native memory mechanism. No separate skill or vault folder is required.
 
-Each `_meta/learnings/{domain}.md` file has two sections:
-
-- **Active** — entries that take effect immediately. Loaded at session start and applied to behavior throughout the session.
-- **Proposed** — entries observed but not yet confirmed. Dormant until promoted.
-
-Entries enter Active or Proposed depending on the source:
-
-| Source | Lands as | Marker |
-|--------|----------|--------|
-| User explicit ("remember", "always", "never", "I prefer") | Active | `[User]` |
-| Main agent in-the-moment detection of clear directive | Active | `[Auto]` |
-| Reflection finds a pattern (single or repeated) | Proposed | `[Inferred]` |
-| User confirmation during promotion pushback | Active (rewritten) | `[Verified]` |
-
-**Promotion to Active** happens when a Proposed entry's observation count reaches **3 or more** across reflection passes — not in-session occurrences. Each reflection pass increments a Proposed entry's count by at most +1, even if the same pattern occurred 5 times in one session. This prevents one bad day from auto-promoting a wrong rule.
-
-**Demotion / rescoping** happens when the user pushes back on a promotion. The default is rewrite-with-scope: the main agent rewrites the entry with the user's stated scope ("only for CEO emails") and keeps it in Active with `[Verified]` marker. If the user instead says "delete it," the entry is removed.
-
-### 11.4 Reflection at Wrap-Up
-
-Reflection is a step in the myna-wrap-up skill (End of Day path only — not Weekly Summary). It runs as the final step before the output summary and invokes the myna-learn skill's `reflect` operation.
-
-Reflection scans the session context for patterns indicating user preferences or corrections, checks them against existing entries in `_meta/learnings/*.md`, and either adds new Proposed entries, increments existing Proposed counts, or promotes Proposed entries to Active when their observation count reaches 3.
-
-If the user closes the session without running myna-wrap-up, the session's signals are lost. This is an accepted trade-off in v1 — patterns survive missed sessions because reflection is tolerant to gaps. Real preferences will surface across multiple wrap-up cycles even if individual sessions are missed.
-
-### 11.5 Output Boundary
-
-Learnings inform Myna's behavior, never the content of its outputs.
-
-- Never include learning content in drafts, replies, briefings, prep docs, or any user-facing text.
-- Never reference learnings in any output that another person will read.
-- The only context where learning content appears in conversational output is when the user explicitly asks Myna to summarize or list its current learnings — and only to the user.
-
-### 11.6 What Counts as a Learning vs an Entity Note
-
-The myna-learn skill refuses entries that are facts about specific entities. The litmus test:
-
-- **Does this rule apply across many objects?** → Learning. Goes in `_meta/learnings/{domain}.md`.
-- **Is this a fact about one specific entity?** → Entity note. Goes in `Projects/{project}.md`, `People/{person}.md`, etc.
-
-Examples:
-
-| Statement | Type | Where it goes |
-|-----------|------|---------------|
-| "I prefer terse drafts" | Pattern across many drafts | `_meta/learnings/email.md` Active |
-| "Avoid Friday afternoon meetings" | Pattern across many meetings | `_meta/learnings/meetings.md` Active |
-| "Sarah is the PM for auth migration" | Fact about Sarah | `People/sarah-chen.md` |
-| "Auth migration launches May 15" | Fact about auth migration | `Projects/auth-migration.md` timeline |
-| "Don't open emails with 'I hope this finds you well'" | Pattern across many drafts | `_meta/learnings/email.md` Active |
-
-When a user requests capture of a factual entry, the myna-learn skill refuses and redirects to the appropriate canonical note via the myna-capture skill.
+The full resolution rule lives in the myna-steering-memory skill.

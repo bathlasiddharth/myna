@@ -4,7 +4,7 @@
 
 Myna is a set of AI agent instructions that turn Claude Code into a Chief of Staff for tech professionals. The user types natural language prompts inside Claude Code. Myna reads from external sources (email, Slack, calendar) via MCP servers and writes exclusively to a local Obsidian vault under a single `myna/` subfolder. All agent instructions are plain markdown — readable by any LLM, but designed and tested for Claude Code (D045, D046).
 
-Architecturally, Myna is one main agent with 24 skills. The main agent handles routing and simple operations. Cross-cutting rules live in 6 steering skills, preloaded via the subagent's `skills:` frontmatter field. Feature skills are loaded on demand (progressive disclosure — only their name and description are in context until activated). Config lives in 6 YAML files read at session start.
+Architecturally, Myna is one main agent with 23 skills. The main agent handles routing and simple operations. Cross-cutting rules live in 6 steering skills, preloaded via the subagent's `skills:` frontmatter field. Feature skills are loaded on demand (progressive disclosure — only their name and description are in context until activated). Config lives in 6 YAML files read at session start.
 
 There are no subagents in v1. No automatic skill chaining — each skill outputs its result and tells the user what to do next if a follow-up action is needed.
 
@@ -15,7 +15,7 @@ Myna distributes as a Claude Code plugin (D053). Installation is a single comman
 1. **Plugin install** — `/plugin install myna@agentflock` installs the plugin from the agentflock marketplace. Skills live at `skills/*/SKILL.md` inside the plugin directory. The plugin name is `myna`; the skill namespace is `myna:`.
 2. **Main agent** — `agents/agent.md` contains identity, routing logic, and direct operations. Referenced as `myna:agent`. Frontmatter lists steering skills via the `skills:` field for preloading.
 3. **Steering skills** — 6 skills with `user-invocable: false` preloaded at startup via the agent's `skills:` field. Always in context. Referenced as `myna:steering-safety`, `myna:steering-conventions`, etc.
-4. **Feature skills** — 24 skills at `skills/{name}/SKILL.md` in the plugin directory. Only names and descriptions in context at startup. Full content loaded on demand when invoked as `/myna:{name}`.
+4. **Feature skills** — 23 skills at `skills/{name}/SKILL.md` in the plugin directory. Only names and descriptions in context at startup. Full content loaded on demand when invoked as `/myna:{name}`.
 5. **Config** — vault path stored in `~/.myna/config.yaml` (written by `install/claude.sh` on first run via `/myna:setup`). Six YAML config files read at session start from `{vault_path}/{subfolder}/_system/config/`.
 6. **First-time setup** — `/myna:setup` is the single entry point. It runs `install/claude.sh` (vault directory creation and `~/.myna/config.yaml`), then opens the Config UI or doc import for configuration.
 
@@ -51,8 +51,7 @@ External MCP servers (email, Slack, calendar) are registered with Claude Code vi
 | 20 | calendar | Time blocks, reminders, task breakdown | "reserve 2 hours Thursday" |
 | 21 | self-track | Log contributions and generate self-review docs | "build my promo case" |
 | 22 | park | Save and resume context | "park this" |
-| 23 | learn | Emergent memory: capture, reflect, delete | "remember that I prefer terse drafts" |
-| 24 | process-review-queue | Process review queue items | "review my queue" |
+| 23 | process-review-queue | Process review queue items | "review my queue" |
 
 Skills are invoked as `/myna:{name}` (e.g., `/myna:sync`, `/myna:plan`). The full plugin-qualified form is `myna:{name}`.
 
@@ -97,9 +96,9 @@ Provides ephemeral planning advice without writing to the vault. Analyzes your c
 
 #### 3. myna-wrap-up
 
-Closes out the day. Compares planned vs actual, logs contributions, moves unfinished items to tomorrow, then invokes myna-learn's reflection to scan the session for behavioral patterns.
+Closes out the day. Compares planned vs actual, logs contributions, moves unfinished items to tomorrow, and saves any behavioral corrections observed during the session to Claude Code memory.
 
-**Features covered:** End of Day Wrap-Up, contribution detection, carry-forward, reflection (invokes myna-learn)
+**Features covered:** End of Day Wrap-Up, contribution detection, carry-forward, session memory save
 
 **Example invocations:** "wrap up", "end of day", "close out today"
 
@@ -437,25 +436,7 @@ Saves working context for later resumption. The parked file must be detailed eno
 
 ---
 
-#### 23. myna-learn
-
-Manages Myna's emergent memory — behavioral preferences observed across sessions. Supports capture (save a new preference), reflect (scan session for patterns), delete (remove a wrong rule), and negotiate (handle pushback on a promoted rule).
-
-**Features covered:** Emergent memory: capture, reflect, delete, negotiate
-
-**Example invocations:** "remember that I prefer terse drafts", "forget that rule about Friday meetings", "what have you learned?", "show my learnings"
-
-**Reads:** `_meta/learnings/*.md`
-
-**Writes:** `_meta/learnings/*.md` (Active and Proposed entries with provenance markers)
-
-**Invocation paths:** Explicit user statement ("remember that...") → Active entry with [User] marker. Main agent detection of clear directive → Active with [Auto]. Reflection during myna-wrap-up → Proposed with [Inferred]. Promotion to Active after 3 reflection-pass observations.
-
-**Example:** User says "remember that I prefer bullet points over paragraphs in status updates" → writes to `_meta/learnings/email.md` Active section with [User] marker → "Noted: prefer bullet points in status updates."
-
----
-
-#### 24. myna-process-review-queue
+#### 23. myna-process-review-queue
 
 Processes review queue items. Two interaction modes: work through items interactively in chat, or edit queue files in Obsidian and tell the assistant to process approved items.
 
@@ -535,12 +516,12 @@ Cross-cutting rules preloaded at startup via the agent's `skills:` frontmatter f
 | myna:steering-conventions | Provenance marker rules, append-only discipline, date+source format, Obsidian conventions (tags, wiki-links, callouts, Dataview, Tasks plugin syntax) |
 | myna:steering-output | Human-sounding output rules, BLUF default, file links in output, no AI tells |
 | myna:steering-system | Feature toggle checking, config reload, graceful degradation, error recovery with retry TODOs, relative date resolution |
-| myna:steering-memory | Memory model precedence, domain mapping table, learning file format rules |
+| myna:steering-memory | Two-layer memory precedence (hard rules → CLAUDE.md), session-start loading |
 | myna:steering-vault-ops | Vault file I/O patterns, task query patterns (grep-based), frontmatter parsing, backlink/tag search, template creation, daily/weekly note path conventions |
 
 ### Feature Skills
 
-24 feature skills at `skills/{name}/SKILL.md` in the plugin directory. At startup, only each skill's name and description are in context (progressive disclosure). When the user's request matches a skill's description — or the user invokes it with `/myna:{name}` plus natural language arguments — Claude Code loads the full SKILL.md content.
+23 feature skills at `skills/{name}/SKILL.md` in the plugin directory. At startup, only each skill's name and description are in context (progressive disclosure). When the user's request matches a skill's description — or the user invokes it with `/myna:{name}` plus natural language arguments — Claude Code loads the full SKILL.md content.
 
 Skills read config files and vault files as needed. Each skill's instructions describe what to do, where to read, where to write, and what rules to follow.
 
@@ -883,7 +864,7 @@ All agent content — skills, steering, main agent, config schemas — is plain 
 |----------|--------------------|--------|
 | Main agent | `agents/agent.md` | `myna:agent` |
 | Steering skills (6) | `skills/steering-{name}/SKILL.md` | `myna:steering-{name}` (preloaded) |
-| Feature skills (24) | `skills/{name}/SKILL.md` | `/myna:{name}` (on demand) |
+| Feature skills (23) | `skills/{name}/SKILL.md` | `/myna:{name}` (on demand) |
 | Plugin metadata | `.claude-plugin/plugin.json` | Read by Claude Code at install |
 
 **Vault config (`~/.myna/config.yaml`):** Written by `install/claude.sh` on first run (invoked by `/myna:setup`). Stores `vault_path` and `subfolder`. Read at the start of every session. The six user config YAML files live in `{vault_path}/{subfolder}/_system/config/` — these are never overwritten by plugin updates.
@@ -943,41 +924,22 @@ The `myna-capture` skill is built first in Phase 1 because it exercises the most
 
 ## 13. Memory Model
 
-Myna maintains three layers of behavioral rules with explicit precedence (D048). The layers are loaded together at session start and compose at runtime.
+Myna maintains two layers of behavioral rules with explicit precedence. The layers are loaded together at session start and compose at runtime.
 
-### Three Layers
+### Two Layers
 
 | Layer | Lives in | Authoritative for | Skill writes? |
 |-------|----------|-------------------|---------------|
 | Hard rules | 6 steering skills (myna-steering-*) | Safety, scope, draft-never-send, vault-only writes, append-only discipline, vault tool patterns | Never |
-| User bootstrap | `CLAUDE.md` | Initial preferences and project context written by the user at setup | Never |
-| Emergent preferences | `vault/_meta/learnings/{domain}.md` | Observed user preferences, patterns, and corrections | myna-learn only |
+| Workspace config | `CLAUDE.md` / `workspace.yaml` | User preferences, project context, initial configuration | Never (user edits directly) |
 
 ### Runtime Precedence
 
-1. **Hard rules in steering ALWAYS win.** Immutable at runtime; cannot be overridden by any learning or `CLAUDE.md` entry.
-2. **Active learnings override `CLAUDE.md`** when they conflict on the same scope. Learnings reflect the user's current state observed from interaction; `CLAUDE.md` is bootstrap.
-3. **`CLAUDE.md` applies** in the absence of a relevant learning.
+1. **Hard rules in steering ALWAYS win.** Immutable at runtime; cannot be overridden by any `CLAUDE.md` entry or workspace config.
+2. **`CLAUDE.md` / `workspace.yaml` applies** otherwise.
 
-The myna-learn skill never touches `CLAUDE.md`. Conflicts between learnings and `CLAUDE.md` are resolved by precedence at runtime, not by file edits — the user manages `CLAUDE.md` manually. The full resolution rule and the domain mapping table that skills use both live in the myna-steering-memory skill.
+### Session Memory Save (Wrap-Up)
 
-### Learnings as a Content Type
+At the end of each day, myna-wrap-up saves behavioral corrections observed during the session to Claude Code memory (feedback type). These corrections persist across sessions as part of Claude Code's native memory mechanism. No separate skill or vault folder is required.
 
-Learnings are stored as plain markdown under `vault/_meta/learnings/{domain}.md` with one file per domain (`email`, `meetings`, `tasks`, `people`, `general`). Each file has two sections:
-
-- **Active** — entries that take effect immediately. Loaded at session start and applied to behavior throughout the session.
-- **Proposed** — entries observed but not yet confirmed. Dormant until promoted.
-
-Entries use the standard provenance markers (`[User]`, `[Auto]`, `[Inferred]`, `[Verified]`) per myna-steering-conventions. Promotion happens when a Proposed entry's observation count reaches 3 across reflection passes (not in-session occurrences) or when the user explicitly confirms it. Per reflection pass, each pattern increments by at most +1, which prevents one bad day from auto-promoting a wrong rule.
-
-### Reflection and Capture
-
-The myna-learn skill exposes three operations: `capture` (write a new entry), `reflect` (look back over the session for patterns), and `delete` (remove a wrong entry). Capture runs from two paths — explicit user statement ("remember that...") or main agent in-the-moment detection of a clear directive. Reflection runs as the final step of myna-wrap-up and is the only path that promotes Proposed entries to Active. Natural-language intent recognition is preferred over keyword matching: the main agent invokes myna-learn when the user expresses save / recall / forget intent in any phrasing.
-
-In v1, only the main agent (and myna-wrap-up's reflection step) invokes myna-learn. Other skills do not capture learnings directly — capture is centralized through the main agent recognizing user intent. This avoids scattering capture logic across 24 skills before we know what kinds of detection are worth building.
-
-### Output Boundary
-
-Learnings inform Myna's behavior, never the content of its outputs. Drafts, replies, briefings, prep docs, and other user-facing text never reference learnings. The only context where learning content appears in conversational output is when the user explicitly asks Myna to summarize or list its current learnings — and only to the user, never to a third party via Myna's drafts.
-
-See the myna-learn skill for the full operation set, file format, examples, and the negotiation sub-procedure for handling user pushback on a promotion.
+The full resolution rule lives in the myna-steering-memory skill.
