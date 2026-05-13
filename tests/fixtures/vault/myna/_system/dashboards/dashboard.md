@@ -16,12 +16,6 @@ TASK FROM "myna" WHERE !completed AND priority = "high" SORT due ASC
 TASK FROM "myna" WHERE !completed AND (due <= date(today) OR !due) SORT priority DESC LIMIT 30
 ```
 
-## Overdue Delegations
-
-```dataview
-TASK FROM "myna" WHERE !completed AND type = "delegation" AND due < date(today) SORT due ASC
-```
-
 ## Review Queue
 
 - [[review-work]]

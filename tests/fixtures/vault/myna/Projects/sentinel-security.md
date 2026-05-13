@@ -29,7 +29,7 @@ aliases: ["Sentinel Security"]
 
 ## Open Tasks
 
-- [ ] Chris to complete phase 1 audit and triage report 📅 2026-04-24 [project:: [[Sentinel Security]]] [type:: delegation] [person:: [[Chris Wilson]]] [User]
+- [ ] Chris to complete phase 1 audit and triage report 📅 2026-04-24 [project:: [[Sentinel Security]]] [type:: task] [person:: [[Chris Wilson]]] [User]
 - [ ] Schedule Sentinel phase 2 scoping meeting 📅 2026-04-18 [project:: [[Sentinel Security]]] [type:: task] [User]
 - [ ] Review Chris's Q1 hardening proposal in context of March 12 postmortem 📅 2026-04-15 [project:: [[Sentinel Security]]] [type:: task] [User]
 

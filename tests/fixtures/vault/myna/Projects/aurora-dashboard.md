@@ -32,10 +32,10 @@ aliases: ["Aurora Dashboard"]
 
 ## Open Tasks
 
-- [ ] Nate to implement the incidents-by-severity tile 📅 2026-04-17 [project:: [[Aurora Dashboard]]] [type:: delegation] [person:: [[Nate Brooks]]] [Auto] (slack, #aurora-dashboard, 2026-04-06)
-- [ ] Nate to add David Clark's scope requests to the backlog 📅 2026-04-14 [project:: [[Aurora Dashboard]]] [type:: delegation] [person:: [[Nate Brooks]]] [User]
+- [ ] Nate to implement the incidents-by-severity tile 📅 2026-04-17 [project:: [[Aurora Dashboard]]] [type:: task] [person:: [[Nate Brooks]]] [Auto] (slack, #aurora-dashboard, 2026-04-06)
+- [ ] Nate to add David Clark's scope requests to the backlog 📅 2026-04-14 [project:: [[Aurora Dashboard]]] [type:: task] [person:: [[Nate Brooks]]] [User]
 - [ ] Review Aurora dashboard before Platform all-hands demo 📅 2026-04-23 [project:: [[Aurora Dashboard]]] [type:: task] [User]
-- [ ] Laura to wire the second velocity tile 📅 2026-04-21 [project:: [[Aurora Dashboard]]] [type:: delegation] [person:: [[Laura Hayes]]] [User]
+- [ ] Laura to wire the second velocity tile 📅 2026-04-21 [project:: [[Aurora Dashboard]]] [type:: task] [person:: [[Laura Hayes]]] [User]
 
 ```dataview
 TASK

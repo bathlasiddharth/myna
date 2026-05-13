@@ -28,12 +28,6 @@ Atlas caching design review at 2pm — support Sarah running her first cross-tea
 TASK FROM "myna" WHERE !completed AND (due <= date(today) OR !due) SORT priority DESC LIMIT 20
 ```
 
-### Delegations
-
-```dataview
-TASK FROM "myna" WHERE !completed AND type = "delegation" SORT due ASC
-```
-
 ### Review Queue
 
 8 items pending. [[review-work]] (5), [[review-people]] (2), [[review-self]] (1).

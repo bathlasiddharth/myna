@@ -136,7 +136,7 @@ process these emails:
 
 **Pass criteria:**
 - Extracts decision (Option B caching — already in Atlas timeline → should skip as duplicate)
-- Extracts action items as delegations with `[type:: delegation]` and `[person::]` fields
+- Extracts action items assigned to others as `[type:: task]` with `[person::]` set to the owner
 - The "we should review this" phrasing in Alex's email is routed to review-work (ambiguous owner) — or written directly with [Inferred] + review-status: pending
 - Output shows "Changes:" block listing files modified
 - Near-duplicate on the meeting recap → "Skipped: similar item already exists" (or similar)
@@ -337,7 +337,7 @@ triage these inbox emails:
 - Main agent routes via Universal Done → process-meeting
 - Reads the April 10 Marcus session (notes are unprocessed — no `*[Processed]*` marker)
 - Extracts:
-  - Task for Marcus: finalize fallback design doc by April 14 (delegation)
+  - Task for Marcus: finalize fallback design doc by April 14 ([type:: task] with [person:: [[Marcus Walker]]])
   - Task for Sam: draft parental leave coverage plan with HR
   - Task for Sam: think about Nate as Phoenix co-owner (may route to review-work due to ambiguity)
   - Observation: growth-area (scope-cut discomfort) OR strength (brought written design) — ideally both
@@ -347,7 +347,7 @@ triage these inbox emails:
 
 **Files to check:**
 - `Meetings/1-1s/marcus-walker.md` — new processed marker below April 10 Notes, other sessions untouched
-- `Projects/phoenix-platform.md` — new delegation task
+- `Projects/phoenix-platform.md` — new task assigned to Marcus ([type:: task] with [person::])
 - `People/marcus-walker.md` — new observation(s) and/or personal note
 - `_system/sources/marcus-walker.md` — new source file created with verbatim notes
 
@@ -459,7 +459,7 @@ Action items:
 
 **Pass criteria:**
 - Phoenix Platform blockers prominently listed (multiple callout blocks in timeline — validator dependency 18 days)
-- Overdue dependency task "Waiting on infra team" flagged
+- Overdue task "Waiting on infra team to upgrade validator service" flagged (overdue since Apr 8)
 - Each blocker has age in days, source reference, owner (if known)
 - Suggests "escalate this blocker" as a next action for Phoenix
 - Atlas has no blockers — should not be listed

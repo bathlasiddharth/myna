@@ -29,12 +29,6 @@ Nate 1:1. Phoenix escalation memo to David. Figure out how to handle the time co
 TASK FROM "myna" WHERE !completed AND (due <= date(today) OR !due) SORT priority DESC LIMIT 20
 ```
 
-### Delegations
-
-```dataview
-TASK FROM "myna" WHERE !completed AND type = "delegation" SORT due ASC
-```
-
 ### Review Queue
 
 8 items pending. [[review-work]] (5), [[review-people]] (2), [[review-self]] (1).

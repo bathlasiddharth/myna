@@ -33,8 +33,8 @@ aliases: ["Bridge Integration"]
 ## Open Tasks
 
 - [ ] Confirm phase 1 timeline with Emily 📅 2026-04-14 ⏫ [project:: [[Bridge Integration]]] [type:: task] [Auto] (email, Emily, 2026-04-07)
-- [ ] Rachel to implement the phase 1 state machine 📅 2026-04-30 [project:: [[Bridge Integration]]] [type:: delegation] [person:: [[Rachel Davis]]] [User]
-- [ ] Sarah to coordinate Atlas wave 1 handoff with Bridge 📅 2026-04-22 [project:: [[Bridge Integration]]] [type:: delegation] [person:: [[Sarah Carter]]] [User]
+- [ ] Rachel to implement the phase 1 state machine 📅 2026-04-30 [project:: [[Bridge Integration]]] [type:: task] [person:: [[Rachel Davis]]] [User]
+- [ ] Sarah to coordinate Atlas wave 1 handoff with Bridge 📅 2026-04-22 [project:: [[Bridge Integration]]] [type:: task] [person:: [[Sarah Carter]]] [User]
 - [ ] Review updated Payments merchant API contract 📅 2026-04-18 [project:: [[Bridge Integration]]] [type:: task] [User]
 
 ```dataview

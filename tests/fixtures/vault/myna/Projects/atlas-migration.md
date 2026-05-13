@@ -64,12 +64,12 @@ aliases: ["Atlas Migration"]
 ## Open Tasks
 
 - [ ] Review updated caching design doc from Sarah 📅 2026-04-13 ⏫ [project:: [[Atlas Migration]]] [type:: task] [Auto] (slack, #atlas-team, 2026-04-10)
-- [ ] Sarah to draft the v1.1 token refresh retry semantics note 📅 2026-04-15 [project:: [[Atlas Migration]]] [type:: delegation] [person:: [[Sarah Carter]]] [Auto] (meeting, Atlas Caching Design Review, 2026-04-09)
-- [ ] Alex to integrate API spec into Phoenix client 📅 2026-04-15 [project:: [[Atlas Migration]]] [type:: delegation] [person:: [[Alex Thompson]]] [Auto] (email, Sarah, 2026-04-03)
+- [ ] Sarah to draft the v1.1 token refresh retry semantics note 📅 2026-04-15 [project:: [[Atlas Migration]]] [type:: task] [person:: [[Sarah Carter]]] [Auto] (meeting, Atlas Caching Design Review, 2026-04-09)
+- [ ] Alex to integrate API spec into Phoenix client 📅 2026-04-15 [project:: [[Atlas Migration]]] [type:: task] [person:: [[Alex Thompson]]] [Auto] (email, Sarah, 2026-04-03)
 - [ ] Confirm production token cardinality from telemetry 📅 2026-04-13 🔼 [project:: [[Atlas Migration]]] [type:: task] [review-status:: pending] [Inferred] — owner inferred from prior conversation
 - [ ] Reply to Sarah Mitchell about Q2 dependencies 📅 2026-04-10 [project:: [[Atlas Migration]]] [type:: reply-needed] [review-status:: pending] [Inferred] (email, Sarah Mitchell, 2026-04-06) — needs reply
 - [ ] Draft the Wave 1 migration communication for the 12 services 📅 2026-04-17 [project:: [[Atlas Migration]]] [type:: task] [User]
-- [ ] Emily Parker to confirm Payments test environment access 📅 2026-04-14 [project:: [[Atlas Migration]]] [type:: delegation] [person:: [[Emily Parker]]] [Inferred] — implied in her April 7 email but no explicit commit
+- [ ] Emily Parker to confirm Payments test environment access 📅 2026-04-14 [project:: [[Atlas Migration]]] [type:: task] [person:: [[Emily Parker]]] [Inferred] — implied in her April 7 email but no explicit commit
 
 ```dataview
 TASK

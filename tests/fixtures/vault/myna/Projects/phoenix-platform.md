@@ -53,11 +53,11 @@ aliases: ["Phoenix Platform"]
 ## Open Tasks
 
 - [ ] Escalate validator blocker to infra team lead (via James if needed) 📅 2026-04-13 ⏫ [project:: [[Phoenix Platform]]] [type:: task] [Auto] (slack, #phoenix-eng, 2026-04-05)
-- [ ] Marcus to finalize fallback ingestion design doc 📅 2026-04-14 [project:: [[Phoenix Platform]]] [type:: delegation] [person:: [[Marcus Walker]]] [Auto] (meeting, 1:1 with Marcus, 2026-04-10)
-- [ ] Waiting on infra team to upgrade validator service 📅 2026-04-08 [project:: [[Phoenix Platform]]] [type:: dependency] [Auto] (slack, #phoenix-eng, 2026-03-25)
+- [ ] Marcus to finalize fallback ingestion design doc 📅 2026-04-14 [project:: [[Phoenix Platform]]] [type:: task] [person:: [[Marcus Walker]]] [Auto] (meeting, 1:1 with Marcus, 2026-04-10)
+- [ ] Waiting on infra team to upgrade validator service 📅 2026-04-08 [project:: [[Phoenix Platform]]] [type:: task] [Auto] (slack, #phoenix-eng, 2026-03-25)
 - [ ] Write up Phoenix v1 risk note for VP review 📅 2026-04-17 🔼 [project:: [[Phoenix Platform]]] [type:: task] [User]
 - [ ] Plan coverage for Marcus parental leave (starts May 18) 📅 2026-04-25 ⏫ [project:: [[Phoenix Platform]]] [type:: task] [User]
-- [ ] Marcus to document the ingestion prototype for handoff 📅 2026-05-10 [project:: [[Phoenix Platform]]] [type:: delegation] [person:: [[Marcus Walker]]] [User]
+- [ ] Marcus to document the ingestion prototype for handoff 📅 2026-05-10 [project:: [[Phoenix Platform]]] [type:: task] [person:: [[Marcus Walker]]] [User]
 
 ```dataview
 TASK

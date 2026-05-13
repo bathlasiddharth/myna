@@ -24,9 +24,9 @@ aliases: ["Helix Research"]
 
 ## Open Tasks
 
-- [ ] Laura to evaluate VectorVendor against FAISS and Qdrant 📅 2026-04-24 [project:: [[Helix Research]]] [type:: delegation] [person:: [[Laura Hayes]]] [User]
-- [ ] Get VectorVendor sandbox with Acme-scale data 📅 2026-04-15 [project:: [[Helix Research]]] [type:: delegation] [person:: [[Laura Hayes]]] [Auto] (slack, #helix-research, 2026-04-07)
-- [ ] Draft evaluation criteria doc for the spike 📅 2026-04-11 [project:: [[Helix Research]]] [type:: delegation] [person:: [[Laura Hayes]]] [User]
+- [ ] Laura to evaluate VectorVendor against FAISS and Qdrant 📅 2026-04-24 [project:: [[Helix Research]]] [type:: task] [person:: [[Laura Hayes]]] [User]
+- [ ] Get VectorVendor sandbox with Acme-scale data 📅 2026-04-15 [project:: [[Helix Research]]] [type:: task] [person:: [[Laura Hayes]]] [Auto] (slack, #helix-research, 2026-04-07)
+- [ ] Draft evaluation criteria doc for the spike 📅 2026-04-11 [project:: [[Helix Research]]] [type:: task] [person:: [[Laura Hayes]]] [User]
 
 ```dataview
 TASK

@@ -29,12 +29,6 @@ Land Atlas API spec v2 review by EOD. Talk to Marcus about Phoenix blocker. Get 
 TASK FROM "myna" WHERE !completed AND (due <= date(today) OR !due) SORT priority DESC LIMIT 20
 ```
 
-### Delegations
-
-```dataview
-TASK FROM "myna" WHERE !completed AND type = "delegation" SORT due ASC
-```
-
 ### Review Queue
 
 7 items pending. [[review-work]] (4), [[review-people]] (2), [[review-self]] (1).
