@@ -33,14 +33,13 @@ Query open and completed tasks across the vault using Grep:
 | Open tasks | `- \[ \]` |
 | Completed tasks | `- \[x\]` |
 | Filter by project | `\[project:: \[\[{name}\]\]\]` |
-| Filter by type | `\[type:: {type}\]` — values: `task`, `delegation`, `dependency`, `reply-needed`, `retry` |
+| Filter by type | `\[type:: {type}\]` — values: `task`, `reply-needed` |
 | Filter by person | `\[person:: \[\[{name}\]\]\]` |
 | Due date (for overdue detection) | `📅 {YYYY-MM-DD}` — compare matched date against today |
 | Pending review | `\[review-status:: pending\]` |
 | High priority | `⏫` |
 | Medium priority | `🔼` |
 | Recurrence | `🔁 every` |
-| Retry tasks | `\[type:: retry\]` |
 
 **Combining filters:** Run Grep for the primary filter, then filter results in-context for secondary conditions. Example: find overdue high-priority tasks → Grep for `- \[ \]` in Projects/, then filter for lines containing `⏫` and a `📅` date before today.
 

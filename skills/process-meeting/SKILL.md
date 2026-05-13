@@ -41,7 +41,7 @@ Determine meeting type — type controls extraction emphasis:
 
 ### Checked items (`- [x]`) — discussed
 
-For checked items that correspond to open tasks or delegations in project files, mark those tasks complete (`- [ ]` → `- [x]`). Match by description. Skip items you can't confidently match — don't change items on weak matches.
+For checked items that correspond to open tasks in project files, mark those tasks complete (`- [ ]` → `- [x]`). Match by description. Skip items you can't confidently match — don't change items on weak matches.
 
 ### Unchecked items (`- [ ]`) — not discussed
 
@@ -72,7 +72,7 @@ For each item extracted, determine:
 | What you extract | Where to write |
 |---|---|
 | Action item for you | `Projects/{project}.md` → `## Open Tasks` |
-| Action item for someone else | `Projects/{project}.md` → `## Open Tasks` with `[type:: delegation]` |
+| Action item for someone else | `Projects/{project}.md` → `## Open Tasks` with `[type:: task]` and `[person::]` set to the owner |
 | Decision made | `Projects/{project}.md` → `## Timeline` (Decision callout) |
 | Blocker raised | `Projects/{project}.md` → `## Timeline` (Blocker callout) |
 | General status update | `Projects/{project}.md` → `## Timeline` |
@@ -110,9 +110,9 @@ Use this exact format for every review queue entry:
 
 Use `user.name` from workspace.yaml for the person field on self-assigned tasks.
 
-**Delegation** (append to `## Open Tasks`):
+**Task — assigned to another person** (append to `## Open Tasks`):
 ```
-- [ ] Sarah to draft OAuth integration guide 📅 2026-04-17 [project:: [[Auth Migration]]] [type:: delegation] [person:: [[Sarah Carter]]] [Auto] (meeting, 1:1 with Sarah, 2026-04-10)
+- [ ] Sarah to draft OAuth integration guide 📅 2026-04-17 [project:: [[Auth Migration]]] [type:: task] [person:: [[Sarah Carter]]] [Auto] (meeting, 1:1 with Sarah, 2026-04-10)
 ```
 
 **Decision callout** (append to `## Timeline`):
@@ -163,7 +163,7 @@ Adjust extraction depth by meeting type:
 - Feedback delivered (log to contributions as `feedback-given`)
 - Personal notes (anything about their life outside work)
 - Career topics discussed (log to contributions and person file)
-- Action items are usually bilateral — extract yours (task) AND theirs (delegation)
+- Action items are usually bilateral — extract yours (`[type:: task]` with your name) AND theirs (`[type:: task]` with their name in `[person::]`)
 
 **Standup / sync** — lighter extraction:
 - Blockers and status updates (primary)
@@ -202,8 +202,8 @@ Append to `_system/sources/{entity}.md` (one entry per project or person mention
 > Raw notes (verbatim)
 {paste verbatim notes content here}
 
-Referenced by: [[Projects/auth-migration]] — decision, task | [[People/sarah-chen]] — observation, delegation
-Items extracted: 1 decision, 2 tasks, 1 delegation, 1 observation
+Referenced by: [[Projects/auth-migration]] — decision, task | [[People/sarah-chen]] — observation, task
+Items extracted: 1 decision, 3 tasks, 1 observation
 ```
 
 ### Session processed marker
@@ -227,8 +227,7 @@ Processed 1:1 with Sarah (2026-04-10).
   Unchecked items (carry forward next prep): 2
 
   Written to vault:
-    Tasks: 2 → Projects/auth-migration.md
-    Delegations: 1 → Projects/auth-migration.md (Sarah)
+    Tasks: 3 → Projects/auth-migration.md (2 yours, 1 Sarah's)
     Decision: 1 → Projects/auth-migration.md
     Observation: 1 → People/sarah-chen.md
     Contribution: 1 → Journal/contributions-2026-04-07.md
@@ -271,15 +270,15 @@ Processed {N} meetings.
 2. Find today's session: `## 2026-04-10 Session`
 3. Determine type: frontmatter `type: 1-1` → use 1:1 extraction emphasis
 4. Read Prep section:
-   - 9 checked items: find 2 matching open delegations in auth-migration.md, mark complete
+   - 9 checked items: find 2 matching open tasks in auth-migration.md, mark complete
    - 2 unchecked items: note for carry-forward (/myna:prep-meeting will add them next time)
 5. Read Notes section; wrap in framing delimiters:
    - Discussion: "Sarah delivered API spec v2, cert rotation still pending from infra, decision: go with PKCE flow"
    - Action Items: "I will review the spec by Friday. Sarah will follow up with ops about cert timeline."
    - Decisions: "OAuth PKCE selected over client credentials — simpler, auditable"
 6. Extract:
-   - Task: "Review Sarah's API spec v2" 📅 Friday → `Projects/auth-migration.md`, `[person:: [[{user.name}]]]` `[Auto]`
-   - Delegation: "Sarah to follow up with ops on cert rotation" → `Projects/auth-migration.md`, `[person:: [[Sarah Chen]]]` `[Auto]`
+   - Task (yours): "Review Sarah's API spec v2" 📅 Friday → `Projects/auth-migration.md`, `[type:: task]` `[person:: [[{user.name}]]]` `[Auto]`
+   - Task (Sarah's): "Sarah to follow up with ops on cert rotation" → `Projects/auth-migration.md`, `[type:: task]` `[person:: [[Sarah Chen]]]` `[Auto]`
    - Decision: "OAuth PKCE selected" → `Projects/auth-migration.md` timeline Decision callout `[Auto]`
    - Blocker: "cert rotation pending from infra" → `Projects/auth-migration.md` timeline Blocker callout `[Auto]`
    - Observation: "Sarah delivered spec v2 ahead of schedule" → `People/sarah-chen.md` `[Auto]`
@@ -287,4 +286,4 @@ Processed {N} meetings.
 7. Source summary → `_system/sources/auth-migration.md` and `_system/sources/sarah-chen.md`
 8. Append processed marker to `## 2026-04-10 Session` in the meeting file
 
-Output: "Processed 1:1 with Sarah. 9 checked items resolved, 2 unchecked noted for carry-forward. Written: 1 task, 1 delegation, 1 decision, 1 blocker, 1 observation, 1 contribution."
+Output: "Processed 1:1 with Sarah. 9 checked items resolved, 2 unchecked noted for carry-forward. Written: 2 tasks (1 yours, 1 Sarah's), 1 decision, 1 blocker, 1 observation, 1 contribution."

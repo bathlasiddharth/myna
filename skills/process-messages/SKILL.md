@@ -98,8 +98,7 @@ For each email/message/document, extract every relevant item across all destinat
 | Signal in source | Destination | Provenance |
 |-----------------|-------------|------------|
 | Explicit action item for you | `Projects/{project}.md` open tasks | `[Auto]` if owner+action explicit, `[Inferred]` if inferred |
-| Action item assigned to someone else (no delegation language) | `Projects/{project}.md` open tasks with `[type:: task]` and `[person:: {name}]` | `[Auto]` if explicit, `[Inferred]` if inferred |
-| Explicit delegation ("delegate to X", "hand off to X") | `Projects/{project}.md` open tasks with `[type:: delegation]` and `[person:: {name}]` | `[Auto]` if explicit, `[Inferred]` if inferred |
+| Action item for someone else (any language) | `Projects/{project}.md` open tasks with `[type:: task]` and `[person:: {name}]` | `[Auto]` if explicit, `[Inferred]` if inferred |
 | Decision made | `Projects/{project}.md` timeline (Decision callout) | `[Auto]` if stated, `[Inferred]` if implied |
 | Blocker or impediment | `Projects/{project}.md` timeline (Blocker callout) | `[Auto]` if stated |
 | Timeline-worthy status update | `Projects/{project}.md` timeline | `[Auto]` |
@@ -151,10 +150,6 @@ Use `user.name` from workspace.yaml for self-assigned tasks.
 - [ ] Sarah to send updated API spec to the team 📅 2026-04-09 ⏫ [project:: [[Auth Migration]]] [type:: task] [person:: [[Sarah Carter]]] [Auto] (email, Sarah)
 ```
 
-**Delegation task** (only when explicit delegation language — "delegate to X", "hand off to X"):
-```
-- [ ] Sarah to send updated API spec to the team 📅 2026-04-09 ⏫ [project:: [[Auth Migration]]] [type:: delegation] [person:: [[Sarah Carter]]] [Auto] (email, Sarah)
-```
 
 **Observation** (append to `## Observations` section in person file):
 ```
@@ -221,7 +216,7 @@ During extraction, stage reply-needed tasks in `ReviewQueue/review-work.md` for 
 
 **Waiting on them (outbound):** When processing emails, also scan for messages where the sender matches `user.email` or `user.name` (from workspace.yaml) and the thread shows no subsequent reply from the other party in the same folder. These represent threads the user initiated that may still be awaiting a response. Stage as `[type:: reply-needed] [person:: {recipient name}]` with a description starting "Waiting on {person} for {topic}".
 
-These surface in the daily note's delegation/open-task view. When a subsequent processing run detects a message from you in the same thread (sender email matches `user.email` from workspace.yaml, or sender name matches `user.name`), mark the reply-needed task complete. When a reply arrives from the other party, mark waiting-on-them tasks complete.
+These surface in the daily note's open-task view. When a subsequent processing run detects a message from you in the same thread (sender email matches `user.email` from workspace.yaml, or sender name matches `user.name`), mark the reply-needed task complete. When a reply arrives from the other party, mark waiting-on-them tasks complete.
 
 ---
 

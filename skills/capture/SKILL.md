@@ -166,30 +166,28 @@ Different from the observation capture above: this is a recognition entry specif
    - Due date (resolve relative dates to absolute: "by Friday" → `2026-04-11`)
    - Priority (explicit or inferred from language — "urgent", "ASAP" → high)
    - Effort estimate (if mentioned)
-   - Type: task (default), delegation (only if explicit delegation language: "delegate to X", "hand this off to X"), dependency (if "waiting on..."), reply-needed (if "need a reply from...")
-   - Person (for delegations and project tasks with an owner)
+   - Type: task (default), reply-needed (if "need a reply from...")
+   - Person (for tasks with an owner or tasks assigned to others)
 2. Mark each field as `explicit` or `(inferred)`.
 3. **Write directly if all fields are explicit.** If any field is inferred, add `[review-status:: pending]` and write to review queue.
 
 **Task format:**
 ```
-- [ ] {title} 📅 {YYYY-MM-DD} ⏫ [project:: {name}] [type:: {task|delegation|dependency|reply-needed}] [person:: {name}] [effort:: {estimate}] [review-status:: pending] [Auto] (capture, {date})
+- [ ] {title} 📅 {YYYY-MM-DD} ⏫ [project:: {name}] [type:: {task|reply-needed}] [person:: {name}] [effort:: {estimate}] [review-status:: pending] [Auto] (capture, {date})
 ```
 
 Include only fields that have values.
 
 **Type rules:**
-- `task` — user is doing it themselves (default)
-- `delegation` — user uses explicit delegation language: "delegate this to X", "hand this off to X"
-- `dependency` — "waiting on X"
+- `task` — default for all action items, regardless of who owns them; use `[person::]` to indicate the owner
 - `reply-needed` — "need a reply from X"
 
-When the user specifies a project AND a person for a task WITHOUT delegation language (e.g., "Add task 'review PR' to Project Alpha for Sarah"), create `[type:: task]` with `[person:: [[Sarah Chen]]]` as the owner — not a delegation.
+When the user specifies a project AND a person for a task (e.g., "Add task 'review PR' to Project Alpha for Sarah"), create `[type:: task]` with `[person:: [[Sarah Chen]]]` as the owner.
 
 **Person field rules:**
 - Self-assigned tasks (`[type:: task]` with no explicit owner): always include `[person:: [[{user.name}]]]` using `user.name` from workspace.yaml
 - Project tasks with an explicit owner (`[type:: task]` with a named person): `[person:: [[{their-name}]]]`
-- Delegations / dependencies / reply-needed: `[person:: [[{their-name}]]]` using the name as it appears in people.yaml
+- Tasks assigned to others or reply-needed: `[person:: [[{their-name}]]]` using the name as it appears in people.yaml
 
 **Destination:** Project file at `Projects/{project-slug}.md` under Open Tasks section, or daily note if no project.
 
@@ -202,7 +200,7 @@ Parse:
 - Due: Friday → `2026-04-11` (explicit)
 - Priority: high (explicit)
 - Project: not mentioned → inferred from context or ask
-- Person: not a delegation (the user is doing this)
+- Person: not specified (user is the owner — self-assigned)
 
 If project can't be inferred:
 Ask: "Which project is this for? Or should I add it to your personal tasks?"
@@ -219,22 +217,22 @@ User: "Add task 'review PR' to Project Alpha for Sarah"
 Parse:
 - Title: Review PR
 - Project: Project Alpha (explicit)
-- Person: Sarah (explicit owner, no delegation language)
-- Type: task (not delegation — no delegation language used)
+- Person: Sarah (explicit owner)
+- Type: task
 
 ```
 - [ ] Review PR [project:: [[Project Alpha]]] [type:: task] [person:: [[Sarah Chen]]] [Auto] (capture)
 ```
 
-User: "delegate the onboarding doc review to Sarah"
+User: "hand the onboarding doc review to Sarah"
 
 Parse:
 - Title: Onboarding doc review
-- Person: Sarah (explicit delegation language used)
-- Type: delegation
+- Person: Sarah (explicit owner)
+- Type: task (person field carries ownership)
 
 ```
-- [ ] Onboarding doc review [project:: [[{project}]]] [type:: delegation] [person:: [[Sarah Chen]]] [Auto] (capture)
+- [ ] Onboarding doc review [project:: [[{project}]]] [type:: task] [person:: [[Sarah Chen]]] [Auto] (capture)
 ```
 
 ---

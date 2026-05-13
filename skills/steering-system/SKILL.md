@@ -1,7 +1,7 @@
 ---
 name: steering-system
 disable-model-invocation: true
-description: System behavior rules — config reload, graceful degradation, error recovery with retry TODOs, relative date resolution, fuzzy name resolution
+description: System behavior rules — config reload, graceful degradation, error recovery with inline reporting, relative date resolution, fuzzy name resolution
 user-invocable: false
 ---
 
@@ -35,13 +35,16 @@ Missing config sections cause the related feature to be skipped, not an error.
 When a multi-step operation partially fails:
 1. Report what succeeded and what failed
 2. Include enough detail for the user to fix manually if needed
-3. Create a retry TODO for failures the user would want to retry:
+3. Never silently swallow failures — list each failure inline in the response with the reason
 
+Example inline failure report:
 ```
-- [ ] 🔄 Retry: {what failed} — {reason} [type:: retry] [created:: {YYYY-MM-DD}]
+Partial success — 3 of 4 items written.
+  ✓ Projects/auth-migration.md — task added
+  ✓ People/sarah-chen.md — observation added
+  ✓ Journal/contributions-2026-04-07.md — contribution logged
+  ✗ Projects/aurora-dashboard.md — file not found (create it first or route to review queue)
 ```
-
-**Retry TODO location:** Write to today's daily note (`Journal/{YYYY-MM-DD}.md`) for general failures. Write to the relevant project file for project-specific failures. Retry TODOs surface in the daily note Immediate Attention section. Never silently swallow failures.
 
 ## Relative Date Resolution
 

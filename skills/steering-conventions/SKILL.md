@@ -134,8 +134,8 @@ For tasks, `📅` is the **due date**, not the source date. Include the source d
 
 **Task fields as inline properties:**
 - `[project:: [[{name}]]]` — which project (wiki-link to project file)
-- `[type:: {task | delegation | dependency | reply-needed | retry}]` — task type
-- `[person:: [[{name}]]]` — owner (for delegations) or who you're waiting on (wiki-link to person file)
+- `[type:: {task | reply-needed}]` — task type
+- `[person:: [[{name}]]]` — owner or who you're waiting on (wiki-link to person file)
 - `[review-status:: {pending | reviewed}]` — set to pending when fields are inferred
 - `[effort:: {estimate}]` — effort estimate
 - Priority emoji: ⏫ high, 🔼 medium, (none) low
@@ -198,7 +198,7 @@ Standard Dataview syntax for dashboards and notes:
 ```dataview
 TASK
 FROM "myna/Projects"
-WHERE !completed AND type = "delegation" AND due < date(today)
+WHERE !completed AND type = "task" AND due < date(today)
 SORT due ASC
 ```
 
