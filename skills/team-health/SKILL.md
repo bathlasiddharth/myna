@@ -42,12 +42,25 @@ For each person in people.yaml with `relationship_tier: direct`:
 
 ## Output
 
+### Summary
+
+Show a brief narrative summary before the table. 2-3 sentences: who needs the most attention and why, and the overall team picture. All flags are about the user's own records and follow-through — not about any employee's state or engagement (D018). Synthesize only facts present in the vault.
+
+Example:
+```
+### Summary
+Alex and Maya need attention this week — Alex has a 45-day feedback gap and 3 overdue tasks; Maya has had no career conversation in 4 months. Marcus's delegations are all overdue. Sarah is tracking clean.
+```
+
 ### Summary Table
 
-Show a table first for quick scanning:
+Show a table after the summary for quick scanning:
 
 ```
 ## 🏥 Team Health — [date]
+
+### Summary
+[2-3 sentence narrative: who needs most attention and why, overall team picture. Based on the user's records — not inferences about employee state.]
 
 | Person | Open | Overdue | Assigned to them | Feedback | Last 1:1 | Attention |
 |--------|------|---------|------------------|----------|----------|-----------|
@@ -114,6 +127,9 @@ If no contributions in the last 14 days for a person, that person simply doesn't
 
 ```
 ## 🏥 Team Health — 2026-04-12
+
+### Summary
+Alex and Maya need attention this week — Alex has a 45-day feedback gap and 3 overdue tasks; Maya has had no career conversation in 4 months. Marcus's delegations are all overdue. Sarah is tracking clean.
 
 | Person | Open | Overdue | Assigned to them | Feedback   | Last 1:1 | Attention |
 |--------|------|---------|------------------|------------|----------|-----------|

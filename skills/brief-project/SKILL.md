@@ -66,6 +66,8 @@ Missing files or unavailable MCPs: skip and note what was unavailable.
 ```
 **[Project Name]** — [status]
 
+[One sentence: current phase, whether any blocker is active, and next key date. Synthesize only facts present in the vault.]
+
 - [Status and phase — what's being worked on right now]
 - ⚠️ Blocker: [top blocker if any] — [brief context]
 - 📅 Next: [next milestone or deadline]
@@ -88,7 +90,7 @@ Skip the blocker bullet if there are no open blockers. Skip recent development i
 ---
 
 ### 📊 Current State
-[2-3 sentence summary of where the project stands. Pull from the most recent timeline entries and overview.]
+[2-3 sentence narrative lead-in: where the project stands, what's actively being worked on, and whether there are blockers or upcoming deadlines. This is the first thing shown — it gives the "so what" before the structured sections. Pull from the most recent timeline entries and overview. Synthesize only facts present in the vault — do not infer status, team sentiment, or trajectory beyond what's recorded.]
 
 ### 🚧 Open Blockers
 > [!warning] [Blocker description]
@@ -135,6 +137,8 @@ Group recurring meetings: if the same meeting title appears on multiple days, co
 **Output:**
 ```
 **Auth Migration** — active
+
+Phase 2 is in progress with one active blocker and a staging deploy targeting April 15.
 
 - Phase 2 underway: API spec under review, staging deploy targeting April 15
 - ⚠️ Blocker: Platform API integration — waiting on Platform team since Apr 3

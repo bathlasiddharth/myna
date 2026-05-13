@@ -85,6 +85,9 @@ Carry-forward rate per session = unchecked items / total prep items. Report the 
 
 ---
 
+### Summary
+[2-4 sentences covering: overall follow-through rate, whether any recurring topics are a concern, and carry-forward trend. Apply the same strict data boundary here: synthesize counts and patterns, not assessments. Do not infer relationship quality, engagement, or morale — report only what the numbers show.]
+
 ### Action Item Follow-Through
 
 **Overall rate:** [X]% ([Y of Z] action items addressed across analyzed sessions)
@@ -136,6 +139,9 @@ Topics appearing in 3+ sessions without resolution:
 **Sessions analyzed:** 8 sessions (2026-01-31 to 2026-04-02)
 
 ---
+
+### Summary
+Follow-through rate is 72% (18 of 25 action items addressed) — 7 items went unaddressed across 8 sessions. Two topics have recurred in 3-4 sessions without resolution: API spec ownership and Q3 growth goals. Average carry-forward rate is 46%, meaning roughly half of prep items are left unchecked each session.
 
 ### Action Item Follow-Through
 

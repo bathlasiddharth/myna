@@ -285,6 +285,10 @@ type: adhoc
 After generating prep:
 ```
 📋 Prep ready for {meeting name} — {N} items.
+
+**Key Points:**
+{bullet list from the Key Points section written to the vault}
+
 {file link}
 
 Say "done with {meeting name}" after the meeting to process your notes.
@@ -293,8 +297,16 @@ Say "done with {meeting name}" after the meeting to process your notes.
 For batch (all remaining today):
 ```
 📋 Prep generated for {N} meetings:
-  • {meeting 1}: {N} items — {file link}
-  • {meeting 2}: {N} items — {file link}
+
+**{meeting 1}** — {N} items
+**Key Points:**
+{Key Points bullets for meeting 1}
+{file link 1}
+
+**{meeting 2}** — {N} items
+**Key Points:**
+{Key Points bullets for meeting 2}
+{file link 2}
 ```
 
 ---
@@ -375,4 +387,17 @@ Appended to `Meetings/1-1s/sarah-chen.md` (after frontmatter, tags, and any prev
 ---
 ```
 
-Output: "Prep ready for 1:1 with Sarah — 11 items. obsidian://open?vault=...&file=Meetings/1-1s/sarah-chen.md"
+Output:
+```
+📋 Prep ready for 1:1 with Sarah — 11 items.
+
+**Key Points:**
+- Own the cert renewal miss up front — you're carrying it forward again.
+- Lead with Sarah's strong spec v2 work before raising the documentation feedback.
+- Career gap is 41 days — worth naming explicitly if the conversation opens up.
+- **Pre-meeting:** Review Sarah's diagram in the design doc before you sit down.
+
+obsidian://open?vault=...&file=Meetings/1-1s/sarah-chen.md
+
+Say "done with 1:1 with Sarah" after the meeting to process your notes.
+```

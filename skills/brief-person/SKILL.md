@@ -52,6 +52,9 @@ Show all sections inline. Always include every section — if a section has no d
 
 ---
 
+### Summary
+[2-4 sentences covering the person's current situation, most pressing open item (if any), and one key thing to know before meeting with them. Synthesize only facts present in the vault. Do not infer tone, mood, relationship quality, or any internal state.]
+
 ### Overview
 [Role description and context from person file. 1-2 sentences.]
 
@@ -129,6 +132,9 @@ Action items from last session:
 **Relationship:** direct
 
 ---
+
+### 📋 Summary
+Sarah has 3 open tasks on the Auth Migration project, with the API spec draft overdue by 1 day. The most pressing item is unblocking the Platform API dependency — she's waiting on a caching decision doc you haven't sent yet. One key thing to know: she has a pending strength observation from the March outage that hasn't been delivered.
 
 ### 📋 Overview
 Senior engineer on the Platform team. Working on the Auth Migration and Platform API projects.
